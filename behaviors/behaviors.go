@@ -1,15 +1,17 @@
 package behaviors
 
 import (
+	"github.com/Lincyaw/loadgenerator/service"
 	"math/rand"
 	"sync"
+	"time"
 )
 
 var behaviors_ []BehaviorUnit
 var once sync.Once
 
 type Behavior interface {
-	Run()
+	Run(cli *service.SvcImpl)
 }
 
 type BehaviorUnit struct {
@@ -44,22 +46,46 @@ type LoadGenerator struct {
 }
 
 func (l *LoadGenerator) Start(conf ...func(*Config)) {
+	cli := service.NewSvcClients()
 	config := Config{}
 	for _, fn := range conf {
 		fn(&config)
 	}
 
-	totalWeight := 0
-	for _, behaviorUnit := range behaviors_ {
-		totalWeight += behaviorUnit.Weight
+	if config.Thread <= 0 {
+		config.Thread = 1
 	}
 
-	randomWeight := rand.Intn(totalWeight)
-	for _, behaviorUnit := range behaviors_ {
-		randomWeight -= behaviorUnit.Weight
-		if randomWeight <= 0 {
-			behaviorUnit.B.Run()
-			break
-		}
+	totalWeight := 0
+	weightBoundaries := make([]int, len(behaviors_))
+
+	for i, behaviorUnit := range behaviors_ {
+		totalWeight += behaviorUnit.Weight
+		weightBoundaries[i] = totalWeight
 	}
+
+	var wg sync.WaitGroup
+	wg.Add(config.Thread)
+
+	for i := 0; i < config.Thread; i++ {
+		go func() {
+			defer wg.Done()
+			randSrc := rand.NewSource(time.Now().UnixNano())
+			randGen := rand.New(randSrc)
+
+			for {
+				randomWeight := randGen.Intn(totalWeight)
+				selectedIndex := 0
+				for j, boundary := range weightBoundaries {
+					if randomWeight < boundary {
+						selectedIndex = j
+						break
+					}
+				}
+				behaviors_[selectedIndex].B.Run(cli)
+			}
+		}()
+	}
+
+	cli.ShowStats()
 }
