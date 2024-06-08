@@ -23,6 +23,12 @@ type SeatCreateInfoResp struct {
 	} `json:"data"`
 }
 
+type TicketLeftResp struct {
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   int    `json:"data"`
+}
+
 func (s *SvcImpl) ReqSeatCreate(input *SeatCreateInfoReq) (*SeatCreateInfoResp, error) {
 	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/seatservice/seats", input)
 	if err != nil {
@@ -33,6 +39,24 @@ func (s *SvcImpl) ReqSeatCreate(input *SeatCreateInfoReq) (*SeatCreateInfoResp, 
 		return nil, err
 	}
 	var result SeatCreateInfoResp
+
+	err = json.Unmarshal(body, &result)
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+func (s *SvcImpl) ReqGetTicketLeft(input *SeatCreateInfoReq) (*TicketLeftResp, error) {
+	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/seatservice/seats/left_tickets", input)
+	if err != nil {
+		return nil, err
+	}
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	var result TicketLeftResp
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
