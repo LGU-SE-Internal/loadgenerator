@@ -59,7 +59,7 @@ package service
 //	return s.parseResponse(resp)
 //}
 //
-//func (s *SvcImpl) sendRequest(method, url string, data interface{}) (*http.Response, error) {
+//func (s *SvcImpl) sendRequest(method, url string, data interface{}) (*http.RouteResponse, error) {
 //	var body io.Reader
 //	if data != nil {
 //		jsonData, err := json.Marshal(data)
@@ -78,7 +78,7 @@ package service
 //	return s.cli.Do(req)
 //}
 //
-//func (s *SvcImpl) parseResponse(resp *http.Response) (interface{}, error) {
+//func (s *SvcImpl) parseResponse(resp *http.RouteResponse) (interface{}, error) {
 //	defer resp.Body.Close()
 //	body, err := io.ReadAll(resp.Body)
 //	if err != nil {

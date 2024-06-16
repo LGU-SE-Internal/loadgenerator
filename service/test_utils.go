@@ -20,7 +20,7 @@ func (s *SvcImpl) ShowStats() {
 	table := tview.NewTable().SetBorders(true)
 	table.SetBackgroundColor(tcell.ColorDefault)
 	// 设置表头
-	headers := []string{"URL", "Method", "Success", "Failed", "Request Bodies", "Response Bodies"}
+	headers := []string{"URL", "Method", "Success", "Failed", "Request Bodies", "RouteResponse Bodies"}
 	for i, header := range headers {
 		table.SetCell(0, i, tview.NewTableCell(header).SetTextColor(tcell.ColorYellow))
 	}

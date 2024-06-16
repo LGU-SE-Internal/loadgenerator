@@ -19,7 +19,7 @@ type GetContactsResp struct {
 	} `json:"data"`
 }
 
-// Response structs
+// RouteResponse structs
 type ContactResponse struct {
 	Status int         `json:"status"`
 	Msg    string      `json:"msg"`
@@ -27,6 +27,12 @@ type ContactResponse struct {
 }
 
 type StationResponse struct {
+	Status int         `json:"status"`
+	Msg    string      `json:"msg"`
+	Data   interface{} `json:"data"`
+}
+
+type deleteResponse struct {
 	Status int         `json:"status"`
 	Msg    string      `json:"msg"`
 	Data   interface{} `json:"data"`
@@ -171,7 +177,7 @@ func (s *SvcImpl) GetAllStations() (*StationResponse, error) {
 	return &result, err
 }
 
-func (s *SvcImpl) DeleteStation(id string) (*StationResponse, error) {
+func (s *SvcImpl) DeleteStation(id string) (*deleteResponse, error) {
 	resp, err := s.cli.SendRequest("DELETE", s.BaseUrl+fmt.Sprintf("/api/v1/adminbasicservice/adminbasic/stations/%s", id), nil)
 	if err != nil {
 		return nil, err
@@ -180,7 +186,7 @@ func (s *SvcImpl) DeleteStation(id string) (*StationResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result StationResponse
+	var result deleteResponse
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }

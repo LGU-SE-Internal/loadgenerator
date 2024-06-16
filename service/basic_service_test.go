@@ -73,7 +73,7 @@ package service_test
 //
 //type MockClient struct{}
 //
-//func (c *MockClient) SendRequest(method, url string, body interface{}) (*http.Response, error) {
+//func (c *MockClient) SendRequest(method, url string, body interface{}) (*http.RouteResponse, error) {
 //	reqBodyBytes, _ := json.Marshal(body)
 //	req := httptest.NewRequest(method, url, bytes.NewReader(reqBodyBytes))
 //	resp := httptest.NewRecorder()

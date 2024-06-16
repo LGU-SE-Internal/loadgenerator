@@ -15,6 +15,12 @@ type RouteInfo struct {
 	ID           string `json:"id"`
 }
 
+type AddResponse struct {
+	Status int      `json:"status"`
+	Msg    string   `json:"msg"`
+	Data   []string `json:"data"`
+}
+
 type RouteInfoResp struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`
@@ -48,17 +54,18 @@ func (s *SvcImpl) ReqGetAllRoutes() (*RouteInfoResp, error) {
 	return &result, err
 }
 
-func (s *SvcImpl) ReqAddRoute(input *RouteInfo) (*RouteInfoResp, error) {
+func (s *SvcImpl) ReqAddRoute(input *RouteInfo) (*AddResponse, error) {
 	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/adminrouteservice/adminroute", input)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
+
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
-	var result RouteInfoResp
+	var result AddResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
