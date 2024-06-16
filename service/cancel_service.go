@@ -23,7 +23,7 @@ func (s *SvcImpl) ReqCalculate(orderId string) (*DataStringResp, error) {
 	return &result, nil
 }
 
-func (s *SvcImpl) ReqCancelTicket(orderId string, loginId string) (*OrderArrResp, error) {
+func (s *SvcImpl) ReqCancelTicket(orderId string, loginId string) (*DataStringResp, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+"/api/v1/cancelservice/cancel/"+orderId+"/"+loginId, nil)
 	if err != nil {
 		return nil, err
@@ -32,7 +32,7 @@ func (s *SvcImpl) ReqCancelTicket(orderId string, loginId string) (*OrderArrResp
 	if err != nil {
 		return nil, err
 	}
-	var result OrderArrResp
+	var result DataStringResp
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
