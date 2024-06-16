@@ -1,21 +1,24 @@
 package service
 
 import (
+	"github.com/go-faker/faker/v4"
 	"testing"
 )
 
 func TestSvcImpl_AddUpdateDeleteUser(t *testing.T) {
-	cli, _ := GetBasicClient()
+	cli, _ := GetAdminClient()
+	MockedID := faker.UUIDHyphenated()
+	MockedUserName := faker.Username()
 
 	// Add User
 	addResp, err := cli.AddUser(&UserDto{
-		//UserID       string `json:"userId"`
-		//UserName     string `json:"userName"`
-		//Password     string `json:"password"`
-		//Gender       int    `json:"gender"`
-		//DocumentType int    `json:"documentType"`
-		//DocumentNum  string `json:"documentNum"`
-		//Email        string `json:"email"`
+		UserID:       MockedID,
+		UserName:     MockedUserName,
+		Password:     "77777",
+		Gender:       1,
+		DocumentType: 1,
+		DocumentNum:  "admin",
+		Email:        faker.Email(),
 	})
 	if err != nil {
 		t.Errorf("AddUser failed: %v", err)
@@ -24,13 +27,13 @@ func TestSvcImpl_AddUpdateDeleteUser(t *testing.T) {
 
 	// Update User
 	updateResp, err := cli.UpdateUser(&UserDto{
-		//UserID       string `json:"userId"`
-		//UserName     string `json:"userName"`
-		//Password     string `json:"password"`
-		//Gender       int    `json:"gender"`
-		//DocumentType int    `json:"documentType"`
-		//DocumentNum  string `json:"documentNum"`
-		//Email        string `json:"email"`
+		UserID:       MockedID,
+		UserName:     MockedUserName,
+		Password:     "88888",
+		Gender:       1,
+		DocumentType: 1,
+		DocumentNum:  "admin",
+		Email:        faker.Email(),
 	})
 	if err != nil {
 		t.Errorf("UpdateUser failed: %v", err)
@@ -38,7 +41,7 @@ func TestSvcImpl_AddUpdateDeleteUser(t *testing.T) {
 	t.Logf("UpdateUser response: %+v", updateResp)
 
 	// Delete User
-	deleteResp, err := cli.DeleteUser("12345")
+	deleteResp, err := cli.DeleteUser(MockedID)
 	if err != nil {
 		t.Errorf("DeleteUser failed: %v", err)
 	}
