@@ -1,207 +1,354 @@
 package service
 
-//
-//import (
-//	"testing"
-//)
-//
-//func TestOrderService_GetTicketListByDateAndTripId(t *testing.T) {
-//	cli, _ := GetAdminClient()
-//	seatRequest := Seat{
-//		TravelDate: "2023-06-14",
-//		TripId:     "D1234",
-//	}
-//	result, err := cli.GetTicketListByDateAndTripId(seatRequest)
-//	if err != nil {
-//		t.Errorf("Request failed, err %s", err)
-//	}
-//	if len(result) == 0 {
-//		t.Errorf("No tickets found")
-//	}
-//}
-//
-//func TestOrderService_CreateNewOrder(t *testing.T) {
-//	cli, _ := GetAdminClient()
-//	order := Order{
-//		From:       "StationA",
-//		To:         "StationB",
-//		TravelDate: "2023-06-14",
-//	}
-//	result, err := cli.CreateNewOrder(order)
-//	if err != nil {
-//		t.Errorf("Request failed, err %s", err)
-//	}
-//	if result.Id == "" {
-//		t.Errorf("Order creation failed")
-//	}
-//}
-//
-//func TestOrderService_AddNewOrder(t *testing.T) {
-//	cli, _ := GetAdminClient()
-//	order := Order{
-//		From:       "StationA",
-//		To:         "StationB",
-//		TravelDate: "2023-06-14",
-//	}
-//	result, err := cli.AddNewOrder(order)
-//	if err != nil {
-//		t.Errorf("Request failed, err %s", err)
-//	}
-//	if result.Id == "" {
-//		t.Errorf("Order creation failed")
-//	}
-//}
-//
-//func TestOrderService_QueryOrders(t *testing.T) {
-//	cli, _ := GetAdminClient()
-//	orderInfo := OrderInfo{
-//		LoginId: "user123",
-//	}
-//	result, err := cli.QueryOrders(orderInfo)
-//	if err != nil {
-//		t.Errorf("Request failed, err %s", err)
-//	}
-//	if len(result) == 0 {
-//		t.Errorf("No orders found")
-//	}
-//}
-//
-//func TestOrderService_QueryOrdersForRefresh(t *testing.T) {
-//	cli, _ := GetAdminClient()
-//	orderInfo := OrderInfo{
-//		LoginId: "user123",
-//	}
-//	result, err := cli.QueryOrdersForRefresh(orderInfo)
-//	if err != nil {
-//		t.Errorf("Request failed, err %s", err)
-//	}
-//	if len(result) == 0 {
-//		t.Errorf("No orders found")
-//	}
-//}
-//
-//func TestOrderService_CalculateSoldTicket(t *testing.T) {
-//	cli, _ := GetAdminClient()
-//	travelDate := "2023-06-14"
-//	trainNumber := "D1234"
-//	result, err := cli.CalculateSoldTicket(travelDate, trainNumber)
-//	if err != nil {
-//		t.Errorf("Request failed, err %s", err)
-//	}
-//	if result == 0 {
-//		t.Errorf("No tickets sold")
-//	}
-//}
-//
-//func TestOrderService_GetOrderPrice(t *testing.T) {
-//	cli, _ := GetAdminClient()
-//	orderId := "order123"
-//	result, err := cli.GetOrderPrice(orderId)
-//	if err != nil {
-//		t.Errorf("Request failed, err %s", err)
-//	}
-//	if result == 0 {
-//		t.Errorf("Order price not found")
-//	}
-//}
-//
-//func TestOrderService_PayOrder(t *testing.T) {
-//	cli, _ := GetAdminClient()
-//	orderId := "order123"
-//	result, err := cli.PayOrder(orderId)
-//	if err != nil {
-//		t.Errorf("Request failed, err %s", err)
-//	}
-//	if result.Id == "" {
-//		t.Errorf("Order payment failed")
-//	}
-//}
-//
-//func TestOrderService_GetOrderById(t *testing.T) {
-//	cli, _ := GetAdminClient()
-//	orderId := "order123"
-//	result, err := cli.GetOrderById(orderId)
-//	if err != nil {
-//		t.Errorf("Request failed, err %s", err)
-//	}
-//	if result.Id == "" {
-//		t.Errorf("Order not found")
-//	}
-//}
-//
-//func TestOrderService_ModifyOrder(t *testing.T) {
-//	cli, _ := GetAdminClient()
-//	orderId := "order123"
-//	status := 1
-//	result, err := cli.ModifyOrder(orderId, status)
-//	if err != nil {
-//		t.Errorf("Request failed, err %s", err)
-//	}
-//	if result.Id == "" {
-//		t.Errorf("Order modification failed")
-//	}
-//}
-//
-//func TestOrderService_SecurityInfoCheck(t *testing.T) {
-//	cli, _ := GetAdminClient()
-//	checkDate := "2023-06-14"
-//	accountId := "account123"
-//	result, err := cli.SecurityInfoCheck(checkDate, accountId)
-//	if err != nil {
-//		t.Errorf("Request failed, err %s", err)
-//	}
-//	if !result {
-//		t.Errorf("Security check failed")
-//	}
-//}
-//
-//func TestOrderService_SaveOrderInfo(t *testing.T) {
-//	cli, _ := GetAdminClient()
-//	orderInfo := Order{
-//		Id: "order123",
-//	}
-//	result, err := cli.SaveOrderInfo(orderInfo)
-//	if err != nil {
-//		t.Errorf("Request failed, err %s", err)
-//	}
-//	if result.Id == "" {
-//		t.Errorf("Order save failed")
-//	}
-//}
-//
-//func TestOrderService_UpdateOrder(t *testing.T) {
-//	cli, _ := GetAdminClient()
-//	order := Order{
-//		Id: "order123",
-//	}
-//	result, err := cli.UpdateOrder(order)
-//	if err != nil {
-//		t.Errorf("Request failed, err %s", err)
-//	}
-//	if result.Id == "" {
-//		t.Errorf("Order update failed")
-//	}
-//}
-//
-//func TestOrderService_DeleteOrder(t *testing.T) {
-//	cli, _ := GetAdminClient()
-//	orderId := "order123"
-//	result, err := cli.DeleteOrder(orderId)
-//	if err != nil {
-//		t.Errorf("Request failed, err %s", err)
-//	}
-//	if result.Id == "" {
-//		t.Errorf("Order deletion failed")
-//	}
-//}
-//
-//func TestOrderService_GetAllOrders(t *testing.T) {
-//	cli, _ := GetAdminClient()
-//	result, err := cli.GetAllOrders()
-//	if err != nil {
-//		t.Errorf("Request failed, err %s", err)
-//	}
-//	if len(result) == 0 {
-//		t.Errorf("No orders found")
-//	}
-//}
+import (
+	"fmt"
+	"github.com/go-faker/faker/v4"
+	"github.com/google/uuid"
+	"strconv"
+	"testing"
+)
+
+func TestSvcImpl_ReqFindAllOrder(t *testing.T) {
+	cli, _ := GetAdminClient()
+	GetResp, _ := cli.ReqFindAllOrder()
+	fmt.Println(GetResp.Msg)
+}
+
+func TestSvcImpl_ReqCreateNewOrder(t *testing.T) {
+	cli, _ := GetAdminClient()
+	AddResp, err := cli.ReqCreateNewOrder(&Order{
+		AccountId:              uuid.NewString(),
+		BoughtDate:             faker.Date(),
+		CoachNumber:            RandomIntBetween(1, 10),
+		ContactsDocumentNumber: strconv.Itoa(RandomIntBetween(1, 10)),
+		ContactsName:           faker.Name(),
+		DifferenceMoney:        RandomDecimalStringBetween(1, 10),
+		DocumentType:           0,
+		From:                   RandomProvincialCapitalEN(),
+		Id:                     uuid.NewString(),
+		Price:                  RandomDecimalStringBetween(1, 10),
+		SeatClass:              GetTrainTicketClass(),
+		SeatNumber:             GenerateSeatNumber(),
+		Status:                 0,
+		To:                     RandomProvincialCapitalEN(),
+		TrainNumber:            "G111",
+		TravelDate:             faker.Date(),
+		TravelTime:             faker.TimeString(),
+	})
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(AddResp.Msg)
+}
+
+func TestSvcImpl_ReqSaveOrderInfo(t *testing.T) {
+	cli, _ := GetAdminClient()
+	UpdateResp, err := cli.ReqSaveOrderInfo(&Order{
+		AccountId:              "test1",
+		BoughtDate:             faker.Date(),
+		CoachNumber:            RandomIntBetween(1, 10),
+		ContactsDocumentNumber: strconv.Itoa(RandomIntBetween(1, 10)),
+		ContactsName:           faker.Name(),
+		DifferenceMoney:        RandomDecimalStringBetween(1, 10),
+		DocumentType:           0,
+		From:                   RandomProvincialCapitalEN(),
+		Id:                     "790bcfd5-82d2-4717-aa9f-e00bef992268",
+		Price:                  RandomDecimalStringBetween(1, 10),
+		SeatClass:              GetTrainTicketClass(),
+		SeatNumber:             GenerateSeatNumber(),
+		Status:                 0,
+		To:                     RandomProvincialCapitalEN(),
+		TrainNumber:            "G111",
+		TravelDate:             faker.Date(),
+		TravelTime:             faker.TimeString(),
+	})
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(UpdateResp.Msg)
+}
+
+func TestSvcImpl_ReqAddCreateNewOrder(t *testing.T) {
+	cli, _ := GetAdminClient()
+	AddResp, err := cli.ReqAddCreateNewOrder(&Order{
+		AccountId:              uuid.NewString(),
+		BoughtDate:             faker.Date(),
+		CoachNumber:            RandomIntBetween(1, 10),
+		ContactsDocumentNumber: strconv.Itoa(RandomIntBetween(1, 10)),
+		ContactsName:           faker.Name(),
+		DifferenceMoney:        RandomDecimalStringBetween(1, 10),
+		DocumentType:           0,
+		From:                   RandomProvincialCapitalEN(),
+		Id:                     uuid.NewString(),
+		Price:                  RandomDecimalStringBetween(1, 10),
+		SeatClass:              GetTrainTicketClass(),
+		SeatNumber:             GenerateSeatNumber(),
+		Status:                 0,
+		To:                     RandomProvincialCapitalEN(),
+		TrainNumber:            "G111",
+		TravelDate:             faker.Date(),
+		TravelTime:             faker.TimeString(),
+	})
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(AddResp.Msg)
+}
+
+func TestSvcImpl_ReqUpdateOrder_OrderService(t *testing.T) {
+	cli, _ := GetAdminClient()
+	UpdateResp, err := cli.ReqUpdateOrder_OrderService(&Order{
+		AccountId:              "test1",
+		BoughtDate:             faker.Date(),
+		CoachNumber:            RandomIntBetween(1, 10),
+		ContactsDocumentNumber: strconv.Itoa(RandomIntBetween(1, 10)),
+		ContactsName:           faker.Name(),
+		DifferenceMoney:        RandomDecimalStringBetween(1, 10),
+		DocumentType:           0,
+		From:                   RandomProvincialCapitalEN(),
+		Id:                     "790bcfd5-82d2-4717-aa9f-e00bef992268",
+		Price:                  RandomDecimalStringBetween(1, 10),
+		SeatClass:              GetTrainTicketClass(),
+		SeatNumber:             GenerateSeatNumber(),
+		Status:                 0,
+		To:                     RandomProvincialCapitalEN(),
+		TrainNumber:            "G111",
+		TravelDate:             faker.Date(),
+		TravelTime:             faker.TimeString(),
+	})
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(UpdateResp.Msg)
+}
+
+func TestSvcImpl_ReqPayOrder(t *testing.T) {
+	cli, _ := GetBasicClient()
+	Resp, err := cli.ReqPayOrder("790bcfd5-82d2-4717-aa9f-e00bef992268")
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(Resp.Msg)
+}
+
+func TestSvcImpl_ReqGetOrderPrice(t *testing.T) {
+	cli, _ := GetAdminClient()
+	Resp, err := cli.ReqGetOrderPrice("790bcfd5-82d2-4717-aa9f-e00bef992268")
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(Resp.Msg)
+}
+
+func TestSvcImpl_ReqQueryOrders(t *testing.T) {
+	cli, _ := GetAdminClient()
+	Resp, err := cli.ReqQueryOrders(&Qi{
+		BoughtDateEnd:         faker.Date(),
+		BoughtDateStart:       faker.Date(),
+		EnableBoughtDateQuery: true,
+		EnableStateQuery:      true,
+		EnableTravelDateQuery: true,
+		LoginId:               uuid.NewString(),
+		State:                 0,
+		TravelDateEnd:         faker.Date(),
+		TravelDateStart:       faker.Date(),
+	})
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(Resp.Msg)
+}
+
+func TestSvcImpl_ReqQueryOrderForRefresh(t *testing.T) {
+	cli, _ := GetAdminClient()
+	Resp, err := cli.ReqQueryOrderForRefresh(&Qi{
+		BoughtDateEnd:         faker.Date(),
+		BoughtDateStart:       faker.Date(),
+		EnableBoughtDateQuery: true,
+		EnableStateQuery:      true,
+		EnableTravelDateQuery: true,
+		LoginId:               uuid.NewString(),
+		State:                 0,
+		TravelDateEnd:         faker.Date(),
+		TravelDateStart:       faker.Date(),
+	})
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(Resp.Msg)
+}
+
+func TestSvcImpl_ReqSecurityInfoCheck(t *testing.T) {
+	cli, _ := GetAdminClient()
+	Resp, err := cli.ReqSecurityInfoCheck(faker.Date(), "4d2a46c7-71cb-4cf1-b5bb-b68406d9da6f")
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(Resp.Msg)
+}
+
+func TestSvcImpl_ReqModifyOrder(t *testing.T) {
+	cli, _ := GetAdminClient()
+	Resp, err := cli.ReqModifyOrder("790bcfd5-82d2-4717-aa9f-e00bef992268", 0)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(Resp.Msg)
+}
+
+func TestSvcImpl_ReqGetTicketsList(t *testing.T) {
+	cli, _ := GetAdminClient()
+	Resp, err := cli.ReqGetTicketsList(&Seat{
+		DestStation:  RandomProvincialCapitalEN(),
+		SeatType:     2,
+		StartStation: RandomProvincialCapitalEN(),
+		Stations:     nil,
+		TotalNum:     0,
+		TrainNumber:  GenerateTrainNumber(),
+		TravelDate:   faker.Date(),
+	})
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(Resp.Msg)
+}
+
+func TestSvcImpl_ReqCalculateSoldTicket(t *testing.T) {
+	cli, _ := GetAdminClient()
+	Resp, err := cli.ReqCalculateSoldTicket(faker.Date(), GenerateTrainNumber())
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(Resp.Msg)
+}
+
+func TestSvcImpl_ReqGetOrderById(t *testing.T) {
+	cli, _ := GetAdminClient()
+	Resp, err := cli.ReqGetOrderById("790bcfd5-82d2-4717-aa9f-e00bef992268")
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(Resp.Msg)
+}
+
+func TestSvcImpl_ReqDeleteOrder_OrderService(t *testing.T) {
+	cli, _ := GetAdminClient()
+	Resp, err := cli.ReqDeleteOrder_OrderService("f72aa648-132e-43cd-8355-54819839deb9")
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(Resp.Msg)
+}
+
+func TestSvcImpl_End2End_OrderService(t *testing.T) {
+	cli, _ := GetAdminClient()
+	Resp, _ := cli.ReqCreateNewOrder(&Order{
+		AccountId:              uuid.NewString(),
+		BoughtDate:             faker.Date(),
+		CoachNumber:            RandomIntBetween(1, 10),
+		ContactsDocumentNumber: strconv.Itoa(RandomIntBetween(1, 10)),
+		ContactsName:           faker.Name(),
+		DifferenceMoney:        RandomDecimalStringBetween(1, 10),
+		DocumentType:           0,
+		From:                   RandomProvincialCapitalEN(),
+		Id:                     uuid.NewString(),
+		Price:                  RandomDecimalStringBetween(1, 10),
+		SeatClass:              GetTrainTicketClass(),
+		SeatNumber:             GenerateSeatNumber(),
+		Status:                 0,
+		To:                     RandomProvincialCapitalEN(),
+		TrainNumber:            "G111",
+		TravelDate:             faker.Date(),
+		TravelTime:             faker.TimeString(),
+	})
+	fmt.Println(Resp.Msg)
+	originOrder := Resp.Data
+	Resp, _ = cli.ReqSaveOrderInfo(&originOrder)
+	fmt.Println(Resp.Msg)
+	ArrResp, _ := cli.ReqGetOrderPrice(originOrder.Id)
+	fmt.Println(ArrResp.Msg)
+	Resp, _ = cli.ReqPayOrder(originOrder.Id)
+	fmt.Println(Resp.Msg)
+	DataResp, _ := cli.ReqQueryOrders(&Qi{
+		BoughtDateEnd:         faker.Date(),
+		BoughtDateStart:       faker.Date(),
+		EnableBoughtDateQuery: true,
+		EnableStateQuery:      true,
+		EnableTravelDateQuery: true,
+		LoginId:               uuid.NewString(),
+		State:                 0,
+		TravelDateEnd:         faker.Date(),
+		TravelDateStart:       faker.Date(),
+	})
+	fmt.Println(DataResp.Msg)
+	DataResp, _ = cli.ReqQueryOrderForRefresh(&Qi{
+		BoughtDateEnd:         faker.Date(),
+		BoughtDateStart:       faker.Date(),
+		EnableBoughtDateQuery: true,
+		EnableStateQuery:      true,
+		EnableTravelDateQuery: true,
+		LoginId:               uuid.NewString(),
+		State:                 0,
+		TravelDateEnd:         faker.Date(),
+		TravelDateStart:       faker.Date(),
+	})
+	fmt.Println(DataResp.Msg)
+	Resp, _ = cli.ReqSecurityInfoCheck(originOrder.BoughtDate, originOrder.AccountId)
+	fmt.Println(Resp.Msg)
+	Resp, _ = cli.ReqModifyOrder(originOrder.Id, 0)
+	fmt.Println(Resp.Msg)
+	Resp, _ = cli.ReqGetTicketsList(&Seat{
+		DestStation:  RandomProvincialCapitalEN(),
+		SeatType:     2,
+		StartStation: RandomProvincialCapitalEN(),
+		Stations:     nil,
+		TotalNum:     0,
+		TrainNumber:  GenerateTrainNumber(),
+		TravelDate:   faker.Date(),
+	})
+	fmt.Println(Resp.Msg)
+	Resp, _ = cli.ReqCalculateSoldTicket(faker.Date(), GenerateTrainNumber())
+	fmt.Println(Resp.Msg)
+	Resp, _ = cli.ReqGetOrderById(originOrder.Id)
+	fmt.Println(Resp.Msg)
+	Resp, _ = cli.ReqDeleteOrder_OrderService(originOrder.Id)
+	fmt.Println(Resp.Msg)
+	Resp, _ = cli.ReqAddCreateNewOrder(&Order{
+		AccountId:              uuid.NewString(),
+		BoughtDate:             faker.Date(),
+		CoachNumber:            RandomIntBetween(1, 10),
+		ContactsDocumentNumber: strconv.Itoa(RandomIntBetween(1, 10)),
+		ContactsName:           faker.Name(),
+		DifferenceMoney:        RandomDecimalStringBetween(1, 10),
+		DocumentType:           0,
+		From:                   RandomProvincialCapitalEN(),
+		Id:                     uuid.NewString(),
+		Price:                  RandomDecimalStringBetween(1, 10),
+		SeatClass:              GetTrainTicketClass(),
+		SeatNumber:             GenerateSeatNumber(),
+		Status:                 0,
+		To:                     RandomProvincialCapitalEN(),
+		TrainNumber:            "G111",
+		TravelDate:             faker.Date(),
+		TravelTime:             faker.TimeString(),
+	})
+	fmt.Println(Resp.Msg)
+	Resp, _ = cli.ReqUpdateOrder_OrderService(&Resp.Data)
+	fmt.Println(Resp.Msg)
+}
