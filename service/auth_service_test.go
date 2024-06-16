@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"github.com/google/uuid"
 	"testing"
 )
@@ -16,11 +17,12 @@ func GetBasicClient() (*SvcImpl, string) {
 }
 func GetAdminClient() (*SvcImpl, string) {
 	cli := NewSvcClients()
-	loginResp, _ := cli.ReqUserLogin(&UserLoginInfoReq{
+	loginResp, err := cli.ReqUserLogin(&UserLoginInfoReq{
 		Password:         "222222",
 		UserName:         "admin",
 		VerificationCode: "123",
 	})
+	fmt.Println(loginResp, err)
 	return cli, loginResp.Data.UserId
 }
 

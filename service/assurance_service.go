@@ -18,17 +18,13 @@ type AssuranceService interface {
 }
 
 type AssuranceInfo struct {
-	// Define the structure based on your API response
 	AssuranceID string `json:"assuranceId"`
 	OrderID     string `json:"orderId"`
-	// Add more fields as needed
 }
 
 type AssuranceType struct {
-	// Define the structure based on your API response
 	TypeID   int    `json:"typeId"`
 	TypeName string `json:"typeName"`
-	// Add more fields as needed
 }
 
 type AssuranceResponse struct {
@@ -39,20 +35,59 @@ type AssuranceResponse struct {
 	} `json:"data"`
 }
 
-func (s *SvcImpl) GetAllAssurances() ([]AssuranceInfo, error) {
+type Modify_Response struct {
+	Status int         `json:"status"`
+	Msg    string      `json:"msg"`
+	Data   interface{} `json:"data"`
+}
+
+type GetAllResponse struct {
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   []struct {
+		Id        string  `json:"id"`
+		OrderId   string  `json:"orderId"`
+		TypeIndex int     `json:"typeIndex"`
+		TypeName  string  `json:"typeName"`
+		TypePrice float64 `json:"typePrice"`
+	} `json:"data"`
+}
+
+type AssuranceDeleteResponse struct {
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   string `json:"data"`
+}
+
+type GetAssuranceByIDeInfo struct {
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   struct {
+		Id      string `json:"id"`
+		OrderId string `json:"orderId"`
+		Type    string `json:"type"`
+	} `json:"data"`
+}
+
+func (s *SvcImpl) GetAllAssurances() (*GetAllResponse, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+"/api/v1/assuranceservice/assurances", nil)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	var assurances []AssuranceInfo
-	err = json.NewDecoder(resp.Body).Decode(&assurances)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
 
-	return assurances, nil
+	var result GetAllResponse
+	err = json.Unmarshal(body, &result)
+	if err != nil {
+		return nil, err
+	}
+
+	return &result, nil
 }
 
 func (s *SvcImpl) GetAllAssuranceTypes() ([]AssuranceType, error) {
@@ -71,7 +106,7 @@ func (s *SvcImpl) GetAllAssuranceTypes() ([]AssuranceType, error) {
 	return types, nil
 }
 
-func (s *SvcImpl) DeleteAssuranceByID(assuranceID string) (*AssuranceResponse, error) {
+func (s *SvcImpl) DeleteAssuranceByID(assuranceID string) (*AssuranceDeleteResponse, error) {
 	url := fmt.Sprintf("%s/api/v1/assuranceservice/assurances/assuranceid/%s", s.BaseUrl, assuranceID)
 	resp, err := s.cli.SendRequest("DELETE", url, nil)
 	if err != nil {
@@ -84,7 +119,7 @@ func (s *SvcImpl) DeleteAssuranceByID(assuranceID string) (*AssuranceResponse, e
 		return nil, err
 	}
 
-	var result AssuranceResponse
+	var result AssuranceDeleteResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
@@ -115,7 +150,7 @@ func (s *SvcImpl) DeleteAssuranceByOrderID(orderID string) (*AssuranceResponse, 
 	return &result, nil
 }
 
-func (s *SvcImpl) ModifyAssurance(assuranceID string, orderID string, typeIndex int) (*AssuranceResponse, error) {
+func (s *SvcImpl) ModifyAssurance(assuranceID string, orderID string, typeIndex int) (*Modify_Response, error) {
 	url := fmt.Sprintf("%s/api/v1/assuranceservice/assurances/%s/%s/%d", s.BaseUrl, assuranceID, orderID, typeIndex)
 	resp, err := s.cli.SendRequest("PATCH", url, nil)
 	if err != nil {
@@ -128,7 +163,7 @@ func (s *SvcImpl) ModifyAssurance(assuranceID string, orderID string, typeIndex 
 		return nil, err
 	}
 
-	var result AssuranceResponse
+	var result Modify_Response
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
@@ -159,7 +194,7 @@ func (s *SvcImpl) CreateNewAssurance(typeIndex int, orderID string) (*AssuranceR
 	return &result, nil
 }
 
-func (s *SvcImpl) GetAssuranceByID(assuranceID string) (*AssuranceInfo, error) {
+func (s *SvcImpl) GetAssuranceByID(assuranceID string) (*GetAssuranceByIDeInfo, error) {
 	url := fmt.Sprintf("%s/api/v1/assuranceservice/assurances/assuranceid/%s", s.BaseUrl, assuranceID)
 	resp, err := s.cli.SendRequest("GET", url, nil)
 	if err != nil {
@@ -167,8 +202,13 @@ func (s *SvcImpl) GetAssuranceByID(assuranceID string) (*AssuranceInfo, error) {
 	}
 	defer resp.Body.Close()
 
-	var assurance AssuranceInfo
-	err = json.NewDecoder(resp.Body).Decode(&assurance)
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var assurance GetAssuranceByIDeInfo
+	err = json.Unmarshal(body, &assurance)
 	if err != nil {
 		return nil, err
 	}
@@ -176,19 +216,24 @@ func (s *SvcImpl) GetAssuranceByID(assuranceID string) (*AssuranceInfo, error) {
 	return &assurance, nil
 }
 
-func (s *SvcImpl) FindAssuranceByOrderID(orderID string) ([]AssuranceInfo, error) {
-	url := fmt.Sprintf("%s/api/v1/assuranceservice/assurances/orderid/%s", s.BaseUrl, orderID)
+func (s *SvcImpl) FindAssuranceByOrderID(orderId string) (*GetAssuranceByIDeInfo, error) {
+	url := fmt.Sprintf("%s/api/v1/assuranceservice/assurances/orderid/%s", s.BaseUrl, orderId)
 	resp, err := s.cli.SendRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	var assurances []AssuranceInfo
-	err = json.NewDecoder(resp.Body).Decode(&assurances)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
 
-	return assurances, nil
+	var assurance GetAssuranceByIDeInfo
+	err = json.Unmarshal(body, &assurance)
+	if err != nil {
+		return nil, err
+	}
+
+	return &assurance, nil
 }
