@@ -8,15 +8,15 @@ import (
 	"testing"
 )
 
-func TestSvcImpl_ReqFindAllOeder(t *testing.T) {
+func TestSvcImpl_ReqFindAllOrder(t *testing.T) {
 	cli, _ := GetAdminClient()
-	GetResp, _ := cli.ReqFindAllOeder()
+	GetResp, _ := cli.ReqFindAllOrder()
 	fmt.Println(GetResp.Msg)
 }
 
-func TestSvcImpl_ReqCreateNewOeder(t *testing.T) {
+func TestSvcImpl_ReqCreateNewOrder(t *testing.T) {
 	cli, _ := GetAdminClient()
-	AddResp, err := cli.ReqCreateNewOeder(&Order{
+	AddResp, err := cli.ReqCreateNewOrder(&Order{
 		AccountId:              uuid.NewString(),
 		BoughtDate:             faker.Date(),
 		CoachNumber:            RandomIntBetween(1, 10),
@@ -258,7 +258,7 @@ func TestSvcImpl_ReqDeleteOrder_OrderService(t *testing.T) {
 
 func TestSvcImpl_End2End_OrderService(t *testing.T) {
 	cli, _ := GetAdminClient()
-	Resp, _ := cli.ReqCreateNewOeder(&Order{
+	Resp, _ := cli.ReqCreateNewOrder(&Order{
 		AccountId:              uuid.NewString(),
 		BoughtDate:             faker.Date(),
 		CoachNumber:            RandomIntBetween(1, 10),

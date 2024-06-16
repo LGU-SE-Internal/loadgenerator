@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-func (s *SvcImpl) ReqFindAllOeder() (*OrderArrResp, error) {
+func (s *SvcImpl) ReqFindAllOrder() (*OrderArrResp, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+"/api/v1/orderservice/order", nil)
 	if err != nil {
 		return nil, err
@@ -24,7 +24,7 @@ func (s *SvcImpl) ReqFindAllOeder() (*OrderArrResp, error) {
 	return &result, nil
 }
 
-func (s *SvcImpl) ReqCreateNewOeder(input *Order) (*OrderResp, error) {
+func (s *SvcImpl) ReqCreateNewOrder(input *Order) (*OrderResp, error) {
 	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/orderservice/order", input)
 	if err != nil {
 		return nil, err
