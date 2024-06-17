@@ -21,9 +21,16 @@ type GetContactsResp struct {
 
 // RouteResponse structs
 type ContactResponse struct {
-	Status int         `json:"status"`
-	Msg    string      `json:"msg"`
-	Data   interface{} `json:"data"`
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   struct {
+		Id             string `json:"id"`
+		AccountId      string `json:"accountId"`
+		Name           string `json:"name"`
+		DocumentType   int    `json:"documentType"`
+		DocumentNumber string `json:"documentNumber"`
+		PhoneNumber    string `json:"phoneNumber"`
+	} `json:"data"`
 }
 
 type StationResponse struct {
@@ -107,7 +114,7 @@ type PriceInfo struct {
 
 // AdminBasicInfoService methods
 
-func (s *SvcImpl) GetAllContacts() (*GetContactsResp, error) {
+func (s *SvcImpl) AdminGetAllContacts() (*GetContactsResp, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+"/api/v1/adminbasicservice/adminbasic/contacts", nil)
 	if err != nil {
 		return nil, err
@@ -121,7 +128,7 @@ func (s *SvcImpl) GetAllContacts() (*GetContactsResp, error) {
 	return &result, err
 }
 
-func (s *SvcImpl) DeleteContact(contactsId string) (*ContactResponse, error) {
+func (s *SvcImpl) AdminDeleteContact(contactsId string) (*ContactResponse, error) {
 	resp, err := s.cli.SendRequest("DELETE", s.BaseUrl+fmt.Sprintf("/api/v1/adminbasicservice/adminbasic/contacts/%s", contactsId), nil)
 	if err != nil {
 		return nil, err
@@ -135,7 +142,7 @@ func (s *SvcImpl) DeleteContact(contactsId string) (*ContactResponse, error) {
 	return &result, err
 }
 
-func (s *SvcImpl) ModifyContact(contacts *Contacts) (*ContactResponse, error) {
+func (s *SvcImpl) AdminModifyContact(contacts *Contacts) (*ContactResponse, error) {
 	resp, err := s.cli.SendRequest("PUT", s.BaseUrl+"/api/v1/adminbasicservice/adminbasic/contacts", contacts)
 	if err != nil {
 		return nil, err
@@ -149,7 +156,7 @@ func (s *SvcImpl) ModifyContact(contacts *Contacts) (*ContactResponse, error) {
 	return &result, err
 }
 
-func (s *SvcImpl) AddContact(contacts *Contacts) (*ContactResponse, error) {
+func (s *SvcImpl) AdminAddContact(contacts *Contacts) (*ContactResponse, error) {
 	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/adminbasicservice/adminbasic/contacts", contacts)
 	if err != nil {
 		return nil, err
