@@ -6,8 +6,17 @@ import (
 	"io"
 )
 
+type UserService interface {
+	GetAllUsers() (*AdminUserResponse, error)
+	GetUserByUserName(userName string) (*SingleUserResponse, error)
+	GetUserByUserId(userId string) (*SingleUserResponse, error)
+	RegisterUser(userDto *AdminUserDto) (*UserRegisterResponse, error)
+	DeleteUser(userId string) (*Response, error)
+	UpdateUser(user *AdminUserDto) (*Response, error)
+}
+
 // Define the request and response structs that will be used in the service methods
-type UserDto_user struct {
+type UserDtoUser struct {
 	UserID       string `json:"userId"`
 	UserName     string `json:"userName"`
 	Password     string `json:"password"`
@@ -17,11 +26,6 @@ type UserDto_user struct {
 	Email        string `json:"email"`
 }
 
-//	type UserResponse struct {
-//		Status int    `json:"status"`
-//		Msg    string `json:"msg"`
-//		Data   []UserDto `json:"data"`
-//	}
 type SingleUserResponse struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`
@@ -50,14 +54,7 @@ type UserRegisterResponse struct {
 	} `json:"data"`
 }
 
-//
-//type Response struct {
-//	Status int    `json:"status"`
-//	Msg    string `json:"msg"`
-//	Data   interface{} `json:"data"`
-//}
-
-type AllUserResponse_user struct {
+type AllUserResponseUser struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`
 	Data   []struct {
@@ -71,7 +68,7 @@ type AllUserResponse_user struct {
 	} `json:"data"`
 }
 
-func (s *SvcImpl) GetAllUsers_user() (*UserResponse, error) {
+func (s *SvcImpl) GetAllUsers() (*AdminUserResponse, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+"/api/v1/userservice/users", nil)
 	if err != nil {
 		return nil, err
@@ -81,7 +78,7 @@ func (s *SvcImpl) GetAllUsers_user() (*UserResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result UserResponse
+	var result AdminUserResponse
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
@@ -128,7 +125,7 @@ func (s *SvcImpl) GetUserByUserId(userId string) (*SingleUserResponse, error) {
 	return &result, nil
 }
 
-func (s *SvcImpl) RegisterUser(userDto *UserDto) (*UserRegisterResponse, error) {
+func (s *SvcImpl) RegisterUser(userDto *AdminUserDto) (*UserRegisterResponse, error) {
 	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/userservice/users/register", userDto)
 	if err != nil {
 		return nil, err
@@ -147,7 +144,7 @@ func (s *SvcImpl) RegisterUser(userDto *UserDto) (*UserRegisterResponse, error) 
 	return &result, nil
 }
 
-func (s *SvcImpl) DeleteUser_user(userId string) (*Response, error) {
+func (s *SvcImpl) DeleteUser(userId string) (*Response, error) {
 	resp, err := s.cli.SendRequest("DELETE", s.BaseUrl+fmt.Sprintf("/api/v1/userservice/users/%s", userId), nil)
 	if err != nil {
 		return nil, err
@@ -166,7 +163,7 @@ func (s *SvcImpl) DeleteUser_user(userId string) (*Response, error) {
 	return &result, nil
 }
 
-func (s *SvcImpl) UpdateUser_user(user *UserDto) (*Response, error) {
+func (s *SvcImpl) UpdateUser(user *AdminUserDto) (*Response, error) {
 	resp, err := s.cli.SendRequest("PUT", s.BaseUrl+"/api/v1/userservice/users", user)
 	if err != nil {
 		return nil, err

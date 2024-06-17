@@ -6,6 +6,15 @@ import (
 	"io"
 )
 
+type PriceService interface {
+	FindByRouteIdAndTrainType(routeId, trainType string) (*AdminPriceResponse, error)
+	FindByRouteIdsAndTrainTypes(ridsAndTts []string) (*AllPriceResponse, error)
+	FindAllPriceConfig() (*AllPriceResponse, error)
+	CreateNewPriceConfig(info PriceConfig) (*AdminPriceResponse, error)
+	DeletePriceConfig(pricesId string) (*AdminPriceResponse, error)
+	UpdatePriceConfig(info PriceConfig) (*AdminPriceResponse, error)
+}
+
 type PriceConfig struct {
 	Id        string  `json:"id"`
 	RouteId   string  `json:"routeId"`
@@ -14,7 +23,7 @@ type PriceConfig struct {
 	// Add more fields as needed
 }
 
-//type PriceResponse struct {
+//type AdminPriceResponse struct {
 //	Status int         `json:"status"`
 //	Msg    string      `json:"msg"`
 //	Data   PriceConfig `json:"data"`
@@ -26,16 +35,7 @@ type AllPriceResponse struct {
 	Data   []PriceConfig `json:"data"`
 }
 
-type PriceService interface {
-	FindByRouteIdAndTrainType(routeId, trainType string) (*PriceResponse, error)
-	FindByRouteIdsAndTrainTypes(ridsAndTts []string) (*AllPriceResponse, error)
-	FindAllPriceConfig() (*AllPriceResponse, error)
-	CreateNewPriceConfig(info PriceConfig) (*PriceResponse, error)
-	DeletePriceConfig(pricesId string) (*PriceResponse, error)
-	UpdatePriceConfig(info PriceConfig) (*PriceResponse, error)
-}
-
-func (s *SvcImpl) FindByRouteIdAndTrainType(routeId, trainType string) (*PriceResponse, error) {
+func (s *SvcImpl) FindByRouteIdAndTrainType(routeId, trainType string) (*AdminPriceResponse, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+fmt.Sprintf("/api/v1/priceservice/prices/%s/%s", routeId, trainType), nil)
 	if err != nil {
 		return nil, err
@@ -46,7 +46,7 @@ func (s *SvcImpl) FindByRouteIdAndTrainType(routeId, trainType string) (*PriceRe
 	if err != nil {
 		return nil, err
 	}
-	var result PriceResponse
+	var result AdminPriceResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
@@ -95,7 +95,7 @@ func (s *SvcImpl) FindAllPriceConfig() (*AllPriceResponse, error) {
 	return &result, nil
 }
 
-func (s *SvcImpl) CreateNewPriceConfig(info PriceConfig) (*PriceResponse, error) {
+func (s *SvcImpl) CreateNewPriceConfig(info PriceConfig) (*AdminPriceResponse, error) {
 	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/priceservice/prices", info)
 	if err != nil {
 		return nil, err
@@ -106,7 +106,7 @@ func (s *SvcImpl) CreateNewPriceConfig(info PriceConfig) (*PriceResponse, error)
 	if err != nil {
 		return nil, err
 	}
-	var result PriceResponse
+	var result AdminPriceResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
@@ -115,7 +115,7 @@ func (s *SvcImpl) CreateNewPriceConfig(info PriceConfig) (*PriceResponse, error)
 	return &result, nil
 }
 
-func (s *SvcImpl) DeletePriceConfig(pricesId string) (*PriceResponse, error) {
+func (s *SvcImpl) DeletePriceConfig(pricesId string) (*AdminPriceResponse, error) {
 	resp, err := s.cli.SendRequest("DELETE", s.BaseUrl+fmt.Sprintf("/api/v1/priceservice/prices/%s", pricesId), nil)
 	if err != nil {
 		return nil, err
@@ -126,7 +126,7 @@ func (s *SvcImpl) DeletePriceConfig(pricesId string) (*PriceResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result PriceResponse
+	var result AdminPriceResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
@@ -135,7 +135,7 @@ func (s *SvcImpl) DeletePriceConfig(pricesId string) (*PriceResponse, error) {
 	return &result, nil
 }
 
-func (s *SvcImpl) UpdatePriceConfig(info PriceConfig) (*PriceResponse, error) {
+func (s *SvcImpl) UpdatePriceConfig(info PriceConfig) (*AdminPriceResponse, error) {
 	resp, err := s.cli.SendRequest("PUT", s.BaseUrl+"/api/v1/priceservice/prices", info)
 	if err != nil {
 		return nil, err
@@ -146,7 +146,7 @@ func (s *SvcImpl) UpdatePriceConfig(info PriceConfig) (*PriceResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result PriceResponse
+	var result AdminPriceResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err

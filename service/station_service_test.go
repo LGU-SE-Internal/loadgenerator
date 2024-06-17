@@ -19,7 +19,7 @@ func TestStationService_FullIntegration(t *testing.T) {
 
 	//Mock
 	MockedID := faker.UUIDHyphenated()
-	input := &Station_station{
+	input := &Station{
 		ID:       MockedID,
 		Name:     "Shenzhen Bei",
 		StayTime: 7,
@@ -35,7 +35,7 @@ func TestStationService_FullIntegration(t *testing.T) {
 	}
 
 	// Test Update
-	input1 := &Station_station{
+	input1 := &Station{
 		ID:       "c40200a8-bb63-445f-b332-6c4891666829",
 		Name:     "zhenjiang",
 		StayTime: 3,
@@ -57,7 +57,7 @@ func TestStationService_FullIntegration(t *testing.T) {
 	}
 	stationId_delete := stationId
 	//stationId := "45dea90e-eb9b-4602-8562-0b4dfdf12e5f"
-	resp3, err3 := cli.DeleteStation(stationId_delete)
+	resp3, err3 := cli.AdminDeleteStation(stationId_delete)
 	if err3 != nil {
 		t.Errorf("Request failed, err3 %s", err3)
 	}

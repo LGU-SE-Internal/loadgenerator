@@ -5,6 +5,13 @@ import (
 	"io"
 )
 
+type AdminOrderService interface {
+	ReqGetAllOrders() (*OrderArrResp, error)
+	ReqAddOrder(input *Order) (*OrderResp, error)
+	ReqUpdateOrder(input *Order) (*OrderResp, error)
+	ReqDeleteOrder(orderId string, trainNumber string) (*OrderResp, error)
+}
+
 func (s *SvcImpl) ReqGetAllOrders() (*OrderArrResp, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+"/api/v1/adminorderservice/adminorder", nil)
 	if err != nil {

@@ -6,6 +6,16 @@ import (
 	"io"
 )
 
+type ContactsService interface {
+	GetAllContacts() (*AdminGetContactsResp, error)
+	AddContact(contacts *AdminContacts) (*AdminContactResponse, error)
+	AddAdminContact(contacts *AdminContacts) (*AdminContactResponse, error)
+	ModifyContact(contacts *AdminContacts) (*AdminContactResponse, error)
+	DeleteContact(contactsId string) (*DeleteContactsResp, error)
+	GetContactByContactId(contactsId string) (*AdminContactResponse, error)
+	GetContactByAccountId(accountId string) (*GetContactsByAccountIdResp, error)
+}
+
 type GetContactsByAccountIdResp struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`
@@ -24,7 +34,7 @@ type DeleteContactsResp struct {
 	Data   string `json:"data"`
 }
 
-func (s *SvcImpl) GetAllContacts() (*GetContactsResp, error) {
+func (s *SvcImpl) GetAllContacts() (*AdminGetContactsResp, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+"/api/v1/contactservice/contacts", nil)
 	if err != nil {
 		return nil, err
@@ -33,12 +43,12 @@ func (s *SvcImpl) GetAllContacts() (*GetContactsResp, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result GetContactsResp
+	var result AdminGetContactsResp
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
 
-func (s *SvcImpl) AddContact(contacts *Contacts) (*ContactResponse, error) {
+func (s *SvcImpl) AddContact(contacts *AdminContacts) (*AdminContactResponse, error) {
 	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/contactservice/contacts", contacts)
 	if err != nil {
 		return nil, err
@@ -47,12 +57,12 @@ func (s *SvcImpl) AddContact(contacts *Contacts) (*ContactResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result ContactResponse
+	var result AdminContactResponse
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
 
-func (s *SvcImpl) AddAdminContact(contacts *Contacts) (*ContactResponse, error) {
+func (s *SvcImpl) AddAdminContact(contacts *AdminContacts) (*AdminContactResponse, error) {
 	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/contactservice/contacts/admin", contacts)
 	if err != nil {
 		return nil, err
@@ -61,11 +71,11 @@ func (s *SvcImpl) AddAdminContact(contacts *Contacts) (*ContactResponse, error) 
 	if err != nil {
 		return nil, err
 	}
-	var result ContactResponse
+	var result AdminContactResponse
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
-func (s *SvcImpl) ModifyContact(contacts *Contacts) (*ContactResponse, error) {
+func (s *SvcImpl) ModifyContact(contacts *AdminContacts) (*AdminContactResponse, error) {
 	resp, err := s.cli.SendRequest("PUT", s.BaseUrl+"/api/v1/contactservice/contacts", contacts)
 	if err != nil {
 		return nil, err
@@ -74,7 +84,7 @@ func (s *SvcImpl) ModifyContact(contacts *Contacts) (*ContactResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result ContactResponse
+	var result AdminContactResponse
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
@@ -91,7 +101,7 @@ func (s *SvcImpl) DeleteContact(contactsId string) (*DeleteContactsResp, error) 
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
-func (s *SvcImpl) GetContactByContactId(contactsId string) (*ContactResponse, error) {
+func (s *SvcImpl) GetContactByContactId(contactsId string) (*AdminContactResponse, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+fmt.Sprintf("/api/v1/contactservice/contacts/%s", contactsId), nil)
 	if err != nil {
 		return nil, err
@@ -100,7 +110,7 @@ func (s *SvcImpl) GetContactByContactId(contactsId string) (*ContactResponse, er
 	if err != nil {
 		return nil, err
 	}
-	var result ContactResponse
+	var result AdminContactResponse
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }

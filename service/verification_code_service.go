@@ -6,6 +6,10 @@ import (
 	"io"
 )
 
+type VerificationCodeService interface {
+	VerifyCode(verifyCode string) (bool, error)
+}
+
 func (s *SvcImpl) VerifyCode(verifyCode string) (bool, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+fmt.Sprintf("/api/v1/verifycode/verify/%s", verifyCode), nil)
 	if err != nil {
