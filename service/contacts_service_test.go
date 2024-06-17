@@ -14,7 +14,7 @@ func TestSvcImpl_GetAllContacts(t *testing.T) {
 	}
 	t.Log("[get all]: ", contacts)
 
-	contactResp, err := cli.AddContact(&Contacts{
+	contactResp, err := cli.AddContact(&AdminContacts{
 		ID:        uuid.NewString(),
 		AccountID: uuid.NewString(),
 		Name:      faker.Name(),
@@ -24,7 +24,7 @@ func TestSvcImpl_GetAllContacts(t *testing.T) {
 	}
 	t.Log("[add contact]: ", contactResp)
 
-	adminContactResp, err := cli.AddAdminContact(&Contacts{
+	adminContactResp, err := cli.AddAdminContact(&AdminContacts{
 		ID:        uuid.NewString(),
 		AccountID: uuid.NewString(),
 		Name:      faker.Name(),
@@ -34,7 +34,7 @@ func TestSvcImpl_GetAllContacts(t *testing.T) {
 	}
 	t.Log("[add admin contact]: ", adminContactResp)
 
-	modifyContactResp, err := cli.ModifyContact(&Contacts{
+	modifyContactResp, err := cli.ModifyContact(&AdminContacts{
 		ID:          contactResp.Data.Id,
 		AccountID:   contactResp.Data.AccountId,
 		Name:        faker.Name(),

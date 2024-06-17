@@ -6,6 +6,14 @@ import (
 	"io"
 )
 
+type RouteService interface {
+	CreateAndModifyRoute(input *RouteInfo_route) (*RouteResponse, error)
+	DeleteRoute(routeId string) (*DeleteResponse, error)
+	QueryRouteById(routeId string) (*RouteResponse, error)
+	QueryRoutesByIds(routeIds []string) (*QueryMultiResponse, error)
+	QueryAllRoutes() (*QueryMultiResponse, error)
+	QueryRoutesByStartAndEnd(start, end string) (*QueryMultiResponse, error)
+}
 type QueryMultiResponse struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`

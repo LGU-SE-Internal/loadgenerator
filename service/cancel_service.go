@@ -5,6 +5,11 @@ import (
 	"io"
 )
 
+type CancelService interface {
+	ReqCalculate(orderId string) (*DataStringResp, error)
+	ReqCancelTicket(orderId string, loginId string) (*DataStringResp, error)
+}
+
 func (s *SvcImpl) ReqCalculate(orderId string) (*DataStringResp, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+"/api/v1/cancelservice/cancel/refound/"+orderId, nil)
 	if err != nil {

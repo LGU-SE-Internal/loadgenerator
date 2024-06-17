@@ -6,7 +6,13 @@ import (
 	"io"
 )
 
-type UserDto struct {
+type AdminUserService interface {
+	AdminAddUser(user *AdminUserDto) (*AdminUserResponse, error)
+	AdminUpdateUser(user *AdminUserDto) (*AdminUserResponse, error)
+	AdminDeleteUser(userId string) (*AdminDeleteResponseUser, error)
+	AdminGetAllUsers() (*AllUserResponseUser, error)
+}
+type AdminUserDto struct {
 	UserID       string `json:"userId"`
 	UserName     string `json:"userName"`
 	Password     string `json:"password"`
@@ -16,13 +22,13 @@ type UserDto struct {
 	Email        string `json:"email"`
 }
 
-type DeleteResponse_user struct {
+type AdminDeleteResponseUser struct {
 	Status int         `json:"status"`
 	Msg    string      `json:"msg"`
 	Data   interface{} `json:"data"`
 }
 
-type UserResponse struct {
+type AdminUserResponse struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`
 	Data   struct {
@@ -36,7 +42,7 @@ type UserResponse struct {
 	} `json:"data"`
 }
 
-type AllUserResponse struct {
+type AdminAllUserResponse struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`
 	Data   []struct {
@@ -50,7 +56,7 @@ type AllUserResponse struct {
 	} `json:"data"`
 }
 
-func (s *SvcImpl) AddUser(user *UserDto) (*UserResponse, error) {
+func (s *SvcImpl) AdminAddUser(user *AdminUserDto) (*AdminUserResponse, error) {
 	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/adminuserservice/users", user)
 	if err != nil {
 		return nil, err
@@ -62,7 +68,7 @@ func (s *SvcImpl) AddUser(user *UserDto) (*UserResponse, error) {
 		return nil, err
 	}
 
-	var result UserResponse
+	var result AdminUserResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
@@ -71,7 +77,7 @@ func (s *SvcImpl) AddUser(user *UserDto) (*UserResponse, error) {
 	return &result, nil
 }
 
-func (s *SvcImpl) UpdateUser(user *UserDto) (*UserResponse, error) {
+func (s *SvcImpl) AdminUpdateUser(user *AdminUserDto) (*AdminUserResponse, error) {
 	resp, err := s.cli.SendRequest("PUT", s.BaseUrl+"/api/v1/adminuserservice/users", user)
 	if err != nil {
 		return nil, err
@@ -83,7 +89,7 @@ func (s *SvcImpl) UpdateUser(user *UserDto) (*UserResponse, error) {
 		return nil, err
 	}
 
-	var result UserResponse
+	var result AdminUserResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
@@ -92,7 +98,7 @@ func (s *SvcImpl) UpdateUser(user *UserDto) (*UserResponse, error) {
 	return &result, nil
 }
 
-func (s *SvcImpl) DeleteUser(userId string) (*DeleteResponse_user, error) {
+func (s *SvcImpl) AdminDeleteUser(userId string) (*AdminDeleteResponseUser, error) {
 	url := fmt.Sprintf("%s/api/v1/adminuserservice/users/%s", s.BaseUrl, userId)
 	resp, err := s.cli.SendRequest("DELETE", url, nil)
 	if err != nil {
@@ -105,7 +111,7 @@ func (s *SvcImpl) DeleteUser(userId string) (*DeleteResponse_user, error) {
 		return nil, err
 	}
 
-	var result DeleteResponse_user
+	var result AdminDeleteResponseUser
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
@@ -114,7 +120,7 @@ func (s *SvcImpl) DeleteUser(userId string) (*DeleteResponse_user, error) {
 	return &result, nil
 }
 
-func (s *SvcImpl) GetAllUsers() (*AllUserResponse_user, error) {
+func (s *SvcImpl) AdminGetAllUsers() (*AllUserResponseUser, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+"/api/v1/adminuserservice/users", nil)
 	if err != nil {
 		return nil, err
@@ -126,7 +132,7 @@ func (s *SvcImpl) GetAllUsers() (*AllUserResponse_user, error) {
 		return nil, err
 	}
 
-	var users *AllUserResponse_user
+	var users *AllUserResponseUser
 	err = json.Unmarshal(body, &users)
 	if err != nil {
 		return nil, err

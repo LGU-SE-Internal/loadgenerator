@@ -6,7 +6,17 @@ import (
 	"io"
 )
 
-type Station_station struct {
+type StationService interface {
+	QueryStations() (*Response, error)
+	CreateStation(input *Station) (*StationCreateResponse, error)
+	UpdateStation(input *Station) (*StationUpdateResponse, error)
+	DeleteStation(stationId string) (*Response, error)
+	QueryStationIdByName(stationName string) (*StationQueryIdByNameResponse, error)
+	QueryStationIdsByNames(stationNameList []string) (*QueryStationIdsByNamesResponse, error)
+	QueryStationNameById(stationId string) (*QueryStationNameByIdResponse, error)
+	QueryStationNamesByIds(stationIdList []string) (*QueryStationNamesByIdsResponse, error)
+}
+type Station struct {
 	ID       string `json:"id"`
 	Name     string `json:"name"`
 	StayTime int    `json:"stayTime"`
@@ -22,7 +32,7 @@ type Response struct {
 	} `json:"data"`
 }
 
-type createResponse struct {
+type StationCreateResponse struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`
 	Data   struct {
@@ -32,19 +42,19 @@ type createResponse struct {
 	} `json:"data"`
 }
 
-type updateResponse struct {
+type StationUpdateResponse struct {
 	Status int         `json:"status"`
 	Msg    string      `json:"msg"`
 	Data   interface{} `json:"data"`
 }
 
-type queryIdByNameResponse struct {
+type StationQueryIdByNameResponse struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`
 	Data   string `json:"data"`
 }
 
-type queryStationIdsByNamesResponse struct {
+type QueryStationIdsByNamesResponse struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`
 	Data   struct {
@@ -85,7 +95,7 @@ func (s *SvcImpl) QueryStations() (*Response, error) {
 	return &result, nil
 }
 
-func (s *SvcImpl) CreateStation(input *Station_station) (*createResponse, error) {
+func (s *SvcImpl) CreateStation(input *Station) (*StationCreateResponse, error) {
 	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/stationservice/stations", input)
 	if err != nil {
 		return nil, err
@@ -95,7 +105,7 @@ func (s *SvcImpl) CreateStation(input *Station_station) (*createResponse, error)
 	if err != nil {
 		return nil, err
 	}
-	var result createResponse
+	var result StationCreateResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
@@ -103,7 +113,7 @@ func (s *SvcImpl) CreateStation(input *Station_station) (*createResponse, error)
 	return &result, nil
 }
 
-func (s *SvcImpl) UpdateStation(input *Station_station) (*updateResponse, error) {
+func (s *SvcImpl) UpdateStation(input *Station) (*StationUpdateResponse, error) {
 	resp, err := s.cli.SendRequest("PUT", s.BaseUrl+"/api/v1/stationservice/stations", input)
 	if err != nil {
 		return nil, err
@@ -114,7 +124,7 @@ func (s *SvcImpl) UpdateStation(input *Station_station) (*updateResponse, error)
 	if err != nil {
 		return nil, err
 	}
-	var result updateResponse
+	var result StationUpdateResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
@@ -122,7 +132,7 @@ func (s *SvcImpl) UpdateStation(input *Station_station) (*updateResponse, error)
 	return &result, nil
 }
 
-func (s *SvcImpl) DeleteStation_station(stationId string) (*Response, error) {
+func (s *SvcImpl) DeleteStation(stationId string) (*Response, error) {
 	resp, err := s.cli.SendRequest("DELETE", s.BaseUrl+fmt.Sprintf("/api/v1/stationservice/stations/%s", stationId), nil)
 	if err != nil {
 		return nil, err
@@ -140,7 +150,7 @@ func (s *SvcImpl) DeleteStation_station(stationId string) (*Response, error) {
 	return &result, nil
 }
 
-func (s *SvcImpl) QueryStationIdByName(stationName string) (*queryIdByNameResponse, error) {
+func (s *SvcImpl) QueryStationIdByName(stationName string) (*StationQueryIdByNameResponse, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+fmt.Sprintf("/api/v1/stationservice/stations/id/%s", stationName), nil)
 	if err != nil {
 		return nil, err
@@ -151,7 +161,7 @@ func (s *SvcImpl) QueryStationIdByName(stationName string) (*queryIdByNameRespon
 	if err != nil {
 		return nil, err
 	}
-	var result queryIdByNameResponse
+	var result StationQueryIdByNameResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
@@ -159,7 +169,7 @@ func (s *SvcImpl) QueryStationIdByName(stationName string) (*queryIdByNameRespon
 	return &result, nil
 }
 
-func (s *SvcImpl) QueryStationIdsByNames(stationNameList []string) (*queryStationIdsByNamesResponse, error) {
+func (s *SvcImpl) QueryStationIdsByNames(stationNameList []string) (*QueryStationIdsByNamesResponse, error) {
 	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/stationservice/stations/idlist", stationNameList)
 	if err != nil {
 		return nil, err
@@ -169,7 +179,7 @@ func (s *SvcImpl) QueryStationIdsByNames(stationNameList []string) (*queryStatio
 	if err != nil {
 		return nil, err
 	}
-	var result queryStationIdsByNamesResponse
+	var result QueryStationIdsByNamesResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
