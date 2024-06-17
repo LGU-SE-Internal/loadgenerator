@@ -6,6 +6,11 @@ import (
 	"io"
 )
 
+type AuthService interface {
+	ReqUserLogin(input *UserLoginInfoReq) (*UserLoginInfoResp, error)
+	ReqUserCreate(input *UserCreateInfoReq) (*UserCreateInfoResp, error)
+	ReqUserDelete(userid string) (*UserDeleteInfoResp, error)
+}
 type UserLoginInfoResp struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`

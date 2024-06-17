@@ -19,14 +19,14 @@ func TestSvcImpl_AddUpdateDeleteSecurityConfig(t *testing.T) {
 		Description: "Made in haven",
 	}
 
-	// Add Security Config
+	// Add Security AdminConfig
 	addResp, err := cli.AddNewSecurityConfig(input)
 	if err != nil {
 		t.Errorf("AddNewSecurityConfig failed: %v", err)
 	}
 	t.Logf("AddNewSecurityConfig response: %+v", addResp)
 
-	// Update Security Config
+	// Update Security AdminConfig
 	updateResp, err1 := cli.ModifySecurityConfig(&SecurityConfig{
 		ID:          "cf3cf953-7f67-4936-b8bc-e7e1720f26e2",
 		Name:        "Prof. Ardella Schinner",
@@ -45,7 +45,7 @@ func TestSvcImpl_AddUpdateDeleteSecurityConfig(t *testing.T) {
 	}
 	t.Logf("FindAllSecurityConfig response: %+v", configs)
 
-	// Delete Security Config
+	// Delete Security AdminConfig
 	var deleteID string
 	if len(configs.Data) > 0 {
 		deleteID = configs.Data[len(configs.Data)-1].ID

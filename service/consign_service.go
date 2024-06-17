@@ -6,6 +6,14 @@ import (
 	"io"
 )
 
+type ConsignService interface {
+	InsertConsignRecord(consign *Consign) (*ConsignResponse, error)
+	UpdateConsignRecord(consign *Consign) (*ConsignResponse, error)
+	QueryByAccountId(accountId string) (*AllConsignResponse, error)
+	QueryByOrderId(orderId string) (*QueryByOrderIdResponse, error)
+	QueryByConsignee(consignee string) (*QueryByConsigneeResponse, error)
+}
+
 // Define the request and response structs that will be used in the service methods
 type Consign struct {
 	ID         string  `json:"id"`         // id主键改成uuid类型的 自定义生成策略
@@ -31,15 +39,6 @@ type AllConsignResponse struct {
 	Status int       `json:"status"`
 	Msg    string    `json:"msg"`
 	Data   []Consign `json:"data"`
-}
-
-type ConsignService interface {
-	InsertConsignRecord(consign Consign) (*ConsignResponse, error)
-	UpdateConsignRecord(consign Consign) (*ConsignResponse, error)
-	QueryByAccountId(accountId string) (*AllConsignResponse, error)
-	QueryByOrderId(orderId string) (*AllConsignResponse, error)
-	QueryByConsignee(consignee string) (*AllConsignResponse, error)
-	DeleteConsign(consignId string) (*ConsignResponse, error)
 }
 
 func (s *SvcImpl) InsertConsignRecord(consign *Consign) (*ConsignResponse, error) {

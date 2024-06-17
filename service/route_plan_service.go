@@ -5,6 +5,12 @@ import (
 	"io"
 )
 
+type RoutePlanService interface {
+	GetCheapestRoutes(input *RoutePlanInfo) (*RoutePlanResponse, error)
+	GetQuickestRoutes(input *RoutePlanInfo) (*RoutePlanResponse, error)
+	GetMinStopStations(input *RoutePlanInfo) (*RoutePlanResponse, error)
+}
+
 // Define the structs for the request and response
 type RoutePlanInfo struct {
 	StartStation string `json:"startStation"`
