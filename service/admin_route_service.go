@@ -21,23 +21,35 @@ type AddResponse struct {
 	Data   []string `json:"data"`
 }
 
+//type RouteInfoResp struct {
+//	Status int    `json:"status"`
+//	Msg    string `json:"msg"`
+//	Data   []struct {
+//		LoginID      string `json:"loginId"`
+//		StartStation string `json:"startStation"`
+//		EndStation   string `json:"endStation"`
+//		StationList  string `json:"stationList"`
+//		DistanceList string `json:"distanceList"`
+//		ID           string `json:"id"`
+//	} `json:"data"`
+//}
+
 type RouteInfoResp struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`
 	Data   []struct {
-		LoginID      string `json:"loginId"`
-		StartStation string `json:"startStation"`
-		EndStation   string `json:"endStation"`
-		StationList  string `json:"stationList"`
-		DistanceList string `json:"distanceList"`
-		ID           string `json:"id"`
+		Id           string   `json:"id"`
+		Stations     []string `json:"stations"`
+		Distances    []int    `json:"distances"`
+		StartStation string   `json:"startStation"`
+		EndStation   string   `json:"endStation"`
 	} `json:"data"`
 }
 
 type RouteDeleteInfoResp struct {
-	Status int         `json:"status"`
-	Msg    string      `json:"msg"`
-	Data   interface{} `json:"data"`
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   string `json:"data"`
 }
 
 func (s *SvcImpl) ReqGetAllRoutes() (*RouteInfoResp, error) {
@@ -54,7 +66,13 @@ func (s *SvcImpl) ReqGetAllRoutes() (*RouteInfoResp, error) {
 	return &result, err
 }
 
-func (s *SvcImpl) ReqAddRoute(input *RouteInfo) (*AddResponse, error) {
+type AdminAddResponse struct {
+	Status int      `json:"status"`
+	Msg    string   `json:"msg"`
+	Data   []string `json:"data"`
+}
+
+func (s *SvcImpl) ReqAddRoute(input *RouteInfo) (*AdminAddResponse, error) {
 	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/adminrouteservice/adminroute", input)
 	if err != nil {
 		return nil, err
@@ -65,7 +83,7 @@ func (s *SvcImpl) ReqAddRoute(input *RouteInfo) (*AddResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result AddResponse
+	var result AdminAddResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err

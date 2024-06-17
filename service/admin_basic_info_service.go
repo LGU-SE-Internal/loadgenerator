@@ -58,9 +58,15 @@ type ConfigResponse struct {
 }
 
 type PriceResponse struct {
-	Status int         `json:"status"`
-	Msg    string      `json:"msg"`
-	Data   interface{} `json:"data"`
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   struct {
+		Id                  string  `json:"id"`
+		TrainType           string  `json:"trainType"`
+		RouteId             string  `json:"routeId"`
+		BasicPriceRate      float64 `json:"basicPriceRate"`
+		FirstClassPriceRate float64 `json:"firstClassPriceRate"`
+	} `json:"data"`
 }
 
 // Request structs
@@ -128,7 +134,13 @@ func (s *SvcImpl) AdminGetAllContacts() (*GetContactsResp, error) {
 	return &result, err
 }
 
-func (s *SvcImpl) AdminDeleteContact(contactsId string) (*ContactResponse, error) {
+type adminDeleteResponse struct {
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   string `json:"data"`
+}
+
+func (s *SvcImpl) AdminDeleteContact(contactsId string) (*adminDeleteResponse, error) {
 	resp, err := s.cli.SendRequest("DELETE", s.BaseUrl+fmt.Sprintf("/api/v1/adminbasicservice/adminbasic/contacts/%s", contactsId), nil)
 	if err != nil {
 		return nil, err
@@ -137,7 +149,7 @@ func (s *SvcImpl) AdminDeleteContact(contactsId string) (*ContactResponse, error
 	if err != nil {
 		return nil, err
 	}
-	var result ContactResponse
+	var result adminDeleteResponse
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }

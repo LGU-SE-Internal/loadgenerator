@@ -7,11 +7,11 @@ import (
 )
 
 type PriceConfig struct {
-	Id        string  `json:"id"`
-	RouteId   string  `json:"routeId"`
-	TrainType string  `json:"trainType"`
-	Price     float64 `json:"price"`
-	// Add more fields as needed
+	ID                  string  `json:"id"`                  // id主键改成uuid类型的 自定义生成策略
+	TrainType           string  `json:"trainType"`           // 这次托运关联订单
+	RouteID             string  `json:"routeId"`             // 这次托运关联的账户
+	BasicPriceRate      float64 `json:"basicPriceRate"`      // 基础价格
+	FirstClassPriceRate float64 `json:"firstClassPriceRate"` // 一等票价格
 }
 
 //type PriceResponse struct {
@@ -21,9 +21,15 @@ type PriceConfig struct {
 //}
 
 type AllPriceResponse struct {
-	Status int           `json:"status"`
-	Msg    string        `json:"msg"`
-	Data   []PriceConfig `json:"data"`
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   []struct {
+		Id                  string  `json:"id"`
+		TrainType           string  `json:"trainType"`
+		RouteId             string  `json:"routeId"`
+		BasicPriceRate      float64 `json:"basicPriceRate"`
+		FirstClassPriceRate float64 `json:"firstClassPriceRate"`
+	} `json:"data"`
 }
 
 type PriceService interface {
@@ -35,7 +41,13 @@ type PriceService interface {
 	UpdatePriceConfig(info PriceConfig) (*PriceResponse, error)
 }
 
-func (s *SvcImpl) FindByRouteIdAndTrainType(routeId, trainType string) (*PriceResponse, error) {
+type findByRouteIdAndTrainTypeResponse struct {
+	Status int         `json:"status"`
+	Msg    string      `json:"msg"`
+	Data   interface{} `json:"data"`
+}
+
+func (s *SvcImpl) FindByRouteIdAndTrainType(routeId string, trainType string) (*findByRouteIdAndTrainTypeResponse, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+fmt.Sprintf("/api/v1/priceservice/prices/%s/%s", routeId, trainType), nil)
 	if err != nil {
 		return nil, err
@@ -46,7 +58,7 @@ func (s *SvcImpl) FindByRouteIdAndTrainType(routeId, trainType string) (*PriceRe
 	if err != nil {
 		return nil, err
 	}
-	var result PriceResponse
+	var result findByRouteIdAndTrainTypeResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
@@ -95,7 +107,7 @@ func (s *SvcImpl) FindAllPriceConfig() (*AllPriceResponse, error) {
 	return &result, nil
 }
 
-func (s *SvcImpl) CreateNewPriceConfig(info PriceConfig) (*PriceResponse, error) {
+func (s *SvcImpl) CreateNewPriceConfig(info *PriceConfig) (*PriceResponse, error) {
 	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/priceservice/prices", info)
 	if err != nil {
 		return nil, err
