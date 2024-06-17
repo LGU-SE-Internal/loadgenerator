@@ -5,7 +5,13 @@ import (
 	"io"
 )
 
-func (s *SvcImpl) ReqCreateNewOrder_WaitOrder(input *OrderVO) (*OrderResp, error) {
+type WaitOrderService interface {
+	ReqCreateNewWaitOrder(input *OrderVO) (*OrderResp, error)
+	ReqGetAllWaitOrder() (*OrderArrResp, error)
+	ReqGetWaitListOrders() (*OrderArrResp, error)
+}
+
+func (s *SvcImpl) ReqCreateNewWaitOrder(input *OrderVO) (*OrderResp, error) {
 	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/waitorderservice/order", input)
 	if err != nil {
 		return nil, err
@@ -23,7 +29,7 @@ func (s *SvcImpl) ReqCreateNewOrder_WaitOrder(input *OrderVO) (*OrderResp, error
 	return &result, nil
 }
 
-func (s *SvcImpl) ReqGetAllOrders_WaitOrder() (*OrderArrResp, error) {
+func (s *SvcImpl) ReqGetAllWaitOrder() (*OrderArrResp, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+"/api/v1/waitorderservice/orders", nil)
 	if err != nil {
 		return nil, err

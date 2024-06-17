@@ -11,7 +11,7 @@ func TestSvcImpl_AddUpdateDeleteUser(t *testing.T) {
 	MockedUserName := faker.Username()
 
 	// Add User
-	addResp, err := cli.AddUser(&UserDto{
+	addResp, err := cli.AdminAddUser(&AdminUserDto{
 		UserID:       MockedID,
 		UserName:     MockedUserName,
 		Password:     "77777",
@@ -21,12 +21,12 @@ func TestSvcImpl_AddUpdateDeleteUser(t *testing.T) {
 		Email:        faker.Email(),
 	})
 	if err != nil {
-		t.Errorf("AddUser failed: %v", err)
+		t.Errorf("AdminAddUser failed: %v", err)
 	}
-	t.Logf("AddUser response: %+v", addResp)
+	t.Logf("AdminAddUser response: %+v", addResp)
 
 	// Update User
-	updateResp, err := cli.UpdateUser(&UserDto{
+	updateResp, err := cli.AdminUpdateUser(&AdminUserDto{
 		UserID:       MockedID,
 		UserName:     MockedUserName,
 		Password:     "88888",
@@ -36,21 +36,21 @@ func TestSvcImpl_AddUpdateDeleteUser(t *testing.T) {
 		Email:        faker.Email(),
 	})
 	if err != nil {
-		t.Errorf("UpdateUser failed: %v", err)
+		t.Errorf("AdminUpdateUser failed: %v", err)
 	}
-	t.Logf("UpdateUser response: %+v", updateResp)
+	t.Logf("AdminUpdateUser response: %+v", updateResp)
 
 	// Delete User
-	deleteResp, err := cli.DeleteUser(MockedID)
+	deleteResp, err := cli.AdminDeleteUser(MockedID)
 	if err != nil {
-		t.Errorf("DeleteUser failed: %v", err)
+		t.Errorf("AdminDeleteUser failed: %v", err)
 	}
-	t.Logf("DeleteUser response: %+v", deleteResp)
+	t.Logf("AdminDeleteUser response: %+v", deleteResp)
 
 	// Get All Users
-	users, err := cli.GetAllUsers()
+	users, err := cli.AdminGetAllUsers()
 	if err != nil {
-		t.Errorf("GetAllUsers failed: %v", err)
+		t.Errorf("AdminGetAllUsers failed: %v", err)
 	}
-	t.Logf("GetAllUsers response: %+v", users)
+	t.Logf("AdminGetAllUsers response: %+v", users)
 }

@@ -6,13 +6,6 @@ import (
 	"io"
 )
 
-type SecurityConfig struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	Value       string `json:"value"`
-	Description string `json:"description"`
-}
-
 // SecurityService defines the interface for security operations
 type SecurityService interface {
 	FindAllSecurityConfig() (*FindAllResponse, error)
@@ -20,6 +13,12 @@ type SecurityService interface {
 	ModifySecurityConfig(config *SecurityConfig) (*SingleResponse, error)
 	DeleteSecurityConfig(id string) (*DeleteResponse, error)
 	Check(accountId string) (*SingleResponse, error)
+}
+type SecurityConfig struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Value       string `json:"value"`
+	Description string `json:"description"`
 }
 
 // FindAllResponse represents the response structure for finding all security configs

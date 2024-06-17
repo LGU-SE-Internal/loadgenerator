@@ -6,6 +6,12 @@ import (
 	"io"
 )
 
+type StationFoodService interface {
+	GetAllStationFood() (*GetStationFoodResp, error)
+	GetStationFoodByName(stationName string) (*GetStationFoodResp, error)
+	GetStationFoodByNames(stationNames []string) (*GetStationFoodResp, error)
+	GetStationFoodById(storeId string) (*GetStationFoodSingleResp, error)
+}
 type GetStationFoodResp struct {
 	Status int           `json:"status"`
 	Msg    string        `json:"msg"`

@@ -6,7 +6,29 @@ import (
 	"io"
 )
 
-type GetContactsResp struct {
+type AdminBasicInfoService interface {
+	AdminGetAllContacts() (*AdminGetContactsResp, error)
+	AdminDeleteContact(contactsId string) (*AdminContactResponse, error)
+	AdminModifyContact(contacts *AdminContacts) (*AdminContactResponse, error)
+	AdminAddContact(contacts *AdminContacts) (*AdminContactResponse, error)
+	AdminGetAllStations() (*AdminStationResponse, error)
+	AdminDeleteStation(id string) (*AdminDeleteResponse, error)
+	AdminModifyStation(station *AdminStation) (*AdminStationResponse, error)
+	AdminAddStation(station *AdminStation) (*AdminStationResponse, error)
+	AdminGetAllTrains() (*AdminTrainResponse, error)
+	AdminDeleteTrain(id string) (*AdminTrainResponse, error)
+	AdminModifyTrain(train *AdminTrainType) (*AdminTrainResponse, error)
+	AdminAddTrain(train *AdminTrainType) (*AdminTrainResponse, error)
+	AdminGetAllConfigs() (*AdminConfigResponse, error)
+	AdminDeleteConfig(name string) (*AdminConfigResponse, error)
+	AdminModifyConfig(config *AdminConfig) (*AdminConfigResponse, error)
+	AdminAddConfig(config *AdminConfig) (*AdminConfigResponse, error)
+	AdminGetAllPrices() (*AdminPriceResponse, error)
+	AdminDeletePrice(pricesId string) (*AdminPriceResponse, error)
+	AdminModifyPrice(price *AdminPriceInfo) (*AdminPriceResponse, error)
+	AdminAddPrice(price *AdminPriceInfo) (*AdminPriceResponse, error)
+}
+type AdminGetContactsResp struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`
 	Data   []struct {
@@ -19,8 +41,7 @@ type GetContactsResp struct {
 	} `json:"data"`
 }
 
-// RouteResponse structs
-type ContactResponse struct {
+type AdminContactResponse struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`
 	Data   struct {
@@ -33,44 +54,38 @@ type ContactResponse struct {
 	} `json:"data"`
 }
 
-type StationResponse struct {
+type AdminStationResponse struct {
 	Status int         `json:"status"`
 	Msg    string      `json:"msg"`
 	Data   interface{} `json:"data"`
 }
 
-type deleteResponse struct {
+type AdminDeleteResponse struct {
 	Status int         `json:"status"`
 	Msg    string      `json:"msg"`
 	Data   interface{} `json:"data"`
 }
 
-type TrainResponse struct {
+type AdminTrainResponse struct {
 	Status int         `json:"status"`
 	Msg    string      `json:"msg"`
 	Data   interface{} `json:"data"`
 }
 
-type ConfigResponse struct {
+type AdminConfigResponse struct {
 	Status int         `json:"status"`
 	Msg    string      `json:"msg"`
 	Data   interface{} `json:"data"`
 }
 
-type PriceResponse struct {
-	Status int    `json:"status"`
-	Msg    string `json:"msg"`
-	Data   struct {
-		Id                  string  `json:"id"`
-		TrainType           string  `json:"trainType"`
-		RouteId             string  `json:"routeId"`
-		BasicPriceRate      float64 `json:"basicPriceRate"`
-		FirstClassPriceRate float64 `json:"firstClassPriceRate"`
-	} `json:"data"`
+type AdminPriceResponse struct {
+	Status int         `json:"status"`
+	Msg    string      `json:"msg"`
+	Data   interface{} `json:"data"`
 }
 
 // Request structs
-type Contacts struct {
+type AdminContacts struct {
 	ID             string `json:"id"`
 	AccountID      string `json:"accountId"`
 	Name           string `json:"name"`
@@ -79,13 +94,13 @@ type Contacts struct {
 	PhoneNumber    string `json:"phoneNumber"`
 }
 
-type Station struct {
+type AdminStation struct {
 	ID       string `json:"id"`
 	Name     string `json:"name"`
 	StayTime int    `json:"stayTime"`
 }
 
-type TrainType struct {
+type AdminTrainType struct {
 	ID           string `json:"id"`
 	Name         string `json:"name"`
 	EconomyClass int    `json:"economyClass"`
@@ -93,12 +108,12 @@ type TrainType struct {
 	AverageSpeed int    `json:"averageSpeed"`
 }
 
-type Config struct {
+type AdminConfig struct {
 	Name        string `json:"name"`
 	Value       string `json:"value"`
 	Description string `json:"description"`
 }
-type ModifyContactsResp struct {
+type AdminModifyContactsResp struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`
 	Data   struct {
@@ -110,7 +125,7 @@ type ModifyContactsResp struct {
 		PhoneNumber    string `json:"phoneNumber"`
 	} `json:"data"`
 }
-type PriceInfo struct {
+type AdminPriceInfo struct {
 	ID                  string  `json:"id"`
 	TrainType           string  `json:"trainType"`
 	RouteID             string  `json:"routeId"`
@@ -120,7 +135,7 @@ type PriceInfo struct {
 
 // AdminBasicInfoService methods
 
-func (s *SvcImpl) AdminGetAllContacts() (*GetContactsResp, error) {
+func (s *SvcImpl) AdminGetAllContacts() (*AdminGetContactsResp, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+"/api/v1/adminbasicservice/adminbasic/contacts", nil)
 	if err != nil {
 		return nil, err
@@ -129,18 +144,12 @@ func (s *SvcImpl) AdminGetAllContacts() (*GetContactsResp, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result GetContactsResp
+	var result AdminGetContactsResp
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
 
-type adminDeleteResponse struct {
-	Status int    `json:"status"`
-	Msg    string `json:"msg"`
-	Data   string `json:"data"`
-}
-
-func (s *SvcImpl) AdminDeleteContact(contactsId string) (*adminDeleteResponse, error) {
+func (s *SvcImpl) AdminDeleteContact(contactsId string) (*AdminContactResponse, error) {
 	resp, err := s.cli.SendRequest("DELETE", s.BaseUrl+fmt.Sprintf("/api/v1/adminbasicservice/adminbasic/contacts/%s", contactsId), nil)
 	if err != nil {
 		return nil, err
@@ -149,12 +158,12 @@ func (s *SvcImpl) AdminDeleteContact(contactsId string) (*adminDeleteResponse, e
 	if err != nil {
 		return nil, err
 	}
-	var result adminDeleteResponse
+	var result AdminContactResponse
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
 
-func (s *SvcImpl) AdminModifyContact(contacts *Contacts) (*ContactResponse, error) {
+func (s *SvcImpl) AdminModifyContact(contacts *AdminContacts) (*AdminContactResponse, error) {
 	resp, err := s.cli.SendRequest("PUT", s.BaseUrl+"/api/v1/adminbasicservice/adminbasic/contacts", contacts)
 	if err != nil {
 		return nil, err
@@ -163,12 +172,12 @@ func (s *SvcImpl) AdminModifyContact(contacts *Contacts) (*ContactResponse, erro
 	if err != nil {
 		return nil, err
 	}
-	var result ContactResponse
+	var result AdminContactResponse
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
 
-func (s *SvcImpl) AdminAddContact(contacts *Contacts) (*ContactResponse, error) {
+func (s *SvcImpl) AdminAddContact(contacts *AdminContacts) (*AdminContactResponse, error) {
 	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/adminbasicservice/adminbasic/contacts", contacts)
 	if err != nil {
 		return nil, err
@@ -177,12 +186,12 @@ func (s *SvcImpl) AdminAddContact(contacts *Contacts) (*ContactResponse, error) 
 	if err != nil {
 		return nil, err
 	}
-	var result ContactResponse
+	var result AdminContactResponse
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
 
-func (s *SvcImpl) GetAllStations() (*StationResponse, error) {
+func (s *SvcImpl) AdminGetAllStations() (*AdminStationResponse, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+"/api/v1/adminbasicservice/adminbasic/stations", nil)
 	if err != nil {
 		return nil, err
@@ -191,12 +200,12 @@ func (s *SvcImpl) GetAllStations() (*StationResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result StationResponse
+	var result AdminStationResponse
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
 
-func (s *SvcImpl) DeleteStation(id string) (*deleteResponse, error) {
+func (s *SvcImpl) AdminDeleteStation(id string) (*AdminDeleteResponse, error) {
 	resp, err := s.cli.SendRequest("DELETE", s.BaseUrl+fmt.Sprintf("/api/v1/adminbasicservice/adminbasic/stations/%s", id), nil)
 	if err != nil {
 		return nil, err
@@ -205,12 +214,12 @@ func (s *SvcImpl) DeleteStation(id string) (*deleteResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result deleteResponse
+	var result AdminDeleteResponse
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
 
-func (s *SvcImpl) ModifyStation(station *Station) (*StationResponse, error) {
+func (s *SvcImpl) AdminModifyStation(station *AdminStation) (*AdminStationResponse, error) {
 	resp, err := s.cli.SendRequest("PUT", s.BaseUrl+"/api/v1/adminbasicservice/adminbasic/stations", station)
 	if err != nil {
 		return nil, err
@@ -219,12 +228,12 @@ func (s *SvcImpl) ModifyStation(station *Station) (*StationResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result StationResponse
+	var result AdminStationResponse
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
 
-func (s *SvcImpl) AddStation(station *Station) (*StationResponse, error) {
+func (s *SvcImpl) AdminAddStation(station *AdminStation) (*AdminStationResponse, error) {
 	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/adminbasicservice/adminbasic/stations", station)
 	if err != nil {
 		return nil, err
@@ -233,12 +242,12 @@ func (s *SvcImpl) AddStation(station *Station) (*StationResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result StationResponse
+	var result AdminStationResponse
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
 
-func (s *SvcImpl) GetAllTrains() (*TrainResponse, error) {
+func (s *SvcImpl) AdminGetAllTrains() (*AdminTrainResponse, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+"/api/v1/adminbasicservice/adminbasic/trains", nil)
 	if err != nil {
 		return nil, err
@@ -247,12 +256,12 @@ func (s *SvcImpl) GetAllTrains() (*TrainResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result TrainResponse
+	var result AdminTrainResponse
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
 
-func (s *SvcImpl) DeleteTrain(id string) (*TrainResponse, error) {
+func (s *SvcImpl) AdminDeleteTrain(id string) (*AdminTrainResponse, error) {
 	resp, err := s.cli.SendRequest("DELETE", s.BaseUrl+fmt.Sprintf("/api/v1/adminbasicservice/adminbasic/trains/%s", id), nil)
 	if err != nil {
 		return nil, err
@@ -261,12 +270,12 @@ func (s *SvcImpl) DeleteTrain(id string) (*TrainResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result TrainResponse
+	var result AdminTrainResponse
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
 
-func (s *SvcImpl) ModifyTrain(train *TrainType) (*TrainResponse, error) {
+func (s *SvcImpl) AdminModifyTrain(train *AdminTrainType) (*AdminTrainResponse, error) {
 	resp, err := s.cli.SendRequest("PUT", s.BaseUrl+"/api/v1/adminbasicservice/adminbasic/trains", train)
 	if err != nil {
 		return nil, err
@@ -275,12 +284,12 @@ func (s *SvcImpl) ModifyTrain(train *TrainType) (*TrainResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result TrainResponse
+	var result AdminTrainResponse
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
 
-func (s *SvcImpl) AddTrain(train *TrainType) (*TrainResponse, error) {
+func (s *SvcImpl) AdminAddTrain(train *AdminTrainType) (*AdminTrainResponse, error) {
 	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/adminbasicservice/adminbasic/trains", train)
 	if err != nil {
 		return nil, err
@@ -289,12 +298,12 @@ func (s *SvcImpl) AddTrain(train *TrainType) (*TrainResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result TrainResponse
+	var result AdminTrainResponse
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
 
-func (s *SvcImpl) GetAllConfigs() (*ConfigResponse, error) {
+func (s *SvcImpl) AdminGetAllConfigs() (*AdminConfigResponse, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+"/api/v1/adminbasicservice/adminbasic/configs", nil)
 	if err != nil {
 		return nil, err
@@ -303,12 +312,12 @@ func (s *SvcImpl) GetAllConfigs() (*ConfigResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result ConfigResponse
+	var result AdminConfigResponse
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
 
-func (s *SvcImpl) DeleteConfig(name string) (*ConfigResponse, error) {
+func (s *SvcImpl) AdminDeleteConfig(name string) (*AdminConfigResponse, error) {
 	resp, err := s.cli.SendRequest("DELETE", s.BaseUrl+fmt.Sprintf("/api/v1/adminbasicservice/adminbasic/configs/%s", name), nil)
 	if err != nil {
 		return nil, err
@@ -317,12 +326,12 @@ func (s *SvcImpl) DeleteConfig(name string) (*ConfigResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result ConfigResponse
+	var result AdminConfigResponse
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
 
-func (s *SvcImpl) ModifyConfig(config *Config) (*ConfigResponse, error) {
+func (s *SvcImpl) AdminModifyConfig(config *AdminConfig) (*AdminConfigResponse, error) {
 	resp, err := s.cli.SendRequest("PUT", s.BaseUrl+"/api/v1/adminbasicservice/adminbasic/configs", config)
 	if err != nil {
 		return nil, err
@@ -331,12 +340,12 @@ func (s *SvcImpl) ModifyConfig(config *Config) (*ConfigResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result ConfigResponse
+	var result AdminConfigResponse
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
 
-func (s *SvcImpl) AddConfig(config *Config) (*ConfigResponse, error) {
+func (s *SvcImpl) AdminAddConfig(config *AdminConfig) (*AdminConfigResponse, error) {
 	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/adminbasicservice/adminbasic/configs", config)
 	if err != nil {
 		return nil, err
@@ -345,12 +354,12 @@ func (s *SvcImpl) AddConfig(config *Config) (*ConfigResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result ConfigResponse
+	var result AdminConfigResponse
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
 
-func (s *SvcImpl) GetAllPrices() (*PriceResponse, error) {
+func (s *SvcImpl) AdminGetAllPrices() (*AdminPriceResponse, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+"/api/v1/adminbasicservice/adminbasic/prices", nil)
 	if err != nil {
 		return nil, err
@@ -359,12 +368,12 @@ func (s *SvcImpl) GetAllPrices() (*PriceResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result PriceResponse
+	var result AdminPriceResponse
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
 
-func (s *SvcImpl) DeletePrice(pricesId string) (*PriceResponse, error) {
+func (s *SvcImpl) AdminDeletePrice(pricesId string) (*AdminPriceResponse, error) {
 	resp, err := s.cli.SendRequest("DELETE", s.BaseUrl+fmt.Sprintf("/api/v1/adminbasicservice/adminbasic/prices/%s", pricesId), nil)
 	if err != nil {
 		return nil, err
@@ -373,12 +382,12 @@ func (s *SvcImpl) DeletePrice(pricesId string) (*PriceResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result PriceResponse
+	var result AdminPriceResponse
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
 
-func (s *SvcImpl) ModifyPrice(price *PriceInfo) (*PriceResponse, error) {
+func (s *SvcImpl) AdminModifyPrice(price *AdminPriceInfo) (*AdminPriceResponse, error) {
 	resp, err := s.cli.SendRequest("PUT", s.BaseUrl+"/api/v1/adminbasicservice/adminbasic/prices", price)
 	if err != nil {
 		return nil, err
@@ -387,12 +396,12 @@ func (s *SvcImpl) ModifyPrice(price *PriceInfo) (*PriceResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result PriceResponse
+	var result AdminPriceResponse
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
 
-func (s *SvcImpl) AddPrice(price *PriceInfo) (*PriceResponse, error) {
+func (s *SvcImpl) AdminAddPrice(price *AdminPriceInfo) (*AdminPriceResponse, error) {
 	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/adminbasicservice/adminbasic/prices", price)
 	if err != nil {
 		return nil, err
@@ -401,7 +410,7 @@ func (s *SvcImpl) AddPrice(price *PriceInfo) (*PriceResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result PriceResponse
+	var result AdminPriceResponse
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }

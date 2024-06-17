@@ -5,6 +5,10 @@ import (
 	"io"
 )
 
+type SeatService interface {
+	ReqSeatCreate(input *SeatCreateInfoReq) (*SeatCreateInfoResp, error)
+	ReqGetTicketLeft(input *SeatCreateInfoReq) (*TicketLeftResp, error)
+}
 type SeatCreateInfoReq struct {
 	TravelDate  string   `form:"travelDate" json:"travelDate" binding:"required"`
 	TrainNumber string   `form:"trainNumber" json:"trainNumber" binding:"required"`
