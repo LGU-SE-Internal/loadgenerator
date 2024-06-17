@@ -11,7 +11,7 @@ func TestUserService_FullIntegration(t *testing.T) {
 	MockedUserName := faker.Username()
 
 	// Test RegisterUser
-	input := &UserDto{
+	input := &AdminUserDto{
 		UserID:       MockedID,
 		UserName:     MockedUserName,
 		Password:     "123456",
@@ -29,8 +29,8 @@ func TestUserService_FullIntegration(t *testing.T) {
 		t.Errorf("Expected status 201, got %d", resp.Status)
 	}
 
-	// Test GetAllUsers
-	allUsersResp, err1 := cli.GetAllUsers()
+	// Test AdminGetAllUsers
+	allUsersResp, err1 := cli.AdminGetAllUsers()
 	if err1 != nil {
 		t.Errorf("Request failed, err1 %s", err1)
 	}
@@ -56,8 +56,8 @@ func TestUserService_FullIntegration(t *testing.T) {
 		t.Errorf("Expected status 200, got %d", userByIdResp.Status)
 	}
 
-	// Test UpdateUser
-	updateInput := &UserDto{
+	// Test AdminUpdateUser
+	updateInput := &AdminUserDto{
 		UserID:       MockedID,
 		UserName:     MockedUserName,
 		Password:     "654321",
@@ -66,7 +66,7 @@ func TestUserService_FullIntegration(t *testing.T) {
 		DocumentNum:  "basic",
 		Email:        faker.Email(),
 	}
-	updateResp, err4 := cli.UpdateUser(updateInput)
+	updateResp, err4 := cli.AdminUpdateUser(updateInput)
 	if err4 != nil {
 		t.Errorf("Request failed, err4 %s", err4)
 	}
@@ -74,8 +74,8 @@ func TestUserService_FullIntegration(t *testing.T) {
 		t.Errorf("Expected status 200, got %d", updateResp.Status)
 	}
 
-	// Test DeleteUser
-	deleteResp, err5 := cli.DeleteUser(MockedID)
+	// Test AdminDeleteUser
+	deleteResp, err5 := cli.AdminDeleteUser(MockedID)
 	if err5 != nil {
 		t.Errorf("Request failed, err5 %s", err5)
 	}

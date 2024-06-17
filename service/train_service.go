@@ -7,11 +7,13 @@ import (
 )
 
 // TrainType represents the train type structure
-//type TrainType struct {
-//	ID   string `json:"id"`
-//	Name string `json:"name"`
-//	// Add other fields as necessary
-//}
+type TrainType struct {
+	ID           string `json:"id"`
+	Name         string `json:"name"`
+	EconomyClass int    `json:"economyClass"`
+	ConfortClass int    `json:"confortClass"`
+	AverageSpeed int    `json:"averageSpeed"`
+}
 
 // Response represents a generic response structure
 //type Response struct {

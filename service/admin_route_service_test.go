@@ -21,7 +21,7 @@ func TestAdminRouteService_FullIntegration(t *testing.T) {
 	// Mock
 	loginID := faker.UUIDHyphenated()
 	id := faker.UUIDHyphenated()
-	input := &RouteInfo{
+	input := &AdminRouteInfo{
 		LoginID:      loginID,
 		StartStation: "Shenzhen Bei",
 		EndStation:   "Jiulong Xi",

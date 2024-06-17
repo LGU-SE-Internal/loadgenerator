@@ -5,6 +5,11 @@ import (
 	"io"
 )
 
+type ExecuteService interface {
+	ReqExecuteTicket(orderId string) (*DataStringResp, error)
+	ReqCollectTicket(orderId string) (*DataStringResp, error)
+}
+
 func (s *SvcImpl) ReqExecuteTicket(orderId string) (*DataStringResp, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+"/api/v1/executeservice/execute/execute/"+orderId, nil)
 	if err != nil {

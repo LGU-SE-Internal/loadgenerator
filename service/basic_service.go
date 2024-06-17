@@ -6,6 +6,11 @@ import (
 	"io"
 )
 
+type BasicService interface {
+	QueryForTravel(info *Travel) (interface{}, error)
+	QueryForTravels(infos []Travel) (interface{}, error)
+	QueryForStationId(stationName string) (interface{}, error)
+}
 type Type struct {
 	//G("G", 1),
 	///**
