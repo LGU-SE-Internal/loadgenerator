@@ -9,7 +9,7 @@ import (
 
 func TestSvcImpl_ReqCreateNewOrder_WaitOrder(t *testing.T) {
 	cli, _ := GetAdminClient()
-	AddResp, err := cli.ReqCreateNewOrder_WaitOrder(&OrderVO{
+	AddResp, err := cli.ReqCreateNewWaitOrder(&OrderVO{
 		AccountId:  uuid.NewString(),
 		ContactsId: uuid.NewString(),
 		Date:       faker.Date(),
@@ -29,7 +29,7 @@ func TestSvcImpl_ReqCreateNewOrder_WaitOrder(t *testing.T) {
 
 func TestSvcImpl_ReqGetAllOrders_WaitOrder(t *testing.T) {
 	cli, _ := GetAdminClient()
-	GetResp, _ := cli.ReqGetAllOrders_WaitOrder()
+	GetResp, _ := cli.ReqGetAllWaitOrder()
 	fmt.Println(GetResp.Msg)
 }
 

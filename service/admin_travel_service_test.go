@@ -8,7 +8,7 @@ func TestSvcImpl_CreateTravel(t *testing.T) {
 	cli, _ := GetBasicClient()
 
 	// Create Travel
-	resp, err := cli.CreateTravel(&TravelInfo{
+	resp, err := cli.CreateTravel(&AdminTravelInfo{
 		TripID: "12345",
 		//LoginID             string `json:"loginId"`
 		//TripID              string `json:"tripId"`
@@ -26,7 +26,7 @@ func TestSvcImpl_CreateTravel(t *testing.T) {
 	t.Logf("CreateTravel response: %+v", resp)
 
 	// Update Travel
-	updateResp, err := cli.UpdateTravel(&TravelInfo{
+	updateResp, err := cli.UpdateTravel(&AdminTravelInfo{
 		TripID: "12345",
 		//LoginID             string `json:"loginId"`
 		//TripID              string `json:"tripId"`
