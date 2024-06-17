@@ -29,9 +29,9 @@ func TestSvcImpl_AddUpdateDeleteAssurance(t *testing.T) {
 	// Get all assurances types
 	assuranceTypes, err9 := cli.GetAllAssuranceTypes()
 	if err9 != nil {
-		t.Errorf("GetAllAssurances failed: %v", err9)
+		t.Errorf("GetAllAssuranceTypes failed: %v", err9)
 	}
-	t.Logf("GetAllAssurances response: %+v", assuranceTypes)
+	t.Logf("GetAllAssuranceTypes response: %+v", assuranceTypes)
 
 	var GetAssuranceID string
 	var GetOrderID string
