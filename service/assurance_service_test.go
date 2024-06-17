@@ -26,6 +26,13 @@ func TestSvcImpl_AddUpdateDeleteAssurance(t *testing.T) {
 	}
 	t.Logf("GetAllAssurances response: %+v", assurances)
 
+	// Get all assurances types
+	assuranceTypes, err9 := cli.GetAllAssuranceTypes()
+	if err9 != nil {
+		t.Errorf("GetAllAssuranceTypes failed: %v", err9)
+	}
+	t.Logf("GetAllAssuranceTypes response: %+v", assuranceTypes)
+
 	var GetAssuranceID string
 	var GetOrderID string
 	if len(assurances.Data) > 0 {
@@ -41,9 +48,9 @@ func TestSvcImpl_AddUpdateDeleteAssurance(t *testing.T) {
 	t.Logf("ModifyAssurance response: %+v", updateResp)
 
 	// Test GetAssuranceByID
-	GetAssuranceByIDResponse, err3 := cli.GetAssuranceByID(GetAssuranceID)
-	if err3 != nil {
-		t.Errorf("GetAssuranceByID failed: %v", err3)
+	GetAssuranceByIDResponse, err7 := cli.GetAssuranceByID(GetAssuranceID)
+	if err7 != nil {
+		t.Errorf("GetAssuranceByID failed: %v", err7)
 	}
 	t.Logf("GetAssuranceByID response: %+v", GetAssuranceByIDResponse)
 
@@ -55,10 +62,17 @@ func TestSvcImpl_AddUpdateDeleteAssurance(t *testing.T) {
 	t.Logf("FindAssuranceByOrderID response: %+v", FindAssuranceByOrderID)
 
 	// Delete the assurance by ID
-	deleteResp, err2 := cli.DeleteAssuranceByID(GetAssuranceID)
+	deleteResp_assurance, err2 := cli.DeleteAssuranceByID(GetAssuranceID)
 	//deleteResp, err2 := cli.DeleteAssuranceByID("274dcd5a-e873-47bf-8ac2-5365a287742f")
 	if err2 != nil {
-		t.Errorf("DeleteAssuranceByID failed: %v", err2)
+		t.Errorf("DeleteAssuranceByAssuranceID failed: %v", err2)
 	}
-	t.Logf("DeleteAssuranceByID response: %+v", deleteResp)
+	t.Logf("DeleteAssuranceByAssuranceID response: %+v", deleteResp_assurance)
+
+	deleteResp_order, err8 := cli.DeleteAssuranceByOrderID(GetOrderID)
+	//deleteResp, err2 := cli.DeleteAssuranceByID("274dcd5a-e873-47bf-8ac2-5365a287742f")
+	if err8 != nil {
+		t.Errorf("DeleteAssuranceByOrderID failed: %v", err8)
+	}
+	t.Logf("DeleteAssuranceByOrderID response: %+v", deleteResp_order)
 }
