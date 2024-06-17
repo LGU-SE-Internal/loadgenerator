@@ -70,8 +70,8 @@ func TestRouteService_FullIntegration(t *testing.T) {
 	}
 
 	//Test Find by start and end
-	start := "Shenzhen Bei"
-	end := "Jiulong Xi"
+	start := "shanghai"
+	end := "taiyuan"
 	resp5, err5 := cli.QueryRoutesByStartAndEnd(start, end)
 	if err5 != nil {
 		t.Errorf("Request failed, err5 %s", err5)
@@ -88,7 +88,7 @@ func TestRouteService_FullIntegration(t *testing.T) {
 		t.Errorf("Request failed, err6 %s", err6)
 	}
 	if resp6.Status != 0 {
-		t.Errorf("resp6.Status != 1")
+		t.Errorf("resp6.Status != 0")
 	}
 
 }
