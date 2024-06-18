@@ -57,7 +57,11 @@ type Travel struct {
 	DepartureTime string `json:"departureTime"`
 }
 
-func (s *SvcImpl) QueryForTravel(info *Travel) (interface{}, error) {
+type QueryForTravelResponse struct {
+	Status string `json:"status"`
+}
+
+func (s *SvcImpl) QueryForTravel(info *Travel) (*QueryForTravelResponse, error) {
 	url := fmt.Sprintf("%s/api/v1/basicservice/basic/travel", s.BaseUrl)
 	resp, err := s.cli.SendRequest("POST", url, info)
 	if err != nil {
@@ -70,16 +74,20 @@ func (s *SvcImpl) QueryForTravel(info *Travel) (interface{}, error) {
 		return nil, err
 	}
 
-	var result interface{}
+	var result QueryForTravelResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
 	}
 
-	return result, nil
+	return &result, nil
 }
 
-func (s *SvcImpl) QueryForTravels(infos []Travel) (interface{}, error) {
+type QueryForTravelsResponse struct {
+	Status string `json:"status"`
+}
+
+func (s *SvcImpl) QueryForTravels(infos []Travel) (*QueryForTravelsResponse, error) {
 	url := fmt.Sprintf("%s/api/v1/basicservice/basic/travels", s.BaseUrl)
 	resp, err := s.cli.SendRequest("POST", url, infos)
 	if err != nil {
@@ -92,16 +100,22 @@ func (s *SvcImpl) QueryForTravels(infos []Travel) (interface{}, error) {
 		return nil, err
 	}
 
-	var result interface{}
+	var result QueryForTravelsResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
 	}
 
-	return result, nil
+	return &result, nil
 }
 
-func (s *SvcImpl) QueryForStationId(stationName string) (interface{}, error) {
+type QueryForStationIdResponse struct {
+	Status int         `json:"status"`
+	Msg    string      `json:"msg"`
+	Data   interface{} `json:"data"`
+}
+
+func (s *SvcImpl) QueryForStationId(stationName string) (*QueryForStationIdResponse, error) {
 	url := fmt.Sprintf("%s/api/v1/basicservice/basic/%s", s.BaseUrl, stationName)
 	resp, err := s.cli.SendRequest("GET", url, nil)
 	if err != nil {
@@ -114,11 +128,11 @@ func (s *SvcImpl) QueryForStationId(stationName string) (interface{}, error) {
 		return nil, err
 	}
 
-	var result interface{}
+	var result QueryForStationIdResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
 	}
 
-	return result, nil
+	return &result, nil
 }

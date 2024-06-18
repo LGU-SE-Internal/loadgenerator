@@ -11,13 +11,15 @@ func TestSvcImpl_AddUpdateQueryDeletePrice(t *testing.T) {
 
 	MockedRouteId := faker.UUIDHyphenated()
 	MockedTrainType := "HighSpeed"
+	MockedTrainId := faker.UUIDHyphenated()
 
 	// Create a new price config
-	createReq := PriceConfig{
-		Id:        faker.UUIDHyphenated(),
-		RouteId:   MockedRouteId,
-		TrainType: MockedTrainType,
-		Price:     100.0,
+	createReq := &PriceConfig{
+		ID:                  MockedRouteId,
+		TrainType:           MockedTrainType,
+		RouteID:             MockedTrainId,
+		BasicPriceRate:      2.00,
+		FirstClassPriceRate: 5.00,
 	}
 	createResp, err := cli.CreateNewPriceConfig(createReq)
 	if err != nil {
@@ -27,23 +29,17 @@ func TestSvcImpl_AddUpdateQueryDeletePrice(t *testing.T) {
 
 	// Update the price config
 	updateReq := PriceConfig{
-		Id:        createReq.Id,
-		RouteId:   MockedRouteId,
-		TrainType: MockedTrainType,
-		Price:     150.0, // New price
+		ID:                  MockedRouteId,
+		TrainType:           MockedTrainType,
+		RouteID:             MockedTrainId,
+		BasicPriceRate:      1.50,
+		FirstClassPriceRate: 3.50,
 	}
 	updateResp, err := cli.UpdatePriceConfig(updateReq)
 	if err != nil {
 		t.Errorf("UpdatePriceConfig failed: %v", err)
 	}
 	t.Logf("UpdatePriceConfig response: %+v", updateResp)
-
-	// Query price config by route ID and train type
-	priceByRouteAndTrain, err := cli.FindByRouteIdAndTrainType(MockedRouteId, MockedTrainType)
-	if err != nil {
-		t.Errorf("FindByRouteIdAndTrainType failed: %v", err)
-	}
-	t.Logf("FindByRouteIdAndTrainType response: %+v", priceByRouteAndTrain)
 
 	// Query all price configs
 	allPriceConfigs, err := cli.FindAllPriceConfig()
@@ -52,8 +48,15 @@ func TestSvcImpl_AddUpdateQueryDeletePrice(t *testing.T) {
 	}
 	t.Logf("FindAllPriceConfig response: %+v", allPriceConfigs)
 
+	// Query price config by route ID and train type
+	priceByRouteAndTrain, err := cli.FindByRouteIdAndTrainType(MockedRouteId, MockedTrainType)
+	if err != nil {
+		t.Errorf("FindByRouteIdAndTrainType failed: %v", err)
+	}
+	t.Logf("FindByRouteIdAndTrainType response: %+v", priceByRouteAndTrain)
+
 	// Delete the price config
-	deleteResp, err := cli.DeletePriceConfig(createReq.Id)
+	deleteResp, err := cli.DeletePriceConfig(createReq.ID)
 	if err != nil {
 		t.Errorf("DeletePriceConfig failed: %v", err)
 	}
