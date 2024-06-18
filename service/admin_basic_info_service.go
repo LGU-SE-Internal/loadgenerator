@@ -8,7 +8,7 @@ import (
 
 type AdminBasicInfoService interface {
 	AdminGetAllContacts() (*AdminGetContactsResp, error)
-	AdminDeleteContact(contactsId string) (*AdminContactResponse, error)
+	AdminDeleteContact(contactsId string) (*AdminDeleteContactResp, error)
 	AdminModifyContact(contacts *AdminContacts) (*AdminContactResponse, error)
 	AdminAddContact(contacts *AdminContacts) (*AdminContactResponse, error)
 	AdminGetAllStations() (*AdminStationResponse, error)
@@ -53,7 +53,11 @@ type AdminContactResponse struct {
 		PhoneNumber    string `json:"phoneNumber"`
 	} `json:"data"`
 }
-
+type AdminDeleteContactResp struct {
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   string `json:"data"`
+}
 type AdminStationResponse struct {
 	Status int         `json:"status"`
 	Msg    string      `json:"msg"`
@@ -149,7 +153,7 @@ func (s *SvcImpl) AdminGetAllContacts() (*AdminGetContactsResp, error) {
 	return &result, err
 }
 
-func (s *SvcImpl) AdminDeleteContact(contactsId string) (*AdminContactResponse, error) {
+func (s *SvcImpl) AdminDeleteContact(contactsId string) (*AdminDeleteContactResp, error) {
 	resp, err := s.cli.SendRequest("DELETE", s.BaseUrl+fmt.Sprintf("/api/v1/adminbasicservice/adminbasic/contacts/%s", contactsId), nil)
 	if err != nil {
 		return nil, err
@@ -158,7 +162,7 @@ func (s *SvcImpl) AdminDeleteContact(contactsId string) (*AdminContactResponse, 
 	if err != nil {
 		return nil, err
 	}
-	var result AdminContactResponse
+	var result AdminDeleteContactResp
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }

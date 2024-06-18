@@ -30,7 +30,7 @@ func TestUserService_FullIntegration(t *testing.T) {
 	}
 
 	// Test AdminGetAllUsers
-	allUsersResp, err1 := cli.AdminGetAllUsers()
+	allUsersResp, err1 := cli.GetAllUsers()
 	if err1 != nil {
 		t.Errorf("Request failed, err1 %s", err1)
 	}
@@ -66,7 +66,7 @@ func TestUserService_FullIntegration(t *testing.T) {
 		DocumentNum:  "basic",
 		Email:        faker.Email(),
 	}
-	updateResp, err4 := cli.AdminUpdateUser(updateInput)
+	updateResp, err4 := cli.UpdateUser(updateInput)
 	if err4 != nil {
 		t.Errorf("Request failed, err4 %s", err4)
 	}
@@ -75,7 +75,7 @@ func TestUserService_FullIntegration(t *testing.T) {
 	}
 
 	// Test AdminDeleteUser
-	deleteResp, err5 := cli.AdminDeleteUser(MockedID)
+	deleteResp, err5 := cli.DeleteUser(MockedID)
 	if err5 != nil {
 		t.Errorf("Request failed, err5 %s", err5)
 	}

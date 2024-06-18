@@ -1,69 +1,78 @@
 package service
 
 import (
-	"testing"
-
 	"github.com/go-faker/faker/v4"
+	"testing"
 )
 
-func TestService_FullIntegration(t *testing.T) {
-	cli, _ := GetAdminClient() // Assuming GetBasicClient is implemented elsewhere
+func TestBasicServiceFullIntegration(t *testing.T) {
+	cli, _ := GetBasicClient()
 
-	// Mock data for Travel
-	MockedTypeName := faker.Word()
-	MockedIndex := 1
-	MockedTripIDName := faker.Word()
-	MockedTrainTypeName := faker.Word()
-	MockedRouteID := faker.UUIDHyphenated()
-	MockedStartStationName := "Shenzhen Bei"
-	MockedTerminalStationName := "California Airport"
-	MockedStartTime := faker.Date()
-	MockedEndTime := faker.Date()
-	MockedDepartureTime := faker.Date()
-	travel := &Travel{
+	var stationSvc StationService = cli
+	stations, err := stationSvc.QueryStations()
+	if err != nil {
+		t.Error(err)
+	}
+	t.Log(stations)
+	if len(stations.Data) < 2 {
+		t.Fatal("stations length should be greater than 2")
+	}
+
+	var trainSvc TrainService = cli
+	trainTypes, err := trainSvc.Query()
+	if err != nil {
+		t.Error(err)
+	}
+	t.Log(trainTypes)
+
+	var routeSvc RouteService = cli
+	MockedID := faker.UUIDHyphenated()
+	input := &RouteInfo{
+		ID:           MockedID,
+		StartStation: "Shenzhen Bei",
+		EndStation:   "Jiulong Xi",
+		StationList:  "Shenzhen Bei,Shkou,Jiulong Xi",
+		DistanceList: "77,66,55",
+	}
+	resp, err := routeSvc.CreateAndModifyRoute(input)
+	if err != nil {
+		t.Error(err)
+	}
+	t.Log(resp)
+
+	routes, err := routeSvc.QueryAllRoutes()
+	if err != nil {
+		t.Error(err)
+	}
+	t.Log(routes)
+
+	travelQuery := &Travel{
 		Trip: Trip{
-			ID: "1",
-			TripID: TripId{
-				Type:   Type{Name: MockedTypeName, Index: MockedIndex},
-				Number: MockedTripIDName,
+			Id: "6284bf46-0f0a-481d-a221-bb3794b00585",
+			TripId: TripId{
+				Type:   "G",
+				Number: "2asd",
 			},
-			TrainTypeName:       MockedTrainTypeName,
-			RouteID:             MockedRouteID,
-			StartStationName:    MockedStartStationName,
-			StationsName:        "Shenzhen Bei,California Airport",
-			TerminalStationName: MockedTerminalStationName,
-			StartTime:           MockedStartTime,
-			EndTime:             MockedEndTime,
+			TrainTypeName:       trainTypes.Data[0].Name,
+			RouteId:             routes.Data[0].Id,
+			StartStationName:    "",
+			StationsName:        "",
+			TerminalStationName: "",
+			StartTime:           "",
+			EndTime:             "",
 		},
-		StartPlace:    "Shenzhen",
-		EndPlace:      "California",
-		DepartureTime: MockedDepartureTime,
+		StartPlace:    "Shenzhen Bei",
+		EndPlace:      "Jiulong Xi",
+		DepartureTime: "",
 	}
-
-	// Test QueryForTravel
-	queryTravelResp, err := cli.QueryForTravel(travel)
+	travel, err := cli.QueryForTravel(travelQuery)
 	if err != nil {
-		t.Errorf("QueryForTravel request failed, err %s", err)
+		t.Error(err)
 	}
-	t.Logf("QueryForTravel returned results: %v", queryTravelResp)
-
-	// Mock data for Travels
-	travels := []Travel{*travel}
-
-	// Test QueryForTravels
-	queryTravelsResp, err := cli.QueryForTravels(travels)
+	t.Log(travel)
+	travels, err := cli.QueryForTravels([]*Travel{travelQuery})
 	if err != nil {
-		t.Errorf("QueryForTravels request failed, err %s", err)
+		t.Error(err)
 	}
-	t.Logf("QueryForTravels returned results: %v", queryTravelsResp)
-
-	// Mock data for Station Name
-	stationName := faker.Word()
-
-	// Test QueryForStationId
-	queryStationIdResp, err := cli.QueryForStationId(stationName)
-	if err != nil {
-		t.Errorf("QueryForStationId request failed, err %s", err)
-	}
-	t.Logf("QueryForStationId returned results: %v", queryStationIdResp)
+	t.Log(travels)
 }

@@ -7,9 +7,9 @@ import (
 )
 
 type BasicService interface {
-	QueryForTravel(info *Travel) (interface{}, error)
-	QueryForTravels(infos []Travel) (interface{}, error)
-	QueryForStationId(stationName string) (interface{}, error)
+	QueryForTravel(info *Travel) (*QueryForTravelResponse, error)
+	QueryForTravels(infos []*Travel) (*QueryForTravelsResponse, error)
+	QueryForStationId(stationName string) (*QueryForStationIdResponse, error)
 }
 type Type struct {
 	//G("G", 1),
@@ -34,31 +34,54 @@ type Type struct {
 }
 
 type TripId struct {
-	Type   Type   `json:"type"`
+	Type   string `json:"type"`
 	Number string `json:"number"`
 }
 
 type Trip struct {
-	ID                  string `json:"id"`
-	TripID              TripId `json:"tripId"`
-	TrainTypeName       string `json:"trainTypeName"`
-	RouteID             string `json:"routeId"`
+	EndTime             string `json:"endTime"`
+	Id                  string `json:"id"`
+	RouteId             string `json:"routeId"`
 	StartStationName    string `json:"startStationName"`
+	StartTime           string `json:"startTime"`
 	StationsName        string `json:"stationsName"`
 	TerminalStationName string `json:"terminalStationName"`
-	StartTime           string `json:"startTime"`
-	EndTime             string `json:"endTime"`
+	TrainTypeName       string `json:"trainTypeName"`
+	TripId              TripId `json:"tripId"`
 }
 
 type Travel struct {
-	Trip          Trip   `json:"trip"`
-	StartPlace    string `json:"startPlace"`
-	EndPlace      string `json:"endPlace"`
 	DepartureTime string `json:"departureTime"`
+	EndPlace      string `json:"endPlace"`
+	StartPlace    string `json:"startPlace"`
+	Trip          Trip   `json:"trip"`
 }
 
 type QueryForTravelResponse struct {
-	Status string `json:"status"`
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   struct {
+		Status    bool    `json:"status"`
+		Percent   float64 `json:"percent"`
+		TrainType struct {
+			Id           string `json:"id"`
+			Name         string `json:"name"`
+			EconomyClass int    `json:"economyClass"`
+			ConfortClass int    `json:"confortClass"`
+			AverageSpeed int    `json:"averageSpeed"`
+		} `json:"trainType"`
+		Route struct {
+			Id           string   `json:"id"`
+			Stations     []string `json:"stations"`
+			Distances    []int    `json:"distances"`
+			StartStation string   `json:"startStation"`
+			EndStation   string   `json:"endStation"`
+		} `json:"route"`
+		Prices struct {
+			ConfortClass string `json:"confortClass"`
+			EconomyClass string `json:"economyClass"`
+		} `json:"prices"`
+	} `json:"data"`
 }
 
 func (s *SvcImpl) QueryForTravel(info *Travel) (*QueryForTravelResponse, error) {
@@ -87,7 +110,7 @@ type QueryForTravelsResponse struct {
 	Status string `json:"status"`
 }
 
-func (s *SvcImpl) QueryForTravels(infos []Travel) (*QueryForTravelsResponse, error) {
+func (s *SvcImpl) QueryForTravels(infos []*Travel) (*QueryForTravelsResponse, error) {
 	url := fmt.Sprintf("%s/api/v1/basicservice/basic/travels", s.BaseUrl)
 	resp, err := s.cli.SendRequest("POST", url, infos)
 	if err != nil {

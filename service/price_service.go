@@ -95,7 +95,7 @@ func (s *SvcImpl) FindAllPriceConfig() (*AllPriceResponse, error) {
 	return &result, nil
 }
 
-func (s *SvcImpl) CreateNewPriceConfig(info PriceConfig) (*AdminPriceResponse, error) {
+func (s *SvcImpl) CreateNewPriceConfig(info *PriceConfig) (*AdminPriceResponse, error) {
 	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/priceservice/prices", info)
 	if err != nil {
 		return nil, err
@@ -135,7 +135,7 @@ func (s *SvcImpl) DeletePriceConfig(pricesId string) (*AdminPriceResponse, error
 	return &result, nil
 }
 
-func (s *SvcImpl) UpdatePriceConfig(info PriceConfig) (*AdminPriceResponse, error) {
+func (s *SvcImpl) UpdatePriceConfig(info *PriceConfig) (*AdminPriceResponse, error) {
 	resp, err := s.cli.SendRequest("PUT", s.BaseUrl+"/api/v1/priceservice/prices", info)
 	if err != nil {
 		return nil, err
