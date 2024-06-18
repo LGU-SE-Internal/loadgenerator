@@ -18,7 +18,7 @@ func TestBasicServiceFullIntegration(t *testing.T) {
 		t.Fatal("stations length should be greater than 2")
 	}
 
-	var trainSvc TrainService = cli
+	var trainSvc TrainService
 	trainTypes, err := trainSvc.Query()
 	if err != nil {
 		t.Error(err)
