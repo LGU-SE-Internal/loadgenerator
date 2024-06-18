@@ -19,9 +19,11 @@ func TestStationService_FullIntegration(t *testing.T) {
 
 	//Mock
 	MockedID := faker.UUIDHyphenated()
-	input := &Station{
-		ID:       MockedID,
-		Name:     "Shenzhen Bei",
+	MockedCityName := faker.Name()
+	input := &Station_station{
+		ID: MockedID,
+		//Name:     "Shenzhen Bei",
+		Name:     MockedCityName,
 		StayTime: 7,
 	}
 
@@ -34,10 +36,26 @@ func TestStationService_FullIntegration(t *testing.T) {
 		t.Errorf("Already exists")
 	}
 
+	// Query all
+	QueryAll, err7 := cli.QueryStations()
+	if err7 != nil {
+		t.Errorf("Request failed, err7 %s", err7)
+	}
+	if QueryAll.Status != 1 {
+		t.Errorf("QueryAll.Status != 1")
+	}
+
+	var getId string
+	var getName string
+	if len(QueryAll.Data) > 0 {
+		getId = QueryAll.Data[0].Id
+		getName = QueryAll.Data[0].Name
+	}
+
 	// Test Update
-	input1 := &Station{
-		ID:       "c40200a8-bb63-445f-b332-6c4891666829",
-		Name:     "zhenjiang",
+	input1 := &Station_station{
+		ID:       getId,
+		Name:     getName,
 		StayTime: 3,
 	}
 	resp2, err2 := cli.UpdateStation(input1)
@@ -57,7 +75,7 @@ func TestStationService_FullIntegration(t *testing.T) {
 	}
 	stationId_delete := stationId
 	//stationId := "45dea90e-eb9b-4602-8562-0b4dfdf12e5f"
-	resp3, err3 := cli.AdminDeleteStation(stationId_delete)
+	resp3, err3 := cli.DeleteStation(stationId_delete)
 	if err3 != nil {
 		t.Errorf("Request failed, err3 %s", err3)
 	}

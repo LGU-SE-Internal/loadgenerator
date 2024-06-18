@@ -12,7 +12,17 @@ type Config_config struct {
 	Description string `json:"description" validate:""`   // @Valid
 }
 
-func (s *SvcImpl) QueryAllConfigs() (interface{}, error) {
+type ConfigQueryAllConfigsResponse struct {
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   []struct {
+		Name        string `json:"name"`
+		Value       string `json:"value"`
+		Description string `json:"description"`
+	} `json:"data"`
+}
+
+func (s *SvcImpl) QueryAllConfigs() (*ConfigQueryAllConfigsResponse, error) {
 	url := fmt.Sprintf("%s/api/v1/configservice/configs", s.BaseUrl)
 	resp, err := s.cli.SendRequest("GET", url, nil)
 	if err != nil {
@@ -25,16 +35,26 @@ func (s *SvcImpl) QueryAllConfigs() (interface{}, error) {
 		return nil, err
 	}
 
-	var result interface{}
+	var result ConfigQueryAllConfigsResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
 	}
 
-	return result, nil
+	return &result, nil
 }
 
-func (s *SvcImpl) CreateConfig(info Config_config) (interface{}, error) {
+type CreateConfigResponse struct {
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   struct {
+		Name        string `json:"name"`
+		Value       string `json:"value"`
+		Description string `json:"description"`
+	} `json:"data"`
+}
+
+func (s *SvcImpl) CreateConfig(info *Config_config) (*CreateConfigResponse, error) {
 	url := fmt.Sprintf("%s/api/v1/configservice/configs", s.BaseUrl)
 	resp, err := s.cli.SendRequest("POST", url, info)
 	if err != nil {
@@ -47,16 +67,26 @@ func (s *SvcImpl) CreateConfig(info Config_config) (interface{}, error) {
 		return nil, err
 	}
 
-	var result interface{}
+	var result CreateConfigResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
 	}
 
-	return result, nil
+	return &result, nil
 }
 
-func (s *SvcImpl) UpdateConfig(info Config_config) (interface{}, error) {
+type UpdateConfigResponse struct {
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   struct {
+		Name        string `json:"name"`
+		Value       string `json:"value"`
+		Description string `json:"description"`
+	} `json:"data"`
+}
+
+func (s *SvcImpl) UpdateConfig(info Config_config) (*UpdateConfigResponse, error) {
 	url := fmt.Sprintf("%s/api/v1/configservice/configs", s.BaseUrl)
 	resp, err := s.cli.SendRequest("PUT", url, info)
 	if err != nil {
@@ -69,16 +99,26 @@ func (s *SvcImpl) UpdateConfig(info Config_config) (interface{}, error) {
 		return nil, err
 	}
 
-	var result interface{}
+	var result UpdateConfigResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
 	}
 
-	return result, nil
+	return &result, nil
 }
 
-func (s *SvcImpl) DeleteConfig_config_service(configName string) (interface{}, error) {
+type DeleteConfig_config_serviceResponse struct {
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   struct {
+		Name        string `json:"name"`
+		Value       string `json:"value"`
+		Description string `json:"description"`
+	} `json:"data"`
+}
+
+func (s *SvcImpl) DeleteConfig_config_service(configName string) (*DeleteConfig_config_serviceResponse, error) {
 	url := fmt.Sprintf("%s/api/v1/configservice/configs/%s", s.BaseUrl, configName)
 	resp, err := s.cli.SendRequest("DELETE", url, nil)
 	if err != nil {
@@ -91,16 +131,26 @@ func (s *SvcImpl) DeleteConfig_config_service(configName string) (interface{}, e
 		return nil, err
 	}
 
-	var result interface{}
+	var result DeleteConfig_config_serviceResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
 	}
 
-	return result, nil
+	return &result, nil
 }
 
-func (s *SvcImpl) RetrieveConfig(configName string) (interface{}, error) {
+type RetrieveConfigResponse struct {
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   struct {
+		Name        string `json:"name"`
+		Value       string `json:"value"`
+		Description string `json:"description"`
+	} `json:"data"`
+}
+
+func (s *SvcImpl) RetrieveConfig(configName string) (*RetrieveConfigResponse, error) {
 	url := fmt.Sprintf("%s/api/v1/configservice/configs/%s", s.BaseUrl, configName)
 	resp, err := s.cli.SendRequest("GET", url, nil)
 	if err != nil {
@@ -113,11 +163,11 @@ func (s *SvcImpl) RetrieveConfig(configName string) (interface{}, error) {
 		return nil, err
 	}
 
-	var result interface{}
+	var result RetrieveConfigResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
 	}
 
-	return result, nil
+	return &result, nil
 }
