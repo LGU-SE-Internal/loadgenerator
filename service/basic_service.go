@@ -107,7 +107,9 @@ func (s *SvcImpl) QueryForTravel(info *Travel) (*QueryForTravelResponse, error) 
 }
 
 type QueryForTravelsResponse struct {
-	Status string `json:"status"`
+	Status int         `json:"status"`
+	Msg    string      `json:"msg"`
+	Data   interface{} `json:"data"`
 }
 
 func (s *SvcImpl) QueryForTravels(infos []*Travel) (*QueryForTravelsResponse, error) {
