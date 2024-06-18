@@ -20,7 +20,7 @@ func TestStationService_FullIntegration(t *testing.T) {
 	//Mock
 	MockedID := faker.UUIDHyphenated()
 	MockedCityName := faker.Name()
-	input := &Station_station{
+	input := &Station{
 		ID: MockedID,
 		//Name:     "Shenzhen Bei",
 		Name:     MockedCityName,
@@ -53,7 +53,7 @@ func TestStationService_FullIntegration(t *testing.T) {
 	}
 
 	// Test Update
-	input1 := &Station_station{
+	input1 := &Station{
 		ID:       getId,
 		Name:     getName,
 		StayTime: 3,

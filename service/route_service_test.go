@@ -8,7 +8,7 @@ import (
 func TestRouteService_FullIntegration(t *testing.T) {
 	cli, _ := GetBasicClient()
 	MockedID := faker.UUIDHyphenated()
-	input := &RouteInfo_route{
+	input := &RouteInfo{
 		ID:           MockedID,
 		StartStation: "Shenzhen Bei",
 		EndStation:   "Jiulong Xi",

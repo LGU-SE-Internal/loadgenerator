@@ -7,7 +7,7 @@ import (
 )
 
 type RouteService interface {
-	CreateAndModifyRoute(input *RouteInfo_route) (*RouteResponse, error)
+	CreateAndModifyRoute(input *RouteInfo) (*RouteResponse, error)
 	DeleteRoute(routeId string) (*DeleteResponse, error)
 	QueryRouteById(routeId string) (*RouteResponse, error)
 	QueryRoutesByIds(routeIds []string) (*QueryMultiResponse, error)
@@ -32,7 +32,7 @@ type DeleteResponse struct {
 	Data   string `json:"data"`
 }
 
-type RouteInfo_route struct {
+type RouteInfo struct {
 	ID           string `json:"id"`
 	StartStation string `json:"startStation"`
 	EndStation   string `json:"endStation"`
@@ -52,7 +52,7 @@ type RouteResponse struct {
 	} `json:"data"`
 }
 
-func (s *SvcImpl) CreateAndModifyRoute(input *RouteInfo_route) (*RouteResponse, error) {
+func (s *SvcImpl) CreateAndModifyRoute(input *RouteInfo) (*RouteResponse, error) {
 	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/routeservice/routes", input)
 	if err != nil {
 		return nil, err

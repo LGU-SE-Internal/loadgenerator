@@ -20,10 +20,10 @@ import (
 //}
 
 // TravelInfo represents the travel information
-//type TravelInfo struct {
-//	TripId string `json:"tripId"`
-//	// Add other fields as necessary
-//}
+type TravelInfo struct {
+	TripId string `json:"tripId"`
+	// Add other fields as necessary
+}
 
 // TripInfo represents the trip information
 type TripInfo struct {
@@ -50,16 +50,16 @@ type TripResponse struct {
 type TravelService interface {
 	GetTrainTypeByTripId(tripId string) (*TrainType, error)
 	GetRouteByTripId(tripId string) (*Route, error)
-	GetTripsByRouteId(routeIds []string) ([]TripResponse, error)
-	CreateTrip(travelInfo TravelInfo) (*TripResponse, error)
-	Retrieve(tripId string) (*TravelInfo, error)
-	UpdateTrip(travelInfo TravelInfo) (*TripResponse, error)
+	GetTripsByRouteId(routeIds []string) (*GetTripsByRouteIdResponse, error)
+	CreateTrip(travelInfo *TravelInfo) (*TripResponse, error)
+	RetrieveTravel(tripId string) (*TravelInfo, error)
+	UpdateTrip(travelInfo *TravelInfo) (*TripResponse, error)
 	DeleteTrip(tripId string) (*TripResponse, error)
-	QueryInfo(tripInfo TripInfo) ([]TripResponse, error)
-	QueryInfoInParallel(tripInfo TripInfo) ([]TripResponse, error)
+	QueryInfo(tripInfo TripInfo) (*QueryInfoResponse, error)
+	QueryInfoInParallel(tripInfo TripInfo) (*QueryInfoInParallelTripResponse, error)
 	GetTripAllDetailInfo(tripAllDetailInfo TripAllDetailInfo) (*TripResponse, error)
-	QueryAll() ([]TravelInfo, error)
-	AdminQueryAll() ([]TravelInfo, error)
+	QueryAll() (*QueryAllTravelInfo, error)
+	AdminQueryAll() (*QueryAllTravelInfo, error)
 }
 
 func (s *SvcImpl) GetTrainTypeByTripId(tripId string) (*TrainType, error) {

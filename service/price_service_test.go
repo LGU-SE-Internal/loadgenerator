@@ -1,6 +1,7 @@
 package service
 
 import (
+	"math/rand"
 	"testing"
 
 	"github.com/go-faker/faker/v4"
@@ -11,15 +12,13 @@ func TestSvcImpl_AddUpdateQueryDeletePrice(t *testing.T) {
 
 	MockedRouteId := faker.UUIDHyphenated()
 	MockedTrainType := "HighSpeed"
-	MockedTrainId := faker.UUIDHyphenated()
+	//MockedTrainId := faker.UUIDHyphenated()
 
 	// Create a new price config
 	createReq := &PriceConfig{
-		ID:                  MockedRouteId,
-		TrainType:           MockedTrainType,
-		RouteID:             MockedTrainId,
-		BasicPriceRate:      2.00,
-		FirstClassPriceRate: 5.00,
+		Id:        MockedRouteId,
+		TrainType: MockedTrainType,
+		Price:     rand.Float64(),
 	}
 	createResp, err := cli.CreateNewPriceConfig(createReq)
 	if err != nil {
@@ -28,12 +27,10 @@ func TestSvcImpl_AddUpdateQueryDeletePrice(t *testing.T) {
 	t.Logf("CreateNewPriceConfig response: %+v", createResp)
 
 	// Update the price config
-	updateReq := PriceConfig{
-		ID:                  MockedRouteId,
-		TrainType:           MockedTrainType,
-		RouteID:             MockedTrainId,
-		BasicPriceRate:      1.50,
-		FirstClassPriceRate: 3.50,
+	updateReq := &PriceConfig{
+		Id:        MockedRouteId,
+		TrainType: MockedTrainType,
+		Price:     rand.Float64(),
 	}
 	updateResp, err := cli.UpdatePriceConfig(updateReq)
 	if err != nil {
@@ -56,7 +53,7 @@ func TestSvcImpl_AddUpdateQueryDeletePrice(t *testing.T) {
 	t.Logf("FindByRouteIdAndTrainType response: %+v", priceByRouteAndTrain)
 
 	// Delete the price config
-	deleteResp, err := cli.DeletePriceConfig(createReq.ID)
+	deleteResp, err := cli.DeletePriceConfig(createReq.Id)
 	if err != nil {
 		t.Errorf("DeletePriceConfig failed: %v", err)
 	}

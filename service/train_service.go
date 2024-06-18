@@ -15,8 +15,8 @@ type TrainType struct {
 	AverageSpeed int    `json:"averageSpeed"`
 }
 
-// Response represents a generic response structure
-//type Response struct {
+// DeleteStationResponse represents a generic response structure
+//type DeleteStationResponse struct {
 //	Status int         `json:"status"`
 //	Msg    string      `json:"msg"`
 //	Data   interface{} `json:"data"`
@@ -24,22 +24,16 @@ type TrainType struct {
 
 // TrainService defines the methods that the service should implement
 type TrainService interface {
-	Create(trainType TrainType) (*Response, error)
-	Retrieve(id string) (*TrainType, error)
-	RetrieveByName(name string) (*TrainType, error)
-	RetrieveByNames(names []string) ([]TrainType, error)
-	Update(trainType TrainType) (*Response, error)
-	Delete(id string) (*Response, error)
-	Query() ([]TrainType, error)
+	Create(trainType *TrainType) (*DeleteStationResponse, error)
+	Retrieve(id string) (*TrainRetrieveTrainType, error)
+	RetrieveByName(name string) (*TrainRetrieveByNameType, error)
+	RetrieveByNames(names []string) (*TrainRetrieveByNamesType, error)
+	Update(trainType *TrainType) (*TrainUpdateResponse, error)
+	Delete(id string) (*TrainDeleteResponse, error)
+	Query() (*TrainResponseType, error)
 }
 
-type trainCreateResponse struct {
-	Status int         `json:"status"`
-	Msg    string      `json:"msg"`
-	Data   interface{} `json:"data"`
-}
-
-func (s *SvcImpl) Create(trainType *TrainType) (*trainCreateResponse, error) {
+func (s *SvcImpl) Create(trainType *TrainType) (*DeleteStationResponse, error) {
 	url := fmt.Sprintf("%s/api/v1/trainservice/trains", s.BaseUrl)
 	resp, err := s.cli.SendRequest("POST", url, trainType)
 	if err != nil {
@@ -52,7 +46,7 @@ func (s *SvcImpl) Create(trainType *TrainType) (*trainCreateResponse, error) {
 		return nil, err
 	}
 
-	var result trainCreateResponse
+	var result DeleteStationResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
@@ -163,13 +157,13 @@ func (s *SvcImpl) RetrieveByNames(names []string) (*TrainRetrieveByNamesType, er
 	return &result, nil
 }
 
-type trainUpdateResponse struct {
+type TrainUpdateResponse struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`
 	Data   bool   `json:"data"`
 }
 
-func (s *SvcImpl) Update(trainType *TrainType) (*trainUpdateResponse, error) {
+func (s *SvcImpl) Update(trainType *TrainType) (*TrainUpdateResponse, error) {
 	url := fmt.Sprintf("%s/api/v1/trainservice/trains", s.BaseUrl)
 	resp, err := s.cli.SendRequest("PUT", url, trainType)
 	if err != nil {
@@ -182,7 +176,7 @@ func (s *SvcImpl) Update(trainType *TrainType) (*trainUpdateResponse, error) {
 		return nil, err
 	}
 
-	var result trainUpdateResponse
+	var result TrainUpdateResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
@@ -191,13 +185,13 @@ func (s *SvcImpl) Update(trainType *TrainType) (*trainUpdateResponse, error) {
 	return &result, nil
 }
 
-type trainDeleteResponse struct {
+type TrainDeleteResponse struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`
 	Data   bool   `json:"data"`
 }
 
-func (s *SvcImpl) Delete(id string) (*trainDeleteResponse, error) {
+func (s *SvcImpl) Delete(id string) (*TrainDeleteResponse, error) {
 	url := fmt.Sprintf("%s/api/v1/trainservice/trains/%s", s.BaseUrl, id)
 	resp, err := s.cli.SendRequest("DELETE", url, nil)
 	if err != nil {
@@ -210,7 +204,7 @@ func (s *SvcImpl) Delete(id string) (*trainDeleteResponse, error) {
 		return nil, err
 	}
 
-	var result trainDeleteResponse
+	var result TrainDeleteResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err

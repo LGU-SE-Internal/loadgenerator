@@ -7,10 +7,10 @@ import (
 )
 
 type StationService interface {
-	QueryStations() (*Response, error)
+	QueryStations() (*DeleteStationResponse, error)
 	CreateStation(input *Station) (*StationCreateResponse, error)
 	UpdateStation(input *Station) (*StationUpdateResponse, error)
-	DeleteStation(stationId string) (*Response, error)
+	DeleteStation(stationId string) (*DeleteStationResponse, error)
 	QueryStationIdByName(stationName string) (*StationQueryIdByNameResponse, error)
 	QueryStationIdsByNames(stationNameList []string) (*QueryStationIdsByNamesResponse, error)
 	QueryStationNameById(stationId string) (*QueryStationNameByIdResponse, error)
@@ -22,7 +22,7 @@ type Station struct {
 	StayTime int    `json:"stayTime"`
 }
 
-type Response struct {
+type DeleteStationResponse struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`
 	Data   []struct {
@@ -75,7 +75,7 @@ type QueryStationNamesByIdsResponse struct {
 	Data   []string `json:"data"`
 }
 
-func (s *SvcImpl) QueryStations() (*Response, error) {
+func (s *SvcImpl) QueryStations() (*DeleteStationResponse, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+"/api/v1/stationservice/stations", nil)
 	if err != nil {
 		return nil, err
@@ -87,7 +87,7 @@ func (s *SvcImpl) QueryStations() (*Response, error) {
 		return nil, err
 	}
 
-	var result Response
+	var result DeleteStationResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
@@ -132,7 +132,7 @@ func (s *SvcImpl) UpdateStation(input *Station) (*StationUpdateResponse, error) 
 	return &result, nil
 }
 
-func (s *SvcImpl) DeleteStation(stationId string) (*Response, error) {
+func (s *SvcImpl) DeleteStation(stationId string) (*DeleteStationResponse, error) {
 	resp, err := s.cli.SendRequest("DELETE", s.BaseUrl+fmt.Sprintf("/api/v1/stationservice/stations/%s", stationId), nil)
 	if err != nil {
 		return nil, err
@@ -142,7 +142,7 @@ func (s *SvcImpl) DeleteStation(stationId string) (*Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result Response
+	var result DeleteStationResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
