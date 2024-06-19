@@ -7,27 +7,50 @@ import (
 
 // FoodOrder represents the food order structure
 type FoodOrder struct {
-	OrderID     string `json:"orderId"`
-	FoodName    string `json:"foodName"`
-	StationName string `json:"stationName"`
-	StoreName   string `json:"storeName"`
+	ID          string  `json:"id"`
+	OrderID     string  `json:"orderId"`
+	FoodType    int     `json:"foodType"` // 1: train food; 2: food store
+	StationName string  `json:"stationName"`
+	StoreName   string  `json:"storeName"`
+	FoodName    string  `json:"foodName"`
+	Price       float64 `json:"price"`
 }
 
-// CreateFoodOrderResp represents the response structure for creating a food order
 type CreateFoodOrderResp struct {
-	Status int       `json:"status"`
-	Msg    string    `json:"msg"`
-	Data   FoodOrder `json:"data"`
-}
-
-// DeleteFoodOrderResp represents the response structure for deleting a food order
-type DeleteFoodOrderResp struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`
-	Data   string `json:"data"`
+	Data   struct {
+		Id          string      `json:"id"`
+		OrderId     string      `json:"orderId"`
+		FoodType    int         `json:"foodType"`
+		StationName interface{} `json:"stationName"`
+		StoreName   interface{} `json:"storeName"`
+		FoodName    string      `json:"foodName"`
+		Price       float64     `json:"price"`
+	} `json:"data"`
 }
 
-func (s *SvcImpl) FindAllFoodOrder() ([]FoodOrder, error) {
+type DeleteFoodOrderResp struct {
+	Status int         `json:"status"`
+	Msg    string      `json:"msg"`
+	Data   interface{} `json:"data"`
+}
+
+type FindAllFoodOrder struct {
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   []struct {
+		Id          string      `json:"id"`
+		OrderId     string      `json:"orderId"`
+		FoodType    int         `json:"foodType"`
+		StationName interface{} `json:"stationName"`
+		StoreName   interface{} `json:"storeName"`
+		FoodName    string      `json:"foodName"`
+		Price       float64     `json:"price"`
+	} `json:"data"`
+}
+
+func (s *SvcImpl) FindAllFoodOrder() (*FindAllFoodOrder, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+"/api/v1/foodservice/orders", nil)
 	if err != nil {
 		return nil, err
@@ -39,12 +62,12 @@ func (s *SvcImpl) FindAllFoodOrder() ([]FoodOrder, error) {
 		return nil, err
 	}
 
-	var result []FoodOrder
+	var result FindAllFoodOrder
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
 	}
-	return result, nil
+	return &result, nil
 }
 
 func (s *SvcImpl) CreateFoodOrder(foodOrder *FoodOrder) (*CreateFoodOrderResp, error) {
@@ -67,7 +90,13 @@ func (s *SvcImpl) CreateFoodOrder(foodOrder *FoodOrder) (*CreateFoodOrderResp, e
 	return &result, nil
 }
 
-func (s *SvcImpl) CreateFoodOrdersInBatch(foodOrders []FoodOrder) ([]FoodOrder, error) {
+type CreateFoodOrdersInBatch struct {
+	Status int         `json:"status"`
+	Msg    string      `json:"msg"`
+	Data   interface{} `json:"data"`
+}
+
+func (s *SvcImpl) CreateFoodOrdersInBatch(foodOrders []FoodOrder) (*CreateFoodOrdersInBatch, error) {
 	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/foodservice/createOrderBatch", foodOrders)
 	if err != nil {
 		return nil, err
@@ -79,12 +108,12 @@ func (s *SvcImpl) CreateFoodOrdersInBatch(foodOrders []FoodOrder) ([]FoodOrder, 
 		return nil, err
 	}
 
-	var result []FoodOrder
+	var result CreateFoodOrdersInBatch
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
 	}
-	return result, nil
+	return &result, nil
 }
 
 func (s *SvcImpl) UpdateFoodOrder(foodOrder *FoodOrder) (*FoodOrder, error) {
@@ -127,7 +156,21 @@ func (s *SvcImpl) DeleteFoodOrder(orderID string) (*DeleteFoodOrderResp, error) 
 	return &result, nil
 }
 
-func (s *SvcImpl) FindByOrderId(orderID string) (*FoodOrder, error) {
+type FindByOrderIdResponse struct {
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   struct {
+		Id          string  `json:"id"`
+		OrderId     string  `json:"orderId"`
+		FoodType    int     `json:"foodType"`
+		StationName string  `json:"stationName"`
+		StoreName   string  `json:"storeName"`
+		FoodName    string  `json:"foodName"`
+		Price       float64 `json:"price"`
+	} `json:"data"`
+}
+
+func (s *SvcImpl) FindByOrderId(orderID string) (*FindByOrderIdResponse, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+"/api/v1/foodservice/orders/"+orderID, nil)
 	if err != nil {
 		return nil, err
@@ -139,7 +182,7 @@ func (s *SvcImpl) FindByOrderId(orderID string) (*FoodOrder, error) {
 		return nil, err
 	}
 
-	var result FoodOrder
+	var result FindByOrderIdResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
@@ -147,7 +190,13 @@ func (s *SvcImpl) FindByOrderId(orderID string) (*FoodOrder, error) {
 	return &result, nil
 }
 
-func (s *SvcImpl) GetAllFood(date, startStation, endStation, tripID string) ([]FoodOrder, error) {
+type GetAllFoodResponse struct {
+	Status int         `json:"status"`
+	Msg    string      `json:"msg"`
+	Data   interface{} `json:"data"`
+}
+
+func (s *SvcImpl) GetAllFood(date, startStation, endStation, tripID string) (*GetAllFoodResponse, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+"/api/v1/foodservice/foods/"+date+"/"+startStation+"/"+endStation+"/"+tripID, nil)
 	if err != nil {
 		return nil, err
@@ -159,10 +208,10 @@ func (s *SvcImpl) GetAllFood(date, startStation, endStation, tripID string) ([]F
 		return nil, err
 	}
 
-	var result []FoodOrder
+	var result GetAllFoodResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
 	}
-	return result, nil
+	return &result, nil
 }

@@ -21,8 +21,15 @@ import (
 
 // TravelInfo represents the travel information
 type TravelInfo struct {
-	TripId string `json:"tripId"`
-	// Add other fields as necessary
+	LoginID             string `json:"loginId"`
+	TripID              string `json:"tripId"`
+	TrainTypeName       string `json:"trainTypeName"`
+	RouteID             string `json:"routeId"`
+	StartStationName    string `json:"startStationName"`
+	StationsName        string `json:"stationsName"`
+	TerminalStationName string `json:"terminalStationName"`
+	StartTime           string `json:"startTime"`
+	EndTime             string `json:"endTime"`
 }
 
 // TripInfo represents the trip information
@@ -62,7 +69,13 @@ type TravelService interface {
 	AdminQueryAll() (*QueryAllTravelInfo, error)
 }
 
-func (s *SvcImpl) GetTrainTypeByTripId(tripId string) (*TrainType, error) {
+type GetTrainTypeByTripIdResponse struct {
+	Status int         `json:"status"`
+	Msg    string      `json:"msg"`
+	Data   interface{} `json:"data"`
+}
+
+func (s *SvcImpl) GetTrainTypeByTripId(tripId string) (*GetTrainTypeByTripIdResponse, error) {
 	url := fmt.Sprintf("%s/api/v1/travelservice/train_types/%s", s.BaseUrl, tripId)
 	resp, err := s.cli.SendRequest("GET", url, nil)
 	if err != nil {
@@ -75,7 +88,7 @@ func (s *SvcImpl) GetTrainTypeByTripId(tripId string) (*TrainType, error) {
 		return nil, err
 	}
 
-	var result TrainType
+	var result GetTrainTypeByTripIdResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
@@ -84,7 +97,13 @@ func (s *SvcImpl) GetTrainTypeByTripId(tripId string) (*TrainType, error) {
 	return &result, nil
 }
 
-func (s *SvcImpl) GetRouteByTripId(tripId string) (*Route, error) {
+type GetRouteByTripIdResponse struct {
+	Status int         `json:"status"`
+	Msg    string      `json:"msg"`
+	Data   interface{} `json:"data"`
+}
+
+func (s *SvcImpl) GetRouteByTripId(tripId string) (*GetRouteByTripIdResponse, error) {
 	url := fmt.Sprintf("%s/api/v1/travelservice/routes/%s", s.BaseUrl, tripId)
 	resp, err := s.cli.SendRequest("GET", url, nil)
 	if err != nil {
@@ -97,7 +116,7 @@ func (s *SvcImpl) GetRouteByTripId(tripId string) (*Route, error) {
 		return nil, err
 	}
 
-	var result Route
+	var result GetRouteByTripIdResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
@@ -106,13 +125,19 @@ func (s *SvcImpl) GetRouteByTripId(tripId string) (*Route, error) {
 	return &result, nil
 }
 
+//type GetTripsByRouteIdResponse struct {
+//	Status int `json:"status"`
+//	Data   []struct {
+//		SeatNo       int    `json:"seatNo"`
+//		StartStation string `json:"startStation"`
+//		DestStation  string `json:"destStation"`
+//	} `json:"data"`
+//}
+
 type GetTripsByRouteIdResponse struct {
-	Status int `json:"status"`
-	Data   []struct {
-		SeatNo       int    `json:"seatNo"`
-		StartStation string `json:"startStation"`
-		DestStation  string `json:"destStation"`
-	} `json:"data"`
+	Status int             `json:"status"`
+	Msg    string          `json:"msg"`
+	Data   [][]interface{} `json:"data"`
 }
 
 func (s *SvcImpl) GetTripsByRouteId(routeIds []string) (*GetTripsByRouteIdResponse, error) {
@@ -225,13 +250,19 @@ func (s *SvcImpl) DeleteTrip(tripId string) (*TripResponse, error) {
 	return &result, nil
 }
 
+//type QueryInfoResponse struct {
+//	Status int `json:"status"`
+//	Data   []struct {
+//		SeatNo       int    `json:"seatNo"`
+//		StartStation string `json:"startStation"`
+//		DestStation  string `json:"destStation"`
+//	} `json:"data"`
+//}
+
 type QueryInfoResponse struct {
-	Status int `json:"status"`
-	Data   []struct {
-		SeatNo       int    `json:"seatNo"`
-		StartStation string `json:"startStation"`
-		DestStation  string `json:"destStation"`
-	} `json:"data"`
+	Status int           `json:"status"`
+	Msg    string        `json:"msg"`
+	Data   []interface{} `json:"data"`
 }
 
 func (s *SvcImpl) QueryInfo(tripInfo TripInfo) (*QueryInfoResponse, error) {
@@ -287,7 +318,16 @@ func (s *SvcImpl) QueryInfoInParallel(tripInfo TripInfo) (*QueryInfoInParallelTr
 	return &result, nil
 }
 
-func (s *SvcImpl) GetTripAllDetailInfo(tripAllDetailInfo TripAllDetailInfo) (*TripResponse, error) {
+type GetTripAllDetailInfoResponse struct {
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   struct {
+		TripResponse interface{} `json:"tripResponse"`
+		Trip         interface{} `json:"trip"`
+	} `json:"data"`
+}
+
+func (s *SvcImpl) GetTripAllDetailInfo(tripAllDetailInfo TripAllDetailInfo) (*GetTripAllDetailInfoResponse, error) {
 	url := fmt.Sprintf("%s/api/v1/travelservice/trip_detail", s.BaseUrl)
 	resp, err := s.cli.SendRequest("POST", url, tripAllDetailInfo)
 	if err != nil {
@@ -300,7 +340,7 @@ func (s *SvcImpl) GetTripAllDetailInfo(tripAllDetailInfo TripAllDetailInfo) (*Tr
 		return nil, err
 	}
 
-	var result TripResponse
+	var result GetTripAllDetailInfoResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
@@ -313,9 +353,53 @@ type QueryAllTravelInfo struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`
 	Data   []struct {
-		SeatNo       int    `json:"seatNo"`
-		StartStation string `json:"startStation"`
-		DestStation  string `json:"destStation"`
+		Id     string `json:"id"`
+		TripId struct {
+			Type   *string `json:"type"`
+			Number string  `json:"number"`
+		} `json:"tripId"`
+		TrainTypeName       string `json:"trainTypeName"`
+		RouteId             string `json:"routeId"`
+		StartStationName    string `json:"startStationName"`
+		StationsName        string `json:"stationsName"`
+		TerminalStationName string `json:"terminalStationName"`
+		StartTime           string `json:"startTime"`
+		EndTime             string `json:"endTime"`
+	} `json:"data"`
+}
+
+type AdminQueryAllTravelInfo struct {
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   []struct {
+		Trip struct {
+			Id     string `json:"id"`
+			TripId struct {
+				Type   *string `json:"type"`
+				Number string  `json:"number"`
+			} `json:"tripId"`
+			TrainTypeName       string `json:"trainTypeName"`
+			RouteId             string `json:"routeId"`
+			StartStationName    string `json:"startStationName"`
+			StationsName        string `json:"stationsName"`
+			TerminalStationName string `json:"terminalStationName"`
+			StartTime           string `json:"startTime"`
+			EndTime             string `json:"endTime"`
+		} `json:"trip"`
+		TrainType *struct {
+			Id           string `json:"id"`
+			Name         string `json:"name"`
+			EconomyClass int    `json:"economyClass"`
+			ConfortClass int    `json:"confortClass"`
+			AverageSpeed int    `json:"averageSpeed"`
+		} `json:"trainType"`
+		Route struct {
+			Id           string      `json:"id"`
+			Stations     interface{} `json:"stations"`
+			Distances    interface{} `json:"distances"`
+			StartStation interface{} `json:"startStation"`
+			EndStation   interface{} `json:"endStation"`
+		} `json:"route"`
 	} `json:"data"`
 }
 
@@ -341,7 +425,7 @@ func (s *SvcImpl) QueryAll() (*QueryAllTravelInfo, error) {
 	return &result, nil
 }
 
-func (s *SvcImpl) AdminQueryAll() (*QueryAllTravelInfo, error) {
+func (s *SvcImpl) AdminQueryAll() (*AdminQueryAllTravelInfo, error) {
 	url := fmt.Sprintf("%s/api/v1/travelservice/admin_trip", s.BaseUrl)
 	resp, err := s.cli.SendRequest("GET", url, nil)
 	if err != nil {
@@ -354,7 +438,7 @@ func (s *SvcImpl) AdminQueryAll() (*QueryAllTravelInfo, error) {
 		return nil, err
 	}
 
-	var result QueryAllTravelInfo
+	var result AdminQueryAllTravelInfo
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err

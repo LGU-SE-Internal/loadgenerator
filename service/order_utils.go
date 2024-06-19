@@ -130,7 +130,7 @@ type OrderResp struct {
 type DataStringResp struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`
-	Data   string `json:"data"`
+	Data   Order  `json:"data"`
 }
 
 type GetOrderPriceResp struct {

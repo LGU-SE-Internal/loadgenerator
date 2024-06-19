@@ -53,12 +53,13 @@ func (s *SvcImpl) ReqUpdateOrder(input *Order) (*OrderResp, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
-	var result OrderResp
 
+	var result OrderResp
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
@@ -66,17 +67,25 @@ func (s *SvcImpl) ReqUpdateOrder(input *Order) (*OrderResp, error) {
 	return &result, nil
 }
 
-func (s *SvcImpl) ReqDeleteOrder(orderId string, trainNumber string) (*OrderResp, error) {
+type ReqDeleteOrderResponse struct {
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   Order  `json:"data"`
+}
+
+func (s *SvcImpl) ReqDeleteOrder(orderId string, trainNumber string) (*ReqDeleteOrderResponse, error) {
 	resp, err := s.cli.SendRequest("DELETE", s.BaseUrl+"/api/v1/adminorderservice/adminorder/"+orderId+"/"+trainNumber, nil)
 	if err != nil {
 		return nil, err
 	}
 	body, err := io.ReadAll(resp.Body)
+
 	if err != nil {
 		return nil, err
 	}
-	var result OrderResp
 
+	var result ReqDeleteOrderResponse
+	//fmt.Println(result.Data.TrainNumber)
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err

@@ -23,7 +23,7 @@ func TestBasicServiceFullIntegration(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	t.Log(trainTypes)
+	t.Logf("trainTypes returns: %v", trainTypes)
 
 	var routeSvc RouteService = cli
 	MockedID := faker.UUIDHyphenated()

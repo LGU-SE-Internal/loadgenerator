@@ -19,7 +19,7 @@ func TestStationService_FullIntegration(t *testing.T) {
 
 	//Mock
 	MockedID := faker.UUIDHyphenated()
-	MockedCityName := faker.Name()
+	MockedCityName := faker.GetRealAddress().City
 	input := &Station{
 		ID: MockedID,
 		//Name:     "Shenzhen Bei",
@@ -84,7 +84,11 @@ func TestStationService_FullIntegration(t *testing.T) {
 	}
 
 	// Test Query By name
-	stationName := "beijing"
+	// Get name by Query
+	var stationName string
+	if len(resp.Data) > 0 {
+		stationName = resp.Data[0].Name
+	}
 	resp4, err4 := cli.QueryStationIdByName(stationName)
 	if err4 != nil {
 		t.Errorf("Request failed, err4 %s", err4)
@@ -92,6 +96,7 @@ func TestStationService_FullIntegration(t *testing.T) {
 	if resp4.Status != 1 {
 		t.Errorf("resp4.Status != 1")
 	}
+	t.Logf("Query By name response: %v", resp4)
 
 	// Test Query by names
 	stationNames := []string{"suzhou", "shijiazhuang"}
