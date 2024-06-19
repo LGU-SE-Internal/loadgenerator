@@ -25,7 +25,7 @@ type TrainType struct {
 // TrainService defines the methods that the service should implement
 type TrainService interface {
 	Create(trainType *TrainType) (*DeleteStationResponse, error)
-	Retrieve(id string) (*TrainRetrieveTrainType, error)
+	Retrieve(id string) (*TrainServiceRetrieveTrainType, error)
 	RetrieveByName(name string) (*TrainRetrieveByNameType, error)
 	RetrieveByNames(names []string) (*TrainRetrieveByNamesType, error)
 	Update(trainType *TrainType) (*TrainUpdateResponse, error)

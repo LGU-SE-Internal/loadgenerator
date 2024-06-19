@@ -18,12 +18,12 @@ func TestBasicServiceFullIntegration(t *testing.T) {
 		t.Fatal("stations length should be greater than 2")
 	}
 
-	var trainSvc TrainService
+	var trainSvc TrainService = cli
 	trainTypes, err := trainSvc.Query()
 	if err != nil {
 		t.Error(err)
 	}
-	t.Log(trainTypes)
+	t.Logf("trainTypes returns: %v", trainTypes)
 
 	var routeSvc RouteService = cli
 	MockedID := faker.UUIDHyphenated()

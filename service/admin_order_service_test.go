@@ -100,11 +100,21 @@ func TestSvcImpl_End2End(t *testing.T) {
 		TravelDate:             faker.Date(),
 		TravelTime:             faker.TimeString(),
 	}
-	AddResp, _ := cli.ReqAddOrder(&newOrder)
+	AddResp, err := cli.ReqAddOrder(&newOrder)
+	if err != nil {
+		t.Error(err)
+	}
 	fmt.Println(AddResp.Msg)
 	oldOrder := AddResp.Data
-	UpdateResp, _ := cli.ReqUpdateOrder(&oldOrder)
+	UpdateResp, err := cli.ReqUpdateOrder(&oldOrder)
+	if err != nil {
+		t.Error(err)
+	}
 	fmt.Println(UpdateResp.Msg)
-	DeleteResp, _ := cli.ReqDeleteOrder(oldOrder.Id, oldOrder.TrainNumber)
+	DeleteResp, err := cli.ReqDeleteOrder(oldOrder.Id, oldOrder.TrainNumber)
+	if err != nil {
+		t.Error(err)
+	}
+	fmt.Println(DeleteResp.Data.TrainNumber)
 	fmt.Println(DeleteResp.Msg)
 }

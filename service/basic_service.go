@@ -10,6 +10,7 @@ type BasicService interface {
 	QueryForTravel(info *Travel) (*QueryForTravelResponse, error)
 	QueryForTravels(infos []*Travel) (*QueryForTravelsResponse, error)
 	QueryForStationId(stationName string) (*QueryForStationIdResponse, error)
+	QueryTrainService() (*TrainResponseType, error)
 }
 type Type struct {
 	//G("G", 1),
@@ -98,6 +99,28 @@ func (s *SvcImpl) QueryForTravel(info *Travel) (*QueryForTravelResponse, error) 
 	}
 
 	var result QueryForTravelResponse
+	err = json.Unmarshal(body, &result)
+	if err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+}
+
+func (s *SvcImpl) QueryTrainService() (*TrainResponseType, error) {
+	url := fmt.Sprintf("%s/api/v1/trainservice/trains", s.BaseUrl)
+	resp, err := s.cli.SendRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var result TrainResponseType
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
