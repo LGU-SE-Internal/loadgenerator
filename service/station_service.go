@@ -10,7 +10,7 @@ type StationService interface {
 	QueryStations() (*DeleteStationResponse, error)
 	CreateStation(input *Station) (*StationCreateResponse, error)
 	UpdateStation(input *Station) (*StationUpdateResponse, error)
-	DeleteStation(stationId string) (*DeleteStationResponse, error)
+	DeleteStation(stationId string) (*deleteStationResponse, error)
 	QueryStationIdByName(stationName string) (*StationQueryIdByNameResponse, error)
 	QueryStationIdsByNames(stationNameList []string) (*QueryStationIdsByNamesResponse, error)
 	QueryStationNameById(stationId string) (*QueryStationNameByIdResponse, error)
@@ -26,6 +26,16 @@ type DeleteStationResponse struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`
 	Data   []struct {
+		Id       string `json:"id"`
+		Name     string `json:"name"`
+		StayTime int    `json:"stayTime"`
+	} `json:"data"`
+}
+
+type deleteStationResponse struct {
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   struct {
 		Id       string `json:"id"`
 		Name     string `json:"name"`
 		StayTime int    `json:"stayTime"`
@@ -132,17 +142,18 @@ func (s *SvcImpl) UpdateStation(input *Station) (*StationUpdateResponse, error) 
 	return &result, nil
 }
 
-func (s *SvcImpl) DeleteStation(stationId string) (*DeleteStationResponse, error) {
+func (s *SvcImpl) DeleteStation(stationId string) (*deleteStationResponse, error) {
 	resp, err := s.cli.SendRequest("DELETE", s.BaseUrl+fmt.Sprintf("/api/v1/stationservice/stations/%s", stationId), nil)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
+
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
-	var result DeleteStationResponse
+	var result deleteStationResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err

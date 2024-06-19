@@ -161,7 +161,13 @@ func (s *SvcImpl) DeleteAssuranceByID(assuranceID string) (*AssuranceDeleteRespo
 	return &result, nil
 }
 
-func (s *SvcImpl) DeleteAssuranceByOrderID(orderID string) (*AssuranceResponse, error) {
+type DeleteAssuranceByOrderIDResponse struct {
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   string `json:"data"`
+}
+
+func (s *SvcImpl) DeleteAssuranceByOrderID(orderID string) (*DeleteAssuranceByOrderIDResponse, error) {
 	url := fmt.Sprintf("%s/api/v1/assuranceservice/assurances/orderid/%s", s.BaseUrl, orderID)
 	resp, err := s.cli.SendRequest("DELETE", url, nil)
 	if err != nil {
@@ -174,7 +180,7 @@ func (s *SvcImpl) DeleteAssuranceByOrderID(orderID string) (*AssuranceResponse, 
 		return nil, err
 	}
 
-	var result AssuranceResponse
+	var result DeleteAssuranceByOrderIDResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err

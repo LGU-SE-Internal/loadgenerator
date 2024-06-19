@@ -25,7 +25,7 @@ type TrainType struct {
 // TrainService defines the methods that the service should implement
 type TrainService interface {
 	Create(trainType *TrainType) (*DeleteStationResponse, error)
-	Retrieve(id string) (*TrainRetrieveTrainType, error)
+	Retrieve(id string) (*TrainServiceRetrieveTrainType, error)
 	RetrieveByName(name string) (*TrainRetrieveByNameType, error)
 	RetrieveByNames(names []string) (*TrainRetrieveByNamesType, error)
 	Update(trainType *TrainType) (*TrainUpdateResponse, error)
@@ -67,7 +67,13 @@ type TrainRetrieveTrainType struct {
 	} `json:"data"`
 }
 
-func (s *SvcImpl) Retrieve(id string) (*TrainRetrieveTrainType, error) {
+type TrainServiceRetrieveTrainType struct {
+	Status int         `json:"status"`
+	Msg    string      `json:"msg"`
+	Data   interface{} `json:"data"`
+}
+
+func (s *SvcImpl) Retrieve(id string) (*TrainServiceRetrieveTrainType, error) {
 	url := fmt.Sprintf("%s/api/v1/trainservice/trains/%s", s.BaseUrl, id)
 	resp, err := s.cli.SendRequest("GET", url, nil)
 	if err != nil {
@@ -80,7 +86,7 @@ func (s *SvcImpl) Retrieve(id string) (*TrainRetrieveTrainType, error) {
 		return nil, err
 	}
 
-	var result TrainRetrieveTrainType
+	var result TrainServiceRetrieveTrainType
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
