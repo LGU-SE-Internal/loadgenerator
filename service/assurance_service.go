@@ -7,14 +7,14 @@ import (
 )
 
 type AssuranceService interface {
-	GetAllAssurances() ([]AssuranceInfo, error)
-	GetAllAssuranceTypes() ([]AssuranceType, error)
-	DeleteAssuranceByID(assuranceID string) (*AssuranceResponse, error)
-	DeleteAssuranceByOrderID(orderID string) (*AssuranceResponse, error)
-	ModifyAssurance(assuranceID, orderID string, typeIndex int) (*AssuranceResponse, error)
-	CreateNewAssurance(typeIndex int, orderID string) (*AssuranceResponse, error)
-	GetAssuranceByID(assuranceID string) (*AssuranceInfo, error)
-	FindAssuranceByOrderID(orderID string) ([]AssuranceInfo, error)
+	GetAllAssurances() (*GetAllAssuranceResponse, error)
+	GetAllAssuranceTypes() (*GetallAssuranceType, error)
+	DeleteAssuranceByID(assuranceID string) (*AssuranceDeleteResponse, error)
+	DeleteAssuranceByOrderID(orderID string) (*DeleteAssuranceByOrderIDResponse, error)
+	ModifyAssurance(assuranceID string, orderID string, typeIndex int) (*Modify_Response, error)
+	CreateNewAssurance(typeIndex int, orderID string) (*createAssuranceResponse, error)
+	GetAssuranceByID(assuranceID string) (*GetAssuranceByIDeInfo, error)
+	FindAssuranceByOrderID(orderId string) (*GetAssuranceByIDeInfo, error)
 }
 
 type AssuranceInfo struct {

@@ -55,8 +55,8 @@ type TripResponse struct {
 
 // TravelService defines the methods that the service should implement
 type TravelService interface {
-	GetTrainTypeByTripId(tripId string) (*TrainType, error)
-	GetRouteByTripId(tripId string) (*Route, error)
+	GetTrainTypeByTripId(tripId string) (*GetTrainTypeByTripIdResponse, error)
+	GetRouteByTripId(tripId string) (*GetRouteByTripIdResponse, error)
 	GetTripsByRouteId(routeIds []string) (*GetTripsByRouteIdResponse, error)
 	CreateTrip(travelInfo *TravelInfo) (*TripResponse, error)
 	RetrieveTravel(tripId string) (*TravelInfo, error)
@@ -64,9 +64,9 @@ type TravelService interface {
 	DeleteTrip(tripId string) (*TripResponse, error)
 	QueryInfo(tripInfo TripInfo) (*QueryInfoResponse, error)
 	QueryInfoInParallel(tripInfo TripInfo) (*QueryInfoInParallelTripResponse, error)
-	GetTripAllDetailInfo(tripAllDetailInfo TripAllDetailInfo) (*TripResponse, error)
+	GetTripAllDetailInfo(tripAllDetailInfo TripAllDetailInfo) (*GetTripAllDetailInfoResponse, error)
 	QueryAll() (*QueryAllTravelInfo, error)
-	AdminQueryAll() (*QueryAllTravelInfo, error)
+	AdminQueryAll() (*AdminQueryAllTravelInfo, error)
 }
 
 type GetTrainTypeByTripIdResponse struct {

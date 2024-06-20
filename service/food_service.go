@@ -5,6 +5,16 @@ import (
 	"io"
 )
 
+type FoodService interface {
+	FindAllFoodOrder() (*FindAllFoodOrder, error)
+	CreateFoodOrder(foodOrder *FoodOrder) (*CreateFoodOrderResp, error)
+	CreateFoodOrdersInBatch(foodOrders []FoodOrder) (*CreateFoodOrdersInBatch, error)
+	UpdateFoodOrder(foodOrder *FoodOrder) (*FoodOrder, error)
+	DeleteFoodOrder(orderID string) (*DeleteFoodOrderResp, error)
+	FindByOrderId(orderID string) (*FindByOrderIdResponse, error)
+	GetAllFood(date, startStation, endStation, tripID string) (*GetAllFoodResponse, error)
+}
+
 // FoodOrder represents the food order structure
 type FoodOrder struct {
 	ID          string  `json:"id"`
@@ -40,13 +50,13 @@ type FindAllFoodOrder struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`
 	Data   []struct {
-		Id          string      `json:"id"`
-		OrderId     string      `json:"orderId"`
-		FoodType    int         `json:"foodType"`
-		StationName interface{} `json:"stationName"`
-		StoreName   interface{} `json:"storeName"`
-		FoodName    string      `json:"foodName"`
-		Price       float64     `json:"price"`
+		Id          string  `json:"id"`
+		OrderId     string  `json:"orderId"`
+		FoodType    int     `json:"foodType"`
+		StationName string  `json:"stationName"`
+		StoreName   string  `json:"storeName"`
+		FoodName    string  `json:"foodName"`
+		Price       float64 `json:"price"`
 	} `json:"data"`
 }
 
@@ -196,7 +206,7 @@ type GetAllFoodResponse struct {
 	Data   interface{} `json:"data"`
 }
 
-func (s *SvcImpl) GetAllFood(date, startStation, endStation, tripID string) (*GetAllFoodResponse, error) {
+func (s *SvcImpl) GetAllFood(date string, startStation string, endStation string, tripID string) (*GetAllFoodResponse, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+"/api/v1/foodservice/foods/"+date+"/"+startStation+"/"+endStation+"/"+tripID, nil)
 	if err != nil {
 		return nil, err
