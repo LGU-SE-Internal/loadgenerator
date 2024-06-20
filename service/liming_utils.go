@@ -17,19 +17,46 @@ type OrderVO struct {
 }
 
 type Food struct {
-	FoodName string `json:"foodName"`
-	Price    int    `json:"price"`
+	FoodName string  `json:"foodName"`
+	Price    float64 `json:"price"`
 }
 
 type FoodDeliveryOrder struct {
-	CreatedTime        string `json:"createdTime"`
-	DeliveryFee        int    `json:"deliveryFee"`
-	DeliveryTime       string `json:"deliveryTime"`
-	FoodList           []Food `json:"foodList"`
-	Id                 string `json:"id"`
-	SeatNo             int    `json:"seatNo"`
-	StationFoodStoreId string `json:"stationFoodStoreId"`
-	TripId             string `json:"tripId"`
+	CreatedTime        string  `json:"createdTime"`
+	DeliveryFee        float64 `json:"deliveryFee"`
+	DeliveryTime       string  `json:"deliveryTime"`
+	FoodList           []Food  `json:"foodList"`
+	Id                 string  `json:"id"`
+	SeatNo             int     `json:"seatNo"`
+	StationFoodStoreId string  `json:"stationFoodStoreId"`
+	TripId             string  `json:"tripId"`
+}
+
+type FoodDeliveryOrderResponse struct {
+	Status int               `json:"status"`
+	Msg    string            `json:"msg"`
+	Data   FoodDeliveryOrder `json:"data"`
+}
+
+type FoodDeliveryOrderArrResponse struct {
+	Status int                 `json:"status"`
+	Msg    string              `json:"msg"`
+	Data   []FoodDeliveryOrder `json:"data"`
+}
+
+type SeatInfo struct {
+	OrderId string `json:"orderId"`
+	SeatNo  int    `json:"seatNo"`
+}
+
+type TripOrderInfo struct {
+	OrderId string `json:"orderId"`
+	TripId  string `json:"tripId"`
+}
+
+type DeliveryInfo struct {
+	DeliveryTime string `json:"deliveryTime"`
+	OrderId      string `json:"orderId"`
 }
 
 // init seeds the random number generator.
