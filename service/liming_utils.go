@@ -59,6 +59,25 @@ type DeliveryInfo struct {
 	OrderId      string `json:"orderId"`
 }
 
+type Payment struct {
+	Id      string `json:"id"`
+	OrderId string `json:"orderId"`
+	Price   string `json:"price"`
+	UserId  string `json:"userId"`
+}
+
+type PaymentResponse struct {
+	Status int     `json:"status"`
+	Msg    string  `json:"msg"`
+	Data   Payment `json:"data"`
+}
+
+type PaymentArrResponse struct {
+	Status int       `json:"status"`
+	Msg    string    `json:"msg"`
+	Data   []Payment `json:"data"`
+}
+
 // init seeds the random number generator.
 func init() {
 	rand.Seed(time.Now().UnixNano())
