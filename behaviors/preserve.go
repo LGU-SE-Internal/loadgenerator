@@ -960,12 +960,11 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		IsWithin:        MockedIsWithin,
 	}
 
-	preserve, err := preserveSvc.Preserve(&orderTicketsInfo)
+	_, err := preserveSvc.Preserve(&orderTicketsInfo)
 	if err != nil {
 		fmt.Println("error occurs: %v", err)
 		return
 	}
-	fmt.Println("preserve response: %v", preserve)
 	time.Sleep(2 * time.Second)
 }
 

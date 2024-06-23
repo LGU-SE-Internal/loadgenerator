@@ -5,6 +5,7 @@ import (
 	"github.com/Lincyaw/loadgenerator/httpclient"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
+	"os"
 	"sort"
 	"time"
 )
@@ -65,6 +66,13 @@ func (s *SvcImpl) ShowStats() {
 		panic(err)
 	}
 }
+
+func (s *SvcImpl) CleanUp() {
+	stats := httpclient.GenerateMarkdownTable(s.cli.GetRequestStats())
+	fmt.Println(stats)
+	os.WriteFile("data.md", []byte(stats), 0644)
+}
+
 func NewSvcClients() *SvcImpl {
 	cli := httpclient.NewCustomClient()
 	cli.AddHeader("Proxy-Connection", "keep-alive")

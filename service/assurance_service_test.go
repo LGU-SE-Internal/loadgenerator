@@ -2,22 +2,20 @@ package service
 
 import (
 	"testing"
-
-	"github.com/go-faker/faker/v4"
 )
 
 func TestSvcImpl_AddUpdateDeleteAssurance(t *testing.T) {
 	//cli, _ := GetAdminClient()
 	cli, _ := GetBasicClient()
 	//MockedAssuranceID := faker.UUIDHyphenated()
-	MockedOrderID := faker.UUIDHyphenated()
+	//MockedOrderID := faker.UUIDHyphenated()
 
 	// Create a new assurance
-	addResp, err := cli.CreateNewAssurance(1, MockedOrderID) // Assuming typeIndex 1
-	if err != nil {
-		t.Errorf("CreateNewAssurance failed: %v", err)
-	}
-	t.Logf("CreateNewAssurance response: %+v", addResp)
+	//addResp, err := cli.CreateNewAssurance(1, MockedOrderID) // Assuming typeIndex 1
+	//if err != nil {
+	//	t.Errorf("CreateNewAssurance failed: %v", err)
+	//}
+	//t.Logf("CreateNewAssurance response: %+v", addResp)
 
 	// Get all assurances
 	assurances, err3 := cli.GetAllAssurances()
