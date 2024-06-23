@@ -3,7 +3,10 @@ package behaviors
 import (
 	"github.com/Lincyaw/loadgenerator/service"
 	"math/rand"
+	"os"
+	"os/signal"
 	"sync"
+	"syscall"
 	"time"
 )
 
@@ -87,5 +90,18 @@ func (l *LoadGenerator) Start(conf ...func(*Config)) {
 		}()
 	}
 
-	cli.ShowStats()
+	go cli.ShowStats()
+
+	sigs := make(chan os.Signal, 1)
+	done := make(chan bool, 1)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+	go func() {
+		<-sigs
+
+		cli.CleanUp()
+
+		done <- true
+	}()
+
+	<-done
 }

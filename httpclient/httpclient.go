@@ -3,9 +3,11 @@ package httpclient
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"math/rand"
 	"net/http"
+	"strings"
 	"sync"
 )
 
@@ -161,4 +163,21 @@ func (c *HttpClient) GetRequestStats() map[RequestStatsKey]RequestStats {
 		statsCopy[key] = newv
 	}
 	return statsCopy
+}
+func GenerateMarkdownTable(data map[RequestStatsKey]RequestStats) string {
+	var sb strings.Builder
+
+	// 表头
+	sb.WriteString("| URL | Method | Success | Failed | Request Body | Response Body |\n")
+	sb.WriteString("| --- | ------ | ------- | ------ | ------------ | ------------- |\n")
+
+	// 遍历 map 并生成表格行
+	for key, stats := range data {
+		requestBody := strings.Join(stats.RequestBody, "<br>")
+		responseBody := strings.Join(stats.ResponseBody, "<br>")
+		sb.WriteString(fmt.Sprintf("| %s | %s | %d | %d | %s | %s |\n",
+			key.URL, key.Method, stats.Success, stats.Failed, requestBody, responseBody))
+	}
+
+	return sb.String()
 }
