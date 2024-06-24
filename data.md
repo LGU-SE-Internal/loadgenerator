@@ -1,0 +1,6 @@
+| URL | Method | Success | Failed | Request Body | Response Body |
+| --- | ------ | ------- | ------ | ------------ | ------------- |
+| http://10.10.10.220:30440/api/v1/travelservice/trips | POST | 2 | 0 | {"loginId":"98bbe24b-7c4a-4b76-8be1-e9ed5c63690f","tripId":"G777","trainTypeName":"expedita","routeId":"659652d6-1d08-4dcf-bb63-122459013481","startStationName":"Shenzhen Bei","stationsName":"Shenzhen Bei, California Airport","terminalStationName":"California Airport","startTime":"1981-07-17","endTime":"1978-11-14"} | {"loginId":"98bbe24b-7c4a-4b76-8be1-e9ed5c63690f","tripId":"G777","trainTypeName":"expedita","routeId":"659652d6-1d08-4dcf-bb63-122459013481","startStationName":"Shenzhen Bei","stationsName":"Shenzhen Bei, California Airport","terminalStationName":"California Airport","startTime":"1981-07-17","endTime":"1978-11-14"} |
+| http://10.10.10.220:30440/api/v1/orderservice/order | GET | 0 | 10 | null<br>null<br>null | null<br>null<br>null |
+| http://10.10.10.220:30440/api/v1/contactservice/contacts | GET | 0 | 20 | null<br>null<br>null<br>null<br>null<br>null<br>null<br>null | null<br>null<br>null<br>null<br>null<br>null<br>null<br>null |
+| http://10.10.10.220:30440/api/v1/travelservice/trips | GET | 10 | 0 |  |  |

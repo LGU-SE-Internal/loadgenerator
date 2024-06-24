@@ -6,6 +6,22 @@ import (
 	"io"
 )
 
+// TravelService defines the methods that the service should implement
+type TravelService interface {
+	GetTrainTypeByTripId(tripId string) (*GetTrainTypeByTripIdResponse, error)
+	GetRouteByTripId(tripId string) (*GetRouteByTripIdResponse, error)
+	GetTripsByRouteId(routeIds []string) (*GetTripsByRouteIdResponse, error)
+	CreateTrip(travelInfo *TravelInfo) (*TripResponse, error)
+	RetrieveTravel(tripId string) (*TravelInfo, error)
+	UpdateTrip(travelInfo *TravelInfo) (*TripResponse, error)
+	DeleteTrip(tripId string) (*TripResponse, error)
+	QueryInfo(tripInfo TripInfo) (*QueryInfoResponse, error)
+	QueryInfoInParallel(tripInfo TripInfo) (*QueryInfoInParallelTripResponse, error)
+	GetTripAllDetailInfo(tripAllDetailInfo TripAllDetailInfo) (*GetTripAllDetailInfoResponse, error)
+	QueryAll() (*QueryAllTravelInfo, error)
+	AdminQueryAll() (*AdminQueryAllTravelInfo, error)
+}
+
 // TrainType represents the train type structure
 //type TrainType struct {
 //	ID   string `json:"id"`
@@ -51,22 +67,6 @@ type TripResponse struct {
 	Status int         `json:"status"`
 	Msg    string      `json:"msg"`
 	Data   interface{} `json:"data"`
-}
-
-// TravelService defines the methods that the service should implement
-type TravelService interface {
-	GetTrainTypeByTripId(tripId string) (*GetTrainTypeByTripIdResponse, error)
-	GetRouteByTripId(tripId string) (*GetRouteByTripIdResponse, error)
-	GetTripsByRouteId(routeIds []string) (*GetTripsByRouteIdResponse, error)
-	CreateTrip(travelInfo *TravelInfo) (*TripResponse, error)
-	RetrieveTravel(tripId string) (*TravelInfo, error)
-	UpdateTrip(travelInfo *TravelInfo) (*TripResponse, error)
-	DeleteTrip(tripId string) (*TripResponse, error)
-	QueryInfo(tripInfo TripInfo) (*QueryInfoResponse, error)
-	QueryInfoInParallel(tripInfo TripInfo) (*QueryInfoInParallelTripResponse, error)
-	GetTripAllDetailInfo(tripAllDetailInfo TripAllDetailInfo) (*GetTripAllDetailInfoResponse, error)
-	QueryAll() (*QueryAllTravelInfo, error)
-	AdminQueryAll() (*AdminQueryAllTravelInfo, error)
 }
 
 type GetTrainTypeByTripIdResponse struct {
