@@ -106,7 +106,7 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 
 	// Service
 	// Travel Service
-	//TripID
+	// TripID
 	r1 := rand.Float64()
 	if r1 < 0.95 {
 		QueryAllTravelInfo, err := travelSvc.QueryAll()
@@ -395,7 +395,8 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	}
 	time.Sleep(2 * time.Second)
 
-	// 5. Delete
+	// 5. Delete according to the ID
+	// Question: Is te ID here the UUID ID or the ID like 'G777'?
 	var MockedDeleteID string
 	r9 := rand.Float64()
 	if r9 < 0.95 {
@@ -411,46 +412,368 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 			MockedDeleteID = faker.UUIDHyphenated()
 		}
 	} else if r9 < 0.99 {
-		// Create itself
-		MockedDeleteID = faker.UUIDHyphenated()
+		// Create And Query
+		MockedLoginId = faker.UUIDHyphenated()
+		MockedTripID = GenerateTripId()
+		MockedTrainTypeName = GenerateTrainTypeName()
+		MockedRouteID = faker.UUIDHyphenated()
+		MockedStartStationName = faker.GetRealAddress().City
+		MockedTerminalStationName = faker.GetRealAddress().City
+		MockedStationsName = MockedStartStationName + ", " + MockedTerminalStationName
+		MockedStartTime = faker.Date()
+		MockedEndTime = faker.Date()
+		// Input
+		travelInfo := service.TravelInfo{
+			LoginID:             MockedLoginId,
+			TripID:              MockedTripID,
+			TrainTypeName:       MockedTrainTypeName,
+			RouteID:             MockedRouteID,
+			StartStationName:    MockedStartStationName,
+			StationsName:        MockedStationsName,
+			TerminalStationName: MockedTerminalStationName,
+			StartTime:           MockedStartTime,
+			EndTime:             MockedEndTime,
+		}
+		_, error := travelSvc.CreateTrip(&travelInfo)
+		if error != nil {
+			fmt.Println("Error occurs: %v", error)
+		}
+
+		QueryAllTravelInfo, err := travelSvc.QueryAll()
+		if err != nil {
+			fmt.Println("error occurs: %v", err)
+		}
+
+		if len(QueryAllTravelInfo.Data) > 0 {
+			MockedDeleteID = QueryAllTravelInfo.Data[len(QueryAllTravelInfo.Data)-1].Id
+		} else {
+			fmt.Println("The above CRATE Fails and the corresponding database is empty")
+			MockedDeleteID = faker.UUIDHyphenated()
+		}
 	} else {
 		MockedDeleteID = faker.UUIDHyphenated()
 	}
 
-	_, err4 := travelSvc.DeleteTrip()
-
+	_, err4 := travelSvc.DeleteTrip(MockedDeleteID)
+	if err4 != nil {
+		fmt.Println("error4 occurs: %v", err4)
+	}
 	time.Sleep(2 * time.Second)
 
-	// 6. Retrieve by ID
+	// 6. Retrieve by Trip ID & 7. GetTrainTypeByTripId & // 8. GetRouteByTripId
+	var GetTripID string
+	r10 := rand.Float64()
+	if r10 < 0.95 {
+		QueryAllTravelInfo, err := travelSvc.QueryAll()
+		if err != nil {
+			fmt.Println("error occurs: %v", err)
+		}
 
+		if len(QueryAllTravelInfo.Data) > 0 {
+			GetTripID = *(QueryAllTravelInfo.Data[0].TripId.Type) + QueryAllTravelInfo.Data[0].TripId.Number
+		} else {
+			fmt.Println("The corresponding database is empty")
+			GetTripID = GenerateTripId()
+		}
+	} else if r10 < 0.99 {
+		// Create And Query
+		MockedLoginId = faker.UUIDHyphenated()
+		MockedTripID = GenerateTripId()
+		MockedTrainTypeName = GenerateTrainTypeName()
+		MockedRouteID = faker.UUIDHyphenated()
+		MockedStartStationName = faker.GetRealAddress().City
+		MockedTerminalStationName = faker.GetRealAddress().City
+		MockedStationsName = MockedStartStationName + ", " + MockedTerminalStationName
+		MockedStartTime = faker.Date()
+		MockedEndTime = faker.Date()
+		// Input
+		travelInfo := service.TravelInfo{
+			LoginID:             MockedLoginId,
+			TripID:              MockedTripID,
+			TrainTypeName:       MockedTrainTypeName,
+			RouteID:             MockedRouteID,
+			StartStationName:    MockedStartStationName,
+			StationsName:        MockedStationsName,
+			TerminalStationName: MockedTerminalStationName,
+			StartTime:           MockedStartTime,
+			EndTime:             MockedEndTime,
+		}
+		_, error := travelSvc.CreateTrip(&travelInfo)
+		if error != nil {
+			fmt.Println("Error occurs: %v", error)
+		}
+
+		QueryAllTravelInfo, err := travelSvc.QueryAll()
+		if err != nil {
+			fmt.Println("error occurs: %v", err)
+		}
+
+		if len(QueryAllTravelInfo.Data) > 0 {
+			GetTripID = *(QueryAllTravelInfo.Data[len(QueryAllTravelInfo.Data)-1].TripId.Type) + QueryAllTravelInfo.Data[len(QueryAllTravelInfo.Data)-1].TripId.Number
+		} else {
+			fmt.Println("The above CRATE Fails and the corresponding database is empty")
+			GetTripID = GenerateTripId()
+		}
+	} else {
+		GetTripID = GenerateTripId()
+	}
+
+	// 6. Retrieve by Trip ID
+	_, err5 := travelSvc.RetrieveTravel(GetTripID)
+	if err5 != nil {
+		fmt.Println("error5 occurs: %v", err5)
+	}
 	time.Sleep(2 * time.Second)
 
 	// 7. GetTrainTypeByTripId
-
+	_, err6 := travelSvc.GetTrainTypeByTripId(GetTripID)
+	if err6 != nil {
+		fmt.Println("error6 occurs: %v", err6)
+	}
 	time.Sleep(2 * time.Second)
 
 	// 8. GetRouteByTripId
-
+	_, err7 := travelSvc.GetRouteByTripId(GetTripID)
+	if err7 != nil {
+		fmt.Println("error7 occurs: %v", err7)
+	}
 	time.Sleep(2 * time.Second)
 
 	// 9. GetTripsByRouteId
+	var GetRouteIDs []string
+	r11 := rand.Float64()
+	if r11 < 0.95 {
+		GetAllRouteInfo, err := routeSvc.QueryAllRoutes()
+		if err != nil {
+			fmt.Println("error occurs: %v", err)
+		}
 
+		if len(GetAllRouteInfo.Data) > 0 {
+			GetRouteIDs = GetAllRouteInfo.Data[0].Stations
+		} else {
+			fmt.Println("The corresponding database is empty")
+			GetRouteIDs = []string{faker.UUIDHyphenated(), faker.UUIDHyphenated(), faker.UUIDHyphenated()}
+		}
+	} else if r11 < 0.99 {
+		// Create And Query
+		MockedRouteInfoID := faker.UUIDHyphenated()
+		MockedRouteInfoStartStation := faker.GetRealAddress().City
+		MockedRouteInfoEndStation := faker.GetRealAddress().City
+		MockedStationList := MockedRouteInfoStartStation + ", " + faker.GetRealAddress().City + ", " + MockedRouteInfoEndStation
+		MockedDistanceList := string(rand.Intn(1000)) + ", " + string(rand.Intn(1000)) + ", " + string(rand.Intn(1000))
+		CreateAndModifyRouteInput := service.RouteInfo{
+			ID:           MockedRouteInfoID,
+			StartStation: MockedRouteInfoStartStation,
+			EndStation:   MockedRouteInfoEndStation,
+			StationList:  MockedStationList,
+			DistanceList: MockedDistanceList,
+		}
+
+		_, err := routeSvc.CreateAndModifyRoute(&CreateAndModifyRouteInput)
+		if err != nil {
+			fmt.Println("error occurs: %v", err)
+		}
+
+		GetAllRouteInfo, err1 := routeSvc.QueryAllRoutes()
+		if err1 != nil {
+			fmt.Println("error1 occurs: %v", err1)
+		}
+
+		if len(GetAllRouteInfo.Data) > 0 {
+			GetRouteIDs = GetAllRouteInfo.Data[len(GetAllRouteInfo.Data)-1].Stations
+		} else {
+			fmt.Println("The CRATE above fails and the corresponding database is empty")
+			GetRouteIDs = []string{faker.UUIDHyphenated(), faker.UUIDHyphenated(), faker.UUIDHyphenated()}
+		}
+	} else {
+		GetRouteIDs = []string{faker.UUIDHyphenated(), faker.UUIDHyphenated(), faker.UUIDHyphenated()}
+	}
+	_, err8 := travelSvc.GetTripsByRouteId(GetRouteIDs)
+	if err8 != nil {
+		fmt.Println("error8 occurs: %v", err8)
+	}
 	time.Sleep(2 * time.Second)
 
-	// 10. QueryInfo
+	// 10. QueryInfo & 11. QueryInfoInParallel
+	// Mock Input
+	// 10.1. StartPlace
+	// Service
+	// Route Service
+	var MockedStartPlace string
+	r12 := rand.Float64()
+	if r12 < 0.95 {
+		GetAllRouteInfo, err := routeSvc.QueryAllRoutes()
+		if err != nil {
+			fmt.Println("error occurs: %v", err)
+		}
 
+		if len(GetAllRouteInfo.Data) > 0 {
+			MockedStartPlace = GetAllRouteInfo.Data[0].StartStation
+		} else {
+			fmt.Println("The corresponding database is empty")
+			MockedStartPlace = faker.GetRealAddress().City
+		}
+	} else if r12 < 0.99 {
+		MockedRouteInfoID := faker.UUIDHyphenated()
+		MockedRouteInfoStartStation := faker.GetRealAddress().City
+		MockedRouteInfoEndStation := faker.GetRealAddress().City
+		MockedStationList := MockedRouteInfoStartStation + ", " + faker.GetRealAddress().City + ", " + MockedRouteInfoEndStation
+		MockedDistanceList := string(rand.Intn(1000)) + ", " + string(rand.Intn(1000)) + ", " + string(rand.Intn(1000))
+		CreateAndModifyRouteInput := service.RouteInfo{
+			ID:           MockedRouteInfoID,
+			StartStation: MockedRouteInfoStartStation,
+			EndStation:   MockedRouteInfoEndStation,
+			StationList:  MockedStationList,
+			DistanceList: MockedDistanceList,
+		}
+
+		_, err := routeSvc.CreateAndModifyRoute(&CreateAndModifyRouteInput)
+		if err != nil {
+			fmt.Println("error occurs: %v", err)
+		}
+
+		GetAllRouteInfo, err := routeSvc.QueryAllRoutes()
+		if err != nil {
+			fmt.Println("error occurs: %v", err)
+		}
+
+		MockedStartPlace = GetAllRouteInfo.Data[len(GetAllRouteInfo.Data)-1].StartStation
+	} else {
+		MockedStartPlace = faker.GetRealAddress().City
+	}
+
+	// 10.2. EndPlace
+	// Service
+	// Route Service
+	var MockedEndPlace string
+	r13 := rand.Float64()
+	if r13 < 0.95 {
+		GetAllRouteInfo, err := routeSvc.QueryAllRoutes()
+		if err != nil {
+			fmt.Println("error occurs: %v", err)
+		}
+
+		if len(GetAllRouteInfo.Data) > 0 {
+			MockedEndPlace = GetAllRouteInfo.Data[0].EndStation
+		} else {
+			fmt.Println("The corresponding database is empty")
+			MockedEndPlace = faker.GetRealAddress().City
+		}
+	} else if r13 < 0.99 {
+		MockedRouteInfoID := faker.UUIDHyphenated()
+		MockedRouteInfoStartStation := faker.GetRealAddress().City
+		MockedRouteInfoEndStation := faker.GetRealAddress().City
+		MockedStationList := MockedRouteInfoStartStation + ", " + faker.GetRealAddress().City + ", " + MockedRouteInfoEndStation
+		MockedDistanceList := string(rand.Intn(1000)) + ", " + string(rand.Intn(1000)) + ", " + string(rand.Intn(1000))
+		CreateAndModifyRouteInput := service.RouteInfo{
+			ID:           MockedRouteInfoID,
+			StartStation: MockedRouteInfoStartStation,
+			EndStation:   MockedRouteInfoEndStation,
+			StationList:  MockedStationList,
+			DistanceList: MockedDistanceList,
+		}
+
+		_, err := routeSvc.CreateAndModifyRoute(&CreateAndModifyRouteInput)
+		if err != nil {
+			fmt.Println("error occurs: %v", err)
+		}
+
+		GetAllRouteInfo, err := routeSvc.QueryAllRoutes()
+		if err != nil {
+			fmt.Println("error occurs: %v", err)
+		}
+
+		MockedEndPlace = GetAllRouteInfo.Data[len(GetAllRouteInfo.Data)-1].EndStation
+	} else {
+		MockedEndPlace = faker.GetRealAddress().City
+	}
+
+	// 10.3. DepartureTime
+	// Service
+	// Travel Service
+	var MockedDepartureTime string
+	r14 := rand.Float64()
+	if r14 < 0.95 {
+		QueryAllTravelInfo, err := travelSvc.QueryAll()
+		if err != nil {
+			fmt.Println("error occurs: %v", err)
+		}
+
+		if len(QueryAllTravelInfo.Data) > 0 {
+			MockedDepartureTime = QueryAllTravelInfo.Data[0].StartTime
+		} else {
+			fmt.Println("The corresponding database is empty")
+			MockedDepartureTime = getRandomTime()
+		}
+	} else if r14 < 0.99 {
+		// Create itself
+		MockedDepartureTime = getRandomTime()
+	} else {
+		MockedDepartureTime = getRandomTime()
+	}
+
+	// Input
+	MockedTripInfo := service.TripInfo{
+		StartPlace:    MockedStartPlace,
+		EndPlace:      MockedEndPlace,
+		DepartureTime: MockedDepartureTime,
+	}
+
+	// 10. QueryInfo
+	_, err9 := travelSvc.QueryInfo(MockedTripInfo)
+	if err9 != nil {
+		fmt.Println("error9 occurs: %v", err9)
+	}
 	time.Sleep(2 * time.Second)
 
 	// 11. QueryInfoInParallel
-
+	_, err10 := travelSvc.QueryInfoInParallel(MockedTripInfo)
+	if err10 != nil {
+		fmt.Println("error10 occurs: %v", err10)
+	}
 	time.Sleep(2 * time.Second)
 
 	// 12. GetTripAllDetailInfo
+	// Mock input
+	// Service
+	// Travel Service
+	// TripID
+	r15 := rand.Float64()
+	if r15 < 0.95 {
+		QueryAllTravelInfo, err := travelSvc.QueryAll()
+		if err != nil {
+			fmt.Println("error occurs: %v", err)
+		}
 
+		if len(QueryAllTravelInfo.Data) > 0 {
+			MockedTripID = *(QueryAllTravelInfo.Data[0].TripId.Type) + QueryAllTravelInfo.Data[0].TripId.Number
+		} else {
+			fmt.Println("The corresponding database is empty")
+			MockedTripID = GenerateTripId()
+		}
+	} else if r15 < 0.99 {
+		// Create itself
+		MockedTripID = GenerateTripId()
+	} else {
+		MockedTripID = GenerateTripId()
+	}
+
+	// input
+	MockedtripAllDetailInfo := service.TripAllDetailInfo{
+		TripId: MockedTripID,
+	}
+
+	_, err11 := travelSvc.GetTripAllDetailInfo(MockedtripAllDetailInfo)
+	if err11 != nil {
+		fmt.Println("error11 occurs: %v", err11)
+	}
 	time.Sleep(2 * time.Second)
 
 	// 13. AdminQueryAll
-
+	_, err12 := travelSvc.AdminQueryAll()
+	if err12 != nil {
+		fmt.Println("error12 occurs: %v", err12)
+	}
 	time.Sleep(2 * time.Second)
 }
 
@@ -501,6 +824,15 @@ func ListToString(stations []string) string {
 
 	result := builder.String()
 	return result
+}
+
+func StringToList(input string) []string {
+	// Split the input string by commas and trim any leading/trailing spaces from each element
+	parts := strings.Split(input, ",")
+	for i := range parts {
+		parts[i] = strings.TrimSpace(parts[i])
+	}
+	return parts
 }
 
 func getRandomTime() string {
