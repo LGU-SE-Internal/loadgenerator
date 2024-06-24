@@ -172,7 +172,7 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		MockedRouteInfoStartStation := faker.GetRealAddress().City
 		MockedRouteInfoEndStation := faker.GetRealAddress().City
 		MockedStationList := MockedRouteInfoStartStation + ", " + faker.GetRealAddress().City + ", " + MockedRouteInfoEndStation
-		MockedDistanceList := string(rand.Intn(1000)) + ", " + string(rand.Intn(1000)) + ", " + string(rand.Intn(1000))
+		MockedDistanceList := fmt.Sprintf("%d, %d, %d", rand.Intn(1000), rand.Intn(1000), rand.Intn(1000))
 		CreateAndModifyRouteInput := service.RouteInfo{
 			ID:           MockedRouteInfoID,
 			StartStation: MockedRouteInfoStartStation,
@@ -217,7 +217,7 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		MockedRouteInfoStartStation := faker.GetRealAddress().City
 		MockedRouteInfoEndStation := faker.GetRealAddress().City
 		MockedStationList := MockedRouteInfoStartStation + ", " + faker.GetRealAddress().City + ", " + MockedRouteInfoEndStation
-		MockedDistanceList := string(rand.Intn(1000)) + ", " + string(rand.Intn(1000)) + ", " + string(rand.Intn(1000))
+		MockedDistanceList := fmt.Sprintf("%d, %d, %d", rand.Intn(1000), rand.Intn(1000), rand.Intn(1000))
 		CreateAndModifyRouteInput := service.RouteInfo{
 			ID:           MockedRouteInfoID,
 			StartStation: MockedRouteInfoStartStation,
@@ -262,7 +262,7 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		MockedRouteInfoStartStation := faker.GetRealAddress().City
 		MockedRouteInfoEndStation := faker.GetRealAddress().City
 		MockedStationList := MockedRouteInfoStartStation + ", " + faker.GetRealAddress().City + ", " + MockedRouteInfoEndStation
-		MockedDistanceList := string(rand.Intn(1000)) + ", " + string(rand.Intn(1000)) + ", " + string(rand.Intn(1000))
+		MockedDistanceList := fmt.Sprintf("%d, %d, %d", rand.Intn(1000), rand.Intn(1000), rand.Intn(1000))
 		CreateAndModifyRouteInput := service.RouteInfo{
 			ID:           MockedRouteInfoID,
 			StartStation: MockedRouteInfoStartStation,
@@ -307,7 +307,7 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		MockedRouteInfoStartStation := faker.GetRealAddress().City
 		MockedRouteInfoEndStation := faker.GetRealAddress().City
 		MockedStationList := MockedRouteInfoStartStation + ", " + faker.GetRealAddress().City + ", " + MockedRouteInfoEndStation
-		MockedDistanceList := string(rand.Intn(1000)) + ", " + string(rand.Intn(1000)) + ", " + string(rand.Intn(1000))
+		MockedDistanceList := fmt.Sprintf("%d, %d, %d", rand.Intn(1000), rand.Intn(1000), rand.Intn(1000))
 		CreateAndModifyRouteInput := service.RouteInfo{
 			ID:           MockedRouteInfoID,
 			StartStation: MockedRouteInfoStartStation,
@@ -618,7 +618,7 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		MockedRouteInfoStartStation := faker.GetRealAddress().City
 		MockedRouteInfoEndStation := faker.GetRealAddress().City
 		MockedStationList := MockedRouteInfoStartStation + ", " + faker.GetRealAddress().City + ", " + MockedRouteInfoEndStation
-		MockedDistanceList := string(rand.Intn(1000)) + ", " + string(rand.Intn(1000)) + ", " + string(rand.Intn(1000))
+		MockedDistanceList := fmt.Sprintf("%d, %d, %d", rand.Intn(1000), rand.Intn(1000), rand.Intn(1000))
 		CreateAndModifyRouteInput := service.RouteInfo{
 			ID:           MockedRouteInfoID,
 			StartStation: MockedRouteInfoStartStation,
@@ -664,7 +664,7 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		MockedRouteInfoStartStation := faker.GetRealAddress().City
 		MockedRouteInfoEndStation := faker.GetRealAddress().City
 		MockedStationList := MockedRouteInfoStartStation + ", " + faker.GetRealAddress().City + ", " + MockedRouteInfoEndStation
-		MockedDistanceList := string(rand.Intn(1000)) + ", " + string(rand.Intn(1000)) + ", " + string(rand.Intn(1000))
+		MockedDistanceList := fmt.Sprintf("%d, %d, %d", rand.Intn(1000), rand.Intn(1000), rand.Intn(1000))
 		CreateAndModifyRouteInput := service.RouteInfo{
 			ID:           MockedRouteInfoID,
 			StartStation: MockedRouteInfoStartStation,
