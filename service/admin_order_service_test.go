@@ -10,7 +10,10 @@ import (
 
 func TestSvcImpl_ReqGetAllOrders(t *testing.T) {
 	cli, _ := GetAdminClient()
-	GetResp, _ := cli.ReqGetAllOrders()
+	GetResp, err := cli.ReqGetAllOrders()
+	if err != nil {
+		t.Errorf("err reponse: %v", err)
+	}
 	fmt.Println(GetResp.Msg)
 }
 

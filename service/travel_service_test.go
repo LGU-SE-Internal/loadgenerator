@@ -86,7 +86,7 @@ func TestTravelService_FullIntegration(t *testing.T) {
 	// Test Delete
 	var deleteID string
 	if len(allTravelInfos.Data) > 0 {
-		deleteID = allTravelInfos.Data[len(allTravelInfos.Data)-1].TerminalStationName
+		deleteID = *(allTravelInfos.Data[len(allTravelInfos.Data)-1].TripId.Type) + allTravelInfos.Data[len(allTravelInfos.Data)-1].TripId.Number
 	} else {
 		t.Errorf("QueryAll returned empty data")
 	}
