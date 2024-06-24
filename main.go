@@ -12,6 +12,10 @@ func main() {
 			B:      &behaviors.PreserveBehavior{},
 			Weight: 100,
 		},
+		behaviors.BehaviorUnit{
+			B:      &behaviors.TravelBehavior{},
+			Weight: 100,
+		},
 	)
 	lg := &behaviors.LoadGenerator{}
 	lg.Start(behaviors.WithThread(10))
