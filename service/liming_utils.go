@@ -59,6 +59,68 @@ type DeliveryInfo struct {
 	OrderId      string `json:"orderId"`
 }
 
+type Payment struct {
+	Id      string `json:"id"`
+	OrderId string `json:"orderId"`
+	Price   string `json:"price"`
+	UserId  string `json:"userId"`
+}
+
+type PaymentResponse struct {
+	Status int     `json:"status"`
+	Msg    string  `json:"msg"`
+	Data   Payment `json:"data"`
+}
+
+type PaymentArrResponse struct {
+	Status int       `json:"status"`
+	Msg    string    `json:"msg"`
+	Data   []Payment `json:"data"`
+}
+
+type TripPayment struct {
+	TripId  string `json:"tripId"`
+	OrderId string `json:"orderId"`
+	Price   string `json:"price"`
+	UserId  string `json:"userId"`
+}
+
+type TripPaymentResponse struct {
+	Status int         `json:"status"`
+	Msg    string      `json:"msg"`
+	Data   TripPayment `json:"data"`
+}
+
+type TripPaymentArrResponse struct {
+	Status int           `json:"status"`
+	Msg    string        `json:"msg"`
+	Data   []TripPayment `json:"data"`
+}
+
+type AccountInfo struct {
+	Money  string `json:"money"`
+	UserId string `json:"userId"`
+}
+
+type AccountInfoArrResponse struct {
+	Status int           `json:"status"`
+	Msg    string        `json:"msg"`
+	Data   []AccountInfo `json:"data"`
+}
+
+type Money struct {
+	Id     string `json:"id"`
+	UserId string `json:"userId"`
+	Money  string `json:"money"`
+	Type   string `json:"type"`
+}
+
+type MoneyResponse struct {
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   Money  `json:"data"`
+}
+
 // init seeds the random number generator.
 func init() {
 	rand.Seed(time.Now().UnixNano())
