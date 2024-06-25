@@ -97,7 +97,7 @@ func (l *LoadGenerator) Start(conf ...func(*Config)) {
 		}()
 	}
 
-	go cli.ShowStats()
+	//go cli.ShowStats()
 
 	sigs := make(chan os.Signal, 1)
 	done := make(chan bool, 1)
