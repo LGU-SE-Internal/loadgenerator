@@ -2,8 +2,35 @@ package service
 
 import (
 	"github.com/go-faker/faker/v4"
+	"sync"
 	"testing"
 )
+
+func TestTravelServiceQueryAll(t *testing.T) {
+	var wg sync.WaitGroup
+	//numIterations := 100
+
+	for i := 0; i < 10; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+
+			cli, _ := GetAdminClient()
+			for {
+				// Query Test
+				_, err := cli.QueryAll()
+				if err != nil {
+					t.Errorf("Request failed, err %s", err)
+					return
+				}
+				// Process the response if needed
+			}
+		}()
+
+		wg.Wait()
+	}
+
+}
 
 func TestTravelService_FullIntegration(t *testing.T) {
 	cli, _ := GetAdminClient()
