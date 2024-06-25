@@ -5,6 +5,7 @@ import (
 	"github.com/Lincyaw/loadgenerator/service"
 	"github.com/go-faker/faker/v4"
 	"github.com/google/uuid"
+	"log"
 	"math/rand"
 	"strconv"
 	"time"
@@ -51,10 +52,10 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 	r0 := rand.Float64()
 	if r0 < 0.95 {
 		// DirectQuery_And_Order; Prob = 0.95
-		//fmt.Println("Selected: DirectQuery_And_Order")
+		//log.Fatalf("Selected: DirectQuery_And_Order")
 		GetAllContacts, err := accountSvc.GetAllContacts()
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		if len(GetAllContacts.Data) > 0 {
@@ -62,7 +63,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		}
 	} else if r0 < 0.99 {
 		// CreateAndQuery_And_Order; Prob = 0.04
-		//fmt.Println("Selected: CreateAndQuery_And_Order")
+		//log.Fatalf("Selected: CreateAndQuery_And_Order")
 		CreateContactsInput := service.AdminContacts{
 			ID:        uuid.NewString(),
 			AccountID: uuid.NewString(),
@@ -70,12 +71,12 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		}
 		CreateContacts, err := accountSvc.AddContact(&CreateContactsInput)
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 		MockedAccountID = CreateContacts.Data.AccountId
 	} else {
 		// Random_Create_And_Order; Prob = 0.01
-		//fmt.Println("Selected: Random_Create_And_Order")
+		//log.Fatalf("Selected: Random_Create_And_Order")
 		MockedAccountID = faker.UUIDHyphenated()
 	}
 
@@ -86,10 +87,10 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 	r1 := rand.Float64()
 	if r1 < 0.95 {
 		// DirectQuery_And_Order; Prob = 0.95
-		//fmt.Println("Selected: DirectQuery_And_Order")
+		//log.Fatalf("Selected: DirectQuery_And_Order")
 		GetAllContacts, err := contactsSvc.GetAllContacts()
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		if len(GetAllContacts.Data) > 0 {
@@ -97,7 +98,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		}
 	} else if r1 < 0.99 {
 		// CreateAndQuery_And_Order; Prob = 0.04
-		//fmt.Println("Selected: CreateAndQuery_And_Order")
+		//log.Fatalf("Selected: CreateAndQuery_And_Order")
 		CreateContactsInput := service.AdminContacts{
 			ID:        uuid.NewString(),
 			AccountID: uuid.NewString(),
@@ -105,12 +106,12 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		}
 		CreateContacts, err := contactsSvc.AddContact(&CreateContactsInput)
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 		MockedContactsID = CreateContacts.Data.Id
 	} else {
 		// Random_Create_And_Order; Prob = 0.01
-		//fmt.Println("Selected: Random_Create_And_Order")
+		//log.Fatalf("Selected: Random_Create_And_Order")
 		MockedContactsID = faker.UUIDHyphenated()
 	}
 
@@ -121,10 +122,10 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 	r2 := rand.Float64()
 	if r2 < 0.95 {
 		// DirectQuery_And_Order; Prob = 0.95
-		//fmt.Println("Selected: DirectQuery_And_Order")
+		//log.Fatalf("Selected: DirectQuery_And_Order")
 		GetAllTravel, err := travelSvc.QueryAll()
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		if len(GetAllTravel.Data) > 0 {
@@ -132,7 +133,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		}
 	} else if r2 < 0.99 {
 		// CreateAndQuery_And_Order; Prob = 0.04
-		//fmt.Println("Selected: CreateAndQuery_And_Order")
+		//log.Fatalf("Selected: CreateAndQuery_And_Order")
 		MockedLoginId := faker.UUIDHyphenated()
 		MockedTrainTypeName := faker.Word()
 		MockedRouteID := faker.UUIDHyphenated()
@@ -154,12 +155,12 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 
 		_, err := travelSvc.CreateTrip(&CreateTravelInput)
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		GetAllTravel, err := travelSvc.QueryAll()
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		if len(GetAllTravel.Data) > 0 {
@@ -167,7 +168,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		}
 	} else {
 		// Random_Create_And_Order; Prob = 0.01
-		//fmt.Println("Selected: Random_Create_And_Order")
+		//log.Fatalf("Selected: Random_Create_And_Order")
 		MockedTripID = faker.UUIDHyphenated()
 	}
 
@@ -178,10 +179,10 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 	r3 := rand.Float64()
 	if r3 < 0.95 {
 		// DirectQuery_And_Order; Prob = 0.95
-		//fmt.Println("Selected: DirectQuery_And_Order")
+		//log.Fatalf("Selected: DirectQuery_And_Order")
 		GetAllOrder, err := orderSvc.ReqFindAllOrder()
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		if len(GetAllOrder.Data) > 0 {
@@ -189,7 +190,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		}
 	} else if r3 < 0.99 {
 		// CreateAndQuery_And_Order; Prob = 0.04
-		//fmt.Println("Selected: CreateAndQuery_And_Order")
+		//log.Fatalf("Selected: CreateAndQuery_And_Order")
 		_, err := orderSvc.ReqCreateNewOrder(&service.Order{
 			AccountId:              uuid.NewString(),
 			BoughtDate:             faker.Date(),
@@ -211,12 +212,12 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		})
 
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		GetAllOrder, err := orderSvc.ReqFindAllOrder()
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		if len(GetAllOrder.Data) > 0 {
@@ -224,7 +225,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		}
 	} else {
 		// Random_Create_And_Order; Prob = 0.01
-		//fmt.Println("Selected: Random_Create_And_Order")
+		//log.Fatalf("Selected: Random_Create_And_Order")
 		MockedSeatType = rand.Intn(3)
 	}
 
@@ -244,7 +245,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 	if r5 < 0.95 {
 		GetAllOrder, err := orderSvc.ReqFindAllOrder()
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		if len(GetAllOrder.Data) > 0 {
@@ -272,12 +273,12 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		})
 
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		GetAllOrder, err := orderSvc.ReqFindAllOrder()
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		if len(GetAllOrder.Data) > 0 {
@@ -296,7 +297,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 	if r6 < 0.95 {
 		//GetAllTrip, err := tripSvc.QueryAll()
 		//if err != nil {
-		//	fmt.Println("error occurs: %v", err)
+		//	log.Fatalf("error occurs: %v", err)
 		//}
 		//
 		//if len(GetAllTrip.Data) > 0 {
@@ -304,7 +305,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		//}
 		GetAllOrder, err := orderSvc.ReqFindAllOrder()
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		if len(GetAllOrder.Data) > 0 {
@@ -332,12 +333,12 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		})
 
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		GetAllOrder, err := orderSvc.ReqFindAllOrder()
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		if len(GetAllOrder.Data) > 0 {
@@ -352,7 +353,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 	if r7 < 0.95 {
 		//GetAllTrip, err := tripSvc.QueryAll()
 		//if err != nil {
-		//	fmt.Println("error occurs: %v", err)
+		//	log.Fatalf("error occurs: %v", err)
 		//}
 		//
 		//if len(GetAllTrip.Data) > 0 {
@@ -360,7 +361,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		//}
 		GetAllOrder, err := orderSvc.ReqFindAllOrder()
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		if len(GetAllOrder.Data) > 0 {
@@ -388,12 +389,12 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		})
 
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		GetAllOrder, err := orderSvc.ReqFindAllOrder()
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		if len(GetAllOrder.Data) > 0 {
@@ -410,7 +411,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 	if r8 < 0.95 {
 		GetAllAssurance, err := assuranceSvc.GetAllAssurances()
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		if len(GetAllAssurance.Data) > 0 {
@@ -420,12 +421,12 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		MockedAssuranceOrderID := faker.UUIDHyphenated()
 		_, err := assuranceSvc.CreateNewAssurance(rand.Intn(1), MockedAssuranceOrderID)
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		GetAllAssurance, err := assuranceSvc.GetAllAssurances()
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		if len(GetAllAssurance.Data) > 0 {
@@ -442,7 +443,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 	if r9 < 0.95 {
 		GetAllFood, err := foodSvc.FindAllFoodOrder()
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		if len(GetAllFood.Data) > 0 {
@@ -474,12 +475,12 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		foodOrders := []service.FoodOrder{foodOrder, updateFoodOrder}
 		_, err := foodSvc.CreateFoodOrdersInBatch(foodOrders)
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		GetAllFood, err := foodSvc.FindAllFoodOrder()
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		if len(GetAllFood.Data) > 0 {
@@ -495,7 +496,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 	if r10 < 0.95 {
 		GetAllFood, err := foodSvc.FindAllFoodOrder()
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		if len(GetAllFood.Data) > 0 {
@@ -527,12 +528,12 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		foodOrders := []service.FoodOrder{foodOrder, updateFoodOrder}
 		_, err := foodSvc.CreateFoodOrdersInBatch(foodOrders)
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		GetAllFood, err := foodSvc.FindAllFoodOrder()
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		if len(GetAllFood.Data) > 0 {
@@ -548,7 +549,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 	if r11 < 0.95 {
 		GetAllFood, err := foodSvc.FindAllFoodOrder()
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		if len(GetAllFood.Data) > 0 {
@@ -580,12 +581,12 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		foodOrders := []service.FoodOrder{foodOrder, updateFoodOrder}
 		_, err := foodSvc.CreateFoodOrdersInBatch(foodOrders)
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		GetAllFood, err := foodSvc.FindAllFoodOrder()
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		if len(GetAllFood.Data) > 0 {
@@ -603,7 +604,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 	if r12 < 0.95 {
 		GetAllFood, err := foodSvc.FindAllFoodOrder()
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		if len(GetAllFood.Data) > 0 {
@@ -635,12 +636,12 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		foodOrders := []service.FoodOrder{foodOrder, updateFoodOrder}
 		_, err := foodSvc.CreateFoodOrdersInBatch(foodOrders)
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		GetAllFood, err := foodSvc.FindAllFoodOrder()
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		if len(GetAllFood.Data) > 0 {
@@ -656,7 +657,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 	if r13 < 0.95 {
 		GetAllFood, err := foodSvc.FindAllFoodOrder()
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		if len(GetAllFood.Data) > 0 {
@@ -688,12 +689,12 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		foodOrders := []service.FoodOrder{foodOrder, updateFoodOrder}
 		_, err := foodSvc.CreateFoodOrdersInBatch(foodOrders)
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		GetAllFood, err := foodSvc.FindAllFoodOrder()
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		if len(GetAllFood.Data) > 0 {
@@ -710,7 +711,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 	if r14 < 0.95 {
 		GetAllConsignByAccountId, err := consignSvc.QueryByAccountId("3c7ca4eb-4eb2-407a-b870-7fb228d87c5c")
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 		if len(GetAllConsignByAccountId.Data) > 0 {
 			MockedHandleDate = GetAllConsignByAccountId.Data[0].HandleDate
@@ -744,12 +745,12 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		}
 		_, err := consignSvc.InsertConsignRecord(insertReq)
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		GetAllConsignByAccountId, err := consignSvc.QueryByAccountId("3c7ca4eb-4eb2-407a-b870-7fb228d87c5c")
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		if len(GetAllConsignByAccountId.Data) > 0 {
@@ -765,7 +766,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 	if r15 < 0.95 {
 		GetAllConsignByAccountId, err := consignSvc.QueryByAccountId("3c7ca4eb-4eb2-407a-b870-7fb228d87c5c")
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 		if len(GetAllConsignByAccountId.Data) > 0 {
 			MockedConsigneeName = GetAllConsignByAccountId.Data[0].Consignee
@@ -799,12 +800,12 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		}
 		_, err := consignSvc.InsertConsignRecord(insertReq)
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		GetAllConsignByAccountId, err := consignSvc.QueryByAccountId("3c7ca4eb-4eb2-407a-b870-7fb228d87c5c")
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		if len(GetAllConsignByAccountId.Data) > 0 {
@@ -820,7 +821,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 	if r16 < 0.95 {
 		GetAllConsignByAccountId, err := consignSvc.QueryByAccountId("3c7ca4eb-4eb2-407a-b870-7fb228d87c5c")
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 		if len(GetAllConsignByAccountId.Data) > 0 {
 			MockedConsigneePhone = GetAllConsignByAccountId.Data[0].Phone
@@ -854,12 +855,12 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		}
 		_, err := consignSvc.InsertConsignRecord(insertReq)
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		GetAllConsignByAccountId, err := consignSvc.QueryByAccountId("3c7ca4eb-4eb2-407a-b870-7fb228d87c5c")
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		if len(GetAllConsignByAccountId.Data) > 0 {
@@ -875,7 +876,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 	if r17 < 0.95 {
 		GetAllConsignByAccountId, err := consignSvc.QueryByAccountId("3c7ca4eb-4eb2-407a-b870-7fb228d87c5c")
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 		if len(GetAllConsignByAccountId.Data) > 0 {
 			MockedConsigneeWeight = GetAllConsignByAccountId.Data[0].Weight
@@ -909,12 +910,12 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		}
 		_, err := consignSvc.InsertConsignRecord(insertReq)
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		GetAllConsignByAccountId, err := consignSvc.QueryByAccountId("3c7ca4eb-4eb2-407a-b870-7fb228d87c5c")
 		if err != nil {
-			fmt.Println("error occurs: %v", err)
+			log.Fatalf("error occurs: %v", err)
 		}
 
 		if len(GetAllConsignByAccountId.Data) > 0 {
@@ -962,7 +963,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 
 	_, err := preserveSvc.Preserve(&orderTicketsInfo)
 	if err != nil {
-		fmt.Println("error occurs: %v", err)
+		log.Fatalf("error occurs: %v", err)
 		//return
 	}
 	time.Sleep(2 * time.Second)
