@@ -17,12 +17,13 @@ func (s *SvcImpl) ReqGetAllOrders() (*OrderArrResp, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
-	var result OrderArrResp
 
+	var result OrderArrResp
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err

@@ -14,6 +14,7 @@ func TestBasicServiceFullIntegration(t *testing.T) {
 		t.Error(err)
 	}
 	t.Log(stations)
+
 	if len(stations.Data) < 2 {
 		t.Fatal("stations length should be greater than 2")
 	}
@@ -51,7 +52,7 @@ func TestBasicServiceFullIntegration(t *testing.T) {
 			Id: "6284bf46-0f0a-481d-a221-bb3794b00585",
 			TripId: TripId{
 				Type:   "G",
-				Number: "2asd",
+				Number: "985",
 			},
 			TrainTypeName:       trainTypes.Data[0].Name,
 			RouteId:             routes.Data[0].Id,
@@ -70,6 +71,7 @@ func TestBasicServiceFullIntegration(t *testing.T) {
 		t.Error(err)
 	}
 	t.Log(travel)
+
 	travels, err := cli.QueryForTravels([]*Travel{travelQuery})
 	if err != nil {
 		t.Error(err)
