@@ -34,7 +34,7 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	// 1. Query
 	_, err := travelSvc.QueryAll()
 	if err != nil {
-		log.Fatalf("error occurs: %v", err)
+		log.Fatalf("[Query]QueryAll error occurs: %v", err)
 	}
 	time.Sleep(2 * time.Second)
 
@@ -63,14 +63,14 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	}
 	_, err1 := travelSvc.CreateTrip(&travelInfo)
 	if err1 != nil {
-		log.Fatalf("error1 occurs: %v\n", err1)
+		log.Fatalf("[Create]CreateTrip error1 occurs: %v\n", err1)
 	}
 	time.Sleep(2 * time.Second)
 
 	// 3. Query Again
 	_, err2 := travelSvc.QueryAll()
 	if err2 != nil {
-		log.Fatalf("error2 occurs: %v", err2)
+		log.Fatalf("[Query Again]QueryAll error2 occurs: %v", err2)
 	}
 	time.Sleep(2 * time.Second)
 
@@ -82,7 +82,7 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 
 	// Service
 	// Travel Service
-	//LoginId
+	// LoginId
 	r0 := rand.Float64()
 	if r0 < 0.95 {
 		QueryAllTravelInfo, err := travelSvc.QueryAll()
@@ -93,7 +93,7 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		if len(QueryAllTravelInfo.Data) > 0 {
 			MockedLoginId = QueryAllTravelInfo.Data[0].Id
 		} else {
-			log.Fatalf("The corresponding database is empty")
+			log.Fatalf("[LoginId] The corresponding database is empty")
 			MockedLoginId = faker.UUIDHyphenated()
 		}
 	} else if r0 < 0.99 {
@@ -110,13 +110,13 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	if r1 < 0.95 {
 		QueryAllTravelInfo, err := travelSvc.QueryAll()
 		if err != nil {
-			log.Fatalf("error occurs: %v", err)
+			log.Fatalf("[TripID]QueryAll error occurs: %v", err)
 		}
 
 		if len(QueryAllTravelInfo.Data) > 0 {
 			MockedTripID = *(QueryAllTravelInfo.Data[0].TripId.Type) + QueryAllTravelInfo.Data[0].TripId.Number
 		} else {
-			log.Fatalf("The corresponding database is empty")
+			log.Fatalf("[TripID] The corresponding database is empty")
 			MockedTripID = GenerateTripId()
 		}
 	} else if r1 < 0.99 {
@@ -128,18 +128,18 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 
 	// Service
 	// Travel Service
-	//TrainTypeName
+	// TrainTypeName
 	r2 := rand.Float64()
 	if r2 < 0.95 {
 		QueryAllTravelInfo, err := travelSvc.QueryAll()
 		if err != nil {
-			log.Fatalf("error occurs: %v", err)
+			log.Fatalf("[TrainTypeName]QueryAll error occurs: %v", err)
 		}
 
 		if len(QueryAllTravelInfo.Data) > 0 {
 			MockedTrainTypeName = QueryAllTravelInfo.Data[0].TrainTypeName
 		} else {
-			log.Fatalf("The corresponding database is empty")
+			log.Fatalf("[TrainTypeName] The corresponding database is empty")
 			MockedTrainTypeName = GenerateTrainTypeName()
 		}
 	} else if r2 < 0.99 {
@@ -152,18 +152,18 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	// Service
 	// Route Service
 	var routeSvc service.RouteService = cli
-	//RouteID
+	// RouteID
 	r3 := rand.Float64()
 	if r3 < 0.95 {
 		GetAllRouteInfo, err := routeSvc.QueryAllRoutes()
 		if err != nil {
-			log.Fatalf("error occurs: %v", err)
+			log.Fatalf("[RouteID]QueryAllRoutes error occurs: %v", err)
 		}
 
 		if len(GetAllRouteInfo.Data) > 0 {
 			MockedRouteID = GetAllRouteInfo.Data[0].Id
 		} else {
-			log.Fatalf("The corresponding database is empty")
+			log.Fatalf("[RouteID] The corresponding database is empty")
 			MockedRouteID = faker.UUIDHyphenated()
 		}
 	} else if r3 < 0.99 {
@@ -182,12 +182,12 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 
 		_, err := routeSvc.CreateAndModifyRoute(&CreateAndModifyRouteInput)
 		if err != nil {
-			log.Fatalf("error occurs: %v", err)
+			log.Fatalf("[RouteID]CreateAndModifyRoute error occurs: %v", err)
 		}
 
 		GetAllRouteInfo, err := routeSvc.QueryAllRoutes()
 		if err != nil {
-			log.Fatalf("error occurs: %v", err)
+			log.Fatalf("[RouteID]QueryAllRoutes error occurs: %v", err)
 		}
 
 		MockedRouteID = GetAllRouteInfo.Data[len(GetAllRouteInfo.Data)-1].Id
@@ -202,13 +202,13 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	if r4 < 0.95 {
 		GetAllRouteInfo, err := routeSvc.QueryAllRoutes()
 		if err != nil {
-			log.Fatalf("error occurs: %v", err)
+			log.Fatalf("[StartStationName]QueryAllRoutes error occurs: %v", err)
 		}
 
 		if len(GetAllRouteInfo.Data) > 0 {
 			MockedStartStationName = GetAllRouteInfo.Data[0].StartStation
 		} else {
-			log.Fatalf("The corresponding database is empty")
+			log.Fatalf("[StartStationName] The corresponding database is empty")
 			MockedStartStationName = faker.GetRealAddress().City
 		}
 	} else if r4 < 0.99 {
@@ -227,12 +227,12 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 
 		_, err := routeSvc.CreateAndModifyRoute(&CreateAndModifyRouteInput)
 		if err != nil {
-			log.Fatalf("error occurs: %v", err)
+			log.Fatalf("[StartStationName]CreateAndModifyRoute error occurs: %v", err)
 		}
 
 		GetAllRouteInfo, err := routeSvc.QueryAllRoutes()
 		if err != nil {
-			log.Fatalf("error occurs: %v", err)
+			log.Fatalf("[StartStationName]QueryAllRoutes error occurs: %v", err)
 		}
 
 		MockedStartStationName = GetAllRouteInfo.Data[len(GetAllRouteInfo.Data)-1].StartStation
@@ -242,18 +242,18 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 
 	// Service
 	// Route Service
-	//TerminalStationName
+	// TerminalStationName
 	r5 := rand.Float64()
 	if r5 < 0.95 {
 		GetAllRouteInfo, err := routeSvc.QueryAllRoutes()
 		if err != nil {
-			log.Fatalf("error occurs: %v", err)
+			log.Fatalf("[TerminalStationName]QueryAllRoutes error occurs: %v", err)
 		}
 
 		if len(GetAllRouteInfo.Data) > 0 {
 			MockedTerminalStationName = GetAllRouteInfo.Data[0].EndStation
 		} else {
-			log.Fatalf("The corresponding database is empty")
+			log.Fatalf("[TerminalStationName]The corresponding database is empty")
 			MockedTerminalStationName = faker.GetRealAddress().City
 		}
 	} else if r5 < 0.99 {
@@ -272,12 +272,12 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 
 		_, err := routeSvc.CreateAndModifyRoute(&CreateAndModifyRouteInput)
 		if err != nil {
-			log.Fatalf("error occurs: %v", err)
+			log.Fatalf("[TerminalStationName]CreateAndModifyRoute error occurs: %v", err)
 		}
 
 		GetAllRouteInfo, err := routeSvc.QueryAllRoutes()
 		if err != nil {
-			log.Fatalf("error occurs: %v", err)
+			log.Fatalf("[TerminalStationName]QueryAllRoutes error occurs: %v", err)
 		}
 
 		MockedTerminalStationName = GetAllRouteInfo.Data[len(GetAllRouteInfo.Data)-1].EndStation
@@ -292,13 +292,13 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	if r6 < 0.95 {
 		GetAllRouteInfo, err := routeSvc.QueryAllRoutes()
 		if err != nil {
-			log.Fatalf("error occurs: %v", err)
+			log.Fatalf("[StationsName]QueryAllRoutes error occurs: %v", err)
 		}
 
 		if len(GetAllRouteInfo.Data) > 0 {
 			MockedStationsName = ListToString(GetAllRouteInfo.Data[0].Stations)
 		} else {
-			log.Fatalf("The corresponding database is empty")
+			log.Fatalf("[StationsName] The corresponding database is empty")
 			MockedStationsName = faker.GetRealAddress().City
 		}
 	} else if r6 < 0.99 {
@@ -317,12 +317,12 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 
 		_, err := routeSvc.CreateAndModifyRoute(&CreateAndModifyRouteInput)
 		if err != nil {
-			log.Fatalf("error occurs: %v", err)
+			log.Fatalf("[StationsName]CreateAndModifyRoute error occurs: %v", err)
 		}
 
 		GetAllRouteInfo, err := routeSvc.QueryAllRoutes()
 		if err != nil {
-			log.Fatalf("error occurs: %v", err)
+			log.Fatalf("[StationsName]QueryAllRoutes error occurs: %v", err)
 		}
 
 		MockedStationsName = ListToString(GetAllRouteInfo.Data[len(GetAllRouteInfo.Data)-1].Stations)
@@ -337,13 +337,13 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	if r7 < 0.95 {
 		QueryAllTravelInfo, err := travelSvc.QueryAll()
 		if err != nil {
-			log.Fatalf("error occurs: %v", err)
+			log.Fatalf("[StartTime]QueryAll error occurs: %v", err)
 		}
 
 		if len(QueryAllTravelInfo.Data) > 0 {
 			MockedStartTime = QueryAllTravelInfo.Data[0].StartTime
 		} else {
-			log.Fatalf("The corresponding database is empty")
+			log.Fatalf("[StartTime] The corresponding database is empty")
 			MockedStartTime = getRandomTime()
 		}
 	} else if r7 < 0.99 {
@@ -360,13 +360,13 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	if r8 < 0.95 {
 		QueryAllTravelInfo, err := travelSvc.QueryAll()
 		if err != nil {
-			log.Fatalf("error occurs: %v", err)
+			log.Fatalf("[EndTime]QueryAll error occurs: %v", err)
 		}
 
 		if len(QueryAllTravelInfo.Data) > 0 {
 			MockedEndTime = QueryAllTravelInfo.Data[0].EndTime
 		} else {
-			log.Fatalf("The corresponding database is empty")
+			log.Fatalf("[EndTime] The corresponding database is empty")
 			MockedEndTime = getRandomTime()
 		}
 	} else if r8 < 0.99 {
@@ -390,7 +390,7 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	}
 	_, err3 := travelSvc.UpdateTrip(&updateTravelInfo)
 	if err3 != nil {
-		log.Fatalf("error3 occurs: %v", err3)
+		log.Fatalf("[Input][UpdateTrip] error3 occurs: %v", err3)
 	}
 	time.Sleep(2 * time.Second)
 
@@ -401,13 +401,13 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	if r9 < 0.95 {
 		QueryAllTravelInfo, err := travelSvc.QueryAll()
 		if err != nil {
-			log.Fatalf("error occurs: %v", err)
+			log.Fatalf("[Delete according to the ID]QueryAll error occurs: %v", err)
 		}
 
 		if len(QueryAllTravelInfo.Data) > 0 {
 			MockedDeleteID = QueryAllTravelInfo.Data[0].Id
 		} else {
-			log.Fatalf("The corresponding database is empty")
+			log.Fatalf("[Delete according to the ID] The corresponding database is empty")
 			MockedDeleteID = faker.UUIDHyphenated()
 		}
 	} else if r9 < 0.99 {
@@ -435,18 +435,18 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		}
 		_, error := travelSvc.CreateTrip(&travelInfo)
 		if error != nil {
-			log.Fatalf("Error occurs: %v", error)
+			log.Fatalf("[Delete according to the ID]CreateTrip Error occurs: %v", error)
 		}
 
 		QueryAllTravelInfo, err := travelSvc.QueryAll()
 		if err != nil {
-			log.Fatalf("error occurs: %v", err)
+			log.Fatalf("[Delete according to the ID]QueryAll error occurs: %v", err)
 		}
 
 		if len(QueryAllTravelInfo.Data) > 0 {
 			MockedDeleteID = QueryAllTravelInfo.Data[len(QueryAllTravelInfo.Data)-1].Id
 		} else {
-			log.Fatalf("The above CRATE Fails and the corresponding database is empty")
+			log.Fatalf("[Delete according to the ID]QueryAllTravelInfo The above CRATE Fails and the corresponding database is empty")
 			MockedDeleteID = faker.UUIDHyphenated()
 		}
 	} else {
@@ -455,7 +455,7 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 
 	_, err4 := travelSvc.DeleteTrip(MockedDeleteID)
 	if err4 != nil {
-		log.Fatalf("error4 occurs: %v", err4)
+		log.Fatalf("[DeleteTrip] error4 occurs: %v", err4)
 	}
 	time.Sleep(2 * time.Second)
 
@@ -465,13 +465,13 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	if r10 < 0.95 {
 		QueryAllTravelInfo, err := travelSvc.QueryAll()
 		if err != nil {
-			log.Fatalf("error occurs: %v", err)
+			log.Fatalf("[6 & 7 & 8]QueryAll error occurs: %v", err)
 		}
 
 		if len(QueryAllTravelInfo.Data) > 0 {
 			GetTripID = *(QueryAllTravelInfo.Data[0].TripId.Type) + QueryAllTravelInfo.Data[0].TripId.Number
 		} else {
-			log.Fatalf("The corresponding database is empty")
+			log.Fatalf("[6 & 7 & 8]The corresponding database is empty")
 			GetTripID = GenerateTripId()
 		}
 	} else if r10 < 0.99 {
@@ -499,18 +499,18 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		}
 		_, error := travelSvc.CreateTrip(&travelInfo)
 		if error != nil {
-			log.Fatalf("Error occurs: %v", error)
+			log.Fatalf("[6 & 7 & 8]CreateTrip Error occurs: %v", error)
 		}
 
 		QueryAllTravelInfo, err := travelSvc.QueryAll()
 		if err != nil {
-			log.Fatalf("error occurs: %v", err)
+			log.Fatalf("[6 & 7 & 8]QueryAllTravelInfo error occurs: %v", err)
 		}
 
 		if len(QueryAllTravelInfo.Data) > 0 {
 			GetTripID = *(QueryAllTravelInfo.Data[len(QueryAllTravelInfo.Data)-1].TripId.Type) + QueryAllTravelInfo.Data[len(QueryAllTravelInfo.Data)-1].TripId.Number
 		} else {
-			log.Fatalf("The above CRATE Fails and the corresponding database is empty")
+			log.Fatalf("[6 & 7 & 8] The above CRATE Fails and the corresponding database is empty")
 			GetTripID = GenerateTripId()
 		}
 	} else {
@@ -520,21 +520,21 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	// 6. Retrieve by Trip ID
 	_, err5 := travelSvc.RetrieveTravel(GetTripID)
 	if err5 != nil {
-		log.Fatalf("error5 occurs: %v", err5)
+		log.Fatalf("[Retrieve by Trip ID]RetrieveTravel error5 occurs: %v", err5)
 	}
 	time.Sleep(2 * time.Second)
 
 	// 7. GetTrainTypeByTripId
 	_, err6 := travelSvc.GetTrainTypeByTripId(GetTripID)
 	if err6 != nil {
-		log.Fatalf("error6 occurs: %v", err6)
+		log.Fatalf("[GetTrainTypeByTripId] error6 occurs: %v", err6)
 	}
 	time.Sleep(2 * time.Second)
 
 	// 8. GetRouteByTripId
 	_, err7 := travelSvc.GetRouteByTripId(GetTripID)
 	if err7 != nil {
-		log.Fatalf("error7 occurs: %v", err7)
+		log.Fatalf("[GetRouteByTripId] error7 occurs: %v", err7)
 	}
 	time.Sleep(2 * time.Second)
 
@@ -544,13 +544,13 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	if r11 < 0.95 {
 		GetAllRouteInfo, err := routeSvc.QueryAllRoutes()
 		if err != nil {
-			log.Fatalf("error occurs: %v", err)
+			log.Fatalf("[GetTripsByRouteId]QueryAllRoutes error occurs: %v", err)
 		}
 
 		if len(GetAllRouteInfo.Data) > 0 {
 			GetRouteIDs = GetAllRouteInfo.Data[0].Stations
 		} else {
-			log.Fatalf("The corresponding database is empty")
+			log.Fatalf("[GetTripsByRouteId] The corresponding database is empty")
 			GetRouteIDs = []string{faker.UUIDHyphenated(), faker.UUIDHyphenated(), faker.UUIDHyphenated()}
 		}
 	} else if r11 < 0.99 {
@@ -570,18 +570,18 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 
 		_, err := routeSvc.CreateAndModifyRoute(&CreateAndModifyRouteInput)
 		if err != nil {
-			log.Fatalf("error occurs: %v", err)
+			log.Fatalf("[GetTripsByRouteId]CreateAndModifyRoute error occurs: %v", err)
 		}
 
 		GetAllRouteInfo, err1 := routeSvc.QueryAllRoutes()
 		if err1 != nil {
-			log.Fatalf("error1 occurs: %v", err1)
+			log.Fatalf("[GetTripsByRouteId]QueryAllRoutes error1 occurs: %v", err1)
 		}
 
 		if len(GetAllRouteInfo.Data) > 0 {
 			GetRouteIDs = GetAllRouteInfo.Data[len(GetAllRouteInfo.Data)-1].Stations
 		} else {
-			log.Fatalf("The CRATE above fails and the corresponding database is empty")
+			log.Fatalf("[GetTripsByRouteId] The CRATE above fails and the corresponding database is empty")
 			GetRouteIDs = []string{faker.UUIDHyphenated(), faker.UUIDHyphenated(), faker.UUIDHyphenated()}
 		}
 	} else {
@@ -589,7 +589,7 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	}
 	_, err8 := travelSvc.GetTripsByRouteId(GetRouteIDs)
 	if err8 != nil {
-		log.Fatalf("error8 occurs: %v", err8)
+		log.Fatalf("[GetTripsByRouteId] error8 occurs: %v", err8)
 	}
 	time.Sleep(2 * time.Second)
 
@@ -603,13 +603,13 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	if r12 < 0.95 {
 		GetAllRouteInfo, err := routeSvc.QueryAllRoutes()
 		if err != nil {
-			log.Fatalf("error occurs: %v", err)
+			log.Fatalf("[10.1. StartPlace]QueryAllRoutes error occurs: %v", err)
 		}
 
 		if len(GetAllRouteInfo.Data) > 0 {
 			MockedStartPlace = GetAllRouteInfo.Data[0].StartStation
 		} else {
-			log.Fatalf("The corresponding database is empty")
+			log.Fatalf("[10.1. StartPlace] The corresponding database is empty")
 			MockedStartPlace = faker.GetRealAddress().City
 		}
 	} else if r12 < 0.99 {
@@ -628,12 +628,12 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 
 		_, err := routeSvc.CreateAndModifyRoute(&CreateAndModifyRouteInput)
 		if err != nil {
-			log.Fatalf("error occurs: %v", err)
+			log.Fatalf("[10.1. StartPlace]CreateAndModifyRoute error occurs: %v", err)
 		}
 
 		GetAllRouteInfo, err := routeSvc.QueryAllRoutes()
 		if err != nil {
-			log.Fatalf("error occurs: %v", err)
+			log.Fatalf("[10.1. StartPlace]QueryAllRoutes error occurs: %v", err)
 		}
 
 		MockedStartPlace = GetAllRouteInfo.Data[len(GetAllRouteInfo.Data)-1].StartStation
@@ -649,13 +649,13 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	if r13 < 0.95 {
 		GetAllRouteInfo, err := routeSvc.QueryAllRoutes()
 		if err != nil {
-			log.Fatalf("error occurs: %v", err)
+			log.Fatalf("[10.2. EndPlace]QueryAllRoutes error occurs: %v", err)
 		}
 
 		if len(GetAllRouteInfo.Data) > 0 {
 			MockedEndPlace = GetAllRouteInfo.Data[0].EndStation
 		} else {
-			log.Fatalf("The corresponding database is empty")
+			log.Fatalf("[10.2. EndPlace] The corresponding database is empty")
 			MockedEndPlace = faker.GetRealAddress().City
 		}
 	} else if r13 < 0.99 {
@@ -674,12 +674,12 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 
 		_, err := routeSvc.CreateAndModifyRoute(&CreateAndModifyRouteInput)
 		if err != nil {
-			log.Fatalf("error occurs: %v", err)
+			log.Fatalf("[10.2. EndPlace]CreateAndModifyRoute error occurs: %v", err)
 		}
 
 		GetAllRouteInfo, err := routeSvc.QueryAllRoutes()
 		if err != nil {
-			log.Fatalf("error occurs: %v", err)
+			log.Fatalf("[10.2. EndPlace]QueryAllRoutes error occurs: %v", err)
 		}
 
 		MockedEndPlace = GetAllRouteInfo.Data[len(GetAllRouteInfo.Data)-1].EndStation
@@ -695,13 +695,13 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	if r14 < 0.95 {
 		QueryAllTravelInfo, err := travelSvc.QueryAll()
 		if err != nil {
-			log.Fatalf("error occurs: %v", err)
+			log.Fatalf("[10.3. DepartureTime]QueryAll error occurs: %v", err)
 		}
 
 		if len(QueryAllTravelInfo.Data) > 0 {
 			MockedDepartureTime = QueryAllTravelInfo.Data[0].StartTime
 		} else {
-			log.Fatalf("The corresponding database is empty")
+			log.Fatalf("[10.3. DepartureTime] The corresponding database is empty")
 			MockedDepartureTime = getRandomTime()
 		}
 	} else if r14 < 0.99 {
@@ -721,14 +721,14 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	// 10. QueryInfo
 	_, err9 := travelSvc.QueryInfo(MockedTripInfo)
 	if err9 != nil {
-		log.Fatalf("error9 occurs: %v", err9)
+		log.Fatalf("[10. QueryInfo]QueryInfo error9 occurs: %v", err9)
 	}
 	time.Sleep(2 * time.Second)
 
 	// 11. QueryInfoInParallel
 	_, err10 := travelSvc.QueryInfoInParallel(MockedTripInfo)
 	if err10 != nil {
-		log.Fatalf("error10 occurs: %v", err10)
+		log.Fatalf("[11. QueryInfoInParallel]QueryInfoInParallel error10 occurs: %v", err10)
 	}
 	time.Sleep(2 * time.Second)
 
@@ -741,13 +741,13 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	if r15 < 0.95 {
 		QueryAllTravelInfo, err := travelSvc.QueryAll()
 		if err != nil {
-			log.Fatalf("error occurs: %v", err)
+			log.Fatalf("[12. GetTripAllDetailInfo]QueryAll error occurs: %v", err)
 		}
 
 		if len(QueryAllTravelInfo.Data) > 0 {
 			MockedTripID = *(QueryAllTravelInfo.Data[0].TripId.Type) + QueryAllTravelInfo.Data[0].TripId.Number
 		} else {
-			log.Fatalf("The corresponding database is empty")
+			log.Fatalf("[12. GetTripAllDetailInfo] The corresponding database is empty")
 			MockedTripID = GenerateTripId()
 		}
 	} else if r15 < 0.99 {
@@ -764,14 +764,14 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 
 	_, err11 := travelSvc.GetTripAllDetailInfo(MockedtripAllDetailInfo)
 	if err11 != nil {
-		log.Fatalf("error11 occurs: %v", err11)
+		log.Fatalf("[GetTripAllDetailInfo]MockedtripAllDetailInfo: error11 occurs: %v", err11)
 	}
 	time.Sleep(2 * time.Second)
 
 	// 13. AdminQueryAll
 	_, err12 := travelSvc.AdminQueryAll()
 	if err12 != nil {
-		log.Fatalf("error12 occurs: %v", err12)
+		log.Fatalf("[13. AdminQueryAll]AdminQueryAll: error12 occurs: %v", err12)
 	}
 	time.Sleep(2 * time.Second)
 }
