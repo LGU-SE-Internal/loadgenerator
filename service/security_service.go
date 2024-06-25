@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 )
@@ -57,7 +58,7 @@ func (s *SvcImpl) FindAllSecurityConfig() (*FindAllResponse, error) {
 	var result FindAllResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -78,7 +79,7 @@ func (s *SvcImpl) AddNewSecurityConfig(config *SecurityConfig) (*SingleResponse,
 	var result SingleResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -99,7 +100,7 @@ func (s *SvcImpl) ModifySecurityConfig(config *SecurityConfig) (*SingleResponse,
 	var result SingleResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -121,7 +122,7 @@ func (s *SvcImpl) DeleteSecurityConfig(id string) (*DeleteResponse, error) {
 	var result DeleteResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -143,7 +144,7 @@ func (s *SvcImpl) Check(accountId string) (*SingleResponse, error) {
 	var result SingleResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil

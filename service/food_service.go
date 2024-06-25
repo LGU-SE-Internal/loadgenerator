@@ -2,6 +2,8 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io"
 )
 
@@ -75,7 +77,7 @@ func (s *SvcImpl) FindAllFoodOrder() (*FindAllFoodOrder, error) {
 	var result FindAllFoodOrder
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -95,7 +97,7 @@ func (s *SvcImpl) CreateFoodOrder(foodOrder *FoodOrder) (*CreateFoodOrderResp, e
 	var result CreateFoodOrderResp
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -121,7 +123,7 @@ func (s *SvcImpl) CreateFoodOrdersInBatch(foodOrders []FoodOrder) (*CreateFoodOr
 	var result CreateFoodOrdersInBatch
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -141,7 +143,7 @@ func (s *SvcImpl) UpdateFoodOrder(foodOrder *FoodOrder) (*FoodOrder, error) {
 	var result FoodOrder
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -161,7 +163,7 @@ func (s *SvcImpl) DeleteFoodOrder(orderID string) (*DeleteFoodOrderResp, error) 
 	var result DeleteFoodOrderResp
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -195,7 +197,7 @@ func (s *SvcImpl) FindByOrderId(orderID string) (*FindByOrderIdResponse, error) 
 	var result FindByOrderIdResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -221,7 +223,7 @@ func (s *SvcImpl) GetAllFood(date string, startStation string, endStation string
 	var result GetAllFoodResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }

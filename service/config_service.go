@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 )
@@ -38,7 +39,7 @@ func (s *SvcImpl) QueryAllConfigs() (*ConfigQueryAllConfigsResponse, error) {
 	var result ConfigQueryAllConfigsResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -70,7 +71,7 @@ func (s *SvcImpl) CreateConfig(info *Config_config) (*CreateConfigResponse, erro
 	var result CreateConfigResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -102,7 +103,7 @@ func (s *SvcImpl) UpdateConfig(info Config_config) (*UpdateConfigResponse, error
 	var result UpdateConfigResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -134,7 +135,7 @@ func (s *SvcImpl) DeleteConfig_config_service(configName string) (*DeleteConfig_
 	var result DeleteConfig_config_serviceResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -166,7 +167,7 @@ func (s *SvcImpl) RetrieveConfig(configName string) (*RetrieveConfigResponse, er
 	var result RetrieveConfigResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil

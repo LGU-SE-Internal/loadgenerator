@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 )
@@ -102,7 +103,7 @@ func (s *SvcImpl) GetAllAssurances() (*GetAllAssuranceResponse, error) {
 	var result GetAllAssuranceResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -155,7 +156,7 @@ func (s *SvcImpl) DeleteAssuranceByID(assuranceID string) (*AssuranceDeleteRespo
 	var result AssuranceDeleteResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -183,7 +184,7 @@ func (s *SvcImpl) DeleteAssuranceByOrderID(orderID string) (*DeleteAssuranceByOr
 	var result DeleteAssuranceByOrderIDResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -205,7 +206,7 @@ func (s *SvcImpl) ModifyAssurance(assuranceID string, orderID string, typeIndex 
 	var result Modify_Response
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -237,7 +238,7 @@ func (s *SvcImpl) CreateNewAssurance(typeIndex int, orderID string) (*createAssu
 	var result createAssuranceResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil

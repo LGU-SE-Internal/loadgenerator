@@ -2,6 +2,8 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io"
 )
 
@@ -18,7 +20,7 @@ func (s *SvcImpl) ReqCreateFoodDeliveryOrder(input *FoodDeliveryOrder) (*FoodDel
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -36,7 +38,7 @@ func (s *SvcImpl) ReqGetAllFoodDeliveryOrders() (*FoodDeliveryOrderArrResponse, 
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -54,7 +56,7 @@ func (s *SvcImpl) ReqGetFoodDeliveryOrderByStoreId(storeId string) (*FoodDeliver
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -72,7 +74,7 @@ func (s *SvcImpl) ReqGetFoodDeliveryOrderById(orderId string) (*FoodDeliveryOrde
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -90,7 +92,7 @@ func (s *SvcImpl) ReqDeleteFoodDeliveryOrderById(orderId string) (*DataStringRes
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -108,7 +110,7 @@ func (s *SvcImpl) ReqUpdateDeliveryTime(input *DeliveryInfo) (*FoodDeliveryOrder
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -126,7 +128,7 @@ func (s *SvcImpl) ReqUpdateSeatNo(input *SeatInfo) (*FoodDeliveryOrderResponse, 
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -144,7 +146,7 @@ func (s *SvcImpl) ReqUpdateTripId(input *TripOrderInfo) (*FoodDeliveryOrderRespo
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }

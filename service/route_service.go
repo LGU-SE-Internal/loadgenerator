@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 )
@@ -66,7 +67,7 @@ func (s *SvcImpl) CreateAndModifyRoute(input *RouteInfo) (*RouteResponse, error)
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -85,7 +86,7 @@ func (s *SvcImpl) DeleteRoute(routeId string) (*DeleteResponse, error) {
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -104,7 +105,7 @@ func (s *SvcImpl) QueryRouteById(routeId string) (*RouteResponse, error) {
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -124,7 +125,7 @@ func (s *SvcImpl) QueryRoutesByIds(routeIds []string) (*QueryMultiResponse, erro
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -143,7 +144,7 @@ func (s *SvcImpl) QueryAllRoutes() (*QueryMultiResponse, error) {
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -163,7 +164,7 @@ func (s *SvcImpl) QueryRoutesByStartAndEnd(start, end string) (*QueryMultiRespon
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }

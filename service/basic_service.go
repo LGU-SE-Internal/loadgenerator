@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 )
@@ -101,7 +102,7 @@ func (s *SvcImpl) QueryForTravel(info *Travel) (*QueryForTravelResponse, error) 
 	var result QueryForTravelResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -123,7 +124,7 @@ func (s *SvcImpl) QueryTrainService() (*TrainResponseType, error) {
 	var result TrainResponseType
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -151,7 +152,7 @@ func (s *SvcImpl) QueryForTravels(infos []*Travel) (*QueryForTravelsResponse, er
 	var result QueryForTravelsResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -179,7 +180,7 @@ func (s *SvcImpl) QueryForStationId(stationName string) (*QueryForStationIdRespo
 	var result QueryForStationIdResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil

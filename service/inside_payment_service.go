@@ -2,6 +2,8 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io"
 )
 
@@ -18,7 +20,7 @@ func (s *SvcImpl) ReqPay_InsidePayment(input *TripPayment) (*TripPaymentResponse
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -36,7 +38,7 @@ func (s *SvcImpl) ReqCreateAccount(input *AccountInfo) (*TripPaymentResponse, er
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -54,7 +56,7 @@ func (s *SvcImpl) ReqPayDifference(input *TripPayment) (*TripPaymentResponse, er
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -72,7 +74,7 @@ func (s *SvcImpl) ReqQueryAccount() (*TripPaymentArrResponse, error) {
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -90,7 +92,7 @@ func (s *SvcImpl) ReqDrawBack(userId string, money string) (*MoneyResponse, erro
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -108,7 +110,7 @@ func (s *SvcImpl) ReqQueryAddMoney() (*MoneyResponse, error) {
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -126,7 +128,7 @@ func (s *SvcImpl) ReqQueryInsidePayment() (*TripPaymentArrResponse, error) {
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -144,7 +146,7 @@ func (s *SvcImpl) ReqAddMoney_Inside(userId string, money string) (*TripPaymentR
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }

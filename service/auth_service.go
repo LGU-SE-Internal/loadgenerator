@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 )
@@ -60,7 +61,7 @@ func (s *SvcImpl) ReqUserLogin(input *UserLoginInfoReq) (*UserLoginInfoResp, err
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	if result.Data.Token != "" {
 		s.cli.AddHeader("Authorization", fmt.Sprintf("Bearer %s", result.Data.Token))
@@ -81,7 +82,7 @@ func (s *SvcImpl) ReqUserCreate(input *UserCreateInfoReq) (*UserCreateInfoResp, 
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -99,7 +100,7 @@ func (s *SvcImpl) ReqUserDelete(userid string) (*UserDeleteInfoResp, error) {
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
