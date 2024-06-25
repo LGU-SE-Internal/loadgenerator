@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 )
@@ -91,7 +92,7 @@ func (s *SvcImpl) GetTrainTypeByTripId(tripId string) (*GetTrainTypeByTripIdResp
 	var result GetTrainTypeByTripIdResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -119,7 +120,7 @@ func (s *SvcImpl) GetRouteByTripId(tripId string) (*GetRouteByTripIdResponse, er
 	var result GetRouteByTripIdResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -156,7 +157,7 @@ func (s *SvcImpl) GetTripsByRouteId(routeIds []string) (*GetTripsByRouteIdRespon
 	var result GetTripsByRouteIdResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -178,7 +179,7 @@ func (s *SvcImpl) CreateTrip(travelInfo *TravelInfo) (*TripResponse, error) {
 	var result TripResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -200,7 +201,7 @@ func (s *SvcImpl) RetrieveTravel(tripId string) (*TravelInfo, error) {
 	var result TravelInfo
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -222,7 +223,7 @@ func (s *SvcImpl) UpdateTrip(travelInfo *TravelInfo) (*TripResponse, error) {
 	var result TripResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -244,7 +245,7 @@ func (s *SvcImpl) DeleteTrip(tripId string) (*TripResponse, error) {
 	var result TripResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -281,7 +282,7 @@ func (s *SvcImpl) QueryInfo(tripInfo TripInfo) (*QueryInfoResponse, error) {
 	var result QueryInfoResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -312,7 +313,7 @@ func (s *SvcImpl) QueryInfoInParallel(tripInfo TripInfo) (*QueryInfoInParallelTr
 	var result QueryInfoInParallelTripResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -343,7 +344,7 @@ func (s *SvcImpl) GetTripAllDetailInfo(tripAllDetailInfo TripAllDetailInfo) (*Ge
 	var result GetTripAllDetailInfoResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -419,7 +420,7 @@ func (s *SvcImpl) QueryAll() (*QueryAllTravelInfo, error) {
 	var result QueryAllTravelInfo
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -441,7 +442,7 @@ func (s *SvcImpl) AdminQueryAll() (*AdminQueryAllTravelInfo, error) {
 	var result AdminQueryAllTravelInfo
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil

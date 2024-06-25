@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 )
@@ -55,7 +56,7 @@ func (s *SvcImpl) InsertConsignRecord(consign *Consign) (*ConsignResponse, error
 	var result ConsignResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -75,7 +76,7 @@ func (s *SvcImpl) UpdateConsignRecord(consign *Consign) (*ConsignResponse, error
 	var result ConsignResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -95,7 +96,7 @@ func (s *SvcImpl) QueryByAccountId(accountId string) (*AllConsignResponse, error
 	var result AllConsignResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -133,7 +134,7 @@ func (s *SvcImpl) QueryByOrderId(orderId string) (*QueryByOrderIdResponse, error
 	var result QueryByOrderIdResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -171,7 +172,7 @@ func (s *SvcImpl) QueryByConsignee(consignee string) (*QueryByConsigneeResponse,
 	var result QueryByConsigneeResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil

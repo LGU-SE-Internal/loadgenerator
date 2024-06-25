@@ -2,6 +2,8 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io"
 )
 
@@ -26,7 +28,7 @@ func (s *SvcImpl) ReqGetAllOrders() (*OrderArrResp, error) {
 	var result OrderArrResp
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -44,7 +46,7 @@ func (s *SvcImpl) ReqAddOrder(input *Order) (*OrderResp, error) {
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -63,7 +65,7 @@ func (s *SvcImpl) ReqUpdateOrder(input *Order) (*OrderResp, error) {
 	var result OrderResp
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -89,7 +91,7 @@ func (s *SvcImpl) ReqDeleteOrder(orderId string, trainNumber string) (*ReqDelete
 	//fmt.Println(result.Data.TrainNumber)
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }

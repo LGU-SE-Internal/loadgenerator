@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 )
@@ -73,7 +74,7 @@ func (s *SvcImpl) ReqAddRoute(input *AdminRouteInfo) (*AdminAddResponse, error) 
 	var result AdminAddResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, err
 }
@@ -91,7 +92,7 @@ func (s *SvcImpl) ReqDeleteRoute(routeId string) (*AdminRouteDeleteInfoResp, err
 	var result AdminRouteDeleteInfoResp
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
