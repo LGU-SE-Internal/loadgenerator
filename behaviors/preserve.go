@@ -963,7 +963,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 	_, err := preserveSvc.Preserve(&orderTicketsInfo)
 	if err != nil {
 		fmt.Println("error occurs: %v", err)
-		return
+		//return
 	}
 	time.Sleep(2 * time.Second)
 }
