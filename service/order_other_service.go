@@ -2,6 +2,8 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io"
 	"strconv"
 )
@@ -37,7 +39,7 @@ func (s *SvcImpl) ReqFindAllOrderOther() (*OrderArrResp, error) {
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -55,7 +57,7 @@ func (s *SvcImpl) ReqCreateNewOrderOther(input *Order) (*OrderResp, error) {
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -73,7 +75,7 @@ func (s *SvcImpl) ReqSaveOrderInfoOther(input *Order) (*OrderResp, error) {
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -91,7 +93,7 @@ func (s *SvcImpl) ReqAddCreateNewOrderOther(input *Order) (*OrderResp, error) {
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -109,7 +111,7 @@ func (s *SvcImpl) ReqUpdateOrderOrderServiceOther(input *Order) (*OrderResp, err
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -127,7 +129,7 @@ func (s *SvcImpl) ReqPayOrderOther(orderId string) (*OrderResp, error) {
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -145,7 +147,7 @@ func (s *SvcImpl) ReqGetOrderPriceOther(orderId string) (*GetOrderPriceResp, err
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -163,7 +165,7 @@ func (s *SvcImpl) ReqQueryOrdersOther(input *Qi) (*OrderArrResp, error) {
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -181,7 +183,7 @@ func (s *SvcImpl) ReqQueryOrderForRefreshOther(input *Qi) (*OrderArrResp, error)
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -199,7 +201,7 @@ func (s *SvcImpl) ReqSecurityInfoCheckOther(checkDate string, accountId string) 
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -217,7 +219,7 @@ func (s *SvcImpl) ReqModifyOrderOther(orderId string, status int) (*OrderResp, e
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -235,7 +237,7 @@ func (s *SvcImpl) ReqGetTicketsListOther(input *Seat) (*OrderResp, error) {
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -253,7 +255,7 @@ func (s *SvcImpl) ReqDeleteOrderOrderServiceOther(orderId string) (*DataStringRe
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -271,7 +273,7 @@ func (s *SvcImpl) ReqGetOrderByIdOther(orderId string) (*OrderResp, error) {
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -289,7 +291,7 @@ func (s *SvcImpl) ReqCalculateSoldTicketOther(travelDate string, travelNumber st
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }

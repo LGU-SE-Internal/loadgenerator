@@ -2,6 +2,8 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io"
 )
 
@@ -45,7 +47,7 @@ func (s *SvcImpl) GetCheapestRoutes(input *RoutePlanInfo) (*RoutePlanResponse, e
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -64,7 +66,7 @@ func (s *SvcImpl) GetQuickestRoutes(input *RoutePlanInfo) (*RoutePlanResponse, e
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -83,7 +85,7 @@ func (s *SvcImpl) GetMinStopStations(input *RoutePlanInfo) (*RoutePlanResponse, 
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }

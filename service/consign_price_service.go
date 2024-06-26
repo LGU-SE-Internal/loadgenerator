@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 )
@@ -74,7 +75,7 @@ func (s *SvcImpl) GetPriceByWeightAndRegion(weight string, isWithinRegion string
 	var result ConsignPriceResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -96,7 +97,7 @@ func (s *SvcImpl) GetPriceInfo() (*GetResponse, error) {
 	var result GetResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -118,7 +119,7 @@ func (s *SvcImpl) GetPriceConfig() (*GetPriceConfigResponse, error) {
 	var result GetPriceConfigResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -140,7 +141,7 @@ func (s *SvcImpl) ModifyPriceConfig(priceConfig *ConsignPrice) (*ModifyConsignPr
 	var result ModifyConsignPriceResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
