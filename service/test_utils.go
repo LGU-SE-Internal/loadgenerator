@@ -70,7 +70,7 @@ func (s *SvcImpl) ShowStats() {
 func (s *SvcImpl) CleanUp() {
 	stats := httpclient.GenerateMarkdownTable(s.cli.GetRequestStats())
 	fmt.Println(stats)
-	os.WriteFile("data.md", []byte(stats), 0644)
+	os.WriteFile(fmt.Sprintf("data-%d.md", time.Now().UnixNano()), []byte(stats), 0644)
 }
 
 func NewSvcClients() *SvcImpl {
@@ -85,6 +85,6 @@ func NewSvcClients() *SvcImpl {
 	cli.AddHeader("Connection", "keep-alive")
 	return &SvcImpl{
 		cli:     cli,
-		BaseUrl: "http://10.10.10.220:30440",
+		BaseUrl: "http://10.10.10.220:31669",
 	}
 }
