@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 )
@@ -56,7 +57,7 @@ func (s *SvcImpl) GetAllUsers() (*GetAllUserResponse, error) {
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -75,7 +76,7 @@ func (s *SvcImpl) GetUserByUserName(userName string) (*SingleUserResponse, error
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -94,7 +95,7 @@ func (s *SvcImpl) GetUserByUserId(userId string) (*SingleUserResponse, error) {
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -113,7 +114,7 @@ func (s *SvcImpl) RegisterUser(userDto *AdminUserDto) (*SingleUserResponse, erro
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -132,7 +133,7 @@ func (s *SvcImpl) DeleteUser(userId string) (*SingleUserResponse, error) {
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -151,7 +152,7 @@ func (s *SvcImpl) UpdateUser(user *AdminUserDto) (*SingleUserResponse, error) {
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }

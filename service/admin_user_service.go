@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 )
@@ -71,7 +72,7 @@ func (s *SvcImpl) AdminAddUser(user *AdminUserDto) (*AdminUserResponse, error) {
 	var result AdminUserResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -92,7 +93,7 @@ func (s *SvcImpl) AdminUpdateUser(user *AdminUserDto) (*AdminUserResponse, error
 	var result AdminUserResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -114,7 +115,7 @@ func (s *SvcImpl) AdminDeleteUser(userId string) (*AdminDeleteResponseUser, erro
 	var result AdminDeleteResponseUser
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil

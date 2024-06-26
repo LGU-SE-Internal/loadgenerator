@@ -100,6 +100,7 @@ func (l *LoadGenerator) Start(conf ...func(*Config)) {
 		}()
 	}
 
+
 	sigs := make(chan os.Signal, 1)
 	done := make(chan bool, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)

@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 )
@@ -49,7 +50,7 @@ func (s *SvcImpl) FindByRouteIdAndTrainType(routeId, trainType string) (*AdminPr
 	var result AdminPriceResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -69,7 +70,7 @@ func (s *SvcImpl) FindByRouteIdsAndTrainTypes(ridsAndTts []string) (*AllPriceRes
 	var result AllPriceResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -89,7 +90,7 @@ func (s *SvcImpl) FindAllPriceConfig() (*AllPriceResponse, error) {
 	var result AllPriceResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -109,7 +110,7 @@ func (s *SvcImpl) CreateNewPriceConfig(info *PriceConfig) (*AdminPriceResponse, 
 	var result AdminPriceResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -129,7 +130,7 @@ func (s *SvcImpl) DeletePriceConfig(pricesId string) (*AdminPriceResponse, error
 	var result AdminPriceResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
@@ -149,7 +150,7 @@ func (s *SvcImpl) UpdatePriceConfig(info *PriceConfig) (*AdminPriceResponse, err
 	var result AdminPriceResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil

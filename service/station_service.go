@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 )
@@ -100,7 +101,7 @@ func (s *SvcImpl) QueryStations() (*DeleteStationResponse, error) {
 	var result DeleteStationResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -118,7 +119,7 @@ func (s *SvcImpl) CreateStation(input *Station) (*StationCreateResponse, error) 
 	var result StationCreateResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -137,7 +138,7 @@ func (s *SvcImpl) UpdateStation(input *Station) (*StationUpdateResponse, error) 
 	var result StationUpdateResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -156,7 +157,7 @@ func (s *SvcImpl) DeleteStation(stationId string) (*deleteStationResponse, error
 	var result deleteStationResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -175,7 +176,7 @@ func (s *SvcImpl) QueryStationIdByName(stationName string) (*StationQueryIdByNam
 	var result StationQueryIdByNameResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -193,7 +194,7 @@ func (s *SvcImpl) QueryStationIdsByNames(stationNameList []string) (*QueryStatio
 	var result QueryStationIdsByNamesResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -211,7 +212,7 @@ func (s *SvcImpl) QueryStationNameById(stationId string) (*QueryStationNameByIdR
 	var result QueryStationNameByIdResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -230,7 +231,7 @@ func (s *SvcImpl) QueryStationNamesByIds(stationIdList []string) (*QueryStationN
 	var result QueryStationNamesByIdsResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
