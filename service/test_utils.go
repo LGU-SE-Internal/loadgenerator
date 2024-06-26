@@ -70,7 +70,7 @@ func (s *SvcImpl) ShowStats() {
 func (s *SvcImpl) CleanUp() {
 	stats := httpclient.GenerateMarkdownTable(s.cli.GetRequestStats())
 	fmt.Println(stats)
-	os.WriteFile("data.md", []byte(stats), 0644)
+	os.WriteFile(fmt.Sprintf("data-%d.md", time.Now().UnixNano()), []byte(stats), 0644)
 }
 
 func NewSvcClients() *SvcImpl {

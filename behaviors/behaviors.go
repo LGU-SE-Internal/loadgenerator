@@ -49,7 +49,6 @@ type LoadGenerator struct {
 }
 
 func (l *LoadGenerator) Start(conf ...func(*Config)) {
-	cli := service.NewSvcClients()
 	config := Config{}
 	for _, fn := range conf {
 		fn(&config)
@@ -70,6 +69,10 @@ func (l *LoadGenerator) Start(conf ...func(*Config)) {
 	var wg sync.WaitGroup
 	wg.Add(config.Thread)
 
+	var cliPool []*service.SvcImpl
+	for i := 0; i < config.Thread; i++ {
+		cliPool = append(cliPool, service.NewSvcClients())
+	}
 	for i := 0; i < config.Thread; i++ {
 		go func() {
 			defer wg.Done()
@@ -92,12 +95,11 @@ func (l *LoadGenerator) Start(conf ...func(*Config)) {
 						break
 					}
 				}
-				behaviors_[selectedIndex].B.Run(cli)
+				behaviors_[selectedIndex].B.Run(cliPool[selectedIndex])
 			}
 		}()
 	}
 
-	//go cli.ShowStats()
 
 	sigs := make(chan os.Signal, 1)
 	done := make(chan bool, 1)
@@ -105,7 +107,9 @@ func (l *LoadGenerator) Start(conf ...func(*Config)) {
 	go func() {
 		<-sigs
 
-		cli.CleanUp()
+		for _, cli := range cliPool {
+			cli.CleanUp()
+		}
 
 		done <- true
 	}()
