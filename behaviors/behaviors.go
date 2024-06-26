@@ -2,6 +2,7 @@ package behaviors
 
 import (
 	"github.com/Lincyaw/loadgenerator/service"
+	"log"
 	"math/rand"
 	"os"
 	"os/signal"
@@ -76,12 +77,12 @@ func (l *LoadGenerator) Start(conf ...func(*Config)) {
 	for i := 0; i < config.Thread; i++ {
 		go func() {
 			defer wg.Done()
-			//defer func() {
-			//	if r := recover(); r != nil {
-			//		// 处理异常，比如记录日志
-			//		log.Printf("Recovered from panic: %v", r)
-			//	}
-			//}()
+			defer func() {
+				if r := recover(); r != nil {
+					// 处理异常，比如记录日志
+					log.Printf("Recovered from panic: %v", r)
+				}
+			}()
 
 			randSrc := rand.NewSource(time.Now().UnixNano())
 			randGen := rand.New(randSrc)
@@ -99,7 +100,6 @@ func (l *LoadGenerator) Start(conf ...func(*Config)) {
 			}
 		}()
 	}
-
 
 	sigs := make(chan os.Signal, 1)
 	done := make(chan bool, 1)
