@@ -75,7 +75,7 @@ func (l *LoadGenerator) Start(conf ...func(*Config)) {
 		cliPool = append(cliPool, service.NewSvcClients())
 	}
 	for i := 0; i < config.Thread; i++ {
-		go func() {
+		go func(index int) {
 			defer wg.Done()
 			defer func() {
 				if r := recover(); r != nil {
@@ -96,9 +96,9 @@ func (l *LoadGenerator) Start(conf ...func(*Config)) {
 						break
 					}
 				}
-				behaviors_[selectedIndex].B.Run(cliPool[selectedIndex])
+				behaviors_[selectedIndex].B.Run(cliPool[index])
 			}
-		}()
+		}(i)
 	}
 
 	sigs := make(chan os.Signal, 1)
@@ -115,4 +115,5 @@ func (l *LoadGenerator) Start(conf ...func(*Config)) {
 	}()
 
 	<-done
+	wg.Wait()
 }
