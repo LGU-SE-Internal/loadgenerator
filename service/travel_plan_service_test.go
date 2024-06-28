@@ -8,9 +8,9 @@ import (
 func TestSvcImpl_ReqGetByCheapest(t *testing.T) {
 	cli, _ := GetAdminClient()
 	AddResp, err := cli.ReqGetByCheapest(&TravelQueryInfo{
-		DepartureTime: "2006-07-19",
-		EndPlace:      "californiaairport",
-		StartPlace:    "shenzhenbei",
+		DepartureTime: "2024-07-19",
+		EndPlace:      "taiyuan",
+		StartPlace:    "shanghai",
 	})
 
 	if err != nil {
@@ -23,9 +23,9 @@ func TestSvcImpl_ReqGetByCheapest(t *testing.T) {
 func TestSvcImpl_ReqGetByMinStation(t *testing.T) {
 	cli, _ := GetAdminClient()
 	AddResp, err := cli.ReqGetByMinStation(&TravelQueryInfo{
-		DepartureTime: "2006-07-19",
-		EndPlace:      "californiaairport",
-		StartPlace:    "shenzhenbei",
+		DepartureTime: "2024-07-19",
+		EndPlace:      "taiyuan",
+		StartPlace:    "shanghai",
 	})
 
 	if err != nil {
@@ -38,9 +38,9 @@ func TestSvcImpl_ReqGetByMinStation(t *testing.T) {
 func TestSvcImpl_ReqGetByQuickest(t *testing.T) {
 	cli, _ := GetAdminClient()
 	AddResp, err := cli.ReqGetByQuickest(&TravelQueryInfo{
-		DepartureTime: "2006-07-19",
-		EndPlace:      "californiaairport",
-		StartPlace:    "shenzhenbei",
+		DepartureTime: "2024-07-19",
+		EndPlace:      "taiyuan",
+		StartPlace:    "shanghai",
 	})
 
 	if err != nil {
@@ -53,11 +53,11 @@ func TestSvcImpl_ReqGetByQuickest(t *testing.T) {
 func TestSvcImpl_ReqTransferResult(t *testing.T) {
 	cli, _ := GetAdminClient()
 	AddResp, err := cli.ReqTransferResult(&TransferTravelQueryInfo{
-		EndStation:   "北京",
-		StartStation: "上海",
-		TrainType:    "G",
-		TravelDate:   "2023-04-01",
-		ViaStation:   "南京",
+		EndStation:   "taiyuan",
+		StartStation: "nanjing",
+		TrainType:    "1",
+		TravelDate:   "2024-07-01",
+		ViaStation:   "shanghai",
 	})
 
 	if err != nil {
