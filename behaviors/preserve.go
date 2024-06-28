@@ -14,6 +14,15 @@ import (
 type PreserveBehavior struct{}
 
 func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
+	_, err := cli.ReqUserLogin(&service.UserLoginInfoReq{
+		Password:         "111111",
+		UserName:         "fdse_microservice",
+		VerificationCode: "123",
+	})
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	var preserveSvc service.PreserveService = cli
 
 	// Mock Input Variables
@@ -1041,7 +1050,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		IsWithin:        MockedIsWithin,
 	}
 
-	_, err := preserveSvc.Preserve(&orderTicketsInfo)
+	_, err = preserveSvc.Preserve(&orderTicketsInfo)
 	if err != nil {
 		log.Fatalf("[Input]Preserve error occurs: %v", err)
 		//return
