@@ -121,6 +121,46 @@ type MoneyResponse struct {
 	Data   Money  `json:"data"`
 }
 
+type TravelQueryInfo struct {
+	DepartureTime string `json:"departureTime"`
+	EndPlace      string `json:"endPlace"`
+	StartPlace    string `json:"startPlace"`
+}
+
+type TransferTravelQueryInfo struct {
+	EndStation   string `json:"endStation"`   // 目的地站
+	StartStation string `json:"startStation"` // 起始站
+	TrainType    string `json:"trainType"`    // 火车类型
+	TravelDate   string `json:"travelDate"`   // 出行日期
+	ViaStation   string `json:"viaStation"`   // 经过站
+}
+
+type TravelAdvanceResultUnit struct {
+	TripId                        string   `json:"tripId"`
+	TrainTypeId                   string   `json:"trainTypeId"`
+	StartStation                  string   `json:"startStation"`
+	EndStation                    string   `json:"endStation"`
+	StopStations                  []string `json:"stopStations"`
+	PriceForSecondClassSeat       string   `json:"priceForSecondClassSeat"`
+	NumberOfRestTicketSecondClass int      `json:"numberOfRestTicketSecondClass"`
+	PriceForFirstClassSeat        string   `json:"priceForFirstClassSeat"`
+	NumberOfRestTicketFirstClass  int      `json:"numberOfRestTicketFirstClass"`
+	StartTime                     string   `json:"startTime"`
+	EndTime                       string   `json:"endTime"`
+}
+
+type TravelQueryArrResponse struct {
+	Status int                       `json:"status"`
+	Msg    string                    `json:"msg"`
+	Data   []TravelAdvanceResultUnit `json:"data"`
+}
+
+type TravelQueryResponse struct {
+	Status int                     `json:"status"`
+	Msg    string                  `json:"msg"`
+	Data   TravelAdvanceResultUnit `json:"data"`
+}
+
 // init seeds the random number generator.
 func init() {
 	rand.Seed(time.Now().UnixNano())
