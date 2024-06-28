@@ -9,11 +9,23 @@ func TestPlanService_FullIntegration(t *testing.T) {
 	cli, _ := GetAdminClient()
 
 	//Mock
+	var routeSvc RouteService = cli
+	var MockedStartStation string
+	var MockedEndStation string
+	QueryAllRoute, err := routeSvc.QueryAllRoutes()
+	if err != nil {
+		t.Error(err.Error())
+	}
+
+	if len(QueryAllRoute.Data) > 0 {
+		MockedStartStation = QueryAllRoute.Data[0].StartStation
+		MockedEndStation = QueryAllRoute.Data[0].EndStation
+	}
 	input := &RoutePlanInfo{
-		StartStation: "Shenzhen Bei",
-		EndStation:   "Jiulong Xi",
-		Num:          1,
-		TravelDate:   "2024-06-14",
+		StartStation: MockedStartStation,
+		EndStation:   MockedEndStation,
+		Num:          3,
+		TravelDate:   "2024-07-04 12:00:00",
 	}
 
 	// Test GetCheapestRoutes
