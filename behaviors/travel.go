@@ -13,6 +13,14 @@ import (
 type TravelBehavior struct{}
 
 func (o *TravelBehavior) Run(cli *service.SvcImpl) {
+	_, err := cli.ReqUserLogin(&service.UserLoginInfoReq{
+		Password:         "111111",
+		UserName:         "fdse_microservice",
+		VerificationCode: "123",
+	})
+	if err != nil {
+		log.Fatalln(err)
+	}
 	var travelSvc service.TravelService = cli
 
 	// TravelService_FullIntegration
@@ -32,7 +40,7 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	var MockedEndTime string
 
 	// 1. Query
-	_, err := travelSvc.QueryAll()
+	_, err = travelSvc.QueryAll()
 	if err != nil {
 		log.Fatalf("[Query]QueryAll error occurs: %v", err)
 	}

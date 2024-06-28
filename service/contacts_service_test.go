@@ -3,9 +3,26 @@ package service
 import (
 	"github.com/go-faker/faker/v4"
 	"github.com/google/uuid"
+	"log"
 	"testing"
 )
 
+func TestSvc(t *testing.T) {
+	cli, _ := GetBasicClient()
+	var contactsSvc ContactsService = cli
+	CreateContactsInput := AdminContacts{
+		ID:        uuid.NewString(),
+		AccountID: uuid.NewString(),
+		Name:      faker.Name(),
+	}
+	CreateContacts, err := contactsSvc.AddContact(&CreateContactsInput)
+	if err != nil {
+		log.Fatalf("[MockedContactsID] CreateContacts error occurs: %v", err)
+	}
+	if CreateContacts.Data.Id == "" {
+		log.Fatalf("Create AdminContacts Fail. Return Id = ''")
+	}
+}
 func TestSvcImpl_GetAllContacts(t *testing.T) {
 	cli, _ := GetBasicClient()
 	contacts, err := cli.GetAllContacts()
