@@ -1,6 +1,7 @@
 package service
 
 import (
+	"log"
 	"testing"
 )
 
@@ -9,13 +10,27 @@ func TestSvcImpl_AddUpdateDeleteAssurance(t *testing.T) {
 	cli, _ := GetBasicClient()
 	//MockedAssuranceID := faker.UUIDHyphenated()
 	//MockedOrderID := faker.UUIDHyphenated()
+	var MockedOrderID string
+	var orderSvc OrderService = cli
 
-	// Create a new assurance
-	//addResp, err := cli.CreateNewAssurance(1, MockedOrderID) // Assuming typeIndex 1
-	//if err != nil {
-	//	t.Errorf("CreateNewAssurance failed: %v", err)
-	//}
-	//t.Logf("CreateNewAssurance response: %+v", addResp)
+	// Query
+	QueryAllOrderInfo, err := orderSvc.ReqFindAllOrder()
+	if err != nil {
+		log.Fatalf("Query All Order Info failed, err:%v\n", err)
+	}
+
+	if len(QueryAllOrderInfo.Data) > 0 {
+		MockedOrderID = QueryAllOrderInfo.Data[0].Id
+	} else {
+		log.Fatalf("Query All Order Info failed -> MockedOrderID fails, err:%v\n", err)
+	}
+
+	//Create a new assurance
+	addResp, err := cli.CreateNewAssurance(1, MockedOrderID) // Assuming typeIndex 1
+	if err != nil {
+		t.Errorf("CreateNewAssurance failed: %v", err)
+	}
+	t.Logf("CreateNewAssurance response: %+v", addResp)
 
 	// Get all assurances
 	assurances, err3 := cli.GetAllAssurances()

@@ -18,7 +18,7 @@ type TravelService interface {
 	DeleteTrip(tripId string) (*TripResponse, error)
 	QueryInfo(tripInfo TripInfo) (*QueryInfoResponse, error)
 	QueryInfoInParallel(tripInfo TripInfo) (*QueryInfoInParallelTripResponse, error)
-	GetTripAllDetailInfo(tripAllDetailInfo TripAllDetailInfo) (*GetTripAllDetailInfoResponse, error)
+	GetTripAllDetailInfo(tripId string) (*GetTripAllDetailInfoResponse, error)
 	QueryAll() (*QueryAllTravelInfo, error)
 	AdminQueryAll() (*AdminQueryAllTravelInfo, error)
 }
@@ -97,6 +97,12 @@ func (s *SvcImpl) GetTrainTypeByTripId(tripId string) (*GetTrainTypeByTripIdResp
 
 	return &result, nil
 }
+
+//type GetRouteByTripIdResponse struct {
+//	Status int         `json:"status"`
+//	Msg    string      `json:"msg"`
+//	Data   interface{} `json:"data"`
+//}
 
 type GetRouteByTripIdResponse struct {
 	Status int         `json:"status"`
@@ -323,14 +329,16 @@ type GetTripAllDetailInfoResponse struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`
 	Data   struct {
+		Status       bool        `json:"status"`
+		Message      interface{} `json:"message"`
 		TripResponse interface{} `json:"tripResponse"`
 		Trip         interface{} `json:"trip"`
 	} `json:"data"`
 }
 
-func (s *SvcImpl) GetTripAllDetailInfo(tripAllDetailInfo TripAllDetailInfo) (*GetTripAllDetailInfoResponse, error) {
+func (s *SvcImpl) GetTripAllDetailInfo(tripId string) (*GetTripAllDetailInfoResponse, error) {
 	url := fmt.Sprintf("%s/api/v1/travelservice/trip_detail", s.BaseUrl)
-	resp, err := s.cli.SendRequest("POST", url, tripAllDetailInfo)
+	resp, err := s.cli.SendRequest("POST", url, tripId)
 	if err != nil {
 		return nil, err
 	}

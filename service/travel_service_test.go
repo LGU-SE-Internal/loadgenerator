@@ -87,7 +87,7 @@ func TestTravelService_FullIntegration(t *testing.T) {
 
 	var getId string
 	if len(allTravelInfos.Data) > 0 {
-		getId = allTravelInfos.Data[0].TerminalStationName
+		getId = *(allTravelInfos.Data[0].TripId.Type) + allTravelInfos.Data[0].TripId.Number
 	}
 
 	// Test Update
@@ -180,10 +180,8 @@ func TestTravelService_FullIntegration(t *testing.T) {
 	t.Logf("QueryInfoInParallel returns: %v", queryInfoInParallelResp)
 
 	// Test GetTripAllDetailInfo
-	tripAllDetailInfo := TripAllDetailInfo{
-		TripId: getId,
-	}
-	tripAllDetailResp, err := cli.GetTripAllDetailInfo(tripAllDetailInfo)
+	TripId := "G1237"
+	tripAllDetailResp, err := cli.GetTripAllDetailInfo(TripId)
 	if err != nil {
 		t.Errorf("GetTripAllDetailInfo request failed, err %s", err)
 	}
