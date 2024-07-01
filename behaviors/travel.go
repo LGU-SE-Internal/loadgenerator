@@ -766,11 +766,9 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	}
 
 	// input
-	MockedtripAllDetailInfo := service.TripAllDetailInfo{
-		TripId: MockedTripID,
-	}
+	TripId := MockedTripID
 
-	_, err11 := travelSvc.GetTripAllDetailInfo(MockedtripAllDetailInfo)
+	_, err11 := travelSvc.GetTripAllDetailInfo(TripId)
 	if err11 != nil {
 		log.Fatalf("[GetTripAllDetailInfo]MockedtripAllDetailInfo: error11 occurs: %v", err11)
 	}
