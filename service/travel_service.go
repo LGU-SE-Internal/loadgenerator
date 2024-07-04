@@ -18,23 +18,10 @@ type TravelService interface {
 	DeleteTrip(tripId string) (*TripResponse, error)
 	QueryInfo(tripInfo TripInfo) (*QueryInfoResponse, error)
 	QueryInfoInParallel(tripInfo TripInfo) (*QueryInfoInParallelTripResponse, error)
-	GetTripAllDetailInfo(tripId string) (*GetTripAllDetailInfoResponse, error)
+	GetTripAllDetailInfo(tripId GetTripDetailReq) (*GetTripAllDetailInfoResponse, error)
 	QueryAll() (*QueryAllTravelInfo, error)
 	AdminQueryAll() (*AdminQueryAllTravelInfo, error)
 }
-
-// TrainType represents the train type structure
-//type TrainType struct {
-//	ID   string `json:"id"`
-//	Name string `json:"name"`
-//}
-
-// Route represents the route structure
-//type Route struct {
-//	ID       string `json:"id"`
-//	Name     string `json:"name"`
-//	Stations []string `json:"stations"`
-//}
 
 // TravelInfo represents the travel information
 type TravelInfo struct {
@@ -98,12 +85,6 @@ func (s *SvcImpl) GetTrainTypeByTripId(tripId string) (*GetTrainTypeByTripIdResp
 	return &result, nil
 }
 
-//type GetRouteByTripIdResponse struct {
-//	Status int         `json:"status"`
-//	Msg    string      `json:"msg"`
-//	Data   interface{} `json:"data"`
-//}
-
 type GetRouteByTripIdResponse struct {
 	Status int         `json:"status"`
 	Msg    string      `json:"msg"`
@@ -131,15 +112,6 @@ func (s *SvcImpl) GetRouteByTripId(tripId string) (*GetRouteByTripIdResponse, er
 
 	return &result, nil
 }
-
-//type GetTripsByRouteIdResponse struct {
-//	Status int `json:"status"`
-//	Data   []struct {
-//		SeatNo       int    `json:"seatNo"`
-//		StartStation string `json:"startStation"`
-//		DestStation  string `json:"destStation"`
-//	} `json:"data"`
-//}
 
 type GetTripsByRouteIdResponse struct {
 	Status int             `json:"status"`
@@ -335,10 +307,16 @@ type GetTripAllDetailInfoResponse struct {
 		Trip         interface{} `json:"trip"`
 	} `json:"data"`
 }
+type GetTripDetailReq struct {
+	From       string `json:"from"`
+	To         string `json:"to"`
+	TravelDate string `json:"travelDate"`
+	TripId     string `json:"tripId"`
+}
 
-func (s *SvcImpl) GetTripAllDetailInfo(tripId string) (*GetTripAllDetailInfoResponse, error) {
+func (s *SvcImpl) GetTripAllDetailInfo(trip GetTripDetailReq) (*GetTripAllDetailInfoResponse, error) {
 	url := fmt.Sprintf("%s/api/v1/travelservice/trip_detail", s.BaseUrl)
-	resp, err := s.cli.SendRequest("POST", url, tripId)
+	resp, err := s.cli.SendRequest("POST", url, trip)
 	if err != nil {
 		return nil, err
 	}
@@ -364,8 +342,8 @@ type QueryAllTravelInfo struct {
 	Data   []struct {
 		Id     string `json:"id"`
 		TripId struct {
-			Type   *string `json:"type"`
-			Number string  `json:"number"`
+			Type   string `json:"type"`
+			Number string `json:"number"`
 		} `json:"tripId"`
 		TrainTypeName       string `json:"trainTypeName"`
 		RouteId             string `json:"routeId"`

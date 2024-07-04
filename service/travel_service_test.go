@@ -42,22 +42,18 @@ func TestTravelService_FullIntegration(t *testing.T) {
 	}
 	t.Logf("QueryAll return: %+v", resp)
 
-	// Mock data
-	//MockedTypeName := faker.Word()
-	//MockedTripID := faker.UUIDHyphenated()
 	MockedLoginId := faker.UUIDHyphenated()
-	//MockedIndex := 1
-	//MockedTripIDName := faker.Word()
 	MockedTrainTypeName := faker.Word()
 	MockedRouteID := faker.UUIDHyphenated()
 	MockedStartStationName := "Shenzhen Bei"
 	MockedTerminalStationName := "California Airport"
 	MockedStartTime := faker.Date()
 	MockedEndTime := faker.Date()
+	TripId := "G777"
 
 	travelInfo := &TravelInfo{
 		LoginID:             MockedLoginId,
-		TripID:              "G777",
+		TripID:              TripId,
 		TrainTypeName:       MockedTrainTypeName,
 		RouteID:             MockedRouteID,
 		StartStationName:    MockedStartStationName,
@@ -85,15 +81,10 @@ func TestTravelService_FullIntegration(t *testing.T) {
 		t.Errorf("QueryAll returned no results")
 	}
 
-	var getId string
-	if len(allTravelInfos.Data) > 0 {
-		getId = *(allTravelInfos.Data[0].TripId.Type) + allTravelInfos.Data[0].TripId.Number
-	}
-
 	// Test Update
 	updateTravelInfo := &TravelInfo{
 		LoginID:             MockedLoginId,
-		TripID:              "G777",
+		TripID:              TripId,
 		TrainTypeName:       MockedTrainTypeName,
 		RouteID:             MockedRouteID,
 		StartStationName:    MockedStartStationName,
@@ -113,7 +104,7 @@ func TestTravelService_FullIntegration(t *testing.T) {
 	// Test Delete
 	var deleteID string
 	if len(allTravelInfos.Data) > 0 {
-		deleteID = *(allTravelInfos.Data[len(allTravelInfos.Data)-1].TripId.Type) + allTravelInfos.Data[len(allTravelInfos.Data)-1].TripId.Number
+		deleteID = allTravelInfos.Data[len(allTravelInfos.Data)-1].TripId.Type + allTravelInfos.Data[len(allTravelInfos.Data)-1].TripId.Number
 	} else {
 		t.Errorf("QueryAll returned empty data")
 	}
@@ -124,7 +115,7 @@ func TestTravelService_FullIntegration(t *testing.T) {
 	t.Logf("DeleteTrip return: %s", deleteResp.Msg)
 
 	// Test Retrieve by ID
-	retrieveResp, err := cli.Retrieve(getId)
+	retrieveResp, err := cli.Retrieve(TripId)
 	if err != nil {
 		t.Errorf("Retrieve request failed, err %s", err)
 	}
@@ -133,7 +124,7 @@ func TestTravelService_FullIntegration(t *testing.T) {
 	}
 
 	// Test GetTrainTypeByTripId
-	trainTypeResp, err := cli.GetTrainTypeByTripId(getId)
+	trainTypeResp, err := cli.GetTrainTypeByTripId(TripId)
 	if err != nil {
 		t.Errorf("GetTrainTypeByTripId request failed, err %s", err)
 	}
@@ -142,7 +133,7 @@ func TestTravelService_FullIntegration(t *testing.T) {
 	}
 
 	// Test GetRouteByTripId
-	routeResp, err := cli.GetRouteByTripId(getId)
+	routeResp, err := cli.GetRouteByTripId(TripId)
 	if err != nil {
 		t.Errorf("GetRouteByTripId request failed, err %s", err)
 	}
@@ -180,8 +171,12 @@ func TestTravelService_FullIntegration(t *testing.T) {
 	t.Logf("QueryInfoInParallel returns: %v", queryInfoInParallelResp)
 
 	// Test GetTripAllDetailInfo
-	TripId := "G1237"
-	tripAllDetailResp, err := cli.GetTripAllDetailInfo(TripId)
+	tripAllDetailResp, err := cli.GetTripAllDetailInfo(GetTripDetailReq{
+		From:       "suzhou",
+		To:         "taiyuan",
+		TravelDate: "",
+		TripId:     "G1234",
+	})
 	if err != nil {
 		t.Errorf("GetTripAllDetailInfo request failed, err %s", err)
 	}
@@ -194,4 +189,25 @@ func TestTravelService_FullIntegration(t *testing.T) {
 	}
 	t.Logf("AdminQueryAll returns: %v", adminQueryAllResp)
 
+}
+
+func TestGetTripAllDetailInfo(t *testing.T) {
+	cli, _ := GetAdminClient()
+
+	resp, err := cli.QueryAll()
+	if err != nil {
+		t.Errorf("Request failed, err %s", err)
+	}
+	t.Logf("QueryAll return: %+v", resp)
+
+	res, err := cli.GetTripAllDetailInfo(GetTripDetailReq{
+		From:       "shanghai",
+		To:         "taiyuan",
+		TravelDate: "2025-05-04 09:00:00",
+		TripId:     "G1234",
+	})
+	if err != nil {
+		t.Errorf("GetTripAllDetailInfo request failed, err %s", err)
+	}
+	t.Log(res)
 }

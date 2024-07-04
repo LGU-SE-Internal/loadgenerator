@@ -122,7 +122,7 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		}
 
 		if len(QueryAllTravelInfo.Data) > 0 {
-			MockedTripID = *(QueryAllTravelInfo.Data[0].TripId.Type) + QueryAllTravelInfo.Data[0].TripId.Number
+			MockedTripID = QueryAllTravelInfo.Data[0].TripId.Type + QueryAllTravelInfo.Data[0].TripId.Number
 		} else {
 			log.Fatalf("[TripID] The corresponding database is empty")
 			MockedTripID = GenerateTripId()
@@ -477,7 +477,7 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		}
 
 		if len(QueryAllTravelInfo.Data) > 0 {
-			GetTripID = *(QueryAllTravelInfo.Data[0].TripId.Type) + QueryAllTravelInfo.Data[0].TripId.Number
+			GetTripID = QueryAllTravelInfo.Data[0].TripId.Type + QueryAllTravelInfo.Data[0].TripId.Number
 		} else {
 			log.Fatalf("[6 & 7 & 8]The corresponding database is empty")
 			GetTripID = GenerateTripId()
@@ -516,7 +516,7 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		}
 
 		if len(QueryAllTravelInfo.Data) > 0 {
-			GetTripID = *(QueryAllTravelInfo.Data[len(QueryAllTravelInfo.Data)-1].TripId.Type) + QueryAllTravelInfo.Data[len(QueryAllTravelInfo.Data)-1].TripId.Number
+			GetTripID = QueryAllTravelInfo.Data[len(QueryAllTravelInfo.Data)-1].TripId.Type + QueryAllTravelInfo.Data[len(QueryAllTravelInfo.Data)-1].TripId.Number
 		} else {
 			log.Fatalf("[6 & 7 & 8] The above CRATE Fails and the corresponding database is empty")
 			GetTripID = GenerateTripId()
@@ -753,7 +753,7 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		}
 
 		if len(QueryAllTravelInfo.Data) > 0 {
-			MockedTripID = *(QueryAllTravelInfo.Data[0].TripId.Type) + QueryAllTravelInfo.Data[0].TripId.Number
+			MockedTripID = QueryAllTravelInfo.Data[0].TripId.Type + QueryAllTravelInfo.Data[0].TripId.Number
 		} else {
 			log.Fatalf("[12. GetTripAllDetailInfo] The corresponding database is empty")
 			MockedTripID = GenerateTripId()
@@ -766,9 +766,12 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	}
 
 	// input
-	TripId := MockedTripID
-
-	_, err11 := travelSvc.GetTripAllDetailInfo(TripId)
+	_, err11 := travelSvc.GetTripAllDetailInfo(service.GetTripDetailReq{
+		From:       "",
+		To:         "",
+		TravelDate: "",
+		TripId:     "",
+	})
 	if err11 != nil {
 		log.Fatalf("[GetTripAllDetailInfo]MockedtripAllDetailInfo: error11 occurs: %v", err11)
 	}

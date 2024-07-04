@@ -397,7 +397,7 @@ func (o *TravelplanBehavior) Run(cli *service.SvcImpl) {
 		}
 
 		if len(GetAllTravelInfo.Data) > 0 {
-			MockedTrainType = *(GetAllTravelInfo.Data[0].TripId.Type)
+			MockedTrainType = GetAllTravelInfo.Data[0].TripId.Type
 		} else {
 			NoExistMockedTrainType = true
 		}
@@ -441,7 +441,7 @@ func (o *TravelplanBehavior) Run(cli *service.SvcImpl) {
 		}
 
 		if len(GetAllTravelInfo.Data) > 0 {
-			MockedTrainType = *(GetAllTravelInfo.Data[0].TripId.Type)
+			MockedTrainType = GetAllTravelInfo.Data[0].TripId.Type
 		} else {
 			log.Fatalf("[MockedTrainType]create fail. No data.")
 		}
@@ -467,7 +467,7 @@ func (o *TravelplanBehavior) Run(cli *service.SvcImpl) {
 		}
 
 		if len(GetAllTravelInfo.Data) > 0 {
-			MockedTravelDate = *(GetAllTravelInfo.Data[0].TripId.Type)
+			MockedTravelDate = GetAllTravelInfo.Data[0].TripId.Type
 		} else {
 			NoExistMockedTravelDate = true
 		}
@@ -531,7 +531,7 @@ func (o *TravelplanBehavior) Run(cli *service.SvcImpl) {
 		}
 
 		if len(GetAllTravelInfo.Data) > 0 {
-			MockedViaStation = *(GetAllTravelInfo.Data[0].TripId.Type)
+			MockedViaStation = GetAllTravelInfo.Data[0].TripId.Type
 		} else {
 			NoExistMockedViaStation = true
 		}
