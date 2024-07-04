@@ -33,7 +33,7 @@ type AdminGetContactsResp struct {
 	Msg    string `json:"msg"`
 	Data   []struct {
 		Id             string  `json:"id"`
-		AccountId      *string `json:"accountId"`
+		AccountId      string `json:"accountId"`
 		Name           string  `json:"name"`
 		DocumentType   int     `json:"documentType"`
 		DocumentNumber string  `json:"documentNumber"`

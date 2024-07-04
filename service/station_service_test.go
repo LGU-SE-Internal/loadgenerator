@@ -2,6 +2,8 @@ package service
 
 import (
 	"github.com/go-faker/faker/v4"
+	"math/rand"
+	"strings"
 	"testing"
 )
 
@@ -9,73 +11,131 @@ func TestStationService_FullIntegration(t *testing.T) {
 	// Admin Test
 	// Query Test
 	cli, _ := GetAdminClient()
-	resp, err := cli.QueryStations()
+	var stationSvc StationService = cli
+
+	resp, err := stationSvc.QueryStations()
 	if err != nil {
 		t.Errorf("Request failed, err %s", err)
 	}
-	if resp.Status != 1 {
-		t.Errorf("resp.Status != 1")
+	if len(resp.Data) == 0 {
+		t.Errorf("No stations found")
 	}
+	t.Log(resp)
 
 	//Mock
-	MockedID := faker.UUIDHyphenated()
 	MockedCityName := faker.GetRealAddress().City
 	input := &Station{
-		ID: MockedID,
-		//Name:     "Shenzhen Bei",
 		Name:     MockedCityName,
-		StayTime: 7,
+		StayTime: rand.Intn(30),
 	}
 
 	// Create Test
-	resp1, err1 := cli.CreateStation(input)
+	resp1, err1 := stationSvc.CreateStation(input)
 	if err1 != nil {
 		t.Errorf("Request failed, err1 %s", err1)
 	}
-	if resp1.Status != 1 {
-		t.Errorf("Already exists")
+	if resp1.Msg == "Already exists" {
+		t.Log("station found, skip")
+		t.Skip()
 	}
+	if resp1.Data.Name != strings.Replace(strings.ToLower(input.Name), " ", "", -1) {
+		t.Errorf("Request failed, resp1.Data.Name: %s, expected: %s", resp1.Data.Name, strings.Replace(strings.ToLower(input.Name), " ", "", -1))
+	}
+	if resp1.Data.StayTime != input.StayTime {
+		t.Errorf("Request failed, resp1.Data.StayTime: %d, expected: %d", resp1.Data.StayTime, input.StayTime)
+	}
+	existedStation := resp1.Data
 
 	// Query all
-	QueryAll, err7 := cli.QueryStations()
+	QueryAll, err7 := stationSvc.QueryStations()
 	if err7 != nil {
 		t.Errorf("Request failed, err7 %s", err7)
 	}
-	if QueryAll.Status != 1 {
-		t.Errorf("QueryAll.Status != 1")
+	found := false
+	for _, station := range QueryAll.Data {
+		if station.Name == existedStation.Name {
+			found = true
+		}
 	}
-
-	var getId string
-	var getName string
-	if len(QueryAll.Data) > 0 {
-		getId = QueryAll.Data[0].Id
-		getName = QueryAll.Data[0].Name
+	if !found {
+		t.Errorf("Request failed, station not found")
 	}
 
 	// Test Update
-	input1 := &Station{
-		ID:       getId,
-		Name:     getName,
-		StayTime: 3,
-	}
-	resp2, err2 := cli.UpdateStation(input1)
+	input1 := &Station{}
+	input1.StayTime = rand.Intn(30)
+	input1.ID = existedStation.Id
+	input1.Name = existedStation.Name
+	resp2, err2 := stationSvc.UpdateStation(input1)
 	if err2 != nil {
 		t.Errorf("Request failed, err2 %s", err2)
 	}
 	if resp2.Status != 1 {
 		t.Errorf("resp2.Status != 1")
 	}
-
-	// Test Deletion
-	var stationId string
-	if len(resp.Data) > 0 {
-		stationId = resp.Data[len(resp.Data)-1].Id
-	} else {
-		t.Errorf("resp.Data is empty")
+	if resp2.Data.StayTime != input1.StayTime {
+		t.Errorf("Request failed. Expected %d, got %d", input1.StayTime, resp2.Data.StayTime)
 	}
-	stationId_delete := stationId
-	//stationId := "45dea90e-eb9b-4602-8562-0b4dfdf12e5f"
-	resp3, err3 := cli.DeleteStation(stationId_delete)
+
+	// Test Query By name
+	// Get name by Query
+	resp4, err4 := stationSvc.QueryStationIdByName(existedStation.Name)
+	if err4 != nil {
+		t.Errorf("Request failed, err4 %s", err4)
+	}
+	if resp4.Status != 1 {
+		t.Errorf("resp4.Status != 1")
+	}
+	if resp4.Data != existedStation.Id {
+		t.Errorf("resp4.Data != input.ID, expected: '%s', actual: '%s'", existedStation.Id, resp4.Data)
+	}
+	t.Logf("Query By name response: %v", resp4)
+
+	// Test Query by names
+	stationNames := []string{existedStation.Name}
+	resp5, err5 := stationSvc.QueryStationIdsByNames(stationNames)
+	if err5 != nil {
+		t.Errorf("Request failed, err5 %s", err5)
+	}
+	if resp5.Status != 1 {
+		t.Errorf("resp5.Status != 1")
+	}
+	if len(resp5.Data) != len(stationNames) {
+		t.Errorf("len(resp5.Data) != len(stationNames): %d, expected: %d", len(resp5.Data), len(stationNames))
+	}
+
+	// Test Query Name by ID
+	resp6, err6 := stationSvc.QueryStationNameById(existedStation.Id)
+	if err6 != nil {
+		t.Errorf("Request failed, err6 %s", err6)
+	}
+	if resp6.Status != 1 {
+		t.Errorf("resp6.Status != 1")
+	}
+	if resp6.Data != existedStation.Name {
+		t.Errorf("resp6.Data != input.Name, expected: '%s', actual: '%s'", existedStation.Name, resp6.Data)
+	}
+
+	// Test QueryStationNamesByIds
+	stationIds := []string{existedStation.Id}
+	resp7, err7 := stationSvc.QueryStationNamesByIds(stationIds)
+	if err7 != nil {
+		t.Errorf("Request failed, err7 %s", err7)
+	}
+	if resp7.Status != 1 {
+		t.Errorf("resp7.Status != 1")
+	}
+	found = false
+	for _, name := range resp7.Data {
+		if name == existedStation.Name {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("Request failed, station not found")
+	}
+
+	resp3, err3 := stationSvc.DeleteStation(existedStation.Id)
 	if err3 != nil {
 		t.Errorf("Request failed, err3 %s", err3)
 	}
@@ -83,60 +143,4 @@ func TestStationService_FullIntegration(t *testing.T) {
 		t.Errorf("resp3.Status != 1")
 	}
 
-	// Test Query By name
-	// Get name by Query
-	var stationName string
-	if len(resp.Data) > 0 {
-		stationName = resp.Data[0].Name
-	}
-	resp4, err4 := cli.QueryStationIdByName(stationName)
-	if err4 != nil {
-		t.Errorf("Request failed, err4 %s", err4)
-	}
-	if resp4.Status != 1 {
-		t.Errorf("resp4.Status != 1")
-	}
-	t.Logf("Query By name response: %v", resp4)
-
-	// Test Query by names
-	stationNames := []string{"suzhou", "shijiazhuang"}
-	resp5, err5 := cli.QueryStationIdsByNames(stationNames)
-	if err5 != nil {
-		t.Errorf("Request failed, err5 %s", err5)
-	}
-	if resp5.Status != 1 {
-		t.Errorf("resp5.Status != 1")
-	}
-
-	// Test Query Name by ID
-	var getStationId string
-	if len(resp.Data) > 0 {
-		getStationId = resp.Data[0].Id
-	} else {
-		t.Errorf("resp.Data is empty")
-	}
-	stationID := getStationId
-	resp6, err6 := cli.QueryStationNameById(stationID)
-	if err6 != nil {
-		t.Errorf("Request failed, err6 %s", err6)
-	}
-	if resp6.Status != 1 {
-		t.Errorf("resp6.Status != 1")
-	}
-
-	// Test QueryStationNamesByIds
-	var id1 string
-	var id2 string
-	if len(resp.Data) > 1 {
-		id1 = resp.Data[0].Id
-		id2 = resp.Data[1].Id
-	}
-	stationIds := []string{id1, id2}
-	resp7, err7 := cli.QueryStationNamesByIds(stationIds)
-	if err7 != nil {
-		t.Errorf("Request failed, err7 %s", err7)
-	}
-	if resp7.Status != 1 {
-		t.Errorf("resp7.Status != 1")
-	}
 }

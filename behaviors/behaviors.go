@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"os"
 	"os/signal"
+	"runtime"
 	"sync"
 	"syscall"
 	"time"
@@ -70,17 +71,18 @@ func (l *LoadGenerator) Start(conf ...func(*Config)) {
 	var wg sync.WaitGroup
 	wg.Add(config.Thread)
 
-	var cliPool []*service.SvcImpl
-	for i := 0; i < config.Thread; i++ {
-		cliPool = append(cliPool, service.NewSvcClients())
-	}
 	for i := 0; i < config.Thread; i++ {
 		go func(index int) {
 			defer wg.Done()
 			defer func() {
 				if r := recover(); r != nil {
 					// 处理异常，比如记录日志
-					log.Printf("Recovered from panic: %v", r)
+					buf := make([]byte, 1024)
+					n := runtime.Stack(buf, false)
+					stackTrace := string(buf[:n])
+
+					// 记录日志，包括 panic 信息和调用栈
+					log.Printf("Recovered from panic: %v\nStack trace:\n%s", r, stackTrace)
 				}
 			}()
 
@@ -96,7 +98,7 @@ func (l *LoadGenerator) Start(conf ...func(*Config)) {
 						break
 					}
 				}
-				behaviors_[selectedIndex].B.Run(cliPool[index])
+				behaviors_[selectedIndex].B.Run(service.NewSvcClients())
 			}
 		}(i)
 	}
@@ -106,10 +108,6 @@ func (l *LoadGenerator) Start(conf ...func(*Config)) {
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 	go func() {
 		<-sigs
-
-		for _, cli := range cliPool {
-			cli.CleanUp()
-		}
 
 		done <- true
 	}()

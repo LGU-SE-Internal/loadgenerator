@@ -8,10 +8,10 @@ import (
 )
 
 type StationService interface {
-	QueryStations() (*DeleteStationResponse, error)
+	QueryStations() (*GetStationResponse, error)
 	CreateStation(input *Station) (*StationCreateResponse, error)
 	UpdateStation(input *Station) (*StationUpdateResponse, error)
-	DeleteStation(stationId string) (*deleteStationResponse, error)
+	DeleteStation(stationId string) (*DeleteStationResponse, error)
 	QueryStationIdByName(stationName string) (*StationQueryIdByNameResponse, error)
 	QueryStationIdsByNames(stationNameList []string) (*QueryStationIdsByNamesResponse, error)
 	QueryStationNameById(stationId string) (*QueryStationNameByIdResponse, error)
@@ -26,17 +26,16 @@ type Station struct {
 type DeleteStationResponse struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`
-	Data   []struct {
+	Data   struct {
 		Id       string `json:"id"`
 		Name     string `json:"name"`
 		StayTime int    `json:"stayTime"`
 	} `json:"data"`
 }
-
-type deleteStationResponse struct {
+type GetStationResponse struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`
-	Data   struct {
+	Data   []struct {
 		Id       string `json:"id"`
 		Name     string `json:"name"`
 		StayTime int    `json:"stayTime"`
@@ -54,9 +53,13 @@ type StationCreateResponse struct {
 }
 
 type StationUpdateResponse struct {
-	Status int         `json:"status"`
-	Msg    string      `json:"msg"`
-	Data   interface{} `json:"data"`
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   struct {
+		Id       string `json:"id"`
+		Name     string `json:"name"`
+		StayTime int    `json:"stayTime"`
+	} `json:"data"`
 }
 
 type StationQueryIdByNameResponse struct {
@@ -66,12 +69,9 @@ type StationQueryIdByNameResponse struct {
 }
 
 type QueryStationIdsByNamesResponse struct {
-	Status int    `json:"status"`
-	Msg    string `json:"msg"`
-	Data   struct {
-		Suzhou       string `json:"suzhou"`
-		Shijiazhuang string `json:"shijiazhuang"`
-	} `json:"data"`
+	Status int               `json:"status"`
+	Msg    string            `json:"msg"`
+	Data   map[string]string `json:"data"`
 }
 
 type QueryStationNameByIdResponse struct {
@@ -86,7 +86,7 @@ type QueryStationNamesByIdsResponse struct {
 	Data   []string `json:"data"`
 }
 
-func (s *SvcImpl) QueryStations() (*DeleteStationResponse, error) {
+func (s *SvcImpl) QueryStations() (*GetStationResponse, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+"/api/v1/stationservice/stations", nil)
 	if err != nil {
 		return nil, err
@@ -98,7 +98,7 @@ func (s *SvcImpl) QueryStations() (*DeleteStationResponse, error) {
 		return nil, err
 	}
 
-	var result DeleteStationResponse
+	var result GetStationResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
@@ -143,7 +143,7 @@ func (s *SvcImpl) UpdateStation(input *Station) (*StationUpdateResponse, error) 
 	return &result, nil
 }
 
-func (s *SvcImpl) DeleteStation(stationId string) (*deleteStationResponse, error) {
+func (s *SvcImpl) DeleteStation(stationId string) (*DeleteStationResponse, error) {
 	resp, err := s.cli.SendRequest("DELETE", s.BaseUrl+fmt.Sprintf("/api/v1/stationservice/stations/%s", stationId), nil)
 	if err != nil {
 		return nil, err
@@ -154,7 +154,7 @@ func (s *SvcImpl) DeleteStation(stationId string) (*deleteStationResponse, error
 	if err != nil {
 		return nil, err
 	}
-	var result deleteStationResponse
+	var result DeleteStationResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
