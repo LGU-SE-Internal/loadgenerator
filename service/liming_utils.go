@@ -161,6 +161,33 @@ type TravelQueryResponse struct {
 	Data   TravelAdvanceResultUnit `json:"data"`
 }
 
+type TicketOrder struct {
+	Date        string `json:"date"`        // 订单日期
+	Email       string `json:"email"`       // 用户邮箱
+	EndPlace    string `json:"endPlace"`    // 目的地
+	ID          string `json:"id"`          // 订单ID
+	OrderNumber string `json:"orderNumber"` // 订单号
+	Price       string `json:"price"`       // 价格
+	SeatClass   string `json:"seatClass"`   // 座位等级
+	SeatNumber  string `json:"seatNumber"`  // 座位号
+	SendStatus  bool   `json:"sendStatus"`  // 发送状态
+	StartPlace  string `json:"startPlace"`  // 出发地
+	StartTime   string `json:"startTime"`   // 出发时间
+	Username    string `json:"username"`    // 用户名
+}
+
+type TicketOrderArrResponse struct {
+	Status int           `json:"status"`
+	Msg    string        `json:"msg"`
+	Data   []TicketOrder `json:"data"`
+}
+
+type TicketOrderResponse struct {
+	Status int         `json:"status"`
+	Msg    string      `json:"msg"`
+	Data   TicketOrder `json:"data"`
+}
+
 // init seeds the random number generator.
 func init() {
 	rand.Seed(time.Now().UnixNano())
