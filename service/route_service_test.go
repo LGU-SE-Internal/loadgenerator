@@ -1,92 +1,153 @@
 package service
 
 import (
+	"fmt"
 	"github.com/go-faker/faker/v4"
+	"math/rand"
 	"testing"
 )
 
 func TestRouteService_FullIntegration(t *testing.T) {
-	cli, _ := GetBasicClient()
+	cli, _ := GetAdminClient()
+	var routeSvc RouteService = cli
+
+	// Create
 	MockedID := faker.UUIDHyphenated()
+	MockedStartStation := faker.GetRealAddress().City
+	MockedEndStation := faker.GetRealAddress().City
+	MockedStationList := fmt.Sprintf("%s, %s, %s", MockedStartStation, faker.GetRealAddress().City, MockedEndStation)
+	MockedDistanceList := fmt.Sprintf("%d, %d, %d", rand.Intn(30), rand.Intn(30), rand.Intn(30))
 	input := &RouteInfo{
 		ID:           MockedID,
-		StartStation: "Shenzhen Bei",
-		EndStation:   "Jiulong Xi",
-		StationList:  "Shenzhen Bei,Shkou,Jiulong Xi",
-		DistanceList: "77,66,55",
+		StartStation: MockedStartStation,
+		EndStation:   MockedEndStation,
+		StationList:  MockedStationList,
+		DistanceList: MockedDistanceList,
 	}
-	resp, err := cli.CreateAndModifyRoute(input)
+	resp, err := routeSvc.CreateAndModifyRoute(input)
 	if err != nil {
 		t.Errorf("Request failed, err %s", err)
 	}
-	if resp.Status != 1 {
-		t.Errorf("resp.Status != 1")
+	if resp.Msg == "Already exists" {
+		t.Log("Route already exists, skip")
+		t.Skip()
 	}
+	if resp.Data.Id != input.ID {
+		t.Errorf("Route ID does not match, expect %s, got %s", input.ID, resp.Data.Id)
+	}
+	if resp.Data.StartStation != input.StartStation {
+		t.Errorf("StartStation does not match, expect %s, got %s", input.StartStation, resp.Data.StartStation)
+	}
+	if resp.Data.EndStation != input.EndStation {
+		t.Errorf("StartStation does not match, expect %s, got %s", input.StartStation, resp.Data.StartStation)
+	}
+	if ListToString(resp.Data.Stations) != input.StationList {
+		t.Errorf("StationList does not match, expect %s, got %s", input.StationList, resp.Data.Stations)
+	}
+	if IntListToString(resp.Data.Distances) != input.DistanceList {
+		t.Errorf("DistanceList does not match, expect %s, got %d", input.DistanceList, resp.Data.Distances)
+	}
+	existedRoute := resp.Data
 
 	//Test Query
-	AllRoutes_By_Query, err2 := cli.QueryAllRoutes()
+	AllRoutes_By_Query, err2 := routeSvc.QueryAllRoutes()
 	if err2 != nil {
 		t.Errorf("Request failed, err2 %s", err2)
 	}
 	if AllRoutes_By_Query.Status != 1 {
 		t.Errorf("AllRoutes_By_Query.Status != 1")
 	}
+	found := false
+	for _, route := range AllRoutes_By_Query.Data {
+		if route.Id == existedRoute.Id {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("Route not found by queryALL")
+	}
 
 	//Test Query_By_Id
-	routeId_Query := MockedID
-	resp3, err3 := cli.QueryRouteById(routeId_Query)
+	routeId_Query := existedRoute.Id
+	resp3, err3 := routeSvc.QueryRouteById(routeId_Query)
 	if err3 != nil {
 		t.Errorf("Request failed, err3 %s", err3)
 	}
 	if resp3.Status != 1 {
 		t.Errorf("resp3.Status != 1")
 	}
-
-	//Test Query_By_Ids
-	var routeIds []string
-	if len(AllRoutes_By_Query.Data) > 0 {
-		routeIds = append(routeIds, AllRoutes_By_Query.Data[0].Id)
-		routeIds = append(routeIds, AllRoutes_By_Query.Data[len(AllRoutes_By_Query.Data)-1].Id)
-	} else {
-		t.Errorf("AllRoutes_By_Query.Data is empty")
+	if resp3.Data.Id != existedRoute.Id {
+		t.Errorf("resp3.Data.Id != existedRoute.Id, expect %s, got %s", existedRoute.Id, resp3.Data.Id)
 	}
 
-	resp4, err4 := cli.QueryRoutesByIds(routeIds)
+	//Test Query_By_Ids
+	//var routeIds []string
+	//if len(AllRoutes_By_Query.Data) > 0 {
+	//	routeIds = append(routeIds, AllRoutes_By_Query.Data[0].Id)
+	//	routeIds = append(routeIds, AllRoutes_By_Query.Data[len(AllRoutes_By_Query.Data)-1].Id)
+	//} else {
+	//	t.Errorf("AllRoutes_By_Query.Data is empty")
+	//}
+
+	routeIds := existedRoute.Stations
+	resp4, err4 := routeSvc.QueryRoutesByIds(routeIds)
 	if err4 != nil {
 		t.Errorf("Request failed, err4 %s", err4)
 	}
 	if resp4.Status != 1 {
 		t.Errorf("resp4.Status != 1")
 	}
-
-	// Test Deletion
-	routeId := MockedID
-	resp1, err1 := cli.DeleteRoute(routeId)
-	if err1 != nil {
-		t.Errorf("Request failed, err %s", err1)
+	found = false
+	for _, route := range resp4.Data {
+		if route.Id == existedRoute.Id {
+			found = true
+		}
 	}
-	if resp1.Status != 1 {
-		t.Errorf("resp.Status != 1")
+	if !found {
+		t.Errorf("Route not found by query by QueryByStations")
 	}
 
 	//Test Find by start and end
-	start := "shanghai"
-	end := "taiyuan"
-	resp5, err5 := cli.QueryRoutesByStartAndEnd(start, end)
+	start := existedRoute.StartStation
+	end := existedRoute.EndStation
+	resp5, err5 := routeSvc.QueryRoutesByStartAndEnd(start, end)
 	if err5 != nil {
 		t.Errorf("Request failed, err5 %s", err5)
+	}
+	if resp5.Status != 1 {
+		t.Errorf("resp5.Status != 1")
+	}
+
+	found = false
+	for _, route := range resp5.Data {
+		if route.Id == existedRoute.Id {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("Route not found by query by start and end")
 	}
 	t.Logf("QueryRoutesByStartAndEnd retuens: %v", resp5)
 
 	// Test unshown data
 	start_false := "California"
 	end_false := "San Diego"
-	resp6, err6 := cli.QueryRoutesByStartAndEnd(start_false, end_false)
+	resp6, err6 := routeSvc.QueryRoutesByStartAndEnd(start_false, end_false)
 	if err6 != nil {
 		t.Errorf("Request failed, err6 %s", err6)
 	}
 	if resp6.Status != 0 {
 		t.Errorf("resp6.Status != 0")
+	}
+
+	// Test Deletion
+	routeId := existedRoute.Id
+	resp1, err1 := routeSvc.DeleteRoute(routeId)
+	if err1 != nil {
+		t.Errorf("Request failed, err %s", err1)
+	}
+	if resp1.Status != 1 {
+		t.Errorf("resp.Status != 1")
 	}
 
 }
