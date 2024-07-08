@@ -7,13 +7,13 @@ import (
 func TestAdminBasicInfoService_FullIntegration(t *testing.T) {
 	adminClient, _ := GetAdminClient()
 
-	allContacts, err := adminClient.GetAllContacts()
+	allContacts, err := adminClient.AdminGetAllContacts()
 	if err != nil {
 		t.Errorf("Failed to get all contacts: %v", err)
 	}
 
 	// Create a client for admin user and perform user creation
-	adminRegisterResp, err := adminClient.AddContact(&Contacts{Name: "Admin User Contact"})
+	adminRegisterResp, err := adminClient.AdminAddContact(&AdminContacts{Name: "Admin User Contact"})
 	if err != nil {
 		t.Errorf("Failed to create contact for admin user: %v", err)
 	}
@@ -29,7 +29,7 @@ func TestAdminBasicInfoService_FullIntegration(t *testing.T) {
 	}
 
 	// Admin user modifies contact
-	modifyResp, err := adminClient.ModifyContact(&Contacts{ID: id, Name: "Modified Basic Contact"})
+	modifyResp, err := adminClient.AdminModifyContact(&AdminContacts{ID: id, Name: "Modified Basic Contact"})
 	if err != nil {
 		t.Errorf("Failed to modify contact for basic user: %v", err)
 	}
@@ -45,7 +45,7 @@ func TestAdminBasicInfoService_FullIntegration(t *testing.T) {
 	}
 
 	// Admin user deletes contact
-	deleteResp, err := adminClient.DeleteContact(contactsId)
+	deleteResp, err := adminClient.AdminDeleteContact(contactsId)
 	if err != nil {
 		t.Errorf("Failed to delete contact for admin user: %v", err)
 	}

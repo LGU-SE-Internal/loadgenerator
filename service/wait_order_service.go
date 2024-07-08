@@ -2,10 +2,18 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io"
 )
 
-func (s *SvcImpl) ReqCreateNewOrder_WaitOrder(input *OrderVO) (*OrderResp, error) {
+type WaitOrderService interface {
+	ReqCreateNewWaitOrder(input *OrderVO) (*OrderResp, error)
+	ReqGetAllWaitOrder() (*OrderArrResp, error)
+	ReqGetWaitListOrders() (*OrderArrResp, error)
+}
+
+func (s *SvcImpl) ReqCreateNewWaitOrder(input *OrderVO) (*OrderResp, error) {
 	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/waitorderservice/order", input)
 	if err != nil {
 		return nil, err
@@ -18,12 +26,12 @@ func (s *SvcImpl) ReqCreateNewOrder_WaitOrder(input *OrderVO) (*OrderResp, error
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
 
-func (s *SvcImpl) ReqGetAllOrders_WaitOrder() (*OrderArrResp, error) {
+func (s *SvcImpl) ReqGetAllWaitOrder() (*OrderArrResp, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+"/api/v1/waitorderservice/orders", nil)
 	if err != nil {
 		return nil, err
@@ -36,7 +44,7 @@ func (s *SvcImpl) ReqGetAllOrders_WaitOrder() (*OrderArrResp, error) {
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -54,7 +62,7 @@ func (s *SvcImpl) ReqGetWaitListOrders() (*OrderArrResp, error) {
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }

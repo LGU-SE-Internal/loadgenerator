@@ -130,7 +130,7 @@ type OrderResp struct {
 type DataStringResp struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`
-	Data   string `json:"data"`
+	Data   Order  `json:"data"`
 }
 
 type GetOrderPriceResp struct {
@@ -165,22 +165,4 @@ type Seat struct {
 	TotalNum     int      `json:"totalNum"`
 	TrainNumber  string   `json:"trainNumber"`
 	TravelDate   string   `json:"travelDate"`
-}
-
-type OrderService interface {
-	ReqFindAllOrder() (*OrderArrResp, error)
-	ReqCreateNewOrder(input *Order) (*OrderResp, error)
-	ReqSaveOrderInfo(input *Order) (*OrderResp, error)
-	ReqAddCreateNewOrder(input *Order) (*OrderResp, error)
-	ReqUpdateOrder_OrderService(input *Order) (*OrderResp, error)
-	ReqPayOrder(orderId string) (*OrderResp, error)
-	ReqGetOrderPrice(orderId string) (*GetOrderPriceResp, error)
-	ReqQueryOrders(input *Qi) (*OrderArrResp, error)
-	ReqQueryOrderForRefresh(input *Qi) (*OrderArrResp, error)
-	ReqSecurityInfoCheck(checkDate string, accountId string) (*OrderResp, error)
-	ReqModifyOrder(orderId string, status int) (*OrderResp, error)
-	ReqGetTicketsList(input *Seat) (*OrderResp, error)
-	ReqDeleteOrder_OrderService(orderId string) (*OrderResp, error)
-	ReqGetOrderById(orderId string) (*OrderResp, error)
-	ReqCalculateSoldTicket(travelDate string, travelNumber string) (*OrderResp, error)
 }

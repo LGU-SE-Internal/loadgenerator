@@ -19,7 +19,6 @@ func (o *CreateUserBehavior) Run(cli *service.SvcImpl) {
 	if err != nil {
 		return
 	}
-	time.Sleep(2 * time.Second)
 	// login
 	_, err = cli.ReqUserLogin(&service.UserLoginInfoReq{
 		Password:         "222222",
