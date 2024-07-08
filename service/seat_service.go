@@ -2,9 +2,15 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io"
 )
 
+type SeatService interface {
+	ReqSeatCreate(input *SeatCreateInfoReq) (*SeatCreateInfoResp, error)
+	ReqGetTicketLeft(input *SeatCreateInfoReq) (*TicketLeftResp, error)
+}
 type SeatCreateInfoReq struct {
 	TravelDate  string   `form:"travelDate" json:"travelDate" binding:"required"`
 	TrainNumber string   `form:"trainNumber" json:"trainNumber" binding:"required"`
@@ -42,7 +48,7 @@ func (s *SvcImpl) ReqSeatCreate(input *SeatCreateInfoReq) (*SeatCreateInfoResp, 
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -60,7 +66,7 @@ func (s *SvcImpl) ReqGetTicketLeft(input *SeatCreateInfoReq) (*TicketLeftResp, e
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }

@@ -2,11 +2,18 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 )
 
-type TravelInfo struct {
+type AdminTravelService interface {
+	CreateTravel(request *AdminTravelInfo) (*AdminTravelResponse, error)
+	UpdateTravel(request *AdminTravelInfo) (*AdminTravelResponse, error)
+	DeleteTravel(tripId string) (*AdminTravelResponse, error)
+	GetAllTravels() ([]AdminTravelInfo, error)
+}
+type AdminTravelInfo struct {
 	LoginID             string `json:"loginId"`
 	TripID              string `json:"tripId"`
 	TrainTypeName       string `json:"trainTypeName"`
@@ -18,7 +25,7 @@ type TravelInfo struct {
 	EndTime             string `json:"endTime"`
 }
 
-type TravelResponse struct {
+type AdminTravelResponse struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`
 	Data   struct {
@@ -34,7 +41,7 @@ type TravelResponse struct {
 	} `json:"data"`
 }
 
-func (s *SvcImpl) CreateTravel(request *TravelInfo) (*TravelResponse, error) {
+func (s *SvcImpl) CreateTravel(request *AdminTravelInfo) (*AdminTravelResponse, error) {
 	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/admintravelservice/admintravel", request)
 	if err != nil {
 		return nil, err
@@ -46,16 +53,16 @@ func (s *SvcImpl) CreateTravel(request *TravelInfo) (*TravelResponse, error) {
 		return nil, err
 	}
 
-	var result TravelResponse
+	var result AdminTravelResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
 }
 
-func (s *SvcImpl) UpdateTravel(request *TravelInfo) (*TravelResponse, error) {
+func (s *SvcImpl) UpdateTravel(request *AdminTravelInfo) (*AdminTravelResponse, error) {
 	resp, err := s.cli.SendRequest("PUT", s.BaseUrl+"/api/v1/admintravelservice/admintravel", request)
 	if err != nil {
 		return nil, err
@@ -67,16 +74,16 @@ func (s *SvcImpl) UpdateTravel(request *TravelInfo) (*TravelResponse, error) {
 		return nil, err
 	}
 
-	var result TravelResponse
+	var result AdminTravelResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
 }
 
-func (s *SvcImpl) DeleteTravel(tripId string) (*TravelResponse, error) {
+func (s *SvcImpl) DeleteTravel(tripId string) (*AdminTravelResponse, error) {
 	url := fmt.Sprintf("%s/api/v1/admintravelservice/admintravel/%s", s.BaseUrl, tripId)
 	resp, err := s.cli.SendRequest("DELETE", url, nil)
 	if err != nil {
@@ -89,16 +96,16 @@ func (s *SvcImpl) DeleteTravel(tripId string) (*TravelResponse, error) {
 		return nil, err
 	}
 
-	var result TravelResponse
+	var result AdminTravelResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
 	return &result, nil
 }
 
-func (s *SvcImpl) GetAllTravels() ([]TravelInfo, error) {
+func (s *SvcImpl) GetAllTravels() ([]AdminTravelInfo, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+"/api/v1/admintravelservice/admintravel", nil)
 	if err != nil {
 		return nil, err
@@ -110,7 +117,7 @@ func (s *SvcImpl) GetAllTravels() ([]TravelInfo, error) {
 		return nil, err
 	}
 
-	var travels []TravelInfo
+	var travels []AdminTravelInfo
 	err = json.Unmarshal(body, &travels)
 	if err != nil {
 		return nil, err
