@@ -2,9 +2,29 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io"
 	"strconv"
 )
+
+type OrderService interface {
+	ReqFindAllOrder() (*OrderArrResp, error)
+	ReqCreateNewOrder(input *Order) (*OrderResp, error)
+	ReqSaveOrderInfo(input *Order) (*OrderResp, error)
+	ReqAddCreateNewOrder(input *Order) (*OrderResp, error)
+	ReqUpdateOrder_OrderService(input *Order) (*OrderResp, error)
+	ReqPayOrder(orderId string) (*OrderResp, error)
+	ReqGetOrderPrice(orderId string) (*GetOrderPriceResp, error)
+	ReqQueryOrders(input *Qi) (*OrderArrResp, error)
+	ReqQueryOrderForRefresh(input *Qi) (*OrderArrResp, error)
+	ReqSecurityInfoCheck(checkDate string, accountId string) (*OrderResp, error)
+	ReqModifyOrder(orderId string, status int) (*OrderResp, error)
+	ReqGetTicketsList(input *Seat) (*OrderResp, error)
+	ReqDeleteOrder_OrderService(orderId string) (*OrderResp, error)
+	ReqGetOrderById(orderId string) (*OrderResp, error)
+	ReqCalculateSoldTicket(travelDate string, travelNumber string) (*OrderResp, error)
+}
 
 func (s *SvcImpl) ReqFindAllOrder() (*OrderArrResp, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+"/api/v1/orderservice/order", nil)
@@ -19,7 +39,7 @@ func (s *SvcImpl) ReqFindAllOrder() (*OrderArrResp, error) {
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -37,7 +57,7 @@ func (s *SvcImpl) ReqCreateNewOrder(input *Order) (*OrderResp, error) {
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -55,7 +75,7 @@ func (s *SvcImpl) ReqSaveOrderInfo(input *Order) (*OrderResp, error) {
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -73,7 +93,7 @@ func (s *SvcImpl) ReqAddCreateNewOrder(input *Order) (*OrderResp, error) {
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -91,7 +111,7 @@ func (s *SvcImpl) ReqUpdateOrder_OrderService(input *Order) (*OrderResp, error) 
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -109,7 +129,7 @@ func (s *SvcImpl) ReqPayOrder(orderId string) (*OrderResp, error) {
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -127,7 +147,7 @@ func (s *SvcImpl) ReqGetOrderPrice(orderId string) (*GetOrderPriceResp, error) {
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -145,7 +165,7 @@ func (s *SvcImpl) ReqQueryOrders(input *Qi) (*OrderArrResp, error) {
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -163,7 +183,7 @@ func (s *SvcImpl) ReqQueryOrderForRefresh(input *Qi) (*OrderArrResp, error) {
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -181,7 +201,7 @@ func (s *SvcImpl) ReqSecurityInfoCheck(checkDate string, accountId string) (*Ord
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -199,7 +219,7 @@ func (s *SvcImpl) ReqModifyOrder(orderId string, status int) (*OrderResp, error)
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -217,7 +237,7 @@ func (s *SvcImpl) ReqGetTicketsList(input *Seat) (*OrderResp, error) {
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -235,7 +255,7 @@ func (s *SvcImpl) ReqDeleteOrder_OrderService(orderId string) (*OrderResp, error
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -253,7 +273,7 @@ func (s *SvcImpl) ReqGetOrderById(orderId string) (*OrderResp, error) {
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -271,7 +291,7 @@ func (s *SvcImpl) ReqCalculateSoldTicket(travelDate string, travelNumber string)
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
