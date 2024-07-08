@@ -2,23 +2,33 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io"
 )
+
+type AdminOrderService interface {
+	ReqGetAllOrders() (*OrderArrResp, error)
+	ReqAddOrder(input *Order) (*OrderResp, error)
+	ReqUpdateOrder(input *Order) (*OrderResp, error)
+	ReqDeleteOrder(orderId string, trainNumber string) (*OrderResp, error)
+}
 
 func (s *SvcImpl) ReqGetAllOrders() (*OrderArrResp, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+"/api/v1/adminorderservice/adminorder", nil)
 	if err != nil {
 		return nil, err
 	}
+
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
-	var result OrderArrResp
 
+	var result OrderArrResp
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -36,7 +46,7 @@ func (s *SvcImpl) ReqAddOrder(input *Order) (*OrderResp, error) {
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
@@ -46,33 +56,42 @@ func (s *SvcImpl) ReqUpdateOrder(input *Order) (*OrderResp, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
-	var result OrderResp
 
+	var result OrderResp
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }
 
-func (s *SvcImpl) ReqDeleteOrder(orderId string, trainNumber string) (*OrderResp, error) {
+type ReqDeleteOrderResponse struct {
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   Order  `json:"data"`
+}
+
+func (s *SvcImpl) ReqDeleteOrder(orderId string, trainNumber string) (*ReqDeleteOrderResponse, error) {
 	resp, err := s.cli.SendRequest("DELETE", s.BaseUrl+"/api/v1/adminorderservice/adminorder/"+orderId+"/"+trainNumber, nil)
 	if err != nil {
 		return nil, err
 	}
 	body, err := io.ReadAll(resp.Body)
+
 	if err != nil {
 		return nil, err
 	}
-	var result OrderResp
 
+	var result ReqDeleteOrderResponse
+	//fmt.Println(result.Data.TrainNumber)
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
 }

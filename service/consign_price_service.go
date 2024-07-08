@@ -2,20 +2,64 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 )
 
+type ConsignPriceService interface {
+	GetPriceByWeightAndRegion(weight string, isWithinRegion string) (*ConsignPriceResponse, error)
+	GetPriceInfo() (*GetResponse, error)
+	GetPriceConfig() (*GetPriceConfigResponse, error)
+	ModifyPriceConfig(priceConfig *ConsignPrice) (*ModifyConsignPriceResponse, error)
+}
 type ConsignPrice struct {
-	ID            string  `json:"id"`             // `@Id @GeneratedValue(generator = "jpa-uuid") @Column(length = 36)`
-	Index         int     `json:"index"`          // `@Column(name = "idx", unique = true)`
-	InitialWeight float64 `json:"initial_weight"` // `@Column(name = "initial_weight")`
-	InitialPrice  float64 `json:"initial_price"`  // `@Column(name = "initial_price")`
-	WithinPrice   float64 `json:"within_price"`   // `@Column(name = "within_price")`
-	BeyondPrice   float64 `json:"beyond_price"`   // `@Column(name = "beyond_price")`
+	ID            string  `json:"id"`            // UUID field, mapped from Java's String
+	Index         int     `json:"index"`         // Unique index field
+	InitialWeight float64 `json:"initialWeight"` // Initial weight field
+	InitialPrice  float64 `json:"initialPrice"`  // Initial price field
+	WithinPrice   float64 `json:"withinPrice"`   // Within price field
+	BeyondPrice   float64 `json:"beyondPrice"`   // Beyond price field
 }
 
-func (s *SvcImpl) GetPriceByWeightAndRegion(weight string, isWithinRegion string) (interface{}, error) {
+type ConsignPriceResponse struct {
+	Status int     `json:"status"`
+	Msg    string  `json:"msg"`
+	Data   float64 `json:"data"`
+}
+
+type GetResponse struct {
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   string `json:"data"`
+}
+
+type GetPriceConfigResponse struct {
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   struct {
+		Id            string  `json:"id"`
+		Index         int     `json:"index"`
+		InitialWeight float64 `json:"initialWeight"`
+		InitialPrice  float64 `json:"initialPrice"`
+		WithinPrice   float64 `json:"withinPrice"`
+		BeyondPrice   float64 `json:"beyondPrice"`
+	} `json:"data"`
+}
+type ModifyConsignPriceResponse struct {
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   struct {
+		Id            string  `json:"id"`
+		Index         int     `json:"index"`
+		InitialWeight float64 `json:"initialWeight"`
+		InitialPrice  float64 `json:"initialPrice"`
+		WithinPrice   float64 `json:"withinPrice"`
+		BeyondPrice   float64 `json:"beyondPrice"`
+	} `json:"data"`
+}
+
+func (s *SvcImpl) GetPriceByWeightAndRegion(weight string, isWithinRegion string) (*ConsignPriceResponse, error) {
 	url := fmt.Sprintf("%s/api/v1/consignpriceservice/consignprice/%s/%s", s.BaseUrl, weight, isWithinRegion)
 	resp, err := s.cli.SendRequest("GET", url, nil)
 	if err != nil {
@@ -28,16 +72,16 @@ func (s *SvcImpl) GetPriceByWeightAndRegion(weight string, isWithinRegion string
 		return nil, err
 	}
 
-	var result interface{}
+	var result ConsignPriceResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
-	return result, nil
+	return &result, nil
 }
 
-func (s *SvcImpl) GetPriceInfo() (interface{}, error) {
+func (s *SvcImpl) GetPriceInfo() (*GetResponse, error) {
 	url := fmt.Sprintf("%s/api/v1/consignpriceservice/consignprice/price", s.BaseUrl)
 	resp, err := s.cli.SendRequest("GET", url, nil)
 	if err != nil {
@@ -50,16 +94,16 @@ func (s *SvcImpl) GetPriceInfo() (interface{}, error) {
 		return nil, err
 	}
 
-	var result interface{}
+	var result GetResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
-	return result, nil
+	return &result, nil
 }
 
-func (s *SvcImpl) GetPriceConfig() (interface{}, error) {
+func (s *SvcImpl) GetPriceConfig() (*GetPriceConfigResponse, error) {
 	url := fmt.Sprintf("%s/api/v1/consignpriceservice/consignprice/config", s.BaseUrl)
 	resp, err := s.cli.SendRequest("GET", url, nil)
 	if err != nil {
@@ -72,16 +116,16 @@ func (s *SvcImpl) GetPriceConfig() (interface{}, error) {
 		return nil, err
 	}
 
-	var result interface{}
+	var result GetPriceConfigResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
-	return result, nil
+	return &result, nil
 }
 
-func (s *SvcImpl) ModifyPriceConfig(priceConfig ConsignPrice) (interface{}, error) {
+func (s *SvcImpl) ModifyPriceConfig(priceConfig *ConsignPrice) (*ModifyConsignPriceResponse, error) {
 	url := fmt.Sprintf("%s/api/v1/consignpriceservice/consignprice", s.BaseUrl)
 	resp, err := s.cli.SendRequest("POST", url, priceConfig)
 	if err != nil {
@@ -94,11 +138,11 @@ func (s *SvcImpl) ModifyPriceConfig(priceConfig ConsignPrice) (interface{}, erro
 		return nil, err
 	}
 
-	var result interface{}
+	var result ModifyConsignPriceResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
-	return result, nil
+	return &result, nil
 }

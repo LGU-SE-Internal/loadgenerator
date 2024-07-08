@@ -5,6 +5,7 @@ import (
 	"github.com/Lincyaw/loadgenerator/httpclient"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
+	"os"
 	"sort"
 	"time"
 )
@@ -20,7 +21,7 @@ func (s *SvcImpl) ShowStats() {
 	table := tview.NewTable().SetBorders(true)
 	table.SetBackgroundColor(tcell.ColorDefault)
 	// 设置表头
-	headers := []string{"URL", "Method", "Success", "Failed", "Request Bodies", "Response Bodies"}
+	headers := []string{"URL", "Method", "Success", "Failed", "Request Bodies", "RouteResponse Bodies"}
 	for i, header := range headers {
 		table.SetCell(0, i, tview.NewTableCell(header).SetTextColor(tcell.ColorYellow))
 	}
@@ -65,6 +66,13 @@ func (s *SvcImpl) ShowStats() {
 		panic(err)
 	}
 }
+
+func (s *SvcImpl) CleanUp() {
+	stats := httpclient.GenerateMarkdownTable(s.cli.GetRequestStats())
+	fmt.Println(stats)
+	os.WriteFile(fmt.Sprintf("data-%d.md", time.Now().UnixNano()), []byte(stats), 0644)
+}
+
 func NewSvcClients() *SvcImpl {
 	cli := httpclient.NewCustomClient()
 	cli.AddHeader("Proxy-Connection", "keep-alive")
@@ -75,8 +83,12 @@ func NewSvcClients() *SvcImpl {
 	cli.AddHeader("Content-Type", "application/json")
 	cli.AddHeader("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8")
 	cli.AddHeader("Connection", "keep-alive")
+	baseUrl := os.Getenv("BASE_URL")
+	if baseUrl == "" {
+		panic("PLEASE use BASE_URL environment variable, example: BASE_URL=http://127.0.0.1:8080")
+	}
 	return &SvcImpl{
 		cli:     cli,
-		BaseUrl: "http://10.10.10.220:32310",
+		BaseUrl: baseUrl,
 	}
 }

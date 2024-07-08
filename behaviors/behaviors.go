@@ -2,8 +2,13 @@ package behaviors
 
 import (
 	"github.com/Lincyaw/loadgenerator/service"
+	"log"
 	"math/rand"
+	"os"
+	"os/signal"
+	"runtime"
 	"sync"
+	"syscall"
 	"time"
 )
 
@@ -46,7 +51,6 @@ type LoadGenerator struct {
 }
 
 func (l *LoadGenerator) Start(conf ...func(*Config)) {
-	cli := service.NewSvcClients()
 	config := Config{}
 	for _, fn := range conf {
 		fn(&config)
@@ -68,8 +72,20 @@ func (l *LoadGenerator) Start(conf ...func(*Config)) {
 	wg.Add(config.Thread)
 
 	for i := 0; i < config.Thread; i++ {
-		go func() {
+		go func(index int) {
 			defer wg.Done()
+			defer func() {
+				if r := recover(); r != nil {
+					// 处理异常，比如记录日志
+					buf := make([]byte, 1024)
+					n := runtime.Stack(buf, false)
+					stackTrace := string(buf[:n])
+
+					// 记录日志，包括 panic 信息和调用栈
+					log.Printf("Recovered from panic: %v\nStack trace:\n%s", r, stackTrace)
+				}
+			}()
+
 			randSrc := rand.NewSource(time.Now().UnixNano())
 			randGen := rand.New(randSrc)
 
@@ -82,10 +98,20 @@ func (l *LoadGenerator) Start(conf ...func(*Config)) {
 						break
 					}
 				}
-				behaviors_[selectedIndex].B.Run(cli)
+				behaviors_[selectedIndex].B.Run(service.NewSvcClients())
 			}
-		}()
+		}(i)
 	}
 
-	cli.ShowStats()
+	sigs := make(chan os.Signal, 1)
+	done := make(chan bool, 1)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+	go func() {
+		<-sigs
+
+		done <- true
+	}()
+
+	<-done
+	wg.Wait()
 }

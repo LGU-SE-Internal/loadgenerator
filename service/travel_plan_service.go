@@ -5,6 +5,13 @@ import (
 	"io"
 )
 
+type TravelplanService interface {
+	ReqGetByCheapest(input *TravelQueryInfo) (*TravelQueryArrResponse, error)
+	ReqGetByMinStation(input *TravelQueryInfo) (*TravelQueryArrResponse, error)
+	ReqGetByQuickest(input *TravelQueryInfo) (*TravelQueryArrResponse, error)
+	ReqTransferResult(input *TransferTravelQueryInfo) (*TravelQueryResponse, error)
+}
+
 func (s *SvcImpl) ReqGetByCheapest(input *TravelQueryInfo) (*TravelQueryArrResponse, error) {
 	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/travelplanservice/travelPlan/cheapest", input)
 	if err != nil {
