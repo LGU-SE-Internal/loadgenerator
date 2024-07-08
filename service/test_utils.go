@@ -77,6 +77,6 @@ func NewSvcClients() *SvcImpl {
 	cli.AddHeader("Connection", "keep-alive")
 	return &SvcImpl{
 		cli:     cli,
-		BaseUrl: "http://10.10.10.220:30440",
+		BaseUrl: "http://10.10.10.220:32310",
 	}
 }
