@@ -29,16 +29,9 @@ type AdminBasicInfoService interface {
 	AdminAddPrice(price *AdminPriceInfo) (*AdminPriceResponse, error)
 }
 type AdminGetContactsResp struct {
-	Status int    `json:"status"`
-	Msg    string `json:"msg"`
-	Data   []struct {
-		Id             string  `json:"id"`
-		AccountId      string `json:"accountId"`
-		Name           string  `json:"name"`
-		DocumentType   int     `json:"documentType"`
-		DocumentNumber string  `json:"documentNumber"`
-		PhoneNumber    string  `json:"phoneNumber"`
-	} `json:"data"`
+	Status int             `json:"status"`
+	Msg    string          `json:"msg"`
+	Data   []AdminContacts `json:"data"`
 }
 
 type AdminContactResponse struct {

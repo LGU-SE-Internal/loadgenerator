@@ -101,6 +101,74 @@ func GetTrainTicketClass() int {
 	}
 }
 
+// compareOrders 比较两个 Order 实例，除了 Id 和 DifferenceMoney 字段外的所有字段是否相等。
+func compareOrders(o1, o2 *Order) bool {
+	equal := true
+
+	if o1.AccountId != o2.AccountId {
+		fmt.Printf("AccountId differs: %s != %s\n", o1.AccountId, o2.AccountId)
+		equal = false
+	}
+	if o1.BoughtDate != o2.BoughtDate {
+		fmt.Printf("BoughtDate differs: %s != %s\n", o1.BoughtDate, o2.BoughtDate)
+		equal = false
+	}
+	if o1.CoachNumber != o2.CoachNumber {
+		fmt.Printf("CoachNumber differs: %d != %d\n", o1.CoachNumber, o2.CoachNumber)
+		equal = false
+	}
+	if o1.ContactsDocumentNumber != o2.ContactsDocumentNumber {
+		fmt.Printf("ContactsDocumentNumber differs: %s != %s\n", o1.ContactsDocumentNumber, o2.ContactsDocumentNumber)
+		equal = false
+	}
+	if o1.ContactsName != o2.ContactsName {
+		fmt.Printf("ContactsName differs: %s != %s\n", o1.ContactsName, o2.ContactsName)
+		equal = false
+	}
+	if o1.DocumentType != o2.DocumentType {
+		fmt.Printf("DocumentType differs: %d != %d\n", o1.DocumentType, o2.DocumentType)
+		equal = false
+	}
+	if o1.From != o2.From {
+		fmt.Printf("From differs: %s != %s\n", o1.From, o2.From)
+		equal = false
+	}
+	if o1.Price != o2.Price {
+		fmt.Printf("Price differs: %s != %s\n", o1.Price, o2.Price)
+		equal = false
+	}
+	if o1.SeatClass != o2.SeatClass {
+		fmt.Printf("SeatClass differs: %d != %d\n", o1.SeatClass, o2.SeatClass)
+		equal = false
+	}
+	if o1.SeatNumber != o2.SeatNumber {
+		fmt.Printf("SeatNumber differs: %s != %s\n", o1.SeatNumber, o2.SeatNumber)
+		equal = false
+	}
+	if o1.Status != o2.Status {
+		fmt.Printf("Status differs: %d != %d\n", o1.Status, o2.Status)
+		equal = false
+	}
+	if o1.To != o2.To {
+		fmt.Printf("To differs: %s != %s\n", o1.To, o2.To)
+		equal = false
+	}
+	if o1.TrainNumber != o2.TrainNumber {
+		fmt.Printf("TrainNumber differs: %s != %s\n", o1.TrainNumber, o2.TrainNumber)
+		equal = false
+	}
+	if o1.TravelDate != o2.TravelDate {
+		fmt.Printf("TravelDate differs: %s != %s\n", o1.TravelDate, o2.TravelDate)
+		equal = false
+	}
+	if o1.TravelTime != o2.TravelTime {
+		fmt.Printf("TravelTime differs: %s != %s\n", o1.TravelTime, o2.TravelTime)
+		equal = false
+	}
+
+	return equal
+}
+
 type Order struct {
 	AccountId              string `json:"accountId"`
 	BoughtDate             string `json:"boughtDate"`
