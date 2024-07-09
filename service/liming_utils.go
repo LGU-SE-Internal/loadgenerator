@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"math/rand"
 	"time"
 )
@@ -226,4 +227,55 @@ func getRandomDish() string {
 	// 从dishes切片中随机选择一个元素
 	randomIndex := rand.Intn(len(dishes))
 	return dishes[randomIndex]
+}
+
+func getRandomContact() AdminContacts {
+	cli := NewSvcClients()
+	_, err := cli.ReqUserLogin(&UserLoginInfoReq{
+		Password:         "222222",
+		UserName:         "admin",
+		VerificationCode: "123",
+	})
+	if err != nil {
+		fmt.Println(err)
+	}
+	contacts, _ := cli.GetAllContacts()
+	// 设置随机数种子以确保每次运行程序时都能得到不同的结果
+	rand.Seed(time.Now().UnixNano())
+
+	// 从contacts.Data切片中随机选择一个元素
+	randomIndex := rand.Intn(len(contacts.Data))
+	return contacts.Data[randomIndex]
+}
+
+func getRandomOrder() Order {
+	cli := NewSvcClients()
+	_, err := cli.ReqUserLogin(&UserLoginInfoReq{
+		Password:         "222222",
+		UserName:         "admin",
+		VerificationCode: "123",
+	})
+	if err != nil {
+		fmt.Println(err)
+	}
+	orders, _ := cli.ReqFindAllOrder()
+	// 设置随机数种子以确保每次运行程序时都能得到不同的结果
+	rand.Seed(time.Now().UnixNano())
+
+	// 从contacts.Data切片中随机选择一个元素
+	randomIndex := rand.Intn(len(orders.Data))
+	return orders.Data[randomIndex]
+}
+
+func getAdjacentDates(dateStr string) (string, string, error) {
+	dateLayout := "2006-01-02"
+	t, err := time.Parse(dateLayout, dateStr)
+	if err != nil {
+		return "", "", err
+	}
+
+	prevDay := t.AddDate(0, 0, -1).Format(dateLayout)
+	nextDay := t.AddDate(0, 0, 1).Format(dateLayout)
+
+	return prevDay, nextDay, nil
 }
