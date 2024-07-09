@@ -88,3 +88,47 @@ func getRandomTime() string {
 
 	return DateAndTime
 }
+
+// ConvertCommaSeparatedToBracketed converts a comma-separated string to a bracketed, space-separated string
+func ConvertCommaSeparatedToBracketed(input string) string {
+	// 删除字符串前后的空白
+	input = strings.TrimSpace(input)
+	// 按逗号分隔字符串，并去除每个元素前后的空白
+	parts := strings.Split(input, ",")
+	for i := range parts {
+		parts[i] = strings.TrimSpace(parts[i])
+	}
+	// 将分隔后的元素用空格连接，并用方括号包围
+	result := fmt.Sprintf("[%s]", strings.Join(parts, " "))
+	return result
+}
+
+// IntSliceToString converts a slice of integers to a bracketed, space-separated string
+func IntSliceToString(ints []int) string {
+	// 使用 strings.Builder 进行高效的字符串拼接
+	var builder strings.Builder
+	builder.WriteString("[")
+	for i, val := range ints {
+		if i > 0 {
+			builder.WriteString(" ")
+		}
+		builder.WriteString(fmt.Sprintf("%d", val))
+	}
+	builder.WriteString("]")
+	return builder.String()
+}
+
+// StringSliceToString converts a slice of strings to a bracketed, space-separated string
+func StringSliceToString(strs []string) string {
+	// 使用 strings.Builder 进行高效的字符串拼接
+	var builder strings.Builder
+	builder.WriteString("[")
+	for i, val := range strs {
+		if i > 0 {
+			builder.WriteString(" ")
+		}
+		builder.WriteString(val)
+	}
+	builder.WriteString("]")
+	return builder.String()
+}
