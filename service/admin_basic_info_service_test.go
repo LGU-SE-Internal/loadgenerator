@@ -23,7 +23,7 @@ func TestAdminBasicInfoService_FullIntegration(t *testing.T) {
 
 	var id string
 	if len(allContacts.Data) > 0 {
-		id = allContacts.Data[0].Id
+		id = allContacts.Data[0].ID
 	} else {
 		t.Errorf("allContacts.Data is empty")
 	}
@@ -39,7 +39,7 @@ func TestAdminBasicInfoService_FullIntegration(t *testing.T) {
 
 	var contactsId string
 	if len(allContacts.Data) > 0 {
-		contactsId = allContacts.Data[len(allContacts.Data)-1].Id
+		contactsId = allContacts.Data[len(allContacts.Data)-1].ID
 	} else {
 		t.Errorf("allContacts.Data is empty")
 	}
