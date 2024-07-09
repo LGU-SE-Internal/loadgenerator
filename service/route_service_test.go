@@ -15,16 +15,16 @@ func TestRouteService_FullIntegration(t *testing.T) {
 	MockedID := faker.UUIDHyphenated()
 	MockedStartStation := faker.GetRealAddress().City
 	MockedEndStation := faker.GetRealAddress().City
-	MockedStationList := fmt.Sprintf("%s, %s, %s", MockedStartStation, faker.GetRealAddress().City, MockedEndStation)
-	MockedDistanceList := fmt.Sprintf("%d, %d, %d", rand.Intn(30), rand.Intn(30), rand.Intn(30))
-	input := &RouteInfo{
+	MockedStationList := fmt.Sprintf("%s,%s,%s", MockedStartStation, faker.GetRealAddress().City, MockedEndStation)
+	MockedDistanceList := fmt.Sprintf("%d,%d,%d", rand.Intn(30), rand.Intn(30), rand.Intn(30))
+	input := RouteInfo{
 		ID:           MockedID,
 		StartStation: MockedStartStation,
 		EndStation:   MockedEndStation,
 		StationList:  MockedStationList,
 		DistanceList: MockedDistanceList,
 	}
-	resp, err := routeSvc.CreateAndModifyRoute(input)
+	resp, err := routeSvc.CreateAndModifyRoute(&input)
 	if err != nil {
 		t.Errorf("Request failed, err %s", err)
 	}
@@ -41,11 +41,11 @@ func TestRouteService_FullIntegration(t *testing.T) {
 	if resp.Data.EndStation != input.EndStation {
 		t.Errorf("StartStation does not match, expect %s, got %s", input.StartStation, resp.Data.StartStation)
 	}
-	if ListToString(resp.Data.Stations) != input.StationList {
-		t.Errorf("StationList does not match, expect %s, got %s", input.StationList, resp.Data.Stations)
+	if StringSliceToString(resp.Data.Stations) != ConvertCommaSeparatedToBracketed(input.StationList) {
+		t.Errorf("StationList does not match, expect %s, got %s", ConvertCommaSeparatedToBracketed(input.StationList), StringSliceToString(resp.Data.Stations))
 	}
-	if IntListToString(resp.Data.Distances) != input.DistanceList {
-		t.Errorf("DistanceList does not match, expect %s, got %d", input.DistanceList, resp.Data.Distances)
+	if IntSliceToString(resp.Data.Distances) != ConvertCommaSeparatedToBracketed(input.DistanceList) {
+		t.Errorf("DistanceList does not match, expect %s, got %s", ConvertCommaSeparatedToBracketed(input.DistanceList), IntSliceToString(resp.Data.Distances))
 	}
 	existedRoute := resp.Data
 
@@ -89,7 +89,7 @@ func TestRouteService_FullIntegration(t *testing.T) {
 	//	t.Errorf("AllRoutes_By_Query.Data is empty")
 	//}
 
-	routeIds := existedRoute.Stations
+	routeIds := []string{existedRoute.Id, AllRoutes_By_Query.Data[0].Id}
 	resp4, err4 := routeSvc.QueryRoutesByIds(routeIds)
 	if err4 != nil {
 		t.Errorf("Request failed, err4 %s", err4)
