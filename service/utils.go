@@ -132,3 +132,10 @@ func StringSliceToString(strs []string) string {
 	builder.WriteString("]")
 	return builder.String()
 }
+
+// RandomSelectString selects a random string from a given slice of strings
+func RandomSelectString(options []string) string {
+	rand.Seed(time.Now().UnixNano()) // Seed the random number generator
+	randomIndex := rand.Intn(len(options))
+	return options[randomIndex]
+}
