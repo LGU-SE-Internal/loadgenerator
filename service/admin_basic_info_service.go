@@ -39,6 +39,7 @@ type AdminGetContactsResp struct {
 		DocumentNumber string `json:"documentNumber"`
 		PhoneNumber    string `json:"phoneNumber"`
 	} `json:"data"`
+
 }
 
 type AdminContactResponse struct {
