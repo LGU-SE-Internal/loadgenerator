@@ -13,9 +13,12 @@ func TestTrainService_FullIntegration(t *testing.T) {
 
 	// Mock data
 	MockedID := faker.UUIDHyphenated()
+	//options := []string{"GaoTieOne", "GaoTieTwo", "DongCheOne", "ZhiDa", "TeKuai", "KuaiSu", "QianNianSunHao"}
+	//selectedName := RandomSelectString(options)
+	//MockedName := selectedName
 	MockedName := faker.Name()
-	MockedEconomyClass := rand.Intn(3)
-	MockedConfortClass := rand.Intn(2)
+	MockedEconomyClass := rand.Int()
+	MockedConfortClass := rand.Int()
 	MockedAverageSpeed := 250 + rand.Intn(20)
 	// input
 	trainType := TrainType{
@@ -34,13 +37,29 @@ func TestTrainService_FullIntegration(t *testing.T) {
 	if createResp.Status != 1 {
 		t.Errorf("Create failed: %s", createResp.Msg)
 	}
+	if createResp.Data.Id != trainType.ID {
+		t.Errorf("Create failed: %s", createResp.Data.Id)
+	}
+	if createResp.Data.Name != trainType.Name {
+		t.Errorf("Create failed: %s", createResp.Data.Name)
+	}
+	if createResp.Data.EconomyClass != trainType.EconomyClass {
+		t.Errorf("Create failed: %d", createResp.Data.EconomyClass)
+	}
+	if createResp.Data.ConfortClass != trainType.ConfortClass {
+		t.Errorf("Create failed: %d", createResp.Data.ConfortClass)
+	}
+	if createResp.Data.AverageSpeed != trainType.AverageSpeed {
+		t.Errorf("Create failed: %d", createResp.Data.AverageSpeed)
+	}
+	existedtrainType := trainType
 
 	// Query Test
 	resp, err := trainSvc.Query()
 	if err != nil {
-		t.Errorf("Request failed, err %s", err)
+		t.Errorf("Request failed, err %s; while response: %v", err, resp)
 	}
-	t.Logf("Query returned results: %v", resp)
+	//t.Logf("Query returned results: %v", resp)
 
 	// Query all
 	allTrainTypes, err := trainSvc.Query()
@@ -55,11 +74,11 @@ func TestTrainService_FullIntegration(t *testing.T) {
 	}
 	found := false
 	for _, trainTypeElement := range allTrainTypes.Data {
-		if trainTypeElement.Id == trainType.ID &&
-			trainTypeElement.Name == trainType.Name &&
-			trainTypeElement.AverageSpeed == trainType.AverageSpeed &&
-			trainTypeElement.ConfortClass == trainType.ConfortClass &&
-			trainTypeElement.EconomyClass == trainType.ConfortClass {
+		if trainTypeElement.Id == existedtrainType.ID &&
+			trainTypeElement.Name == existedtrainType.Name &&
+			trainTypeElement.AverageSpeed == existedtrainType.AverageSpeed &&
+			trainTypeElement.ConfortClass == existedtrainType.ConfortClass &&
+			trainTypeElement.EconomyClass == existedtrainType.ConfortClass {
 			found = true
 		}
 	}

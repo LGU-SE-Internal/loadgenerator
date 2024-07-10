@@ -43,9 +43,15 @@ type TrainService interface {
 }
 
 type CreateStationResponse struct {
-	Status int         `json:"status"`
-	Msg    string      `json:"msg"`
-	Data   interface{} `json:"data"`
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   struct {
+		Id           string `json:"id"`
+		Name         string `json:"name"`
+		EconomyClass int    `json:"economyClass"`
+		ConfortClass int    `json:"confortClass"`
+		AverageSpeed int    `json:"averageSpeed"`
+	} `json:"data"`
 }
 
 func (s *SvcImpl) Create(trainType *TrainType) (*CreateStationResponse, error) {

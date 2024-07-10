@@ -39,7 +39,6 @@ type AdminGetContactsResp struct {
 		DocumentNumber string `json:"documentNumber"`
 		PhoneNumber    string `json:"phoneNumber"`
 	} `json:"data"`
-
 }
 
 type AdminContactResponse struct {
@@ -97,8 +96,8 @@ type AdminPriceResponse struct {
 
 // Request structs
 type AdminContacts struct {
-	ID             string `json:"id"`
-	AccountID      string `json:"accountId"`
+	Id             string `json:"id"`
+	AccountId      string `json:"accountId"`
 	Name           string `json:"name"`
 	DocumentType   int    `json:"documentType"`
 	DocumentNumber string `json:"documentNumber"`
