@@ -29,9 +29,17 @@ type AdminBasicInfoService interface {
 	AdminAddPrice(price *AdminPriceInfo) (*AdminPriceResponse, error)
 }
 type AdminGetContactsResp struct {
-	Status int             `json:"status"`
-	Msg    string          `json:"msg"`
-	Data   []AdminContacts `json:"data"`
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   []struct {
+		Id             string `json:"id"`
+		AccountId      string `json:"accountId"`
+		Name           string `json:"name"`
+		DocumentType   int    `json:"documentType"`
+		DocumentNumber string `json:"documentNumber"`
+		PhoneNumber    string `json:"phoneNumber"`
+	} `json:"data"`
+
 }
 
 type AdminContactResponse struct {
@@ -76,9 +84,15 @@ type AdminConfigResponse struct {
 }
 
 type AdminPriceResponse struct {
-	Status int         `json:"status"`
-	Msg    string      `json:"msg"`
-	Data   interface{} `json:"data"`
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   struct {
+		Id                  string  `json:"id"`
+		TrainType           string  `json:"trainType"`
+		RouteId             string  `json:"routeId"`
+		BasicPriceRate      float64 `json:"basicPriceRate"`
+		FirstClassPriceRate float64 `json:"firstClassPriceRate"`
+	} `json:"data"`
 }
 
 // Request structs

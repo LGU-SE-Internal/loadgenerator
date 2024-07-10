@@ -8,9 +8,9 @@ import (
 )
 
 type RouteService interface {
-	CreateAndModifyRoute(input *RouteInfo) (*RouteResponse, error)
+	CreateAndModifyRoute(input *RouteInfo) (*CreateRouteResponse, error)
 	DeleteRoute(routeId string) (*DeleteResponse, error)
-	QueryRouteById(routeId string) (*RouteResponse, error)
+	QueryRouteById(routeId string) (*CreateRouteResponse, error)
 	QueryRoutesByIds(routeIds []string) (*QueryMultiResponse, error)
 	QueryAllRoutes() (*QueryMultiResponse, error)
 	QueryRoutesByStartAndEnd(start, end string) (*QueryMultiResponse, error)
@@ -41,7 +41,7 @@ type RouteInfo struct {
 	DistanceList string `json:"distanceList"`
 }
 
-type RouteResponse struct {
+type CreateRouteResponse struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`
 	Data   struct {
@@ -53,7 +53,19 @@ type RouteResponse struct {
 	} `json:"data"`
 }
 
-func (s *SvcImpl) CreateAndModifyRoute(input *RouteInfo) (*RouteResponse, error) {
+type RouteResponse struct {
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   []struct {
+		Id           string   `json:"id"`
+		Stations     []string `json:"stations"`
+		Distances    []int    `json:"distances"`
+		StartStation string   `json:"startStation"`
+		EndStation   string   `json:"endStation"`
+	} `json:"data"`
+}
+
+func (s *SvcImpl) CreateAndModifyRoute(input *RouteInfo) (*CreateRouteResponse, error) {
 	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/routeservice/routes", input)
 	if err != nil {
 		return nil, err
@@ -63,7 +75,7 @@ func (s *SvcImpl) CreateAndModifyRoute(input *RouteInfo) (*RouteResponse, error)
 	if err != nil {
 		return nil, err
 	}
-	var result RouteResponse
+	var result CreateRouteResponse
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
@@ -91,7 +103,7 @@ func (s *SvcImpl) DeleteRoute(routeId string) (*DeleteResponse, error) {
 	return &result, nil
 }
 
-func (s *SvcImpl) QueryRouteById(routeId string) (*RouteResponse, error) {
+func (s *SvcImpl) QueryRouteById(routeId string) (*CreateRouteResponse, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+fmt.Sprintf("/api/v1/routeservice/routes/%s", routeId), nil)
 	if err != nil {
 		return nil, err
@@ -101,7 +113,7 @@ func (s *SvcImpl) QueryRouteById(routeId string) (*RouteResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result RouteResponse
+	var result CreateRouteResponse
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
