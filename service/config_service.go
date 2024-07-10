@@ -46,13 +46,9 @@ func (s *SvcImpl) QueryAllConfigs() (*ConfigQueryAllConfigsResponse, error) {
 }
 
 type CreateConfigResponse struct {
-	Status int    `json:"status"`
-	Msg    string `json:"msg"`
-	Data   struct {
-		Name        string `json:"name"`
-		Value       string `json:"value"`
-		Description string `json:"description"`
-	} `json:"data"`
+	Status int           `json:"status"`
+	Msg    string        `json:"msg"`
+	Data   Config_config `json:"data"`
 }
 
 func (s *SvcImpl) CreateConfig(info *Config_config) (*CreateConfigResponse, error) {
