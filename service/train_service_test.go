@@ -13,17 +13,20 @@ func TestTrainService_FullIntegration(t *testing.T) {
 
 	// Mock data
 	MockedID := faker.UUIDHyphenated()
+	//options := []string{"GaoTieOne", "GaoTieTwo", "DongCheOne", "ZhiDa", "TeKuai", "KuaiSu", "QianNianSunHao"}
+	//selectedName := RandomSelectString(options)
+	//MockedName := selectedName
 	MockedName := faker.Name()
-	MockedEconomyClass := rand.Intn(3)
-	MockedConfortClass := rand.Intn(2)
+	MockedEconomyClass := 2147483647
+	MockedConfortClass := 2147483647
 	MockedAverageSpeed := 250 + rand.Intn(20)
 	// input
 	trainType := TrainType{
-		ID:           MockedID,
-		Name:         MockedName,
-		EconomyClass: MockedEconomyClass,
-		ConfortClass: MockedConfortClass,
 		AverageSpeed: MockedAverageSpeed,
+		ConfortClass: MockedConfortClass,
+		EconomyClass: MockedEconomyClass,
+		Id:           MockedID,
+		Name:         MockedName,
 	}
 
 	// Create Test
@@ -34,13 +37,29 @@ func TestTrainService_FullIntegration(t *testing.T) {
 	if createResp.Status != 1 {
 		t.Errorf("Create failed: %s", createResp.Msg)
 	}
+	//if createResp.Data.Id != trainType.Id {
+	//	t.Errorf("Create failed: %s", createResp.Data.Id)
+	//}
+	if createResp.Data.Name != trainType.Name {
+		t.Errorf("Create failed: %s", createResp.Data.Name)
+	}
+	if createResp.Data.EconomyClass != trainType.EconomyClass {
+		t.Errorf("Create failed: %d", createResp.Data.EconomyClass)
+	}
+	if createResp.Data.ConfortClass != trainType.ConfortClass {
+		t.Errorf("Create failed: %d", createResp.Data.ConfortClass)
+	}
+	if createResp.Data.AverageSpeed != trainType.AverageSpeed {
+		t.Errorf("Create failed: %d", createResp.Data.AverageSpeed)
+	}
+	existedtrainType := trainType
 
 	// Query Test
 	resp, err := trainSvc.Query()
 	if err != nil {
-		t.Errorf("Request failed, err %s", err)
+		t.Errorf("Request failed, err %s; while response: %v", err, resp)
 	}
-	t.Logf("Query returned results: %v", resp)
+	//t.Logf("Query returned results: %v", resp)
 
 	// Query all
 	allTrainTypes, err := trainSvc.Query()
@@ -55,11 +74,11 @@ func TestTrainService_FullIntegration(t *testing.T) {
 	}
 	found := false
 	for _, trainTypeElement := range allTrainTypes.Data {
-		if trainTypeElement.Id == trainType.ID &&
-			trainTypeElement.Name == trainType.Name &&
-			trainTypeElement.AverageSpeed == trainType.AverageSpeed &&
-			trainTypeElement.ConfortClass == trainType.ConfortClass &&
-			trainTypeElement.EconomyClass == trainType.ConfortClass {
+		if trainTypeElement.Id == createResp.Data.Id &&
+			trainTypeElement.Name == existedtrainType.Name &&
+			trainTypeElement.AverageSpeed == existedtrainType.AverageSpeed &&
+			trainTypeElement.ConfortClass == existedtrainType.ConfortClass &&
+			trainTypeElement.EconomyClass == existedtrainType.ConfortClass {
 			found = true
 		}
 	}
@@ -70,7 +89,7 @@ func TestTrainService_FullIntegration(t *testing.T) {
 	// Test Update
 	UpdatedAverageSpeed := 275 + rand.Intn(10)
 	updateTrainType := TrainType{
-		ID:           trainType.ID,
+		Id:           createResp.Data.Id,
 		Name:         trainType.Name,
 		EconomyClass: trainType.EconomyClass,
 		ConfortClass: trainType.ConfortClass,
@@ -84,8 +103,8 @@ func TestTrainService_FullIntegration(t *testing.T) {
 		t.Errorf("Update failed: %s", updateResp.Msg)
 	}
 
-	// Test Retrieve by ID
-	retrieveResp, err := trainSvc.Retrieve(trainType.ID)
+	// Test Retrieve by Id
+	retrieveResp, err := trainSvc.Retrieve(createResp.Data.Id)
 	if err != nil {
 		t.Errorf("Retrieve request failed, err %s", err)
 	}
@@ -97,7 +116,7 @@ func TestTrainService_FullIntegration(t *testing.T) {
 	}
 
 	// Test Retrieve by Name
-	retrieveByNameResp, err := trainSvc.RetrieveByName(trainType.Name)
+	retrieveByNameResp, err := trainSvc.RetrieveByName(createResp.Data.Name)
 	if err != nil {
 		t.Errorf("Retrieve by name request failed, err %s", err)
 	}
@@ -122,7 +141,7 @@ func TestTrainService_FullIntegration(t *testing.T) {
 	//} else {
 	//	t.Errorf("Query all returned empty data")
 	//}
-	deleteResp, err := trainSvc.Delete(trainType.ID)
+	deleteResp, err := trainSvc.Delete(createResp.Data.Id)
 	if err != nil {
 		t.Errorf("Delete request failed, err %s", err)
 	}

@@ -11,8 +11,8 @@ func TestSvc(t *testing.T) {
 	cli, _ := GetBasicClient()
 	var contactsSvc ContactsService = cli
 	CreateContactsInput := AdminContacts{
-		ID:        uuid.NewString(),
-		AccountID: uuid.NewString(),
+		Id:        uuid.NewString(),
+		AccountId: uuid.NewString(),
 		Name:      faker.Name(),
 	}
 	CreateContacts, err := contactsSvc.AddContact(&CreateContactsInput)
@@ -32,8 +32,8 @@ func TestSvcImpl_GetAllContacts(t *testing.T) {
 	t.Log("[get all]: ", contacts)
 
 	contactResp, err := cli.AddContact(&AdminContacts{
-		ID:        uuid.NewString(),
-		AccountID: uuid.NewString(),
+		Id:        uuid.NewString(),
+		AccountId: uuid.NewString(),
 		Name:      faker.Name(),
 	})
 	if err != nil {
@@ -42,8 +42,8 @@ func TestSvcImpl_GetAllContacts(t *testing.T) {
 	t.Log("[add contact]: ", contactResp)
 
 	adminContactResp, err := cli.AddAdminContact(&AdminContacts{
-		ID:        uuid.NewString(),
-		AccountID: uuid.NewString(),
+		Id:        uuid.NewString(),
+		AccountId: uuid.NewString(),
 		Name:      faker.Name(),
 	})
 	if err != nil {
@@ -52,8 +52,8 @@ func TestSvcImpl_GetAllContacts(t *testing.T) {
 	t.Log("[add admin contact]: ", adminContactResp)
 
 	modifyContactResp, err := cli.ModifyContact(&AdminContacts{
-		ID:          contactResp.Data.Id,
-		AccountID:   contactResp.Data.AccountId,
+		Id:          contactResp.Data.Id,
+		AccountId:   contactResp.Data.AccountId,
 		Name:        faker.Name(),
 		PhoneNumber: faker.E164PhoneNumber(),
 	})
