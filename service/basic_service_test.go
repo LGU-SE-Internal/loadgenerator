@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/go-faker/faker/v4"
 	"math/rand"
+	"strings"
 	"testing"
 )
 
@@ -32,9 +33,9 @@ func TestBasicServiceFullIntegration(t *testing.T) {
 	var routeSvc RouteService = cli
 	// Create
 	MockedID := faker.UUIDHyphenated()
-	MockedStartStation := faker.GetRealAddress().City
-	MockedEndStation := faker.GetRealAddress().City
-	MockedStationList := fmt.Sprintf("%s,%s,%s", MockedStartStation, faker.GetRealAddress().City, MockedEndStation)
+	MockedStartStation := stations.Data[0].Name
+	MockedEndStation := stations.Data[1].Name
+	MockedStationList := fmt.Sprintf("%s,%s,%s", MockedStartStation, stations.Data[2].Name, MockedEndStation)
 	MockedDistanceList := fmt.Sprintf("%d,%d,%d", rand.Intn(30), rand.Intn(30), rand.Intn(30))
 	input := RouteInfo{
 		ID:           MockedID,
@@ -103,13 +104,13 @@ func TestBasicServiceFullIntegration(t *testing.T) {
 			TrainTypeName:       trainTypes.Data[0].Name,
 			RouteId:             existedRoute.Id,
 			StartStationName:    existedRoute.StartStation,
-			StationsName:        existedRoute.Stations[2], // only ok when there is exactly three stations
+			StationsName:        strings.Join(existedRoute.Stations, ","), // only ok when there is exactly three stations
 			TerminalStationName: existedRoute.EndStation,
 			StartTime:           getRandomTime(),
 			EndTime:             getRandomTime(),
 		},
-		StartPlace:    faker.GetRealAddress().City,
-		EndPlace:      faker.GetRealAddress().City,
+		StartPlace:    existedRoute.StartStation,
+		EndPlace:      existedRoute.EndStation,
 		DepartureTime: "",
 	}
 
