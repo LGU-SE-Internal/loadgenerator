@@ -20,7 +20,7 @@ func TestTrainService_FullIntegration(t *testing.T) {
 	MockedID := faker.UUIDHyphenated()
 	MockedName := faker.Name()
 	trainType := &TrainType{
-		ID:           MockedID,
+		Id:           MockedID,
 		Name:         MockedName,
 		EconomyClass: 1,
 		ConfortClass: 0,
@@ -54,7 +54,7 @@ func TestTrainService_FullIntegration(t *testing.T) {
 
 	// Test Update
 	updateTrainType := &TrainType{
-		ID:           getId,
+		Id:           getId,
 		Name:         getName,
 		EconomyClass: 7,
 		ConfortClass: 8,
