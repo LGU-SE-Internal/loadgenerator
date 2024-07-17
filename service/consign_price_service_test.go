@@ -1,40 +1,46 @@
 package service
 
 import (
+	"math/rand"
 	"testing"
 )
 
 func TestSvcImpl_GetModifyDeletePriceConfig(t *testing.T) {
 	cli, _ := GetAdminClient()
-	//MockedID := faker.UUIDHyphenated()
+	var consignSvc ConsignPriceService = cli
 
+	// Mock Data
+	MockedWeight := "8"
+	MockedIsWithinWeight := "true"
 	// Get price by weight and region
-	priceByWeightAndRegion, err := cli.GetPriceByWeightAndRegion("50", "true")
+	priceByWeightAndRegion, err := consignSvc.GetPriceByWeightAndRegion(MockedWeight, MockedIsWithinWeight)
 	if err != nil {
 		t.Errorf("GetPriceByWeightAndRegion failed: %v", err)
 	}
+	if priceByWeightAndRegion.Status != 1 {
+		t.Errorf("GetPriceByWeightAndRegion failed")
+	}
 	t.Logf("GetPriceByWeightAndRegion response: %+v", priceByWeightAndRegion)
+	//existedConsignPrice := priceByWeightAndRegion.Data
 
 	// Get price info
 	priceInfo, err := cli.GetPriceInfo()
 	if err != nil {
 		t.Errorf("GetPriceInfo failed: %v", err)
 	}
-	t.Logf("GetPriceInfo response: %+v", priceInfo)
+	if priceInfo.Status != 1 {
+		t.Errorf("GetPriceInfo failed")
+	}
 
 	// Get price config
 	priceConfig, err := cli.GetPriceConfig()
 	if err != nil {
 		t.Errorf("GetPriceConfig failed: %v", err)
 	}
-	t.Logf("GetPriceConfig response: %+v", priceConfig)
-
-	// Get the modified price config to verify changes
-	getPriceConfig, err := cli.GetPriceConfig()
-	if err != nil {
-		t.Errorf("getPriceConfig after modification failed: %v", err)
+	if priceConfig.Status != 1 {
+		t.Errorf("GetPriceConfig failed")
 	}
-	t.Logf("GetPriceConfig after modification response: %+v", getPriceConfig)
+	t.Logf("GetPriceConfig response: %+v", priceConfig)
 
 	// Modify price config
 	var getID string
@@ -43,25 +49,29 @@ func TestSvcImpl_GetModifyDeletePriceConfig(t *testing.T) {
 	var getInitialPrice float64
 	var getWithinPrice float64
 	var getBeyondPrice float64
-	if getPriceConfig.Data.Id != "" {
-		getID = getPriceConfig.Data.Id
-		getIndex = getPriceConfig.Data.Index
-		getInitialPrice = getPriceConfig.Data.InitialPrice
-		getInitialPrice = getPriceConfig.Data.InitialPrice
-		getWithinPrice = getPriceConfig.Data.WithinPrice
-		getBeyondPrice = getPriceConfig.Data.BeyondPrice
-	}
 
-	modifyResp, err := cli.ModifyPriceConfig(&ConsignPrice{
+	getID = "5328fd14-3a87-41f0-b624-5941ffec9562"
+	getIndex = 0
+	getInitialWeight = rand.Float64()
+	getInitialPrice = rand.Float64()
+	getWithinPrice = rand.Float64()
+	getBeyondPrice = rand.Float64()
+
+	consignPrice := ConsignPrice{
 		ID:            getID,
 		Index:         getIndex,
 		InitialWeight: getInitialWeight,
 		InitialPrice:  getInitialPrice,
 		WithinPrice:   getWithinPrice,
 		BeyondPrice:   getBeyondPrice,
-	})
+	}
+
+	modifyResp, err := cli.ModifyPriceConfig(&consignPrice)
 	if err != nil {
 		t.Errorf("ModifyPriceConfig failed: %v", err)
+	}
+	if modifyResp.Status != 1 {
+		t.Errorf("ModifyPriceConfig failed")
 	}
 	t.Logf("ModifyPriceConfig response: %+v", modifyResp)
 }
