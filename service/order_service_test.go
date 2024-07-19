@@ -24,7 +24,7 @@ func TestSvcImpl_End2End_OrderService(t *testing.T) {
 
 	randomContact := getRandomContact()
 	originOrder0 := Order{
-		AccountId:              randomContact.AccountID,
+		AccountId:              randomContact.AccountId,
 		BoughtDate:             faker.Date(),
 		CoachNumber:            RandomIntBetween(1, 10),
 		ContactsDocumentNumber: strconv.Itoa(RandomIntBetween(1, 10)),
@@ -67,7 +67,7 @@ func TestSvcImpl_End2End_OrderService(t *testing.T) {
 
 	randomContact = getRandomContact()
 	originOrder1 := Order{
-		AccountId:              randomContact.AccountID,
+		AccountId:              randomContact.AccountId,
 		BoughtDate:             faker.Date(),
 		CoachNumber:            RandomIntBetween(1, 10),
 		ContactsDocumentNumber: strconv.Itoa(RandomIntBetween(1, 10)),
@@ -158,7 +158,7 @@ func TestSvcImpl_End2End_OrderService_another(t *testing.T) {
 
 	randomContact := getRandomContact()
 	origin_order_0 := Order{
-		AccountId:              randomContact.AccountID,
+		AccountId:              randomContact.AccountId,
 		BoughtDate:             faker.Date(),
 		CoachNumber:            RandomIntBetween(1, 10),
 		ContactsDocumentNumber: strconv.Itoa(RandomIntBetween(1, 10)),
@@ -221,7 +221,7 @@ func TestSvcImpl_End2End_OrderService_another(t *testing.T) {
 	fmt.Println(Resp.Msg)
 	randomContact = getRandomContact()
 	Resp21, _ := orderSvc.ReqAddCreateNewOrder(&Order{
-		AccountId:              randomContact.AccountID,
+		AccountId:              randomContact.AccountId,
 		BoughtDate:             faker.Date(),
 		CoachNumber:            RandomIntBetween(1, 10),
 		ContactsDocumentNumber: strconv.Itoa(RandomIntBetween(1, 10)),

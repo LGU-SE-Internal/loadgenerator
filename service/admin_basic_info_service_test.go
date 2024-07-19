@@ -23,13 +23,13 @@ func TestAdminBasicInfoService_FullIntegration(t *testing.T) {
 
 	var id string
 	if len(allContacts.Data) > 0 {
-		id = allContacts.Data[0].ID
+		id = allContacts.Data[0].Id
 	} else {
 		t.Errorf("allContacts.Data is empty")
 	}
 
 	// Admin user modifies contact
-	modifyResp, err := adminClient.AdminModifyContact(&AdminContacts{ID: id, Name: "Modified Basic Contact"})
+	modifyResp, err := adminClient.AdminModifyContact(&AdminContacts{Id: id, Name: "Modified Basic Contact"})
 	if err != nil {
 		t.Errorf("Failed to modify contact for basic user: %v", err)
 	}
@@ -39,7 +39,7 @@ func TestAdminBasicInfoService_FullIntegration(t *testing.T) {
 
 	var contactsId string
 	if len(allContacts.Data) > 0 {
-		contactsId = allContacts.Data[len(allContacts.Data)-1].ID
+		contactsId = allContacts.Data[len(allContacts.Data)-1].Id
 	} else {
 		t.Errorf("allContacts.Data is empty")
 	}

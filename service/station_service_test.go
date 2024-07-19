@@ -135,6 +135,7 @@ func TestStationService_FullIntegration(t *testing.T) {
 		t.Errorf("Request failed, station not found")
 	}
 
+	// Delete
 	resp3, err3 := stationSvc.DeleteStation(existedStation.Id)
 	if err3 != nil {
 		t.Errorf("Request failed, err3 %s", err3)

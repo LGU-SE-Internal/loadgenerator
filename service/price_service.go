@@ -11,17 +11,17 @@ type PriceService interface {
 	FindByRouteIdAndTrainType(routeId, trainType string) (*AdminPriceResponse, error)
 	FindByRouteIdsAndTrainTypes(ridsAndTts []string) (*AllPriceResponse, error)
 	FindAllPriceConfig() (*AllPriceResponse, error)
-	CreateNewPriceConfig(info PriceConfig) (*AdminPriceResponse, error)
+	CreateNewPriceConfig(info *PriceConfig) (*AdminPriceResponse, error)
 	DeletePriceConfig(pricesId string) (*AdminPriceResponse, error)
-	UpdatePriceConfig(info PriceConfig) (*AdminPriceResponse, error)
+	UpdatePriceConfig(info *PriceConfig) (*AdminPriceResponse, error)
 }
 
 type PriceConfig struct {
-	Id        string  `json:"id"`
-	RouteId   string  `json:"routeId"`
-	TrainType string  `json:"trainType"`
-	Price     float64 `json:"price"`
-	// Add more fields as needed
+	ID                  string  `json:"id"`
+	TrainType           string  `json:"trainType"`
+	RouteID             string  `json:"routeId"`
+	BasicPriceRate      float64 `json:"basicPriceRate"`
+	FirstClassPriceRate float64 `json:"firstClassPriceRate"`
 }
 
 //type AdminPriceResponse struct {
@@ -31,9 +31,15 @@ type PriceConfig struct {
 //}
 
 type AllPriceResponse struct {
-	Status int           `json:"status"`
-	Msg    string        `json:"msg"`
-	Data   []PriceConfig `json:"data"`
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   []struct {
+		Id                  string  `json:"id"`
+		TrainType           string  `json:"trainType"`
+		RouteId             string  `json:"routeId"`
+		BasicPriceRate      float64 `json:"basicPriceRate"`
+		FirstClassPriceRate float64 `json:"firstClassPriceRate"`
+	} `json:"data"`
 }
 
 func (s *SvcImpl) FindByRouteIdAndTrainType(routeId, trainType string) (*AdminPriceResponse, error) {
