@@ -20,7 +20,7 @@ func TestSvcImpl_Preserve(t *testing.T) {
 
 	if len(GetAllContactsId.Data) > 0 {
 		//getContactsId = *(GetAllContactsId.Data[0].AccountId)
-		getContactsId = GetAllContactsId.Data[0].ID
+		getContactsId = GetAllContactsId.Data[0].Id
 	}
 
 	MockedAccountID := faker.UUIDHyphenated()

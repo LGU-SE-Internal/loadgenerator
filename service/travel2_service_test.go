@@ -1,12 +1,7 @@
 package service
 
 import (
-	"fmt"
 	//"github.com/Lincyaw/loadgenerator/behaviors"
-
-	//"github.com/Lincyaw/loadgenerator/behaviors"
-	"math/rand"
-	"time"
 
 	//"github.com/Lincyaw/loadgenerator/behaviors"
 	"log"
@@ -153,21 +148,21 @@ func TestTravel2Service_FullIntegration(t *testing.T) {
 }
 
 // helper function
-func GenerateTripId() string {
-	// 设置随机数种子
-	rand.Seed(time.Now().UnixNano())
-
-	// 定义可能的开头字母
-	letters := []rune{'Z', 'T', 'K', 'G', 'D'}
-
-	// 随机选择一个字母
-	startLetter := letters[rand.Intn(len(letters))]
-
-	// 生成三个随机数字
-	randomNumber := rand.Intn(1000)
-
-	// 格式化成三位数字，不足三位前面补零
-	MockedTripID := fmt.Sprintf("%c%03d", startLetter, randomNumber)
-
-	return MockedTripID
-}
+//func GenerateTripId() string {
+//	// 设置随机数种子
+//	rand.Seed(time.Now().UnixNano())
+//
+//	// 定义可能的开头字母
+//	letters := []rune{'Z', 'T', 'K', 'G', 'D'}
+//
+//	// 随机选择一个字母
+//	startLetter := letters[rand.Intn(len(letters))]
+//
+//	// 生成三个随机数字
+//	randomNumber := rand.Intn(1000)
+//
+//	// 格式化成三位数字，不足三位前面补零
+//	MockedTripID := fmt.Sprintf("%c%03d", startLetter, randomNumber)
+//
+//	return MockedTripID
+//}

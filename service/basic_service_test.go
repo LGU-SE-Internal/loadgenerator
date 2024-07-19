@@ -1,19 +1,23 @@
 package service
 
 import (
+	"fmt"
 	"github.com/go-faker/faker/v4"
+	"math/rand"
+	"strings"
 	"testing"
 )
 
 func TestBasicServiceFullIntegration(t *testing.T) {
 	cli, _ := GetBasicClient()
+	//var basicSvc BasicService = cli
 
 	var stationSvc StationService = cli
 	stations, err := stationSvc.QueryStations()
 	if err != nil {
 		t.Error(err)
 	}
-	t.Log(stations)
+	//t.Log(stations)
 
 	if len(stations.Data) < 2 {
 		t.Fatal("stations length should be greater than 2")
@@ -24,57 +28,108 @@ func TestBasicServiceFullIntegration(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	t.Logf("trainTypes returns: %v", trainTypes)
+	//t.Logf("trainTypes returns: %v", trainTypes)
 
 	var routeSvc RouteService = cli
+	// Create
 	MockedID := faker.UUIDHyphenated()
-	input := &RouteInfo{
+	MockedStartStation := stations.Data[0].Name
+	MockedEndStation := stations.Data[1].Name
+	MockedStationList := fmt.Sprintf("%s,%s,%s", MockedStartStation, stations.Data[2].Name, MockedEndStation)
+	MockedDistanceList := fmt.Sprintf("%d,%d,%d", rand.Intn(30), rand.Intn(30), rand.Intn(30))
+	input := RouteInfo{
 		ID:           MockedID,
-		StartStation: "Shenzhen Bei",
-		EndStation:   "Jiulong Xi",
-		StationList:  "Shenzhen Bei,Shkou,Jiulong Xi",
-		DistanceList: "77,66,55",
+		StartStation: MockedStartStation,
+		EndStation:   MockedEndStation,
+		StationList:  MockedStationList,
+		DistanceList: MockedDistanceList,
 	}
-	resp, err := routeSvc.CreateAndModifyRoute(input)
+	resp, err := routeSvc.CreateAndModifyRoute(&input)
 	if err != nil {
 		t.Error(err)
 	}
-	t.Log(resp)
+	if resp.Msg == "Already exists" {
+		t.Log("Route already exists, skip")
+		t.Skip()
+	}
+	if resp.Data.Id != input.ID {
+		t.Errorf("Route ID does not match, expect %s, got %s", input.ID, resp.Data.Id)
+	}
+	if resp.Data.StartStation != input.StartStation {
+		t.Errorf("StartStation does not match, expect %s, got %s", input.StartStation, resp.Data.StartStation)
+	}
+	if resp.Data.EndStation != input.EndStation {
+		t.Errorf("StartStation does not match, expect %s, got %s", input.StartStation, resp.Data.StartStation)
+	}
+	if StringSliceToString(resp.Data.Stations) != ConvertCommaSeparatedToBracketed(input.StationList) {
+		t.Errorf("StationList does not match, expect %s, got %s", ConvertCommaSeparatedToBracketed(input.StationList), StringSliceToString(resp.Data.Stations))
+	}
+	if IntSliceToString(resp.Data.Distances) != ConvertCommaSeparatedToBracketed(input.DistanceList) {
+		t.Errorf("DistanceList does not match, expect %s, got %s", ConvertCommaSeparatedToBracketed(input.DistanceList), IntSliceToString(resp.Data.Distances))
+	}
+	//t.Log(resp)
+	existedRoute := resp.Data
 
 	routes, err := routeSvc.QueryAllRoutes()
 	if err != nil {
 		t.Error(err)
 	}
-	t.Log(routes)
+	if routes.Status != 1 {
+		t.Errorf("AllRoutes_By_Query.Status != 1")
+	}
+	found := false
+	for _, route := range routes.Data {
+		if route.Id == existedRoute.Id {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("Route not found by queryALL")
+	}
+	//t.Log(routes)
 
+	// Mock data
+	//MockedTripId := faker.UUIDHyphenated()
+	MockedTripTripId := GenerateTripId()
+	MockedTripTripIdType := MockedTripTripId[0]
+	MockedTripTripIdNumber := MockedTripTripId[1:]
+	//Input
 	travelQuery := &Travel{
 		Trip: Trip{
-			Id: "6284bf46-0f0a-481d-a221-bb3794b00585",
+			Id: existedRoute.Id,
 			TripId: TripId{
-				Type:   "G",
-				Number: "985",
+				Type:   fmt.Sprintf("%c", MockedTripTripIdType),
+				Number: MockedTripTripIdNumber,
 			},
 			TrainTypeName:       trainTypes.Data[0].Name,
-			RouteId:             routes.Data[0].Id,
-			StartStationName:    "",
-			StationsName:        "",
-			TerminalStationName: "",
-			StartTime:           "",
-			EndTime:             "",
+			RouteId:             existedRoute.Id,
+			StartStationName:    existedRoute.StartStation,
+			StationsName:        strings.Join(existedRoute.Stations, ","), // only ok when there is exactly three stations
+			TerminalStationName: existedRoute.EndStation,
+			StartTime:           getRandomTime(),
+			EndTime:             getRandomTime(),
 		},
-		StartPlace:    "Shenzhen Bei",
-		EndPlace:      "Jiulong Xi",
+		StartPlace:    existedRoute.StartStation,
+		EndPlace:      existedRoute.EndStation,
 		DepartureTime: "",
 	}
-	travel, err := cli.QueryForTravel(travelQuery)
-	if err != nil {
-		t.Error(err)
-	}
-	t.Log(travel)
 
-	travels, err := cli.QueryForTravels([]*Travel{travelQuery})
+	var basicSvc BasicService = cli
+	travel, err := basicSvc.QueryForTravel(travelQuery)
 	if err != nil {
 		t.Error(err)
 	}
-	t.Log(travels)
+	if travel.Status != 1 {
+		t.Log("travel.Status != 1")
+	}
+	//t.Log(travel)
+
+	travels, err := basicSvc.QueryForTravels([]*Travel{travelQuery})
+	if err != nil {
+		t.Error(err)
+	}
+	if travels.Status != 1 {
+		t.Log("travels.Status != 1")
+	}
+	//t.Log(travels)
 }
