@@ -22,8 +22,6 @@ type TrainType struct {
 	ConfortClass int    `json:"confortClass"`
 	AverageSpeed int    `json:"averageSpeed"`
 	EconomyClass int    `json:"economyClass"`
-	Id           string `json:"id"`
-	Name         string `json:"name"`
 }
 
 //type TrainType struct {
