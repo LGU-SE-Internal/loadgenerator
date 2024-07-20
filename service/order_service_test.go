@@ -212,11 +212,11 @@ func TestSvcImpl_End2End_OrderService_another(t *testing.T) {
 		TrainNumber:  GenerateTrainNumber(),
 		TravelDate:   faker.Date(),
 	})
-	fmt.Println(Resp.Msg)
+	fmt.Println(Resp)
 	Resp, _ = orderSvc.ReqCalculateSoldTicket(faker.Date(), GenerateTrainNumber())
-	fmt.Println(Resp.Msg)
+	fmt.Println(Resp)
 	Resp, _ = orderSvc.ReqGetOrderById(originOrder.Id)
-	fmt.Println(Resp.Msg)
+	fmt.Println(Resp)
 	Resp, _ = orderSvc.ReqDeleteOrder_OrderService(originOrder.Id)
 	fmt.Println(Resp.Msg)
 	randomContact = getRandomContact()

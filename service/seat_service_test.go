@@ -4,6 +4,7 @@ import (
 	"math/rand"
 	"strconv"
 	"testing"
+	"time"
 )
 
 func TestSvcImpl_ReqSeatCreate(t *testing.T) {
@@ -40,6 +41,58 @@ func TestSvcImpl_ReqSeatCreate(t *testing.T) {
 		TotalNum:    8,
 		Stations:    []string{"shenzhen", "suzhou", "hong kong"},
 	})
+	if err != nil {
+		t.Error(err)
+	}
+	t.Logf("respGetTicket: %+v", respGetTicket)
+	if respGetTicket.Status != 1 {
+		t.Error("respGetTicket.Status != 1")
+	}
+	if respGetTicket.Msg != "Get Left Ticket of Internal Success" {
+		t.Error("respGetTicket.Data != Get Left Ticket of Internal Success", respGetTicket)
+	}
+}
+
+func TestSvcImpl_ReqSeatCreate_v2(t *testing.T) {
+	cli, _ := GetBasicClient()
+	var seatSvc SeatService = cli
+
+	randomOrder := getRandomOrder()
+	var stations []string
+	totalNum := rand.Intn(10)
+
+	// 设置随机数种子，以确保每次运行程序时都能得到不同的随机数
+	rand.Seed(time.Now().UnixNano())
+
+	// 生成一个[0, 1)之间的浮点数
+	randomFloat := rand.Float64()
+
+	// 如果随机数小于0.5，则执行if代码块；否则，执行else代码块
+	if randomFloat < 0.5 {
+		stations = []string{randomOrder.To, randomOrder.From}
+	} else {
+		stations = []string{randomOrder.From, randomOrder.To}
+	}
+
+	seatCreateInfoReq := &SeatCreateInfoReq{
+		TravelDate:  randomOrder.TravelDate,
+		TrainNumber: randomOrder.TrainNumber[1:],
+		DestStation: randomOrder.To,
+		SeatType:    randomOrder.SeatClass,
+		TotalNum:    totalNum,
+		Stations:    stations,
+	}
+
+	resp, err := seatSvc.ReqSeatCreate(seatCreateInfoReq)
+
+	if err != nil {
+		t.Error(err)
+	}
+	if resp.Data.DestStation != randomOrder.To {
+		t.Error("respGetTicket.Data.DestStation != randomOrder.To")
+	}
+
+	respGetTicket, err := cli.ReqGetTicketLeft(seatCreateInfoReq)
 	if err != nil {
 		t.Error(err)
 	}
