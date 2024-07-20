@@ -170,7 +170,7 @@ type TicketOrder struct {
 	OrderNumber string `json:"orderNumber"` // 订单号
 	Price       string `json:"price"`       // 价格
 	SeatClass   string `json:"seatClass"`   // 座位等级
-	SeatNumber  string `json:"seatNumber"`  // 座位号
+	SeatNumber  int    `json:"seatNumber"`  // 座位号
 	SendStatus  bool   `json:"sendStatus"`  // 发送状态
 	StartPlace  string `json:"startPlace"`  // 出发地
 	StartTime   string `json:"startTime"`   // 出发时间

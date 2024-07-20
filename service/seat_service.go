@@ -19,6 +19,7 @@ type SeatCreateInfoReq struct {
 	TotalNum    int      `form:"totalNum" json:"totalNum" binding:"required"`
 	Stations    []string `json:"stations" binding:"required"`
 }
+
 type SeatCreateInfoResp struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`

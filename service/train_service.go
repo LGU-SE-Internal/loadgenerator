@@ -17,11 +17,11 @@ import (
 //}
 
 type TrainType struct {
-	AverageSpeed int    `json:"averageSpeed"`
-	ConfortClass int    `json:"confortClass"`
-	EconomyClass int    `json:"economyClass"`
 	Id           string `json:"id"`
 	Name         string `json:"name"`
+	ConfortClass int    `json:"confortClass"`
+	AverageSpeed int    `json:"averageSpeed"`
+	EconomyClass int    `json:"economyClass"`
 }
 
 //type TrainType struct {
@@ -85,15 +85,9 @@ func (s *SvcImpl) Create(trainType *TrainType) (*CreateStationResponse, error) {
 }
 
 type TrainRetrieveTrainType struct {
-	Status int    `json:"status"`
-	Msg    string `json:"msg"`
-	Data   struct {
-		Id           string `json:"id"`
-		Name         string `json:"name"`
-		EconomyClass int    `json:"economyClass"`
-		ConfortClass int    `json:"confortClass"`
-		AverageSpeed int    `json:"averageSpeed"`
-	} `json:"data"`
+	Status int       `json:"status"`
+	Msg    string    `json:"msg"`
+	Data   TrainType `json:"data"`
 }
 
 type TrainServiceRetrieveTrainType struct {
@@ -125,15 +119,9 @@ func (s *SvcImpl) Retrieve(id string) (*TrainServiceRetrieveTrainType, error) {
 }
 
 type TrainRetrieveByNameType struct {
-	Status int    `json:"status"`
-	Msg    string `json:"msg"`
-	Data   struct {
-		Id           string `json:"id"`
-		Name         string `json:"name"`
-		EconomyClass int    `json:"economyClass"`
-		ConfortClass int    `json:"confortClass"`
-		AverageSpeed int    `json:"averageSpeed"`
-	} `json:"data"`
+	Status int       `json:"status"`
+	Msg    string    `json:"msg"`
+	Data   TrainType `json:"data"`
 }
 
 func (s *SvcImpl) RetrieveByName(name string) (*TrainRetrieveByNameType, error) {
@@ -159,15 +147,9 @@ func (s *SvcImpl) RetrieveByName(name string) (*TrainRetrieveByNameType, error) 
 }
 
 type TrainRetrieveByNamesType struct {
-	Status int    `json:"status"`
-	Msg    string `json:"msg"`
-	Data   []struct {
-		Id           string `json:"id"`
-		Name         string `json:"name"`
-		EconomyClass int    `json:"economyClass"`
-		ConfortClass int    `json:"confortClass"`
-		AverageSpeed int    `json:"averageSpeed"`
-	} `json:"data"`
+	Status int         `json:"status"`
+	Msg    string      `json:"msg"`
+	Data   []TrainType `json:"data"`
 }
 
 func (s *SvcImpl) RetrieveByNames(names []string) (*TrainRetrieveByNamesType, error) {
@@ -249,15 +231,9 @@ func (s *SvcImpl) Delete(id string) (*TrainDeleteResponse, error) {
 }
 
 type TrainResponseType struct {
-	Status int    `json:"status"`
-	Msg    string `json:"msg"`
-	Data   []struct {
-		Id           string `json:"id"`
-		Name         string `json:"name"`
-		EconomyClass int    `json:"economyClass"`
-		ConfortClass int    `json:"confortClass"`
-		AverageSpeed int    `json:"averageSpeed"`
-	} `json:"data"`
+	Status int         `json:"status"`
+	Msg    string      `json:"msg"`
+	Data   []TrainType `json:"data"`
 }
 
 func (s *SvcImpl) Query() (*TrainResponseType, error) {
