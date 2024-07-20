@@ -78,8 +78,8 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		// CreateAndQuery_And_Order; Prob = 0.04
 		//log.Fatalf("Selected: CreateAndQuery_And_Order")
 		CreateContactsInput := service.AdminContacts{
-			ID:        uuid.NewString(),
-			AccountID: uuid.NewString(),
+			Id:        uuid.NewString(),
+			AccountId: uuid.NewString(),
 			Name:      faker.Name(),
 		}
 		CreateContacts, err := accountSvc.AddContact(&CreateContactsInput)
@@ -111,8 +111,8 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 	}
 	if NoExistMockedContactsID {
 		CreateContactsInput := service.AdminContacts{
-			ID:             uuid.NewString(),
-			AccountID:      MockedAccountID,
+			Id:             uuid.NewString(),
+			AccountId:      MockedAccountID,
 			Name:           faker.Name(),
 			DocumentNumber: "DocumentNumber_One",
 			DocumentType:   rand.Intn(5),
