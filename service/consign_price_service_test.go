@@ -50,7 +50,7 @@ func TestSvcImpl_GetModifyDeletePriceConfig(t *testing.T) {
 	var getWithinPrice float64
 	var getBeyondPrice float64
 
-	getID = "5328fd14-3a87-41f0-b624-5941ffec9562"
+	getID = "39f89515-2d68-4ffb-9214-3c25a73da65f" // The ID here should be updated every redeploy the service since it is randomly generated when deploying.
 	getIndex = 0
 	getInitialWeight = rand.Float64()
 	getInitialPrice = rand.Float64()
