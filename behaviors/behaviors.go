@@ -38,12 +38,18 @@ func GetBehaviors() []BehaviorUnit {
 }
 
 type Config struct {
-	Thread int
+	Thread    int
+	SleepTime int
 }
 
 func WithThread(thread int) func(*Config) {
 	return func(conf *Config) {
 		conf.Thread = thread
+	}
+}
+func WithSleep(milli int) func(*Config) {
+	return func(conf *Config) {
+		conf.SleepTime = milli
 	}
 }
 
@@ -99,6 +105,7 @@ func (l *LoadGenerator) Start(conf ...func(*Config)) {
 					}
 				}
 				behaviors_[selectedIndex].B.Run(service.NewSvcClients())
+				time.Sleep(time.Millisecond * time.Duration(rand.Intn(config.SleepTime)))
 			}
 		}(i)
 	}
