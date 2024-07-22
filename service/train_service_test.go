@@ -1,66 +1,101 @@
 package service
 
 import (
+	"math/rand"
 	"testing"
 
 	"github.com/go-faker/faker/v4"
 )
 
 func TestTrainService_FullIntegration(t *testing.T) {
-	cli, _ := GetBasicClient()
-
-	// Query Test
-	resp, err := cli.Query()
-	if err != nil {
-		t.Errorf("Request failed, err %s", err)
-	}
-	t.Logf("Query returned results: %v", resp)
+	cli, _ := GetAdminClient()
+	var trainSvc TrainService = cli
 
 	// Mock data
 	MockedID := faker.UUIDHyphenated()
+	//options := []string{"GaoTieOne", "GaoTieTwo", "DongCheOne", "ZhiDa", "TeKuai", "KuaiSu", "QianNianSunHao"}
+	//selectedName := RandomSelectString(options)
+	//MockedName := selectedName
 	MockedName := faker.Name()
-	trainType := &TrainType{
+	MockedEconomyClass := 2147483647
+	MockedConfortClass := 2147483647
+	MockedAverageSpeed := 250 + rand.Intn(20)
+	// input
+	trainType := TrainType{
+		AverageSpeed: MockedAverageSpeed,
+		ConfortClass: MockedConfortClass,
+		EconomyClass: MockedEconomyClass,
 		Id:           MockedID,
 		Name:         MockedName,
-		EconomyClass: 1,
-		ConfortClass: 0,
-		AverageSpeed: 200,
 	}
 
 	// Create Test
-	createResp, err := cli.Create(trainType)
+	createResp, err := trainSvc.Create(&trainType)
 	if err != nil {
 		t.Errorf("Create request failed, err %s", err)
 	}
 	if createResp.Status != 1 {
 		t.Errorf("Create failed: %s", createResp.Msg)
 	}
+	//if createResp.Data.Id != trainType.Id {
+	//	t.Errorf("Create failed: %s", createResp.Data.Id)
+	//}
+	if createResp.Data.Name != trainType.Name {
+		t.Errorf("Create failed: %s", createResp.Data.Name)
+	}
+	if createResp.Data.EconomyClass != trainType.EconomyClass {
+		t.Errorf("Create failed: %d", createResp.Data.EconomyClass)
+	}
+	if createResp.Data.ConfortClass != trainType.ConfortClass {
+		t.Errorf("Create failed: %d", createResp.Data.ConfortClass)
+	}
+	if createResp.Data.AverageSpeed != trainType.AverageSpeed {
+		t.Errorf("Create failed: %d", createResp.Data.AverageSpeed)
+	}
+	existedtrainType := trainType
+
+	// Query Test
+	resp, err := trainSvc.Query()
+	if err != nil {
+		t.Errorf("Request failed, err %s; while response: %v", err, resp)
+	}
+	//t.Logf("Query returned results: %v", resp)
 
 	// Query all
-	allTrainTypes, err := cli.Query()
+	allTrainTypes, err := trainSvc.Query()
 	if err != nil {
 		t.Errorf("Query all request failed, err %s", err)
+	}
+	if allTrainTypes.Status != 1 {
+		t.Errorf("allTrainTypes.Status != 1")
 	}
 	if len(allTrainTypes.Data) == 0 {
 		t.Errorf("Query all returned no results")
 	}
-
-	var getId string
-	var getName string
-	if len(allTrainTypes.Data) > 0 {
-		getId = allTrainTypes.Data[0].Id
-		getName = allTrainTypes.Data[0].Name
+	found := false
+	for _, trainTypeElement := range allTrainTypes.Data {
+		if trainTypeElement.Id == createResp.Data.Id &&
+			trainTypeElement.Name == existedtrainType.Name &&
+			trainTypeElement.AverageSpeed == existedtrainType.AverageSpeed &&
+			trainTypeElement.ConfortClass == existedtrainType.ConfortClass &&
+			trainTypeElement.EconomyClass == existedtrainType.ConfortClass {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("Query all not get the corresponsing result, whcih means 'Creation Fails'")
 	}
 
 	// Test Update
-	updateTrainType := &TrainType{
-		Id:           getId,
-		Name:         getName,
-		EconomyClass: 7,
-		ConfortClass: 8,
-		AverageSpeed: 234,
+	UpdatedAverageSpeed := 275 + rand.Intn(10)
+	updateTrainType := TrainType{
+		Id:           createResp.Data.Id,
+		Name:         trainType.Name,
+		EconomyClass: trainType.EconomyClass,
+		ConfortClass: trainType.ConfortClass,
+		AverageSpeed: UpdatedAverageSpeed,
 	}
-	updateResp, err := cli.Update(updateTrainType)
+	updateResp, err := trainSvc.Update(&updateTrainType)
 	if err != nil {
 		t.Errorf("Update request failed, err %s", err)
 	}
@@ -68,33 +103,20 @@ func TestTrainService_FullIntegration(t *testing.T) {
 		t.Errorf("Update failed: %s", updateResp.Msg)
 	}
 
-	// Test Delete
-	var deleteID string
-	if len(allTrainTypes.Data) > 0 {
-		deleteID = allTrainTypes.Data[len(allTrainTypes.Data)-1].Id
-	} else {
-		t.Errorf("Query all returned empty data")
-	}
-
-	deleteResp, err := cli.Delete(deleteID)
-	if err != nil {
-		t.Errorf("Delete request failed, err %s", err)
-	}
-	if deleteResp.Status != 1 {
-		t.Errorf("Delete failed: %s", deleteResp.Msg)
-	}
-
-	// Test Retrieve by ID
-	retrieveResp, err := cli.Retrieve(getId)
+	// Test Retrieve by Id
+	retrieveResp, err := trainSvc.Retrieve(createResp.Data.Id)
 	if err != nil {
 		t.Errorf("Retrieve request failed, err %s", err)
 	}
-	if retrieveResp == nil {
+	//if len(retrieveResp.Data) == 0 {
+	//	t.Errorf("Retrieve returned no result")
+	//}
+	if retrieveResp.Data == nil {
 		t.Errorf("Retrieve returned no result")
 	}
 
 	// Test Retrieve by Name
-	retrieveByNameResp, err := cli.RetrieveByName(getName)
+	retrieveByNameResp, err := trainSvc.RetrieveByName(createResp.Data.Name)
 	if err != nil {
 		t.Errorf("Retrieve by name request failed, err %s", err)
 	}
@@ -111,4 +133,20 @@ func TestTrainService_FullIntegration(t *testing.T) {
 	if len(retrieveByNamesResp.Data) == 0 {
 		t.Errorf("Retrieve by names returned no results")
 	}
+
+	// Test Delete
+	//var deleteID string
+	//if len(allTrainTypes.Data) > 0 {
+	//	deleteID = allTrainTypes.Data[len(allTrainTypes.Data)-1].Id
+	//} else {
+	//	t.Errorf("Query all returned empty data")
+	//}
+	deleteResp, err := trainSvc.Delete(createResp.Data.Id)
+	if err != nil {
+		t.Errorf("Delete request failed, err %s", err)
+	}
+	if deleteResp.Status != 1 {
+		t.Errorf("Delete failed: %s", deleteResp.Msg)
+	}
+
 }

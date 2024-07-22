@@ -8,13 +8,31 @@ import (
 )
 
 // TrainType represents the train type structure
+//type TrainType struct {
+//	ID           string `json:"id"`
+//	Name         string `json:"name"`
+//	EconomyClass int    `json:"economyClass"`
+//	ConfortClass int    `json:"confortClass"`
+//	AverageSpeed int    `json:"averageSpeed"`
+//}
+
 type TrainType struct {
 	Id           string `json:"id"`
 	Name         string `json:"name"`
-	EconomyClass int    `json:"economyClass"`
 	ConfortClass int    `json:"confortClass"`
 	AverageSpeed int    `json:"averageSpeed"`
+	EconomyClass int    `json:"economyClass"`
+	Id           string `json:"id"`
+	Name         string `json:"name"`
 }
+
+//type TrainType struct {
+//	ID           string `gorm:"type:uuid;default:uuid_generate_v4();primaryKey;size:36" json:"id"`
+//	Name         string `gorm:"not null;unique" json:"name"`
+//	EconomyClass int    `gorm:"column:economy_class" json:"economy_class"`
+//	ConfortClass int    `gorm:"column:confort_class" json:"confort_class"`
+//	AverageSpeed int    `gorm:"column:average_speed" json:"average_speed"`
+//}
 
 // DeleteStationResponse represents a generic response structure
 //type DeleteStationResponse struct {
@@ -25,7 +43,7 @@ type TrainType struct {
 
 // TrainService defines the methods that the service should implement
 type TrainService interface {
-	Create(trainType *TrainType) (*DeleteStationResponse, error)
+	Create(trainType *TrainType) (*CreateStationResponse, error)
 	Retrieve(id string) (*TrainServiceRetrieveTrainType, error)
 	RetrieveByName(name string) (*TrainRetrieveByNameType, error)
 	RetrieveByNames(names []string) (*TrainRetrieveByNamesType, error)
@@ -34,7 +52,19 @@ type TrainService interface {
 	Query() (*TrainResponseType, error)
 }
 
-func (s *SvcImpl) Create(trainType *TrainType) (*DeleteStationResponse, error) {
+type CreateStationResponse struct {
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   struct {
+		Id           string `json:"id"`
+		Name         string `json:"name"`
+		EconomyClass int    `json:"economyClass"`
+		ConfortClass int    `json:"confortClass"`
+		AverageSpeed int    `json:"averageSpeed"`
+	} `json:"data"`
+}
+
+func (s *SvcImpl) Create(trainType *TrainType) (*CreateStationResponse, error) {
 	url := fmt.Sprintf("%s/api/v1/trainservice/trains", s.BaseUrl)
 	resp, err := s.cli.SendRequest("POST", url, trainType)
 	if err != nil {
@@ -47,7 +77,7 @@ func (s *SvcImpl) Create(trainType *TrainType) (*DeleteStationResponse, error) {
 		return nil, err
 	}
 
-	var result DeleteStationResponse
+	var result CreateStationResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
