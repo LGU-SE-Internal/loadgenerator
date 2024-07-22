@@ -89,6 +89,7 @@ func TestUserService_FullIntegration(t *testing.T) {
 }
 
 func TestUserService_FullIntegration_v2(t *testing.T) {
+
 	cli, _ := GetAdminClient()
 	var userSvc UserService = cli
 
