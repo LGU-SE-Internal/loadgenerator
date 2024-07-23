@@ -273,6 +273,7 @@ func TestSvcImpl_End2End_OrderService_another(t *testing.T) {
 		t.Errorf("【ReqDeleteOrder】unexpected returned order.")
 		t.Skip()
 	}
+
 	randomContact = getRandomContact()
 
 	newOrder := Order{
