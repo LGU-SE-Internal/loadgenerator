@@ -275,7 +275,6 @@ func TestSvcImpl_End2End_OrderService_another(t *testing.T) {
 	}
 
 	randomContact = getRandomContact()
-
 	newOrder := Order{
 		AccountId:              randomContact.AccountId,
 		BoughtDate:             faker.Date(),
