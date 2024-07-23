@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestTravelServiceQueryAll(t *testing.T) {
+func TestTravelServiceQueryAll_InfiniteLoop_ForTesting(t *testing.T) {
 	var wg sync.WaitGroup
 	//numIterations := 100
 
