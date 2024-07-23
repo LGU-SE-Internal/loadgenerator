@@ -61,25 +61,9 @@ func GenerateTrainNumber() string {
 
 // GenerateSeatNumber 随机生成火车座位号。
 // 座位号的格式为一个字符（A、B、C、D、E之一）后跟两位数字。
-func GenerateSeatNumber() string {
+func GenerateSeatNumber() int {
 	// 初始化随机数生成器
-	rand.Seed(time.Now().UnixNano())
-
-	// 可选的首字母集合
-	seatChars := []rune{'A', 'B', 'C', 'D', 'E'}
-	// 随机选择一个首字母
-	firstChar := seatChars[rand.Intn(len(seatChars))]
-
-	// 生成后续的两位数字
-	var numStr string
-	for i := 0; i < 2; i++ {
-		numStr += fmt.Sprintf("%d", rand.Intn(10))
-	}
-
-	// 拼接首字母和数字部分
-	seatNumber := string(firstChar) + numStr
-
-	return seatNumber
+	return rand.Intn(30)
 }
 
 // GetTrainTicketClass 随机返回高铁票等级。
@@ -142,7 +126,7 @@ func compareOrders(o1, o2 *Order) bool {
 		equal = false
 	}
 	if o1.SeatNumber != o2.SeatNumber {
-		fmt.Printf("SeatNumber differs: %s != %s\n", o1.SeatNumber, o2.SeatNumber)
+		fmt.Printf("SeatNumber differs: %d != %d\n", o1.SeatNumber, o2.SeatNumber)
 		equal = false
 	}
 	if o1.Status != o2.Status {
@@ -181,7 +165,7 @@ type Order struct {
 	Id                     string `json:"id"`
 	Price                  string `json:"price"`
 	SeatClass              int    `json:"seatClass"`
-	SeatNumber             string `json:"seatNumber"`
+	SeatNumber             int    `json:"seatNumber"`
 	Status                 int    `json:"status"`
 	To                     string `json:"to"`
 	TrainNumber            string `json:"trainNumber"`
@@ -189,10 +173,33 @@ type Order struct {
 	TravelTime             string `json:"travelTime"`
 }
 
+type TicketArrResp struct {
+	Status int      `json:"status"`
+	Msg    string   `json:"msg"`
+	Data   []Ticket `json:"data"`
+}
+
+type TicketResp struct {
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   Ticket `json:"data"`
+}
+
 type OrderResp struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`
 	Data   Order  `json:"data"`
+}
+
+type OrderSecurity struct {
+	OrderNumInLastOneHour int `json:"orderNumInLastOneHour"`
+	OrderNumOfValidOrder  int `json:"orderNumOfValidOrder"`
+}
+
+type OrderSecurityResp struct {
+	Status int           `json:"status"`
+	Msg    string        `json:"msg"`
+	Data   OrderSecurity `json:"data"`
 }
 
 type DataStringResp struct {

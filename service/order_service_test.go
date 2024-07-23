@@ -2,11 +2,12 @@ package service
 
 import (
 	"fmt"
+	"math/rand"
 	"strconv"
 	"testing"
+	"time"
 
 	"github.com/go-faker/faker/v4"
-	"github.com/google/uuid"
 )
 
 func TestSvcImpl_End2End_OrderService(t *testing.T) {
@@ -35,7 +36,7 @@ func TestSvcImpl_End2End_OrderService(t *testing.T) {
 		Id:                     "nil",
 		Price:                  RandomDecimalStringBetween(1, 10),
 		SeatClass:              GetTrainTicketClass(),
-		SeatNumber:             GenerateSeatNumber(),
+		SeatNumber:             rand.Intn(30),
 		Status:                 0,
 		To:                     RandomProvincialCapitalEN(),
 		TrainNumber:            "G111",
@@ -78,7 +79,7 @@ func TestSvcImpl_End2End_OrderService(t *testing.T) {
 		Id:                     returnedOrder0.Id,
 		Price:                  RandomDecimalStringBetween(1, 10),
 		SeatClass:              GetTrainTicketClass(),
-		SeatNumber:             GenerateSeatNumber(),
+		SeatNumber:             rand.Intn(30),
 		Status:                 0,
 		To:                     RandomProvincialCapitalEN(),
 		TrainNumber:            "G111",
@@ -154,7 +155,9 @@ func TestSvcImpl_End2End_OrderService_another(t *testing.T) {
 	if err != nil {
 		t.Errorf("Request failed, err %s", err)
 	}
-	t.Log(Resp6)
+	if len(Resp6.Data) < 1 {
+		t.Errorf("[queryOrders] no orders found")
+	}
 
 	randomContact := getRandomContact()
 	origin_order_0 := Order{
@@ -169,7 +172,7 @@ func TestSvcImpl_End2End_OrderService_another(t *testing.T) {
 		Id:                     "nil",
 		Price:                  RandomDecimalStringBetween(1, 10),
 		SeatClass:              GetTrainTicketClass(),
-		SeatNumber:             GenerateSeatNumber(),
+		SeatNumber:             rand.Intn(30),
 		Status:                 0,
 		To:                     RandomProvincialCapitalEN(),
 		TrainNumber:            "G111",
@@ -180,6 +183,11 @@ func TestSvcImpl_End2End_OrderService_another(t *testing.T) {
 	Resp8, err := orderSvc.ReqCreateNewOrder(&origin_order_0)
 	if err != nil {
 		t.Errorf("Request failed, err %s", err)
+		t.Skip()
+	}
+	if !compareOrders(&origin_order_0, &Resp8.Data) {
+		t.Errorf("【ReqCreateNewOrder】unexpected returned order.")
+		t.Skip()
 	}
 
 	originOrder := Resp8.Data
@@ -198,29 +206,73 @@ func TestSvcImpl_End2End_OrderService_another(t *testing.T) {
 		TravelDateEnd:         nextTDay,
 		TravelDateStart:       prevTDay,
 	})
-	fmt.Println(Resp9.Msg)
-	Resp, _ := orderSvc.ReqSecurityInfoCheck(originOrder.BoughtDate, originOrder.AccountId)
+	if err != nil {
+		t.Errorf("Request failed, err %s", err)
+		t.Skip()
+	}
+	if !compareOrders(&randomOrder, &Resp9.Data[0]) {
+		t.Errorf("【ReqQueryOrderForRefresh】unexpected returned order.")
+	}
+	Resp, err := orderSvc.ReqSecurityInfoCheck(originOrder.BoughtDate, originOrder.AccountId)
+	if err != nil {
+		t.Errorf("Request failed, err %s", err)
+		t.Skip()
+	}
 	fmt.Println(Resp.Msg)
-	Resp, _ = orderSvc.ReqModifyOrder(originOrder.Id, 0)
-	fmt.Println(Resp.Msg)
-	Resp, _ = orderSvc.ReqGetTicketsList(&Seat{
-		DestStation:  RandomProvincialCapitalEN(),
-		SeatType:     2,
-		StartStation: RandomProvincialCapitalEN(),
-		Stations:     nil,
-		TotalNum:     0,
-		TrainNumber:  GenerateTrainNumber(),
-		TravelDate:   faker.Date(),
+	fmt.Println(Resp.Data.OrderNumInLastOneHour)
+	fmt.Println(Resp.Data.OrderNumOfValidOrder)
+	Resp21, err := orderSvc.ReqModifyOrder(originOrder.Id, 0)
+	if err != nil {
+		t.Errorf("Request failed, err %s", err)
+		t.Skip()
+	}
+	if !compareOrders(&originOrder, &Resp21.Data) {
+		t.Errorf("【ReqModifyOrder】unexpected returned order.")
+		t.Skip()
+	}
+
+	var stations []string
+
+	// 设置随机数种子，以确保每次运行程序时都能得到不同的随机数
+	rand.Seed(time.Now().UnixNano())
+
+	// 生成一个[0, 1)之间的浮点数
+	randomFloat := rand.Float64()
+
+	// 如果随机数小于0.5，则执行if代码块；否则，执行else代码块
+	if randomFloat < 0.5 {
+		stations = []string{randomOrder.To, randomOrder.From}
+	} else {
+		stations = []string{randomOrder.From, randomOrder.To}
+	}
+
+	Resp22, err := orderSvc.ReqGetTicketsList(&Seat{
+		DestStation:  randomOrder.To,
+		SeatType:     randomOrder.SeatClass,
+		StartStation: randomOrder.From,
+		Stations:     stations,
+		TotalNum:     rand.Intn(10),
+		TrainNumber:  randomOrder.TrainNumber,
+		TravelDate:   randomOrder.TravelDate,
 	})
-	fmt.Println(Resp.Msg)
-	Resp, _ = orderSvc.ReqCalculateSoldTicket(faker.Date(), GenerateTrainNumber())
-	fmt.Println(Resp.Msg)
-	Resp, _ = orderSvc.ReqGetOrderById(originOrder.Id)
-	fmt.Println(Resp.Msg)
-	Resp, _ = orderSvc.ReqDeleteOrder_OrderService(originOrder.Id)
-	fmt.Println(Resp.Msg)
+	if err != nil {
+		t.Errorf("Request failed, err %s", err)
+		t.Skip()
+	}
+	fmt.Println(Resp22.Msg)
+	Resp23, _ := orderSvc.ReqCalculateSoldTicket(faker.Date(), GenerateTrainNumber())
+	fmt.Println(Resp23.Msg)
+	Resp24, _ := orderSvc.ReqGetOrderById(originOrder.Id)
+	fmt.Println(Resp24.Msg)
+	Resp25, _ := orderSvc.ReqDeleteOrder_OrderService(originOrder.Id)
+	fmt.Println(Resp25.Msg)
+	if !compareOrders(&originOrder, &Resp25.Data) {
+		t.Errorf("【ReqDeleteOrder】unexpected returned order.")
+		t.Skip()
+	}
 	randomContact = getRandomContact()
-	Resp21, _ := orderSvc.ReqAddCreateNewOrder(&Order{
+
+	newOrder := Order{
 		AccountId:              randomContact.AccountId,
 		BoughtDate:             faker.Date(),
 		CoachNumber:            RandomIntBetween(1, 10),
@@ -229,19 +281,30 @@ func TestSvcImpl_End2End_OrderService_another(t *testing.T) {
 		DifferenceMoney:        "",
 		DocumentType:           0,
 		From:                   RandomProvincialCapitalEN(),
-		Id:                     uuid.NewString(),
+		Id:                     Resp8.Data.Id,
 		Price:                  RandomDecimalStringBetween(1, 10),
 		SeatClass:              GetTrainTicketClass(),
-		SeatNumber:             GenerateSeatNumber(),
+		SeatNumber:             rand.Intn(30),
 		Status:                 0,
 		To:                     RandomProvincialCapitalEN(),
 		TrainNumber:            "G111",
 		TravelDate:             faker.Date(),
 		TravelTime:             faker.TimeString(),
-	})
-	fmt.Println(Resp21.Msg)
-	Resp22, _ := orderSvc.ReqUpdateOrder_OrderService(&Resp21.Data)
-	fmt.Println(Resp22.Msg)
-	Resp23, _ := orderSvc.ReqDeleteOrder_OrderService(Resp22.Data.Id)
-	fmt.Println(Resp23.Msg)
+	}
+
+	Resp26, _ := orderSvc.ReqAddCreateNewOrder(&newOrder)
+	fmt.Println(Resp26.Msg)
+	if !compareOrders(&newOrder, &Resp26.Data) {
+		t.Errorf("【ReqDeleteOrder】unexpected returned order.")
+		t.Skip()
+	}
+	newOrder = Resp26.Data
+	Resp27, _ := orderSvc.ReqUpdateOrder_OrderService(&newOrder)
+	fmt.Println(Resp27.Msg)
+	if !compareOrders(&newOrder, &Resp27.Data) {
+		t.Errorf("【ReqDeleteOrder】unexpected returned order.")
+		t.Skip()
+	}
+	Resp28, _ := orderSvc.ReqDeleteOrder_OrderService(Resp27.Data.Id)
+	fmt.Println(Resp28.Msg)
 }
