@@ -260,10 +260,13 @@ func TestSvcImpl_End2End_OrderService_another(t *testing.T) {
 		t.Skip()
 	}
 	fmt.Println(Resp22.Msg)
+
 	Resp23, _ := orderSvc.ReqCalculateSoldTicket(faker.Date(), GenerateTrainNumber())
 	fmt.Println(Resp23.Msg)
+
 	Resp24, _ := orderSvc.ReqGetOrderById(originOrder.Id)
 	fmt.Println(Resp24.Msg)
+
 	Resp25, _ := orderSvc.ReqDeleteOrder_OrderService(originOrder.Id)
 	fmt.Println(Resp25.Msg)
 	if !compareOrders(&originOrder, &Resp25.Data) {
