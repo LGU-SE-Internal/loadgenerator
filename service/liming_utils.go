@@ -162,6 +162,18 @@ type TravelQueryResponse struct {
 	Data   TravelAdvanceResultUnit `json:"data"`
 }
 
+type Ticket struct {
+	SeatNo       int    `json:"seatNo"`
+	StartStation string `json:"startStation"`
+	DestStation  string `json:"destStation"`
+}
+
+type TicketArrResponse struct {
+	Status int      `json:"status"`
+	Msg    string   `json:"msg"`
+	Data   []Ticket `json:"data"`
+}
+
 type TicketOrder struct {
 	Date        string `json:"date"`        // 订单日期
 	Email       string `json:"email"`       // 用户邮箱
@@ -170,7 +182,7 @@ type TicketOrder struct {
 	OrderNumber string `json:"orderNumber"` // 订单号
 	Price       string `json:"price"`       // 价格
 	SeatClass   string `json:"seatClass"`   // 座位等级
-	SeatNumber  string `json:"seatNumber"`  // 座位号
+	SeatNumber  int    `json:"seatNumber"`  // 座位号
 	SendStatus  bool   `json:"sendStatus"`  // 发送状态
 	StartPlace  string `json:"startPlace"`  // 出发地
 	StartTime   string `json:"startTime"`   // 出发时间
