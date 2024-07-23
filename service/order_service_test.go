@@ -266,6 +266,10 @@ func TestSvcImpl_End2End_OrderService_another(t *testing.T) {
 
 	Resp24, _ := orderSvc.ReqGetOrderById(originOrder.Id)
 	fmt.Println(Resp24.Msg)
+	if !compareOrders(&originOrder, &Resp24.Data) {
+		t.Errorf("【ReqDeleteOrder】unexpected returned order.")
+		t.Skip()
+	}
 
 	Resp25, _ := orderSvc.ReqDeleteOrder_OrderService(originOrder.Id)
 	fmt.Println(Resp25.Msg)
