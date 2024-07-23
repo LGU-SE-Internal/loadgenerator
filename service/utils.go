@@ -8,6 +8,19 @@ import (
 	"time"
 )
 
+// generateVerifyCode generates a 6-digit verification code consisting of letters and numbers.
+func generateVerifyCode() string {
+	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	const length = 6
+	var seededRand *rand.Rand = rand.New(rand.NewSource(time.Now().UnixNano()))
+
+	code := make([]byte, length)
+	for i := range code {
+		code[i] = charset[seededRand.Intn(len(charset))]
+	}
+	return string(code)
+}
+
 func GenerateTripId() string {
 	// 设置随机数种子
 	rand.Seed(time.Now().UnixNano())
