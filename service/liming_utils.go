@@ -162,6 +162,18 @@ type TravelQueryResponse struct {
 	Data   TravelAdvanceResultUnit `json:"data"`
 }
 
+type Ticket struct {
+	SeatNo       int    `json:"seatNo"`
+	StartStation string `json:"startStation"`
+	DestStation  string `json:"destStation"`
+}
+
+type TicketArrResponse struct {
+	Status int      `json:"status"`
+	Msg    string   `json:"msg"`
+	Data   []Ticket `json:"data"`
+}
+
 type TicketOrder struct {
 	Date        string `json:"date"`        // 订单日期
 	Email       string `json:"email"`       // 用户邮箱
