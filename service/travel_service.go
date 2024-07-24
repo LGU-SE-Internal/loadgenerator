@@ -52,9 +52,22 @@ type TripAllDetailInfo struct {
 
 // TripResponse represents the trip response
 type TripResponse struct {
-	Status int         `json:"status"`
-	Msg    string      `json:"msg"`
-	Data   interface{} `json:"data"`
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   struct {
+		Id     string `json:"id"`
+		TripId struct {
+			Type   string `json:"type"`
+			Number string `json:"number"`
+		} `json:"tripId"`
+		TrainTypeName       string `json:"trainTypeName"`
+		RouteId             string `json:"routeId"`
+		StartStationName    string `json:"startStationName"`
+		StationsName        string `json:"stationsName"`
+		TerminalStationName string `json:"terminalStationName"`
+		StartTime           string `json:"startTime"`
+		EndTime             string `json:"endTime"`
+	} `json:"data"`
 }
 
 type GetTrainTypeByTripIdResponse struct {
@@ -86,9 +99,15 @@ func (s *SvcImpl) GetTrainTypeByTripId(tripId string) (*GetTrainTypeByTripIdResp
 }
 
 type GetRouteByTripIdResponse struct {
-	Status int         `json:"status"`
-	Msg    string      `json:"msg"`
-	Data   interface{} `json:"data"`
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   struct {
+		Id           string      `json:"id"`
+		Stations     interface{} `json:"stations"`
+		Distances    interface{} `json:"distances"`
+		StartStation interface{} `json:"startStation"`
+		EndStation   interface{} `json:"endStation"`
+	} `json:"data"`
 }
 
 func (s *SvcImpl) GetRouteByTripId(tripId string) (*GetRouteByTripIdResponse, error) {

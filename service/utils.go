@@ -40,6 +40,14 @@ func GenerateTripId() string {
 	return MockedTripID
 }
 
+// toLowerCaseAndRemoveSpaces converts a given string to all lower case
+// and removes all spaces.
+func toLowerCaseAndRemoveSpaces(input string) string {
+	lowercased := strings.ToLower(input)
+	noSpaces := strings.ReplaceAll(lowercased, " ", "")
+	return noSpaces
+}
+
 func GenerateTrainTypeName() string {
 	// 设置随机数种子
 	rand.Seed(time.Now().UnixNano())
@@ -93,11 +101,33 @@ func StringToList(input string) []string {
 	return parts
 }
 
-func getRandomTime() string {
-	randomDate := faker.Date()
-	randomTime := faker.TIME
+// generateRandomTime generates a random time in the format "HH:MM:SS".
+func generateRandomTime() string {
+	//// Seed the random number generator to ensure different results each run
+	//rand.Seed(time.Now().UnixNano())
 
-	DateAndTime := randomDate + " " + randomTime
+	// Generate random hours, minutes, and seconds
+	hour := rand.Intn(24)   // 0-23
+	minute := rand.Intn(60) // 0-59
+	second := rand.Intn(60) // 0-59
+
+	// Format the time as "HH:MM:SS"
+	return fmt.Sprintf("%02d:%02d:%02d", hour, minute, second)
+}
+
+func getRandomTime() string {
+	MockedRandomDate := faker.Date()
+
+	////// Seed the random number generator to ensure different results each run
+	////rand.Seed(time.Now().UnixNano())
+	//// Generate random hours, minutes, and seconds
+	//hour := rand.Intn(24)   // 0-23
+	//minute := rand.Intn(60) // 0-59
+	//second := rand.Intn(60) // 0-59
+	//MockedRandomTime := fmt.Sprintf("%02d:%02d:%02d", hour, minute, second)
+	MockedRandomTime := generateRandomTime()
+
+	DateAndTime := MockedRandomDate + " " + MockedRandomTime
 
 	return DateAndTime
 }
