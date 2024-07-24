@@ -1,7 +1,6 @@
 package behaviors
 
 import (
-	"fmt"
 	"github.com/Lincyaw/loadgenerator/service"
 	"github.com/go-faker/faker/v4"
 	"github.com/google/uuid"
@@ -78,8 +77,8 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		// CreateAndQuery_And_Order; Prob = 0.04
 		//log.Fatalf("Selected: CreateAndQuery_And_Order")
 		CreateContactsInput := service.AdminContacts{
-			ID:        uuid.NewString(),
-			AccountID: uuid.NewString(),
+			Id:        uuid.NewString(),
+			AccountId: uuid.NewString(),
 			Name:      faker.Name(),
 		}
 		CreateContacts, err := accountSvc.AddContact(&CreateContactsInput)
@@ -111,8 +110,8 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 	}
 	if NoExistMockedContactsID {
 		CreateContactsInput := service.AdminContacts{
-			ID:             uuid.NewString(),
-			AccountID:      MockedAccountID,
+			Id:             uuid.NewString(),
+			AccountId:      MockedAccountID,
 			Name:           faker.Name(),
 			DocumentNumber: "DocumentNumber_One",
 			DocumentType:   rand.Intn(5),
@@ -220,7 +219,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 			Id:                     uuid.NewString(),
 			Price:                  RandomDecimalStringBetween(1, 10),
 			SeatClass:              GetTrainTicketClass(),
-			SeatNumber:             GenerateSeatNumber(),
+			SeatNumber:             service.GenerateSeatNumber(),
 			Status:                 0,
 			To:                     RandomProvincialCapitalEN(),
 			TrainNumber:            GenerateTripId(),
@@ -287,7 +286,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 			Id:                     uuid.NewString(),
 			Price:                  RandomDecimalStringBetween(1, 10),
 			SeatClass:              GetTrainTicketClass(),
-			SeatNumber:             GenerateSeatNumber(),
+			SeatNumber:             service.GenerateSeatNumber(),
 			Status:                 0,
 			To:                     RandomProvincialCapitalEN(),
 			TrainNumber:            "G111",
@@ -349,7 +348,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 			Id:                     uuid.NewString(),
 			Price:                  RandomDecimalStringBetween(1, 10),
 			SeatClass:              GetTrainTicketClass(),
-			SeatNumber:             GenerateSeatNumber(),
+			SeatNumber:             service.GenerateSeatNumber(),
 			Status:                 0,
 			To:                     RandomProvincialCapitalEN(),
 			TrainNumber:            "G111",
@@ -411,7 +410,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 			Id:                     uuid.NewString(),
 			Price:                  RandomDecimalStringBetween(1, 10),
 			SeatClass:              GetTrainTicketClass(),
-			SeatNumber:             GenerateSeatNumber(),
+			SeatNumber:             service.GenerateSeatNumber(),
 			Status:                 0,
 			To:                     RandomProvincialCapitalEN(),
 			TrainNumber:            "G111",
@@ -1052,27 +1051,4 @@ func GetTrainTicketClass() int {
 	default:
 		return 2
 	}
-}
-
-// GenerateSeatNumber 随机生成火车座位号。
-// 座位号的格式为一个字符（A、B、C、D、E之一）后跟两位数字。
-func GenerateSeatNumber() string {
-	// 初始化随机数生成器
-	rand.Seed(time.Now().UnixNano())
-
-	// 可选的首字母集合
-	seatChars := []rune{'A', 'B', 'C', 'D', 'E'}
-	// 随机选择一个首字母
-	firstChar := seatChars[rand.Intn(len(seatChars))]
-
-	// 生成后续的两位数字
-	var numStr string
-	for i := 0; i < 2; i++ {
-		numStr += fmt.Sprintf("%d", rand.Intn(10))
-	}
-
-	// 拼接首字母和数字部分
-	seatNumber := string(firstChar) + numStr
-
-	return seatNumber
 }

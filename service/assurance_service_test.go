@@ -93,7 +93,7 @@ func TestSvcImpl_AddUpdateDeleteAssurance(t *testing.T) {
 	found1 := true
 	for _, assuranceType := range assuranceTypes.Data {
 		if assuranceType.Name != "Traffic Accident Assurance" {
-			found = false
+			found1 = false
 		}
 	}
 	if !found1 {

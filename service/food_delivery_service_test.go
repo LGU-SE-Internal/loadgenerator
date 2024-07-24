@@ -39,13 +39,19 @@ func TestSvcImpl_ReqFindAllFoodDeliveryOrders(t *testing.T) {
 
 func TestSvcImpl_ReqGetFoodDeliveryOrderByStoreId(t *testing.T) {
 	cli, _ := GetAdminClient()
-	GetResp, _ := cli.ReqGetFoodDeliveryOrderByStoreId("fc212d9b-4215-40ab-bc66-a02710fd387b")
+	GetResp, err := cli.ReqGetFoodDeliveryOrderByStoreId("fc212d9b-4215-40ab-bc66-a02710fd387b")
+	if err != nil {
+		t.Error(err)
+	}
 	fmt.Println(GetResp.Msg)
 }
 
 func TestSvcImpl_ReqGetFoodDeliveryOrderById(t *testing.T) {
 	cli, _ := GetAdminClient()
-	GetResp, _ := cli.ReqGetFoodDeliveryOrderById("8a80811d9031564e0190366bc1950000")
+	GetResp, err := cli.ReqGetFoodDeliveryOrderById("8a80811d9031564e0190366bc1950000")
+	if err != nil {
+		t.Fatal(err)
+	}
 	fmt.Println(GetResp.Msg)
 }
 

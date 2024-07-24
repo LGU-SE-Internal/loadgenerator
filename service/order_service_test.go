@@ -255,6 +255,7 @@ func TestSvcImpl_End2End_OrderService_another(t *testing.T) {
 		TrainNumber:  randomOrder.TrainNumber,
 		TravelDate:   randomOrder.TravelDate,
 	})
+
 	if err != nil {
 		t.Errorf("Request failed, err %s", err)
 		t.Skip()
