@@ -238,6 +238,9 @@ func TestTravelService_FullIntegration(t *testing.T) {
 	if err != nil {
 		t.Errorf("QueryInfo request failed, err %s", err)
 	}
+	if queryInfoResp.Status != 1 {
+		t.Errorf("QueryInfo failed, status: %d", queryInfoResp.Status)
+	}
 
 	// Test QueryInfoInParallel
 	queryInfoInParallelResp, err := cli.QueryInfoInParallel(tripInfo)
@@ -245,7 +248,7 @@ func TestTravelService_FullIntegration(t *testing.T) {
 		t.Errorf("QueryInfoInParallel request failed, err %s", err)
 	}
 	if queryInfoInParallelResp.Status != 1 {
-		t.Errorf("QueryInfoInParallel failed, status: %d", queryInfoResp.Status)
+		t.Errorf("QueryInfoInParallel failed, status: %d", queryInfoInParallelResp.Status)
 	}
 
 	// Test GetTripAllDetailInfo
@@ -276,7 +279,7 @@ func TestTravelService_FullIntegration(t *testing.T) {
 	if deleteResp.Status != 1 {
 		t.Errorf("DeleteTrip failed: %s", deleteResp.Msg)
 	}
-	t.Logf("DeleteTrip return: %s", deleteResp.Msg)
+	t.Logf("DeleteTrip successfully return: %s", deleteResp.Msg)
 
 }
 
