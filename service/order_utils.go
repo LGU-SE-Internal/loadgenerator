@@ -62,7 +62,8 @@ func GenerateTrainNumber() string {
 // GenerateSeatNumber 随机生成火车座位号。
 // 座位号的格式为一个字符（A、B、C、D、E之一）后跟两位数字。
 func GenerateSeatNumber() int {
-	return RandomIntBetween(5, 100)
+	// 初始化随机数生成器
+	return rand.Intn(30)
 }
 
 // GetTrainTicketClass 随机返回高铁票等级。
@@ -172,10 +173,33 @@ type Order struct {
 	TravelTime             string `json:"travelTime"`
 }
 
+type TicketArrResp struct {
+	Status int      `json:"status"`
+	Msg    string   `json:"msg"`
+	Data   []Ticket `json:"data"`
+}
+
+type TicketResp struct {
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   Ticket `json:"data"`
+}
+
 type OrderResp struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`
 	Data   Order  `json:"data"`
+}
+
+type OrderSecurity struct {
+	OrderNumInLastOneHour int `json:"orderNumInLastOneHour"`
+	OrderNumOfValidOrder  int `json:"orderNumOfValidOrder"`
+}
+
+type OrderSecurityResp struct {
+	Status int           `json:"status"`
+	Msg    string        `json:"msg"`
+	Data   OrderSecurity `json:"data"`
 }
 
 type DataStringResp struct {

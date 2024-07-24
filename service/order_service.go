@@ -18,9 +18,9 @@ type OrderService interface {
 	ReqGetOrderPrice(orderId string) (*GetOrderPriceResp, error)
 	ReqQueryOrders(input *Qi) (*OrderArrResp, error)
 	ReqQueryOrderForRefresh(input *Qi) (*OrderArrResp, error)
-	ReqSecurityInfoCheck(checkDate string, accountId string) (*OrderResp, error)
+	ReqSecurityInfoCheck(checkDate string, accountId string) (*OrderSecurityResp, error)
 	ReqModifyOrder(orderId string, status int) (*OrderResp, error)
-	ReqGetTicketsList(input *Seat) (*OrderResp, error)
+	ReqGetTicketsList(input *Seat) (*TicketResp, error)
 	ReqDeleteOrder_OrderService(orderId string) (*OrderResp, error)
 	ReqGetOrderById(orderId string) (*OrderResp, error)
 	ReqCalculateSoldTicket(travelDate string, travelNumber string) (*OrderResp, error)
@@ -188,7 +188,7 @@ func (s *SvcImpl) ReqQueryOrderForRefresh(input *Qi) (*OrderArrResp, error) {
 	return &result, nil
 }
 
-func (s *SvcImpl) ReqSecurityInfoCheck(checkDate string, accountId string) (*OrderResp, error) {
+func (s *SvcImpl) ReqSecurityInfoCheck(checkDate string, accountId string) (*OrderSecurityResp, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+"/api/v1/orderservice/order/security/"+checkDate+"/"+accountId, nil)
 	if err != nil {
 		return nil, err
@@ -197,7 +197,7 @@ func (s *SvcImpl) ReqSecurityInfoCheck(checkDate string, accountId string) (*Ord
 	if err != nil {
 		return nil, err
 	}
-	var result OrderResp
+	var result OrderSecurityResp
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
@@ -224,7 +224,7 @@ func (s *SvcImpl) ReqModifyOrder(orderId string, status int) (*OrderResp, error)
 	return &result, nil
 }
 
-func (s *SvcImpl) ReqGetTicketsList(input *Seat) (*OrderResp, error) {
+func (s *SvcImpl) ReqGetTicketsList(input *Seat) (*TicketResp, error) {
 	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/orderservice/order/tickets", input)
 	if err != nil {
 		return nil, err
@@ -233,7 +233,7 @@ func (s *SvcImpl) ReqGetTicketsList(input *Seat) (*OrderResp, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result OrderResp
+	var result TicketResp
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
