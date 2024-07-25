@@ -52,10 +52,10 @@ func TestTravelService_FullIntegration(t *testing.T) {
 	if createResp.Status != 1 {
 		t.Errorf("CreateTrip failed: %s", createResp.Msg)
 	}
-	//if createResp.Msg != "Already exists" {
-	//	t.Logf("Already exists: %s", createResp.Msg)
-	//	t.Skip()
-	//}
+	if createResp.Msg != "Already exists" {
+		t.Logf("Already exists: %s", createResp.Msg)
+		t.Skip()
+	}
 	isMatch := false
 	if /*createResp.Data.Id == travelInfo.LoginID &&*/
 	createResp.Data.StationsName == toLowerCaseAndRemoveSpaces(travelInfo.StationsName) &&

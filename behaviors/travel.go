@@ -6,7 +6,6 @@ import (
 	"github.com/go-faker/faker/v4"
 	"log"
 	"math/rand"
-	"strings"
 	"time"
 )
 
@@ -40,9 +39,12 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	var MockedEndTime string
 
 	// 1. Query
-	_, err = travelSvc.QueryAll()
+	QueryAllRsp, err := travelSvc.QueryAll()
 	if err != nil {
 		log.Fatalf("[Query]QueryAll error occurs: %v", err)
+	}
+	if QueryAllRsp.Status != 1 {
+		log.Fatalf("[Query]QueryAllRsp.Status != 1")
 	}
 	time.Sleep(2 * time.Second)
 
@@ -54,9 +56,10 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	MockedRouteID = faker.UUIDHyphenated()
 	MockedStartStationName = faker.GetRealAddress().City
 	MockedTerminalStationName = faker.GetRealAddress().City
-	MockedStationsName = MockedStartStationName + ", " + MockedTerminalStationName
-	MockedStartTime = faker.Date()
-	MockedEndTime = faker.Date()
+	//MockedStationsName = MockedStartStationName + ", " + MockedTerminalStationName
+	MockedStationsName = faker.GetRealAddress().City
+	MockedStartTime = getRandomTime()
+	MockedEndTime = getRandomTime()
 	// Input
 	travelInfo := service.TravelInfo{
 		LoginID:             MockedLoginId,
@@ -69,16 +72,22 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		StartTime:           MockedStartTime,
 		EndTime:             MockedEndTime,
 	}
-	_, err1 := travelSvc.CreateTrip(&travelInfo)
+	CreateTripRsp, err1 := travelSvc.CreateTrip(&travelInfo)
 	if err1 != nil {
 		log.Fatalf("[Create]CreateTrip error1 occurs: %v\n", err1)
+	}
+	if CreateTripRsp.Status != 1 {
+		log.Fatalf("[Create]CreateTripRsp.Status != 1")
 	}
 	time.Sleep(2 * time.Second)
 
 	// 3. Query Again
-	_, err2 := travelSvc.QueryAll()
+	QueryAllRspAgain, err2 := travelSvc.QueryAll()
 	if err2 != nil {
 		log.Fatalf("[Query Again]QueryAll error2 occurs: %v", err2)
+	}
+	if QueryAllRspAgain.Status != 1 {
+		log.Fatalf("[Query Again]QueryAllRsp.Status != 1")
 	}
 	time.Sleep(2 * time.Second)
 
@@ -96,6 +105,9 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		QueryAllTravelInfo, err := travelSvc.QueryAll()
 		if err != nil {
 			log.Fatalf("error occurs: %v", err)
+		}
+		if QueryAllTravelInfo.Status != 1 {
+			log.Fatalf("[Query AllTravelInfo.Status] != 1")
 		}
 
 		if len(QueryAllTravelInfo.Data) > 0 {
@@ -120,6 +132,9 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		if err != nil {
 			log.Fatalf("[TripID]QueryAll error occurs: %v", err)
 		}
+		if QueryAllTravelInfo.Status != 1 {
+			log.Fatalf("[Query Again]QueryAllRsp.Status != 1")
+		}
 
 		if len(QueryAllTravelInfo.Data) > 0 {
 			MockedTripID = QueryAllTravelInfo.Data[0].TripId.Type + QueryAllTravelInfo.Data[0].TripId.Number
@@ -142,6 +157,9 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		QueryAllTravelInfo, err := travelSvc.QueryAll()
 		if err != nil {
 			log.Fatalf("[TrainTypeName]QueryAll error occurs: %v", err)
+		}
+		if QueryAllTravelInfo.Status != 1 {
+			log.Fatalf("[Query AllTravelInfo.Status] != 1")
 		}
 
 		if len(QueryAllTravelInfo.Data) > 0 {
@@ -166,6 +184,9 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		GetAllRouteInfo, err := routeSvc.QueryAllRoutes()
 		if err != nil {
 			log.Fatalf("[RouteID]QueryAllRoutes error occurs: %v", err)
+		}
+		if GetAllRouteInfo.Status != 1 {
+			log.Fatalf("[RouteID] The corresponding database is empty")
 		}
 
 		if len(GetAllRouteInfo.Data) > 0 {
@@ -212,6 +233,9 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		if err != nil {
 			log.Fatalf("[StartStationName]QueryAllRoutes error occurs: %v", err)
 		}
+		if GetAllRouteInfo.Status != 1 {
+			log.Fatalf("[StartStationName]QueryAllRsp.Status != 1")
+		}
 
 		if len(GetAllRouteInfo.Data) > 0 {
 			MockedStartStationName = GetAllRouteInfo.Data[0].StartStation
@@ -242,6 +266,9 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		if err != nil {
 			log.Fatalf("[StartStationName]QueryAllRoutes error occurs: %v", err)
 		}
+		if GetAllRouteInfo.Status != 1 {
+			log.Fatalf("[StartStationName]QueryAllRsp.Status != 1")
+		}
 
 		MockedStartStationName = GetAllRouteInfo.Data[len(GetAllRouteInfo.Data)-1].StartStation
 	} else {
@@ -256,6 +283,9 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		GetAllRouteInfo, err := routeSvc.QueryAllRoutes()
 		if err != nil {
 			log.Fatalf("[TerminalStationName]QueryAllRoutes error occurs: %v", err)
+		}
+		if GetAllRouteInfo.Status != 1 {
+			log.Fatalf("[TerminalStationName]QueryAllRsp.Status != 1")
 		}
 
 		if len(GetAllRouteInfo.Data) > 0 {
@@ -287,6 +317,9 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		if err != nil {
 			log.Fatalf("[TerminalStationName]QueryAllRoutes error occurs: %v", err)
 		}
+		if GetAllRouteInfo.Status != 1 {
+			log.Fatalf("[TerminalStationName]QueryAllRsp.Status != 1")
+		}
 
 		MockedTerminalStationName = GetAllRouteInfo.Data[len(GetAllRouteInfo.Data)-1].EndStation
 	} else {
@@ -301,6 +334,9 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		GetAllRouteInfo, err := routeSvc.QueryAllRoutes()
 		if err != nil {
 			log.Fatalf("[StationsName]QueryAllRoutes error occurs: %v", err)
+		}
+		if GetAllRouteInfo.Status != 1 {
+			log.Fatalf("[StationsName]QueryAllRsp.Status != 1")
 		}
 
 		if len(GetAllRouteInfo.Data) > 0 {
@@ -332,6 +368,9 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		if err != nil {
 			log.Fatalf("[StationsName]QueryAllRoutes error occurs: %v", err)
 		}
+		if GetAllRouteInfo.Status != 1 {
+			log.Fatalf("[StationsName]QueryAllRsp.Status != 1")
+		}
 
 		MockedStationsName = ListToString(GetAllRouteInfo.Data[len(GetAllRouteInfo.Data)-1].Stations)
 	} else {
@@ -346,6 +385,9 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		QueryAllTravelInfo, err := travelSvc.QueryAll()
 		if err != nil {
 			log.Fatalf("[StartTime]QueryAll error occurs: %v", err)
+		}
+		if QueryAllTravelInfo.Status != 1 {
+			log.Fatalf("[StartTime]QueryAllRsp.Status != 1")
 		}
 
 		if len(QueryAllTravelInfo.Data) > 0 {
@@ -369,6 +411,9 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		QueryAllTravelInfo, err := travelSvc.QueryAll()
 		if err != nil {
 			log.Fatalf("[EndTime]QueryAll error occurs: %v", err)
+		}
+		if QueryAllTravelInfo.Status != 1 {
+			log.Fatalf("[EndTime]QueryAllRsp.Status != 1")
 		}
 
 		if len(QueryAllTravelInfo.Data) > 0 {
@@ -396,9 +441,12 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		StartTime:           MockedStartTime,
 		EndTime:             MockedEndTime,
 	}
-	_, err3 := travelSvc.UpdateTrip(&updateTravelInfo)
+	UpdateTripRsp, err3 := travelSvc.UpdateTrip(&updateTravelInfo)
 	if err3 != nil {
 		log.Fatalf("[Input][UpdateTrip] error3 occurs: %v", err3)
+	}
+	if UpdateTripRsp.Status != 1 {
+		log.Fatalf("[Input][UpdateTripRsp.Status != 1")
 	}
 	time.Sleep(2 * time.Second)
 
@@ -410,6 +458,9 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		QueryAllTravelInfo, err := travelSvc.QueryAll()
 		if err != nil {
 			log.Fatalf("[Delete according to the ID]QueryAll error occurs: %v", err)
+		}
+		if QueryAllTravelInfo.Status != 1 {
+			log.Fatalf("[Delete according to the ID] QueryAllRsp.Status != 1")
 		}
 
 		if len(QueryAllTravelInfo.Data) > 0 {
@@ -426,9 +477,10 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		MockedRouteID = faker.UUIDHyphenated()
 		MockedStartStationName = faker.GetRealAddress().City
 		MockedTerminalStationName = faker.GetRealAddress().City
-		MockedStationsName = MockedStartStationName + ", " + MockedTerminalStationName
-		MockedStartTime = faker.Date()
-		MockedEndTime = faker.Date()
+		//MockedStationsName = MockedStartStationName + ", " + MockedTerminalStationName
+		MockedStationsName = faker.GetRealAddress().City
+		MockedStartTime = getRandomTime()
+		MockedEndTime = getRandomTime()
 		// Input
 		travelInfo := service.TravelInfo{
 			LoginID:             MockedLoginId,
@@ -450,6 +502,9 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		if err != nil {
 			log.Fatalf("[Delete according to the ID]QueryAll error occurs: %v", err)
 		}
+		if QueryAllTravelInfo.Status != 1 {
+			log.Fatalf("[Delete according to the ID]QueryAllTravelInfo.Status != 1")
+		}
 
 		if len(QueryAllTravelInfo.Data) > 0 {
 			MockedDeleteID = QueryAllTravelInfo.Data[len(QueryAllTravelInfo.Data)-1].Id
@@ -461,9 +516,12 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		MockedDeleteID = faker.UUIDHyphenated()
 	}
 
-	_, err4 := travelSvc.DeleteTrip(MockedDeleteID)
+	DeleteTripRsp, err4 := travelSvc.DeleteTrip(MockedDeleteID)
 	if err4 != nil {
 		log.Fatalf("[DeleteTrip] error4 occurs: %v", err4)
+	}
+	if DeleteTripRsp.Status != 1 {
+		log.Fatalf("[DeleteTripRsp.Status != 1")
 	}
 	time.Sleep(2 * time.Second)
 
@@ -474,6 +532,9 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		QueryAllTravelInfo, err := travelSvc.QueryAll()
 		if err != nil {
 			log.Fatalf("[6 & 7 & 8]QueryAll error occurs: %v", err)
+		}
+		if QueryAllTravelInfo.Status != 1 {
+			log.Fatalf("[6 & 7 & 8] QueryAllRsp.Status != 1")
 		}
 
 		if len(QueryAllTravelInfo.Data) > 0 {
@@ -490,9 +551,10 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		MockedRouteID = faker.UUIDHyphenated()
 		MockedStartStationName = faker.GetRealAddress().City
 		MockedTerminalStationName = faker.GetRealAddress().City
-		MockedStationsName = MockedStartStationName + ", " + MockedTerminalStationName
-		MockedStartTime = faker.Date()
-		MockedEndTime = faker.Date()
+		//MockedStationsName = MockedStartStationName + ", " + MockedTerminalStationName
+		MockedStationsName = faker.GetRealAddress().City
+		MockedStartTime = getRandomTime()
+		MockedEndTime = getRandomTime()
 		// Input
 		travelInfo := service.TravelInfo{
 			LoginID:             MockedLoginId,
@@ -514,6 +576,9 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		if err != nil {
 			log.Fatalf("[6 & 7 & 8]QueryAllTravelInfo error occurs: %v", err)
 		}
+		if QueryAllTravelInfo.Status != 1 {
+			log.Fatalf("[6 & 7 & 8] QueryAllTravelInfo.Status != 1")
+		}
 
 		if len(QueryAllTravelInfo.Data) > 0 {
 			GetTripID = QueryAllTravelInfo.Data[len(QueryAllTravelInfo.Data)-1].TripId.Type + QueryAllTravelInfo.Data[len(QueryAllTravelInfo.Data)-1].TripId.Number
@@ -533,16 +598,22 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	time.Sleep(2 * time.Second)
 
 	// 7. GetTrainTypeByTripId
-	_, err6 := travelSvc.GetTrainTypeByTripId(GetTripID)
+	GetTrainTypeByTripIdRsp, err6 := travelSvc.GetTrainTypeByTripId(GetTripID)
 	if err6 != nil {
 		log.Fatalf("[GetTrainTypeByTripId] error6 occurs: %v", err6)
+	}
+	if GetTrainTypeByTripIdRsp.Status != 1 {
+		log.Fatalf("[GetTrainTypeByTripIdRsp.Status != 1")
 	}
 	time.Sleep(2 * time.Second)
 
 	// 8. GetRouteByTripId
-	_, err7 := travelSvc.GetRouteByTripId(GetTripID)
+	GetRouteByTripIdRsp, err7 := travelSvc.GetRouteByTripId(GetTripID)
 	if err7 != nil {
 		log.Fatalf("[GetRouteByTripId] error7 occurs: %v", err7)
+	}
+	if GetRouteByTripIdRsp.Status != 1 {
+		log.Fatalf("[GetRouteByTripIdRsp.Status != 1")
 	}
 	time.Sleep(2 * time.Second)
 
@@ -585,6 +656,9 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		if err1 != nil {
 			log.Fatalf("[GetTripsByRouteId]QueryAllRoutes error1 occurs: %v", err1)
 		}
+		if GetAllRouteInfo.Status != 1 {
+			log.Fatalf("[GetTripsByRouteId] QueryAllRoutes Status != 1")
+		}
 
 		if len(GetAllRouteInfo.Data) > 0 {
 			GetRouteIDs = GetAllRouteInfo.Data[len(GetAllRouteInfo.Data)-1].Stations
@@ -595,9 +669,13 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	} else {
 		GetRouteIDs = []string{faker.UUIDHyphenated(), faker.UUIDHyphenated(), faker.UUIDHyphenated()}
 	}
-	_, err8 := travelSvc.GetTripsByRouteId(GetRouteIDs)
+
+	GetTripsByRouteIdRsp, err8 := travelSvc.GetTripsByRouteId(GetRouteIDs)
 	if err8 != nil {
 		log.Fatalf("[GetTripsByRouteId] error8 occurs: %v", err8)
+	}
+	if GetTripsByRouteIdRsp.Status != 1 {
+		log.Fatalf("[GetTripsByRouteId]GetTripsByRouteIdRsp.Status != 1")
 	}
 	time.Sleep(2 * time.Second)
 
@@ -642,6 +720,9 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		GetAllRouteInfo, err := routeSvc.QueryAllRoutes()
 		if err != nil {
 			log.Fatalf("[10.1. StartPlace]QueryAllRoutes error occurs: %v", err)
+		}
+		if GetAllRouteInfo.Status != 1 {
+			log.Fatalf("[10.1. StartPlace] QueryAllRoutes Status != 1")
 		}
 
 		MockedStartPlace = GetAllRouteInfo.Data[len(GetAllRouteInfo.Data)-1].StartStation
@@ -689,6 +770,9 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		if err != nil {
 			log.Fatalf("[10.2. EndPlace]QueryAllRoutes error occurs: %v", err)
 		}
+		if GetAllRouteInfo.Status != 1 {
+			log.Fatalf("[10.2. EndPlace] QueryAllRoutes Status != 1")
+		}
 
 		MockedEndPlace = GetAllRouteInfo.Data[len(GetAllRouteInfo.Data)-1].EndStation
 	} else {
@@ -727,16 +811,22 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	}
 
 	// 10. QueryInfo
-	_, err9 := travelSvc.QueryInfo(MockedTripInfo)
+	QueryInfoRsp, err9 := travelSvc.QueryInfo(MockedTripInfo)
 	if err9 != nil {
 		log.Fatalf("[10. QueryInfo]QueryInfo error9 occurs: %v", err9)
+	}
+	if QueryInfoRsp.Status != 1 {
+		log.Fatalf("[10. QueryInfo] QueryInfoRsp.Status != 1")
 	}
 	time.Sleep(2 * time.Second)
 
 	// 11. QueryInfoInParallel
-	_, err10 := travelSvc.QueryInfoInParallel(MockedTripInfo)
+	QueryInfoInParallelRsp, err10 := travelSvc.QueryInfoInParallel(MockedTripInfo)
 	if err10 != nil {
 		log.Fatalf("[11. QueryInfoInParallel]QueryInfoInParallel error10 occurs: %v", err10)
+	}
+	if QueryInfoInParallelRsp.Status != 1 {
+		log.Fatalf("[11. QueryInfoInParallel]QueryInfoInParallelRsp.Status != 1")
 	}
 	time.Sleep(2 * time.Second)
 
@@ -750,6 +840,9 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 		QueryAllTravelInfo, err := travelSvc.QueryAll()
 		if err != nil {
 			log.Fatalf("[12. GetTripAllDetailInfo]QueryAll error occurs: %v", err)
+		}
+		if QueryAllTravelInfo.Status != 1 {
+			log.Fatalf("[12. GetTripAllDetailInfo] QueryAllTravelInfo.Status != 1")
 		}
 
 		if len(QueryAllTravelInfo.Data) > 0 {
@@ -766,7 +859,7 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	}
 
 	// input
-	_, err11 := travelSvc.GetTripAllDetailInfo(service.GetTripDetailReq{
+	GetTripAllDetailInfoRsp, err11 := travelSvc.GetTripAllDetailInfo(service.GetTripDetailReq{
 		From:       "",
 		To:         "",
 		TravelDate: "",
@@ -775,79 +868,76 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	if err11 != nil {
 		log.Fatalf("[GetTripAllDetailInfo]MockedtripAllDetailInfo: error11 occurs: %v", err11)
 	}
+	if GetTripAllDetailInfoRsp.Status != 1 {
+		log.Fatalf("[GetTripAllDetailInfo]MockedtripAllDetailInfo.Status != 1")
+	}
 	time.Sleep(2 * time.Second)
 
 	// 13. AdminQueryAll
-	_, err12 := travelSvc.AdminQueryAll()
+	AdminQueryAllRsp, err12 := travelSvc.AdminQueryAll()
 	if err12 != nil {
 		log.Fatalf("[13. AdminQueryAll]AdminQueryAll: error12 occurs: %v", err12)
+	}
+	if AdminQueryAllRsp.Status != 1 {
+		log.Fatalf("[13. AdminQueryAll]AdminQueryAllRsp.Status != 1")
 	}
 	time.Sleep(2 * time.Second)
 }
 
 // helper function
-func GenerateTripId() string {
-	// 设置随机数种子
-	rand.Seed(time.Now().UnixNano())
+//func GenerateTripId() string {
+//	// 设置随机数种子
+//	rand.Seed(time.Now().UnixNano())
+//
+//	// 定义可能的开头字母
+//	letters := []rune{'Z', 'T', 'K', 'G', 'D'}
+//
+//	// 随机选择一个字母
+//	startLetter := letters[rand.Intn(len(letters))]
+//
+//	// 生成三个随机数字
+//	randomNumber := rand.Intn(1000)
+//
+//	// 格式化成三位数字，不足三位前面补零
+//	MockedTripID := fmt.Sprintf("%c%03d", startLetter, randomNumber)
+//
+//	return MockedTripID
+//}
 
-	// 定义可能的开头字母
-	letters := []rune{'Z', 'T', 'K', 'G', 'D'}
+//func GenerateTrainTypeName() string {
+//	// 设置随机数种子
+//	rand.Seed(time.Now().UnixNano())
+//
+//	// 定义可能的火车类型名称
+//	trainTypes := []string{"GaoTieOne", "GaoTieTwo", "GaoTieSeven", "DongCheOne", "DongCheTen"}
+//
+//	// 随机选择一个火车类型名称
+//	MockedTrainTypeName := trainTypes[rand.Intn(len(trainTypes))]
+//
+//	return MockedTrainTypeName
+//}
 
-	// 随机选择一个字母
-	startLetter := letters[rand.Intn(len(letters))]
+//func ListToString(stations []string) string {
+//
+//	// Use a builder for efficient string concatenation
+//	var builder strings.Builder
+//
+//	for i, station := range stations {
+//		if i > 0 {
+//			builder.WriteString(", ")
+//		}
+//		builder.WriteString(fmt.Sprintf("Stations[%d] %s", i, station))
+//	}
+//
+//	result := builder.String()
+//	return result
+//}
 
-	// 生成三个随机数字
-	randomNumber := rand.Intn(1000)
-
-	// 格式化成三位数字，不足三位前面补零
-	MockedTripID := fmt.Sprintf("%c%03d", startLetter, randomNumber)
-
-	return MockedTripID
-}
-
-func GenerateTrainTypeName() string {
-	// 设置随机数种子
-	rand.Seed(time.Now().UnixNano())
-
-	// 定义可能的火车类型名称
-	trainTypes := []string{"GaoTieOne", "GaoTieTwo", "GaoTieSeven", "DongCheOne", "DongCheTen"}
-
-	// 随机选择一个火车类型名称
-	MockedTrainTypeName := trainTypes[rand.Intn(len(trainTypes))]
-
-	return MockedTrainTypeName
-}
-
-func ListToString(stations []string) string {
-
-	// Use a builder for efficient string concatenation
-	var builder strings.Builder
-
-	for i, station := range stations {
-		if i > 0 {
-			builder.WriteString(", ")
-		}
-		builder.WriteString(fmt.Sprintf("Stations[%d] %s", i, station))
-	}
-
-	result := builder.String()
-	return result
-}
-
-func StringToList(input string) []string {
-	// Split the input string by commas and trim any leading/trailing spaces from each element
-	parts := strings.Split(input, ",")
-	for i := range parts {
-		parts[i] = strings.TrimSpace(parts[i])
-	}
-	return parts
-}
-
-func getRandomTime() string {
-	randomDate := faker.Date()
-	randomTime := faker.TIME
-
-	DateAndTime := randomDate + " " + randomTime
-
-	return DateAndTime
-}
+//func StringToList(input string) []string {
+//	// Split the input string by commas and trim any leading/trailing spaces from each element
+//	parts := strings.Split(input, ",")
+//	for i := range parts {
+//		parts[i] = strings.TrimSpace(parts[i])
+//	}
+//	return parts
+//}
