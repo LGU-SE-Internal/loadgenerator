@@ -66,6 +66,9 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		if err != nil {
 			log.Fatalf("[Mock AccountID]GetAllContacts fail. The error occurs: %v", err)
 		}
+		if GetAllContacts.Status != 1 {
+			log.Fatalf("[Mock AccountID]GetAllContacts.Status != 1")
+		}
 
 		if len(GetAllContacts.Data) > 0 {
 			MockedAccountID = GetAllContacts.Data[0].AccountId
@@ -77,13 +80,16 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		// CreateAndQuery_And_Order; Prob = 0.04
 		//log.Fatalf("Selected: CreateAndQuery_And_Order")
 		CreateContactsInput := service.AdminContacts{
-			Id:        uuid.NewString(),
-			AccountId: uuid.NewString(),
+			Id:        faker.UUIDHyphenated(),
+			AccountId: faker.UUIDHyphenated(),
 			Name:      faker.Name(),
 		}
 		CreateContacts, err := accountSvc.AddContact(&CreateContactsInput)
 		if err != nil {
 			log.Fatalf("[Mock AccountID] CreateContacts error occurs: %v", err)
+		}
+		if CreateContacts.Status != 1 {
+			log.Fatalf("[Mock AccountID] CreateContacts.Status != 1")
 		}
 		MockedAccountID = CreateContacts.Data.AccountId
 	}
@@ -101,6 +107,9 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		if err != nil {
 			log.Fatalf("[MockedContactsID]GetAllContacts error occurs: %v", err)
 		}
+		if GetAllContacts.Status != 1 {
+			log.Fatalf("[Mock AccountID] GetAllContacts.Status != 1")
+		}
 
 		if len(GetAllContacts.Data) > 0 {
 			MockedContactsID = GetAllContacts.Data[0].Id
@@ -110,7 +119,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 	}
 	if NoExistMockedContactsID {
 		CreateContactsInput := service.AdminContacts{
-			Id:             uuid.NewString(),
+			Id:             faker.UUIDHyphenated(),
 			AccountId:      MockedAccountID,
 			Name:           faker.Name(),
 			DocumentNumber: "DocumentNumber_One",
@@ -120,6 +129,9 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		CreateContacts, err := contactsSvc.AddContact(&CreateContactsInput)
 		if err != nil {
 			log.Fatalf("[MockedContactsID] CreateContacts error occurs: %v", err)
+		}
+		if CreateContacts.Status != 1 {
+			log.Fatalf("[Mock AccountID] CreateContacts.Status != 1")
 		}
 		if CreateContacts.Data.Id == "" {
 			log.Printf("Create AdminContacts Fail: %+v", CreateContacts)
@@ -140,6 +152,9 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		if err != nil {
 			log.Fatalf("[MockedTripID] error occurs: %v", err)
 		}
+		if GetAllTravel.Status != 1 {
+			log.Fatalf("[MockedTripID] GetAllTravel.Status != 1")
+		}
 
 		if len(GetAllTravel.Data) > 0 {
 			MockedTripID = GetAllTravel.Data[0].Id
@@ -151,32 +166,40 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		// CreateAndQuery_And_Order; Prob = 0.04
 		//log.Fatalf("Selected: CreateAndQuery_And_Order")
 		MockedLoginId := loginResult.Data.Token
-		MockedTrainTypeName := faker.Word()
+		MockedTrainTypeName := GenerateTrainTypeName()
 		MockedRouteID := faker.UUIDHyphenated()
-		MockedStartStationName := "Shenzhen Bei"
-		MockedTerminalStationName := "California Airport"
-		MockedStartTime := faker.Date()
-		MockedEndTime := faker.Date()
+		MockedStartStationName := faker.GetRealAddress().City
+		MockedStationsName := faker.GetRealAddress().City
+		MockedTerminalStationName := faker.GetRealAddress().City
+		MockedStartTime := getRandomTime()
+		MockedEndTime := getRandomTime()
+		MockedTripId := GenerateTripId()
 		CreateTravelInput := service.TravelInfo{
 			LoginID:             MockedLoginId,
-			TripID:              "G777",
+			TripID:              MockedTripId,
 			TrainTypeName:       MockedTrainTypeName,
 			RouteID:             MockedRouteID,
 			StartStationName:    MockedStartStationName,
-			StationsName:        "Shenzhen Bei, California Airport",
+			StationsName:        MockedStationsName,
 			TerminalStationName: MockedTerminalStationName,
 			StartTime:           MockedStartTime,
 			EndTime:             MockedEndTime,
 		}
 
-		_, err := travelSvc.CreateTrip(&CreateTravelInput)
+		CreateTripRsp, err := travelSvc.CreateTrip(&CreateTravelInput)
 		if err != nil {
 			log.Fatalf("[MockedTripID] CreateTravelInput error occurs: %v", err)
+		}
+		if CreateTripRsp.Status != 1 {
+			log.Fatalf("[MockedTripID] CreateTripRsp.Status != 1")
 		}
 
 		GetAllTravel, err := travelSvc.QueryAll()
 		if err != nil {
 			log.Fatalf("[MockedTripID] GetAllTravel error occurs: %v", err)
+		}
+		if GetAllTravel.Status != 1 {
+			log.Fatalf("[MockedTripID] GetAllTravel.Status != 1")
 		}
 
 		if len(GetAllTravel.Data) > 0 {
@@ -197,6 +220,9 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		if err != nil {
 			log.Fatalf("[MockedSeatType] GetAllOrder error occurs: %v", err)
 		}
+		if GetAllOrder.Status != 1 {
+			log.Fatalf("[MockedSeatType] GetAllOrder.Status != 1")
+		}
 
 		if len(GetAllOrder.Data) > 0 {
 			MockedSeatType = GetAllOrder.Data[0].SeatClass
@@ -209,7 +235,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		//log.Fatalf("Selected: CreateAndQuery_And_Order")
 		_, err = orderSvc.ReqCreateNewOrder(&service.Order{
 			AccountId:              MockedAccountID,
-			BoughtDate:             faker.Date(),
+			BoughtDate:             getRandomTime(),
 			CoachNumber:            rand.Intn(9) + 1,
 			ContactsDocumentNumber: strconv.Itoa(rand.Intn(9) + 1),
 			ContactsName:           faker.Name(),
@@ -223,8 +249,8 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 			Status:                 0,
 			To:                     RandomProvincialCapitalEN(),
 			TrainNumber:            GenerateTripId(),
-			TravelDate:             faker.Date(),
-			TravelTime:             faker.TimeString(),
+			TravelDate:             getRandomTime(),
+			TravelTime:             generateRandomTime(),
 		})
 
 		if err != nil {
@@ -234,6 +260,9 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		GetAllOrder, err := orderSvc.ReqFindAllOrder()
 		if err != nil {
 			log.Fatalf("[MockedSeatType] MockedSeatType error occurs: %v", err)
+		}
+		if GetAllOrder.Status != 1 {
+			log.Fatalf("[MockedSeatType] MockedSeatType Status != 1")
 		}
 
 		if len(GetAllOrder.Data) == 0 {
@@ -266,6 +295,9 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		if err != nil {
 			log.Fatalf("[MockedDate] GetAllOrder error occurs: %v", err)
 		}
+		if GetAllOrder.Status != 1 {
+			log.Fatalf("[MockedDate] GetAllOrder.Status != 1")
+		}
 
 		if len(GetAllOrder.Data) > 0 {
 			MockedDate = GetAllOrder.Data[0].TravelDate
@@ -276,7 +308,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 	if NoExistMockedDate || (r5 < 0.99 && r5 >= 0.95) {
 		_, err := orderSvc.ReqCreateNewOrder(&service.Order{
 			AccountId:              MockedAccountID,
-			BoughtDate:             faker.Date(),
+			BoughtDate:             getRandomTime(),
 			CoachNumber:            rand.Intn(9) + 1,
 			ContactsDocumentNumber: strconv.Itoa(rand.Intn(9) + 1),
 			ContactsName:           faker.Name(),
@@ -289,8 +321,8 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 			SeatNumber:             service.GenerateSeatNumber(),
 			Status:                 0,
 			To:                     RandomProvincialCapitalEN(),
-			TrainNumber:            "G111",
-			TravelDate:             faker.Date(),
+			TrainNumber:            GenerateTripId(),
+			TravelDate:             getRandomTime(),
 			TravelTime:             faker.TimeString(),
 		})
 
@@ -302,15 +334,17 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		if err != nil {
 			log.Fatalf("[MockedDate] GetAllOrder error occurs: %v", err)
 		}
+		if GetAllOrder.Status != 1 {
+			log.Fatalf("[MockedDate] GetAllOrder.Status != 1")
+		}
 
 		MockedDate = GetAllOrder.Data[len(GetAllOrder.Data)-1].TravelDate
 	} else {
-		MockedDate = faker.Date()
+		MockedDate = getRandomTime()
 	}
 
 	// Trip Service
 	//var tripSvc service.TravelService = cli
-
 	// order service
 	// MockedFromCity
 	r6 := rand.Float64()
@@ -328,6 +362,9 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		if err != nil {
 			log.Fatalf("[MockedFromCity] GetAllOrder error occurs: %v", err)
 		}
+		if GetAllOrder.Status != 1 {
+			log.Fatalf("[MockedFromCity] GetAllOrder.Status != 1")
+		}
 
 		if len(GetAllOrder.Data) > 0 {
 			MockedFromCity = GetAllOrder.Data[0].From
@@ -338,22 +375,22 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 	if NoExistMockedFromCity || (r6 < 0.99 && r6 >= 0.95) {
 		CreateMockedFromCity, err := orderSvc.ReqCreateNewOrder(&service.Order{
 			AccountId:              MockedAccountID,
-			BoughtDate:             faker.Date(),
+			BoughtDate:             getRandomTime(),
 			CoachNumber:            rand.Intn(9) + 1,
 			ContactsDocumentNumber: strconv.Itoa(rand.Intn(9) + 1),
 			ContactsName:           faker.Name(),
 			DifferenceMoney:        RandomDecimalStringBetween(1, 10),
 			DocumentType:           0,
 			From:                   RandomProvincialCapitalEN(),
-			Id:                     uuid.NewString(),
+			Id:                     faker.UUIDHyphenated(),
 			Price:                  RandomDecimalStringBetween(1, 10),
 			SeatClass:              GetTrainTicketClass(),
 			SeatNumber:             service.GenerateSeatNumber(),
 			Status:                 0,
 			To:                     RandomProvincialCapitalEN(),
-			TrainNumber:            "G111",
-			TravelDate:             faker.Date(),
-			TravelTime:             faker.TimeString(),
+			TrainNumber:            GenerateTripId(),
+			TravelDate:             getRandomTime(),
+			TravelTime:             generateRandomTime(),
 		})
 
 		if err != nil {
@@ -363,6 +400,9 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		GetAllOrder, err := orderSvc.ReqFindAllOrder()
 		if err != nil {
 			log.Fatalf("[MockedFromCity]GetAllOrder error occurs: %v", err)
+		}
+		if GetAllOrder.Status != 1 {
+			log.Fatalf("[MockedFromCity] GetAllOrder.Status != 1")
 		}
 
 		if CreateMockedFromCity.Data.AccountId == "" {
@@ -400,22 +440,22 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 	if NoExistMockedToCity || (r7 < 0.99 && r7 >= 0.95) {
 		_, err := orderSvc.ReqCreateNewOrder(&service.Order{
 			AccountId:              MockedAccountID,
-			BoughtDate:             faker.Date(),
+			BoughtDate:             getRandomTime(),
 			CoachNumber:            rand.Intn(9) + 1,
 			ContactsDocumentNumber: strconv.Itoa(rand.Intn(9) + 1),
 			ContactsName:           faker.Name(),
 			DifferenceMoney:        RandomDecimalStringBetween(1, 10),
 			DocumentType:           0,
 			From:                   RandomProvincialCapitalEN(),
-			Id:                     uuid.NewString(),
+			Id:                     faker.UUIDHyphenated(),
 			Price:                  RandomDecimalStringBetween(1, 10),
 			SeatClass:              GetTrainTicketClass(),
 			SeatNumber:             service.GenerateSeatNumber(),
 			Status:                 0,
 			To:                     RandomProvincialCapitalEN(),
-			TrainNumber:            "G111",
-			TravelDate:             faker.Date(),
-			TravelTime:             faker.TimeString(),
+			TrainNumber:            GenerateTripId(),
+			TravelDate:             getRandomTime(),
+			TravelTime:             generateRandomTime(),
 		})
 
 		if err != nil {
@@ -425,6 +465,9 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		GetAllOrder, err := orderSvc.ReqFindAllOrder()
 		if err != nil {
 			log.Fatalf("[MockedToCity]GetAllOrder error occurs: %v", err)
+		}
+		if GetAllOrder.Status != 1 {
+			log.Fatalf("[MockedToCity] GetAllOrder.Status != 1")
 		}
 
 		MockedToCity = GetAllOrder.Data[len(GetAllOrder.Data)-1].To
@@ -441,6 +484,9 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		GetAllAssurance, err := assuranceSvc.GetAllAssurances()
 		if err != nil {
 			log.Fatalf("[MockedAssurance]GetAllAssurance error occurs: %v", err)
+		}
+		if GetAllAssurance.Status != 1 {
+			log.Fatalf("[MockedAssurance] GetAllAssurance.Status != 1")
 		}
 
 		if len(GetAllAssurance.Data) > 0 {
@@ -459,6 +505,9 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		GetAllAssurance, err := assuranceSvc.GetAllAssurances()
 		if err != nil {
 			log.Fatalf("[MockedAssurance]GetAllAssurance error occurs: %v", err)
+		}
+		if GetAllAssurance.Status != 1 {
+			log.Fatalf("[MockedAssurance] GetAllAssurance.Status != 1")
 		}
 
 		if CreateMockedAssurance.Data.Id == "" {
@@ -494,18 +543,18 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 			ID:          MockedID,
 			OrderID:     MockedOrderID,
 			FoodType:    1,
-			FoodName:    "HotPot",
-			StationName: "Shang Hai",
-			StoreName:   "MiaoTing Instant-Boiled Mutton",
+			FoodName:    generateRandomFood(),
+			StationName: generateRandomCityName(),
+			StoreName:   generateRandomStoreName(),
 			Price:       7.00,
 		}
 		updateFoodOrder := service.FoodOrder{
 			ID:          MockedID,
 			OrderID:     MockedOrderID,
 			FoodType:    1,
-			FoodName:    "HotPot",
-			StationName: "Shang Hai",
-			StoreName:   "MiaoTing Instant-Boiled Mutton",
+			FoodName:    generateRandomFood(),
+			StationName: generateRandomCityName(),
+			StoreName:   generateRandomStoreName(),
 			Price:       8.00,
 		}
 		foodOrders := []service.FoodOrder{foodOrder, updateFoodOrder}
@@ -517,6 +566,9 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		GetAllFood, err := foodSvc.FindAllFoodOrder()
 		if err != nil {
 			log.Fatalf("[MockedFoodType]GetAllFood error occurs: %v", err)
+		}
+		if GetAllFood.Status != 1 {
+			log.Fatalf("[MockedFoodType] GetAllFood.Status != 1")
 		}
 
 		if GetAllFood.Data[len(GetAllFood.Data)-1].Id == "" {
@@ -547,7 +599,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 	}
 	if NoExistMockedStationName || (r10 < 0.99 && r10 >= 0.95) {
 		createStationresp, err := StationSvc.CreateStation(&service.Station{
-			ID:       uuid.NewString(),
+			ID:       faker.UUIDHyphenated(),
 			Name:     faker.GetRealAddress().City,
 			StayTime: rand.Intn(10),
 		})
@@ -582,18 +634,18 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 			ID:          MockedID,
 			OrderID:     MockedOrderID,
 			FoodType:    1,
-			FoodName:    "HotPot",
-			StationName: "Shang Hai",
-			StoreName:   "MiaoTing Instant-Boiled Mutton",
+			FoodName:    generateRandomFood(),
+			StationName: generateRandomCityName(),
+			StoreName:   generateRandomStoreName(),
 			Price:       7.00,
 		}
 		updateFoodOrder := service.FoodOrder{
 			ID:          MockedID,
 			OrderID:     MockedOrderID,
 			FoodType:    1,
-			FoodName:    "HotPot",
-			StationName: "Shang Hai",
-			StoreName:   "MiaoTing Instant-Boiled Mutton",
+			FoodName:    generateRandomFood(),
+			StationName: generateRandomCityName(),
+			StoreName:   generateRandomStoreName(),
 			Price:       8.00,
 		}
 		foodOrders := []service.FoodOrder{foodOrder, updateFoodOrder}
@@ -605,6 +657,9 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		GetAllFood, err := foodSvc.FindAllFoodOrder()
 		if err != nil {
 			log.Fatalf("[MockedStoreName]GetAllFood error occurs: %v", err)
+		}
+		if GetAllFood.Status != 1 {
+			log.Fatalf("[MockedStoreName]GetAllFood.Status != 1")
 		}
 
 		if GetAllFood.Data[len(GetAllFood.Data)-1].Id == "" {
@@ -640,29 +695,35 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 			ID:          MockedID,
 			OrderID:     MockedOrderID,
 			FoodType:    1,
-			FoodName:    "HotPot",
-			StationName: "Shang Hai",
-			StoreName:   "MiaoTing Instant-Boiled Mutton",
+			FoodName:    generateRandomFood(),
+			StationName: generateRandomCityName(),
+			StoreName:   generateRandomStoreName(),
 			Price:       7.00,
 		}
 		updateFoodOrder := service.FoodOrder{
 			ID:          MockedID,
 			OrderID:     MockedOrderID,
 			FoodType:    1,
-			FoodName:    "HotPot",
-			StationName: "Shang Hai",
-			StoreName:   "MiaoTing Instant-Boiled Mutton",
+			FoodName:    generateRandomFood(),
+			StationName: generateRandomCityName(),
+			StoreName:   generateRandomStoreName(),
 			Price:       8.00,
 		}
 		foodOrders := []service.FoodOrder{foodOrder, updateFoodOrder}
-		_, err := foodSvc.CreateFoodOrdersInBatch(foodOrders)
+		CreateFoodOrdersInBatchRsp, err := foodSvc.CreateFoodOrdersInBatch(foodOrders)
 		if err != nil {
 			log.Fatalf("[MockedFoodName]CreateFoodOrdersInBatch error occurs: %v", err)
+		}
+		if CreateFoodOrdersInBatchRsp.Status != 1 {
+			log.Fatalf("[MockedFoodName]CreateFoodOrdersInBatchRsp.Status != 1")
 		}
 
 		GetAllFood, err := foodSvc.FindAllFoodOrder()
 		if err != nil {
 			log.Fatalf("[MockedFoodName]GetAllFood error occurs: %v", err)
+		}
+		if GetAllFood.Status != 1 {
+			log.Fatalf("[MockedFoodName]GetAllFood.Status != 1")
 		}
 
 		if GetAllFood.Data[len(GetAllFood.Data)-1].Id == "" {
@@ -697,18 +758,18 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 			ID:          MockedID,
 			OrderID:     MockedOrderID,
 			FoodType:    1,
-			FoodName:    "HotPot",
-			StationName: "Shang Hai",
-			StoreName:   "MiaoTing Instant-Boiled Mutton",
+			FoodName:    generateRandomFood(),
+			StationName: generateRandomCityName(),
+			StoreName:   generateRandomStoreName(),
 			Price:       7.00,
 		}
 		updateFoodOrder := service.FoodOrder{
 			ID:          MockedID,
 			OrderID:     MockedOrderID,
 			FoodType:    1,
-			FoodName:    "HotPot",
-			StationName: "Shang Hai",
-			StoreName:   "MiaoTing Instant-Boiled Mutton",
+			FoodName:    generateRandomFood(),
+			StationName: generateRandomCityName(),
+			StoreName:   generateRandomStoreName(),
 			Price:       8.00,
 		}
 		foodOrders := []service.FoodOrder{foodOrder, updateFoodOrder}
@@ -720,6 +781,9 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		GetAllFood, err := foodSvc.FindAllFoodOrder()
 		if err != nil {
 			log.Fatalf("[MockedFoodPrice]GetAllFood error occurs: %v", err)
+		}
+		if GetAllFood.Status != 1 {
+			log.Fatalf("[MockedFoodName]GetAllFood.Status != 1")
 		}
 
 		if GetAllFood.Data[len(GetAllFood.Data)-1].Id == "" {
@@ -741,6 +805,9 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		if err != nil {
 			log.Fatalf("[MockedHandleDate]GetAllConsignByAccountId error occurs: %v", err)
 		}
+		if GetAllConsignByAccountId.Status != 1 {
+			log.Fatalf("[MockedHandleDate]GetAllConsignByAccountId Status != 1")
+		}
 		if len(GetAllConsignByAccountId.Data) > 0 {
 			MockedHandleDate = GetAllConsignByAccountId.Data[0].HandleDate
 		} else {
@@ -750,10 +817,10 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 	if NoExistMockedHandleDate || (r14 < 0.99 && r14 >= 0.95) {
 		MockedId := faker.UUIDHyphenated()
 		MockedOrderId := faker.UUIDHyphenated()
-		MockedHandleDateInput := faker.Date()
-		MockedTargetDate := faker.Date()
-		MockedFromPlace := "suzhou"
-		MockedToPlace := "beijing"
+		MockedHandleDateInput := getRandomTime()
+		MockedTargetDate := getRandomTime()
+		MockedFromPlace := generateRandomCityName()
+		MockedToPlace := generateRandomCityName()
 		MockedConsignee := faker.Name()
 		MockedPhone := faker.PhoneNumber
 
@@ -780,6 +847,9 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		if err != nil {
 			log.Fatalf("[MockedHandleDate]GetAllConsignByAccountId error occurs: %v", err)
 		}
+		if GetAllConsignByAccountId.Status != 1 {
+			log.Fatalf("[MockedHandleDate]GetAllConsignByAccountId Status != 1")
+		}
 
 		if len(GetAllConsignByAccountId.Data) == 0 || GetAllConsignByAccountId.Data[len(GetAllConsignByAccountId.Data)-1].AccountID == "" {
 			log.Fatalf("MockedHandleDate Fails. Consign Data: %v, account id: %v\n", GetAllConsignByAccountId.Data, MockedAccountID)
@@ -787,7 +857,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 
 		MockedHandleDate = GetAllConsignByAccountId.Data[len(GetAllConsignByAccountId.Data)-1].HandleDate
 	} else {
-		MockedHandleDate = faker.Date()
+		MockedHandleDate = getRandomTime()
 	}
 
 	// Consign Service
@@ -808,10 +878,10 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 	if NoExistMockedConsigneeName || (r15 < 0.99 && r15 >= 0.95) {
 		MockedId := faker.UUIDHyphenated()
 		MockedOrderId := faker.UUIDHyphenated()
-		MockedHandleDateInput := faker.Date()
-		MockedTargetDate := faker.Date()
-		MockedFromPlace := "suzhou"
-		MockedToPlace := "beijing"
+		MockedHandleDateInput := getRandomTime()
+		MockedTargetDate := getRandomTime()
+		MockedFromPlace := generateRandomCityName()
+		MockedToPlace := generateRandomCityName()
 		MockedConsignee := faker.Name()
 		MockedPhone := faker.PhoneNumber
 
@@ -837,6 +907,9 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		GetAllConsignByAccountId, err := consignSvc.QueryByAccountId(MockedAccountID)
 		if err != nil {
 			log.Fatalf("[MockedConsigneeName]GetAllConsignByAccountId error occurs: %v", err)
+		}
+		if GetAllConsignByAccountId.Status != 1 {
+			log.Fatalf("[MockedConsigneeName]GetAllConsignByAccountId Status != 1")
 		}
 
 		if GetAllConsignByAccountId.Data[len(GetAllConsignByAccountId.Data)-1].AccountID == "" {
@@ -866,10 +939,10 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 	if NoExistMockedConsigneePhone || (r16 < 0.99 && r16 >= 0.95) {
 		MockedId := faker.UUIDHyphenated()
 		MockedOrderId := faker.UUIDHyphenated()
-		MockedHandleDateInput := faker.Date()
-		MockedTargetDate := faker.Date()
-		MockedFromPlace := "suzhou"
-		MockedToPlace := "beijing"
+		MockedHandleDateInput := getRandomTime()
+		MockedTargetDate := getRandomTime()
+		MockedFromPlace := generateRandomCityName()
+		MockedToPlace := generateRandomCityName()
 		MockedConsignee := faker.Name()
 		MockedPhone := faker.PhoneNumber
 
@@ -895,6 +968,9 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		GetAllConsignByAccountId, err := consignSvc.QueryByAccountId(MockedAccountID)
 		if err != nil {
 			log.Fatalf("[MockedConsigneePhone]GetAllConsignByAccountId error occurs: %v", err)
+		}
+		if GetAllConsignByAccountId.Status != 1 {
+			log.Fatalf("[MockedConsigneePhone]GetAllConsignByAccountId Status != 1")
 		}
 
 		if GetAllConsignByAccountId.Data[len(GetAllConsignByAccountId.Data)-1].AccountID == "" {
@@ -925,10 +1001,10 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		MockedId := faker.UUIDHyphenated()
 		MockedAccountId := faker.UUIDHyphenated()
 		MockedOrderId := faker.UUIDHyphenated()
-		MockedHandleDateInput := faker.Date()
-		MockedTargetDate := faker.Date()
-		MockedFromPlace := "suzhou"
-		MockedToPlace := "beijing"
+		MockedHandleDateInput := getRandomTime()
+		MockedTargetDate := getRandomTime()
+		MockedFromPlace := generateRandomCityName()
+		MockedToPlace := generateRandomCityName()
 		MockedConsignee := faker.Name()
 		MockedPhone := faker.PhoneNumber
 
@@ -954,6 +1030,9 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		GetAllConsignByAccountId, err := consignSvc.QueryByAccountId(MockedAccountID)
 		if err != nil {
 			log.Fatalf("[MockedConsigneeWeight]GetAllConsignByAccountId error occurs: %v", err)
+		}
+		if GetAllConsignByAccountId.Status != 1 {
+			log.Fatalf("[MockedConsigneePhone]GetAllConsignByAccountId Status != 1")
 		}
 
 		if GetAllConsignByAccountId.Data[len(GetAllConsignByAccountId.Data)-1].AccountID == "" {
@@ -1006,12 +1085,15 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		log.Fatalf("[Input]Preserve error occurs: %v", err)
 		//return
 	}
+	if result.Status != 1 {
+		log.Fatalf("[Input]Preserve Status != 1. The result Status is %v", result.Status)
+	}
 	log.Printf("preserve response: %+v", result)
 	time.Sleep(1 * time.Millisecond)
 }
 
 // helper function for Order Service
-// RandomDecimalStringBetween 生成并返回两个整数之间的一位小数形式的随机数字符串，包括边界值。
+/*// RandomDecimalStringBetween 生成并返回两个整数之间的一位小数形式的随机数字符串，包括边界值。
 func RandomDecimalStringBetween(min, max int) string {
 	rand.Seed(time.Now().UnixNano())
 	randomInt := rand.Intn(max-min+1) + min              // 生成[min, max]范围内的随机整数
@@ -1051,4 +1133,4 @@ func GetTrainTicketClass() int {
 	default:
 		return 2
 	}
-}
+}*/

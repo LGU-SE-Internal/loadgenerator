@@ -16,9 +16,10 @@ func TestTrainService_FullIntegration(t *testing.T) {
 	//options := []string{"GaoTieOne", "GaoTieTwo", "DongCheOne", "ZhiDa", "TeKuai", "KuaiSu", "QianNianSunHao"}
 	//selectedName := RandomSelectString(options)
 	//MockedName := selectedName
-	MockedName := faker.Name()
-	MockedEconomyClass := 2147483647
-	MockedConfortClass := 2147483647
+	//MockedName := faker.Name()
+	MockedName := GenerateTrainTypeName()
+	MockedEconomyClass := 2147483647 // MAX Value
+	MockedConfortClass := 2147483647 // Max Value
 	MockedAverageSpeed := 250 + rand.Intn(20)
 	// input
 	trainType := TrainType{
