@@ -1,9 +1,10 @@
-package service
+package behaviors
 
 import (
 	"fmt"
 	"github.com/go-faker/faker/v4"
 	"math/rand"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -48,6 +49,92 @@ func toLowerCaseAndRemoveSpaces(input string) string {
 	return noSpaces
 }
 
+// generateRandomFood generates a random food item from a predefined list of 50 kinds of food.
+func generateRandomFood() string {
+	// Predefined list of food items
+	foodList := []string{
+		"Pizza", "Burger", "Pasta", "Sushi", "Tacos", "Salad", "Steak", "Soup", "Sandwich", "Fries",
+		"Ice Cream", "Cake", "Donut", "Chocolate", "Apple", "Banana", "Orange", "Grapes", "Strawberry", "Blueberry",
+		"Mango", "Pineapple", "Watermelon", "Kiwi", "Avocado", "Tomato", "Cucumber", "Carrot", "Broccoli", "Spinach",
+		"Chicken", "Beef", "Pork", "Lamb", "Fish", "Shrimp", "Crab", "Lobster", "Eggs", "Cheese",
+		"Yogurt", "Milk", "Butter", "Bread", "Rice", "Pasta", "Noodles", "Cereal", "Oatmeal", "Honey",
+	}
+
+	// Seed the random number generator to ensure different results each run
+	rand.Seed(time.Now().UnixNano())
+
+	// Generate a random index to pick a food item
+	randomIndex := rand.Intn(len(foodList))
+
+	// Return the randomly selected food item
+	return foodList[randomIndex]
+}
+
+// generateRandomStoreName generates a random store name from a predefined list of 30 kinds of store names.
+func generateRandomStoreName() string {
+	// Predefined list of store names
+	storeNames := []string{
+		"Grocery Mart", "Tech World", "Fashion Hub", "Book Haven", "Toy Land",
+		"Pet Paradise", "Home Essentials", "Beauty Bliss", "Sports Store", "Gadget Garage",
+		"Furniture Factory", "Shoe Stop", "Pharmacy Plus", "Hardware Haven", "Electronics Emporium",
+		"Music Mania", "Garden Goods", "Office Outlet", "Auto Accessories", "Craft Corner",
+		"Gift Gallery", "Jewelry Junction", "Bakery Bliss", "Café Corner", "Fitness Freak",
+		"Outdoor Outfitters", "Travel Treasures", "Kids' Kingdom", "Vintage Vault", "Wine World",
+	}
+
+	// Seed the random number generator to ensure different results each run
+	rand.Seed(time.Now().UnixNano())
+
+	// Generate a random index to pick a store name
+	randomIndex := rand.Intn(len(storeNames))
+
+	// Return the randomly selected store name
+	return storeNames[randomIndex]
+}
+
+// helper function for Order Service
+// RandomDecimalStringBetween 生成并返回两个整数之间的一位小数形式的随机数字符串，包括边界值。
+func RandomDecimalStringBetween(min, max int) string {
+	rand.Seed(time.Now().UnixNano())
+	randomInt := rand.Intn(max-min+1) + min              // 生成[min, max]范围内的随机整数
+	decimalValue := float64(randomInt) * 0.1             // 将整数转换为一位小数
+	return strconv.FormatFloat(decimalValue, 'f', 1, 64) // 转换为一位小数的字符串形式
+}
+
+// RandomProvincialCapitalEN 随机返回一个中国省会城市的英文名称
+func RandomProvincialCapitalEN() string {
+	rand.Seed(time.Now().UnixNano())
+	return provincialCapitalsEN[rand.Intn(len(provincialCapitalsEN))]
+}
+
+// 中国省会城市的英文列表
+var provincialCapitalsEN = []string{
+	"Beijing", "Shanghai", "Tianjin", "Chongqing",
+	"Shijiazhuang", "Taiyuan", "Hohhot", "Shenyang", "Changchun", "Harbin",
+	"Nanjing", "Hangzhou", "Hefei", "Fuzhou", "Nanchang", "Jinan", "Zhengzhou", "Wuhan", "Changsha", "Guangzhou",
+	"Nanning", "Haikou", "Chengdu", "Guiyang", "Kunming", "Lhasa", "Xi'an", "Lanzhou", "Xining", "Yinchuan",
+	"Urumqi", "Taipei",
+}
+
+// GetTrainTicketClass 随机返回高铁票等级。
+// 有5%的概率返回"FirstClass"（头等座），
+// 15%的概率返回"BusinessClass"（一等座），
+// 剩余80%的概率返回"EconomyClass"（二等座）。
+func GetTrainTicketClass() int {
+	rand.Seed(time.Now().UnixNano()) // 确保每次运行时随机数种子不同
+
+	probability := rand.Intn(100) // 生成0到99之间的随机数
+
+	switch {
+	case probability < 5:
+		return 0
+	case probability < 20:
+		return 1
+	default:
+		return 2
+	}
+}
+
 func GenerateTrainTypeName() string {
 	// 设置随机数种子
 	rand.Seed(time.Now().UnixNano())
@@ -59,6 +146,25 @@ func GenerateTrainTypeName() string {
 	MockedTrainTypeName := trainTypes[rand.Intn(len(trainTypes))]
 
 	return MockedTrainTypeName
+}
+
+// generateRandomCityName generates a random city name from a predefined list of city names.
+func generateRandomCityName() string {
+	// Predefined list of city names
+	cityNames := []string{
+		"nanjing", "shijiazhuang", "wuxi", "shanghaihongqiao", "jiaxingnan",
+		"hangzhou", "shanghai", "zhenjiang", "suzhou", "taiyuan",
+		"xuzhou", "jinan", "beijing",
+	}
+
+	// Seed the random number generator to ensure different results each run
+	rand.Seed(time.Now().UnixNano())
+
+	// Generate a random index to pick a city name
+	randomIndex := rand.Intn(len(cityNames))
+
+	// Return the randomly selected city name
+	return cityNames[randomIndex]
 }
 
 func ListToString(stations []string) string {

@@ -15,7 +15,7 @@ type TravelService interface {
 	CreateTrip(travelInfo *TravelInfo) (*TripResponse, error)
 	RetrieveTravel(tripId string) (*TravelInfo, error)
 	UpdateTrip(travelInfo *TravelInfo) (*TripResponse, error)
-	DeleteTrip(tripId string) (*TripResponse, error)
+	DeleteTrip(tripId string) (*DeleteTripResponse, error)
 	QueryInfo(tripInfo TripInfo) (*QueryInfoResponse, error)
 	QueryInfoInParallel(tripInfo TripInfo) (*QueryInfoInParallelTripResponse, error)
 	GetTripAllDetailInfo(tripId GetTripDetailReq) (*GetTripAllDetailInfoResponse, error)
@@ -52,9 +52,22 @@ type TripAllDetailInfo struct {
 
 // TripResponse represents the trip response
 type TripResponse struct {
-	Status int         `json:"status"`
-	Msg    string      `json:"msg"`
-	Data   interface{} `json:"data"`
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   struct {
+		Id     string `json:"id"`
+		TripId struct {
+			Type   string `json:"type"`
+			Number string `json:"number"`
+		} `json:"tripId"`
+		TrainTypeName       string `json:"trainTypeName"`
+		RouteId             string `json:"routeId"`
+		StartStationName    string `json:"startStationName"`
+		StationsName        string `json:"stationsName"`
+		TerminalStationName string `json:"terminalStationName"`
+		StartTime           string `json:"startTime"`
+		EndTime             string `json:"endTime"`
+	} `json:"data"`
 }
 
 type GetTrainTypeByTripIdResponse struct {
@@ -86,9 +99,15 @@ func (s *SvcImpl) GetTrainTypeByTripId(tripId string) (*GetTrainTypeByTripIdResp
 }
 
 type GetRouteByTripIdResponse struct {
-	Status int         `json:"status"`
-	Msg    string      `json:"msg"`
-	Data   interface{} `json:"data"`
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   struct {
+		Id           string      `json:"id"`
+		Stations     interface{} `json:"stations"`
+		Distances    interface{} `json:"distances"`
+		StartStation interface{} `json:"startStation"`
+		EndStation   interface{} `json:"endStation"`
+	} `json:"data"`
 }
 
 func (s *SvcImpl) GetRouteByTripId(tripId string) (*GetRouteByTripIdResponse, error) {
@@ -207,7 +226,13 @@ func (s *SvcImpl) UpdateTrip(travelInfo *TravelInfo) (*TripResponse, error) {
 	return &result, nil
 }
 
-func (s *SvcImpl) DeleteTrip(tripId string) (*TripResponse, error) {
+//type DeleteTripResponse struct {
+//	Status int    `json:"status"`
+//	Msg    string `json:"msg"`
+//	Data   string `json:"data"`
+//}
+
+func (s *SvcImpl) DeleteTrip(tripId string) (*DeleteTripResponse, error) {
 	url := fmt.Sprintf("%s/api/v1/travelservice/trips/%s", s.BaseUrl, tripId)
 	resp, err := s.cli.SendRequest("DELETE", url, nil)
 	if err != nil {
@@ -220,7 +245,7 @@ func (s *SvcImpl) DeleteTrip(tripId string) (*TripResponse, error) {
 		return nil, err
 	}
 
-	var result TripResponse
+	var result DeleteTripResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
