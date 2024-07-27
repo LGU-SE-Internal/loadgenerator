@@ -18,10 +18,10 @@ type OrderOtherService interface {
 	ReqGetOrderPriceOther(orderId string) (*GetOrderPriceResp, error)
 	ReqQueryOrdersOther(input *Qi) (*OrderArrResp, error)
 	ReqQueryOrderForRefreshOther(input *Qi) (*OrderArrResp, error)
-	ReqSecurityInfoCheckOther(checkDate string, accountId string) (*OrderResp, error)
+	ReqSecurityInfoCheckOther(checkDate string, accountId string) (*OrderSecurityResp, error)
 	ReqModifyOrderOther(orderId string, status int) (*OrderResp, error)
-	ReqGetTicketsListOther(input *Seat) (*OrderResp, error)
-	ReqDeleteOrderOrderServiceOther(orderId string) (*DataStringResp, error)
+	ReqGetTicketsListOther(input *Seat) (*TicketResp, error)
+	ReqDeleteOrderOrderServiceOther(orderId string) (*OrderResp, error)
 	ReqGetOrderByIdOther(orderId string) (*OrderResp, error)
 	ReqCalculateSoldTicketOther(travelDate string, travelNumber string) (*OrderResp, error)
 }
@@ -188,7 +188,7 @@ func (s *SvcImpl) ReqQueryOrderForRefreshOther(input *Qi) (*OrderArrResp, error)
 	return &result, nil
 }
 
-func (s *SvcImpl) ReqSecurityInfoCheckOther(checkDate string, accountId string) (*OrderResp, error) {
+func (s *SvcImpl) ReqSecurityInfoCheckOther(checkDate string, accountId string) (*OrderSecurityResp, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+"/api/v1/orderOtherService/orderOther/security/"+checkDate+"/"+accountId, nil)
 	if err != nil {
 		return nil, err
@@ -197,7 +197,7 @@ func (s *SvcImpl) ReqSecurityInfoCheckOther(checkDate string, accountId string) 
 	if err != nil {
 		return nil, err
 	}
-	var result OrderResp
+	var result OrderSecurityResp
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
@@ -224,7 +224,7 @@ func (s *SvcImpl) ReqModifyOrderOther(orderId string, status int) (*OrderResp, e
 	return &result, nil
 }
 
-func (s *SvcImpl) ReqGetTicketsListOther(input *Seat) (*OrderResp, error) {
+func (s *SvcImpl) ReqGetTicketsListOther(input *Seat) (*TicketResp, error) {
 	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/orderOtherService/orderOther/tickets", input)
 	if err != nil {
 		return nil, err
@@ -233,7 +233,7 @@ func (s *SvcImpl) ReqGetTicketsListOther(input *Seat) (*OrderResp, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result OrderResp
+	var result TicketResp
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
@@ -242,7 +242,7 @@ func (s *SvcImpl) ReqGetTicketsListOther(input *Seat) (*OrderResp, error) {
 	return &result, nil
 }
 
-func (s *SvcImpl) ReqDeleteOrderOrderServiceOther(orderId string) (*DataStringResp, error) {
+func (s *SvcImpl) ReqDeleteOrderOrderServiceOther(orderId string) (*OrderResp, error) {
 	resp, err := s.cli.SendRequest("DELETE", s.BaseUrl+"/api/v1/orderOtherService/orderOther/"+orderId, nil)
 	if err != nil {
 		return nil, err
@@ -251,7 +251,7 @@ func (s *SvcImpl) ReqDeleteOrderOrderServiceOther(orderId string) (*DataStringRe
 	if err != nil {
 		return nil, err
 	}
-	var result DataStringResp
+	var result OrderResp
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
