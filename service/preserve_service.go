@@ -7,6 +7,11 @@ import (
 	"io"
 )
 
+// PreserveService defines the methods that the service should implement
+type PreserveService interface {
+	Preserve(orderTicketsInfo *OrderTicketsInfo) (*PreserveResponse, error)
+}
+
 // OrderTicketsInfo represents the order tickets info structure
 type OrderTicketsInfo struct {
 	AccountID       string  `json:"accountId"`
@@ -35,11 +40,6 @@ type PreserveResponse struct {
 	Status int         `json:"status"`
 	Msg    string      `json:"msg"`
 	Data   interface{} `json:"data"`
-}
-
-// PreserveService defines the methods that the service should implement
-type PreserveService interface {
-	Preserve(orderTicketsInfo *OrderTicketsInfo) (*PreserveResponse, error)
 }
 
 func (s *SvcImpl) Preserve(orderTicketsInfo *OrderTicketsInfo) (*PreserveResponse, error) {
