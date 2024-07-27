@@ -315,7 +315,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 			DifferenceMoney:        RandomDecimalStringBetween(1, 10),
 			DocumentType:           0,
 			From:                   RandomProvincialCapitalEN(),
-			Id:                     uuid.NewString(),
+			Id:                     faker.UUIDHyphenated(),
 			Price:                  RandomDecimalStringBetween(1, 10),
 			SeatClass:              GetTrainTicketClass(),
 			SeatNumber:             service.GenerateSeatNumber(),
