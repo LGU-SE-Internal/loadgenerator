@@ -2,7 +2,6 @@ package service
 
 import (
 	"github.com/go-faker/faker/v4"
-	"github.com/google/uuid"
 	"log"
 	"testing"
 )
@@ -13,8 +12,8 @@ func TestSvc_FullIntegration(t *testing.T) {
 
 	// CreateContact
 	CreateContactsInput := AdminContacts{
-		Id:        uuid.NewString(),
-		AccountId: uuid.NewString(),
+		Id:        faker.UUIDHyphenated(),
+		AccountId: faker.UUIDHyphenated(),
 		Name:      faker.Name(),
 	}
 	CreateContacts, err := contactsSvc.AddContact(&CreateContactsInput)
@@ -67,11 +66,11 @@ func TestSvc_FullIntegration(t *testing.T) {
 
 	// AddAdminContact
 	adminContactReq := AdminContacts{
-		Id:        uuid.NewString(),
-		AccountId: uuid.NewString(),
+		Id:        faker.UUIDHyphenated(),
+		AccountId: faker.UUIDHyphenated(),
 		Name:      faker.Name(),
 	}
-	adminContactResp, err := cli.AddAdminContact(&adminContactReq)
+	adminContactResp, err := contactsSvc.AddAdminContact(&adminContactReq)
 	if err != nil {
 		t.Error(err)
 	}
@@ -93,7 +92,7 @@ func TestSvc_FullIntegration(t *testing.T) {
 	t.Log("[add admin contact]: ", adminContactResp)
 
 	// Modify Contacts
-	modifyContactResp, err := cli.ModifyContact(&AdminContacts{
+	modifyContactResp, err := contactsSvc.ModifyContact(&AdminContacts{
 		Id:          existedContacts.Id,
 		AccountId:   existedContacts.AccountId,
 		Name:        faker.Name(),
@@ -104,7 +103,7 @@ func TestSvc_FullIntegration(t *testing.T) {
 	}
 	t.Log("[modify contact]: ", modifyContactResp)
 
-	contactResp1, err := cli.GetContactByContactId(existedContacts.Id)
+	contactResp1, err := contactsSvc.GetContactByContactId(existedContacts.Id)
 	if err != nil {
 		t.Error(err)
 	}
@@ -124,7 +123,7 @@ func TestSvc_FullIntegration(t *testing.T) {
 	}
 	t.Log("[get contact]: ", contactResp1)
 
-	contactResp2, err := cli.GetContactByAccountId(existedContacts.AccountId)
+	contactResp2, err := contactsSvc.GetContactByAccountId(existedContacts.AccountId)
 	if err != nil {
 		t.Error(err)
 	}
@@ -147,7 +146,7 @@ func TestSvc_FullIntegration(t *testing.T) {
 	}
 	t.Log("[get contact]: ", contactResp2)
 
-	deleteContact, err := cli.DeleteContact(existedContacts.Id)
+	deleteContact, err := contactsSvc.DeleteContact(existedContacts.Id)
 	if err != nil {
 		t.Error(err)
 	}
