@@ -152,38 +152,96 @@ func TestSvcImpl_Preserve(t *testing.T) {
 	}
 	existedTravel := createResp.Data
 
+	// Consign Service
+	var consignSvc ConsignService = cli
+
+	// Mock data
+	MockedId := faker.UUIDHyphenated()
+	MockedAccountId := existedSecurity.ID
+	MockedOrderId := faker.UUIDHyphenated()
+	MockedHandleDate := /*faker.Date()*/ existedTravel.StartTime
+	MockedTargetDate := /*faker.Date()*/ existedTravel.EndTime
+	MockedFromPlace := /*"suzhou"*/ existedTravel.StartStationName
+	MockedToPlace := /*"beijing"*/ existedTravel.TerminalStationName
+	MockedConsignee := /*faker.Name()*/ existedContacts.Name
+	MockedPhone := /*faker.PhoneNumber*/ existedContacts.PhoneNumber
+
+	// Insert a new consign record
+	insertReq := &Consign{
+		ID:         MockedId,
+		OrderID:    MockedOrderId,
+		AccountID:  MockedAccountId,
+		HandleDate: MockedHandleDate,
+		TargetDate: MockedTargetDate,
+		From:       MockedFromPlace,
+		To:         MockedToPlace,
+		Consignee:  MockedConsignee,
+		Phone:      MockedPhone,
+		Weight:     7.0,
+		IsWithin:   false,
+	}
+	insertResp, err := consignSvc.InsertConsignRecord(insertReq)
+	if err != nil {
+		t.Errorf("InsertConsignRecord failed: %v", err)
+	}
+	if insertResp.Msg == "Already exists" {
+
+	}
+	if insertResp.Status != 1 {
+		t.Errorf("InsertConsignRecord failed: %v", insertResp.Status)
+	}
+	isMatch3 := false
+	if /*insertResp.Data.ID == insertReq.ID &&*/
+	insertResp.Data.IsWithin == insertReq.IsWithin &&
+		insertResp.Data.AccountID == insertReq.AccountID &&
+		insertResp.Data.From == insertReq.From &&
+		insertResp.Data.Consignee == insertReq.Consignee &&
+		insertResp.Data.OrderID == insertReq.OrderID &&
+		insertResp.Data.Phone == insertReq.Phone &&
+		insertResp.Data.TargetDate == insertReq.TargetDate &&
+		insertResp.Data.HandleDate == insertReq.HandleDate &&
+		insertResp.Data.To == insertReq.To &&
+		insertResp.Data.Weight == insertReq.Weight {
+		isMatch3 = true
+	}
+	if !isMatch3 {
+		t.Errorf("Creation not match. Expect: %v, but get: %v", insertReq, insertResp.Data)
+	}
+	t.Logf("InsertConsignRecord response: %+v", insertResp)
+	existedConsign := insertResp.Data
+
 	// Mock Data End
 	// Data Input
-	MockedLoginToken := loginResult.Data.Token
-	MockedAccountID := existedSecurity.ID
-	MockedContactsID := existedContacts.Id
-	MockedTripID := existedTravel.Id
-	MockedDate := /*faker.Date()*/ "2025-05-04 09:00:00"
-	MockedFromCity := /*faker.GetRealAddress().City*/ "suzhou"
-	MockedToCity := /*faker.GetRealAddress().City*/ "beijing"
-	MockedHandleDate := /*faker.Date()*/ "2025-07-11"
-	MockedConsigneeName := /*faker.Name()*/ "Dr. Keenan Huel"
-	MockedConsigneePhone := /*faker.PhoneNumber*/ faker.PhoneNumber
+	preserveMockedLoginToken := loginResult.Data.Token
+	preserveMockedAccountID := existedSecurity.ID
+	preserveMockedContactsID := existedContacts.Id
+	preserveMockedTripID := existedTravel.Id
+	preserveMockedDate := /*faker.Date()*/ /*"2025-05-04 09:00:00"*/ existedConsign.TargetDate
+	preserveMockedHandleDate := /*faker.Date()*/ /*"2025-07-11"*/ existedConsign.HandleDate
+	preserveMockedFromCity := /*faker.GetRealAddress().City*/ /*"suzhou"*/ existedConsign.From
+	preserveMockedToCity := /*faker.GetRealAddress().City*/ /*"beijing"*/ existedConsign.To
+	preserveMockedConsigneeName := /*faker.Name()*/ /*"Dr. Keenan Huel"*/ existedConsign.Consignee
+	preserveMockedConsigneePhone := /*faker.PhoneNumber*/ /*faker.PhoneNumber*/ existedConsign.Phone
 
 	// Mock data
 	orderTicketsInfo := OrderTicketsInfo{
-		AccountID:       MockedAccountID,
-		ContactsID:      MockedContactsID,
-		TripID:          MockedTripID,
+		AccountID:       preserveMockedAccountID,
+		ContactsID:      preserveMockedContactsID,
+		TripID:          preserveMockedTripID,
 		SeatType:        1,
-		LoginToken:      MockedLoginToken,
-		Date:            MockedDate,
-		From:            MockedFromCity,
-		To:              MockedToCity,
+		LoginToken:      preserveMockedLoginToken,
+		Date:            preserveMockedDate,
+		From:            preserveMockedFromCity,
+		To:              preserveMockedToCity,
 		Assurance:       1,
 		FoodType:        1,
 		StationName:     "Shenzhen Bei",
 		StoreName:       "Happy Store",
 		FoodName:        "spaghetti",
 		FoodPrice:       10.00,
-		HandleDate:      MockedHandleDate,
-		ConsigneeName:   MockedConsigneeName,
-		ConsigneePhone:  MockedConsigneePhone,
+		HandleDate:      preserveMockedHandleDate,
+		ConsigneeName:   preserveMockedConsigneeName,
+		ConsigneePhone:  preserveMockedConsigneePhone,
 		ConsigneeWeight: 7.77,
 		IsWithin:        true,
 	}
