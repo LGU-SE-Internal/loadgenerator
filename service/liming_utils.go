@@ -279,6 +279,25 @@ func getRandomOrder() Order {
 	return orders.Data[randomIndex]
 }
 
+func getRandomOrder_Other() Order {
+	cli := NewSvcClients()
+	_, err := cli.ReqUserLogin(&UserLoginInfoReq{
+		Password:         "222222",
+		UserName:         "admin",
+		VerificationCode: "123",
+	})
+	if err != nil {
+		fmt.Println(err)
+	}
+	orders, _ := cli.ReqFindAllOrderOther()
+	// 设置随机数种子以确保每次运行程序时都能得到不同的结果
+	rand.Seed(time.Now().UnixNano())
+
+	// 从contacts.Data切片中随机选择一个元素
+	randomIndex := rand.Intn(len(orders.Data))
+	return orders.Data[randomIndex]
+}
+
 func getAdjacentDates(dateStr string) (string, string, error) {
 	dateLayout := "2006-01-02"
 	t, err := time.Parse(dateLayout, dateStr)
