@@ -148,7 +148,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 	if r2 < 0.9999 {
 		// DirectQuery_And_Order; Prob = 0.95
 		//log.Fatalf("Selected: DirectQuery_And_Order")
-		GetAllTravel, err := travelSvc.QueryAll()
+		GetAllTravel, err := travelSvc.QueryAllTrip()
 		if err != nil {
 			log.Fatalf("[MockedTripID] error occurs: %v", err)
 		}
@@ -194,7 +194,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 			log.Fatalf("[MockedTripID] CreateTripRsp.Status != 1")
 		}
 
-		GetAllTravel, err := travelSvc.QueryAll()
+		GetAllTravel, err := travelSvc.QueryAllTrip()
 		if err != nil {
 			log.Fatalf("[MockedTripID] GetAllTravel error occurs: %v", err)
 		}
@@ -350,7 +350,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 	r6 := rand.Float64()
 	NoExistMockedFromCity := false
 	if r6 < 0.95 {
-		//GetAllTrip, err := tripSvc.QueryAll()
+		//GetAllTrip, err := tripSvc.QueryAllTrip()
 		//if err != nil {
 		//	log.Fatalf("error occurs: %v", err)
 		//}
@@ -418,7 +418,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 	r7 := rand.Float64()
 	NoExistMockedToCity := false
 	if r7 < 0.95 {
-		//GetAllTrip, err := tripSvc.QueryAll()
+		//GetAllTrip, err := tripSvc.QueryAllTrip()
 		//if err != nil {
 		//	log.Fatalf("error occurs: %v", err)
 		//}
@@ -795,7 +795,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 		MockedFoodPrice = float64(rand.Intn(7) + 5)
 	}
 
-	// Consign Service 000: Consign do not have the QueryAll() function. Should I add one?
+	// Consign Service 000: Consign do not have the QueryAllTrip() function. Should I add one?
 	var consignSvc service.ConsignService = cli
 	// MockedHandleDate
 	r14 := rand.Float64()

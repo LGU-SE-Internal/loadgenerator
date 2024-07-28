@@ -50,15 +50,15 @@ func TestRouteService_FullIntegration(t *testing.T) {
 	existedRoute := resp.Data
 
 	//Test Query
-	AllRoutes_By_Query, err2 := routeSvc.QueryAllRoutes()
+	AllRoutesByQuery, err2 := routeSvc.QueryAllRoutes()
 	if err2 != nil {
 		t.Errorf("Request failed, err2 %s", err2)
 	}
-	if AllRoutes_By_Query.Status != 1 {
+	if AllRoutesByQuery.Status != 1 {
 		t.Errorf("AllRoutes_By_Query.Status != 1")
 	}
 	found := false
-	for _, route := range AllRoutes_By_Query.Data {
+	for _, route := range AllRoutesByQuery.Data {
 		if route.Id == existedRoute.Id {
 			found = true
 		}
@@ -89,7 +89,7 @@ func TestRouteService_FullIntegration(t *testing.T) {
 	//	t.Errorf("AllRoutes_By_Query.Data is empty")
 	//}
 
-	routeIds := []string{existedRoute.Id, AllRoutes_By_Query.Data[0].Id}
+	routeIds := []string{existedRoute.Id, AllRoutesByQuery.Data[0].Id}
 	resp4, err4 := routeSvc.QueryRoutesByIds(routeIds)
 	if err4 != nil {
 		t.Errorf("Request failed, err4 %s", err4)

@@ -3,6 +3,7 @@ package service
 import (
 	"log"
 	"testing"
+	"time"
 
 	"github.com/go-faker/faker/v4"
 )
@@ -99,58 +100,21 @@ func TestSvcImpl_Preserve(t *testing.T) {
 
 	// Travel Service
 	var travelSvc TravelService = cli
-	// Mock Trip
-	// Mock para
-	MockedLoginId := loginResult.Data.Token
-	MockedTrainTypeName := GenerateTrainTypeName() /*"GaoTieSeven"*/
-	MockedRouteID := faker.UUIDHyphenated()
-	MockedStartStationName := faker.GetRealAddress().City
-	MockedStationsName := faker.GetRealAddress().City
-	MockedTerminalStationName := faker.GetRealAddress().City
-	MockedStartTime := /*getRandomTime()*/ "2099-05-04 15:51:52"
-	MockedEndTime := /*getRandomTime()*/ "2099-07-07 15:51:52"
-	MockedTripId := GenerateTripId()
-
-	// Mock input
-	travelInfo := TravelInfo{
-		LoginID:             MockedLoginId,
-		TripID:              MockedTripId,
-		TrainTypeName:       MockedTrainTypeName,
-		RouteID:             MockedRouteID,
-		StartStationName:    MockedStartStationName,
-		StationsName:        MockedStationsName,
-		TerminalStationName: MockedTerminalStationName,
-		StartTime:           MockedStartTime,
-		EndTime:             MockedEndTime,
-	}
-
 	// Create Test
-	createResp, err := travelSvc.CreateTrip(&travelInfo)
+	allTrip, err := travelSvc.QueryAllTrip()
 	if err != nil {
-		t.Errorf("CreateTrip request failed, err %s", err)
+		t.Errorf("QueryAllTrip failed: %v", err)
 	}
-	if createResp.Status != 1 {
-		t.Errorf("CreateTrip failed: %s", createResp.Msg)
+	var existedTravel Trip
+	for _, trip := range allTrip.Data {
+		startTime, err := time.Parse("2006-01-02 15:04:05", trip.StartTime)
+		if err != nil {
+			t.Errorf("QueryAllTrip failed: %v", err)
+		}
+		if startTime.After(time.Now()) {
+			existedTravel = trip
+		}
 	}
-	if createResp.Msg != "Already exists" {
-		t.Logf("Already exists: %s", createResp.Msg)
-		t.Skip()
-	}
-	isMatch2 := false
-	if /*createResp.Data.Id == travelInfo.LoginID &&*/
-	createResp.Data.StationsName == toLowerCaseAndRemoveSpaces(travelInfo.StationsName) &&
-		createResp.Data.StartStationName == toLowerCaseAndRemoveSpaces(travelInfo.StartStationName) &&
-		createResp.Data.TerminalStationName == toLowerCaseAndRemoveSpaces(travelInfo.TerminalStationName) &&
-		createResp.Data.StartTime == travelInfo.StartTime &&
-		createResp.Data.EndTime == travelInfo.EndTime &&
-		createResp.Data.TrainTypeName == travelInfo.TrainTypeName &&
-		createResp.Data.RouteId == travelInfo.RouteID {
-		isMatch2 = true
-	}
-	if !isMatch2 {
-		t.Errorf("CreateTrip failed: %s. Except: %v, but get: %v", createResp.Msg, travelInfo, createResp.Data)
-	}
-	existedTravel := createResp.Data
 
 	// Consign Service
 	var consignSvc ConsignService = cli
@@ -159,12 +123,12 @@ func TestSvcImpl_Preserve(t *testing.T) {
 	MockedId := faker.UUIDHyphenated()
 	MockedAccountId := existedSecurity.ID
 	MockedOrderId := faker.UUIDHyphenated()
-	MockedHandleDate := /*faker.Date()*/ existedTravel.StartTime
-	MockedTargetDate := /*faker.Date()*/ existedTravel.EndTime
-	MockedFromPlace := /*"suzhou"*/ existedTravel.StartStationName
-	MockedToPlace := /*"beijing"*/ existedTravel.TerminalStationName
-	MockedConsignee := /*faker.Name()*/ existedContacts.Name
-	MockedPhone := /*faker.PhoneNumber*/ existedContacts.PhoneNumber
+	MockedHandleDate := existedTravel.StartTime
+	MockedTargetDate := existedTravel.EndTime
+	MockedFromPlace := existedTravel.StartStationName
+	MockedToPlace := existedTravel.TerminalStationName
+	MockedConsignee := existedContacts.Name
+	MockedPhone := existedContacts.PhoneNumber
 
 	// Insert a new consign record
 	insertReq := &Consign{

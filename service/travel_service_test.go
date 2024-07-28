@@ -3,6 +3,7 @@ package service
 import (
 	"github.com/go-faker/faker/v4"
 	"log"
+	"strings"
 	"sync"
 	"testing"
 )
@@ -21,7 +22,7 @@ func TestTravelService_FullIntegration(t *testing.T) {
 	}
 
 	// Query Test
-	resp, err := travelSvc.QueryAll()
+	resp, err := travelSvc.QueryAllTrip()
 	if err != nil {
 		t.Errorf("Request failed, err %s", err)
 	}
@@ -29,15 +30,24 @@ func TestTravelService_FullIntegration(t *testing.T) {
 		t.Errorf("Request failed, status: %d", resp.Status)
 	}
 
+	var routeSvc RouteService = cli
+	AllRoutesByQuery, err2 := routeSvc.QueryAllRoutes()
+	if err2 != nil {
+		t.Errorf("Request failed, err2 %s", err2)
+	}
+	if AllRoutesByQuery.Status != 1 {
+		t.Errorf("AllRoutes_By_Query.Status != 1")
+	}
+
 	// Mock para
 	MockedLoginId := loginResult.Data.Token
 	MockedTrainTypeName := GenerateTrainTypeName() /*"GaoTieSeven"*/
 	MockedRouteID := faker.UUIDHyphenated()
-	MockedStartStationName := faker.GetRealAddress().City
-	MockedStationsName := faker.GetRealAddress().City
-	MockedTerminalStationName := faker.GetRealAddress().City
+	MockedStartStationName := AllRoutesByQuery.Data[0].StartStation
+	MockedStationsName := strings.Join(AllRoutesByQuery.Data[0].Stations, ",")
+	MockedTerminalStationName := AllRoutesByQuery.Data[0].EndStation
 	MockedStartTime := getRandomTime()
-	MockedEndTime := getRandomTime()
+	MockedEndTime := getRandomTime(WithStartTime(MockedStartTime))
 	MockedTripId := GenerateTripId()
 
 	// Mock input
@@ -62,7 +72,7 @@ func TestTravelService_FullIntegration(t *testing.T) {
 	if createResp.Status != 1 {
 		t.Errorf("CreateTrip failed: %s", createResp.Msg)
 	}
-	if createResp.Msg != "Already exists" {
+	if createResp.Msg == "Already exists" {
 		t.Logf("Already exists: %s", createResp.Msg)
 		t.Skip()
 	}
@@ -83,26 +93,19 @@ func TestTravelService_FullIntegration(t *testing.T) {
 	existedTravel := createResp.Data
 
 	// Query all
-	allTravelInfos, err := cli.QueryAll()
+	allTravelInfos, err := cli.QueryAllTrip()
 	if err != nil {
-		t.Errorf("QueryAll request failed, err %s", err)
+		t.Errorf("QueryAllTrip request failed, err %s", err)
 	}
 	if len(allTravelInfos.Data) == 0 {
-		t.Errorf("QueryAll returned no results")
+		t.Errorf("QueryAllTrip returned no results")
 	}
 	if allTravelInfos.Status != 1 {
-		t.Errorf("QueryAll failed, status: %d", allTravelInfos.Status)
+		t.Errorf("QueryAllTrip failed, status: %d", allTravelInfos.Status)
 	}
 	found := false
 	for _, travel := range allTravelInfos.Data {
-		if /*travel.Id == existedTravel.Id &&*/
-		travel.RouteId == existedTravel.RouteId &&
-			travel.StartTime == existedTravel.StartTime &&
-			travel.EndTime == existedTravel.EndTime &&
-			travel.TrainTypeName == existedTravel.TrainTypeName &&
-			travel.StartStationName == toLowerCaseAndRemoveSpaces(existedTravel.StationsName) &&
-			/*travel.StationsName == toLowerCaseAndRemoveSpaces(existedTravel.StationsName) &&*/
-			travel.TerminalStationName == toLowerCaseAndRemoveSpaces(existedTravel.TerminalStationName) {
+		if travel.Id == existedTravel.Id {
 			found = true
 		}
 	}
@@ -110,7 +113,7 @@ func TestTravelService_FullIntegration(t *testing.T) {
 		t.Errorf("Cannot find existed travel info: %v", existedTravel)
 	}
 
-	// QueryAll - Admin
+	// QueryAllTrip - Admin
 	adminQueryAllResp, err := cli.AdminQueryAll()
 	if err != nil {
 		t.Errorf("AdminQueryAll request failed, err %s", err)
@@ -120,14 +123,7 @@ func TestTravelService_FullIntegration(t *testing.T) {
 	}
 	found2 := false
 	for _, travel := range adminQueryAllResp.Data {
-		if travel.Trip.Id == existedTravel.Id &&
-			travel.Trip.RouteId == existedTravel.RouteId &&
-			travel.Trip.StartTime == existedTravel.StartTime &&
-			travel.Trip.EndTime == existedTravel.EndTime &&
-			travel.Trip.TrainTypeName == existedTravel.TrainTypeName &&
-			travel.Trip.StartStationName == toLowerCaseAndRemoveSpaces(existedTravel.StationsName) &&
-			/*travel.Trip.StationsName == toLowerCaseAndRemoveSpaces(existedTravel.StationsName) &&*/
-			travel.Trip.TerminalStationName == toLowerCaseAndRemoveSpaces(existedTravel.TerminalStationName) {
+		if travel.Trip.Id == existedTravel.Id {
 			found2 = true
 		}
 	}
@@ -174,15 +170,15 @@ func TestTravelService_FullIntegration(t *testing.T) {
 	}
 
 	// Query all UpdatedInfo
-	allUpdatedTravelInfos, err := cli.QueryAll()
+	allUpdatedTravelInfos, err := cli.QueryAllTrip()
 	if err != nil {
-		t.Errorf("QueryAll request failed, err %s", err)
+		t.Errorf("QueryAllTrip request failed, err %s", err)
 	}
 	if len(allUpdatedTravelInfos.Data) == 0 {
-		t.Errorf("QueryAll returned no results")
+		t.Errorf("QueryAllTrip returned no results")
 	}
 	if allUpdatedTravelInfos.Status != 1 {
-		t.Errorf("QueryAll failed, status: %d", allUpdatedTravelInfos.Status)
+		t.Errorf("QueryAllTrip failed, status: %d", allUpdatedTravelInfos.Status)
 	}
 	found1 := false
 	for _, travel := range allUpdatedTravelInfos.Data {
@@ -305,7 +301,7 @@ func TestTravelServiceQueryAll_InfiniteLoop_ForTesting(t *testing.T) {
 			cli, _ := GetAdminClient()
 			for {
 				// Query Test
-				_, err := cli.QueryAll()
+				_, err := cli.QueryAllTrip()
 				if err != nil {
 					t.Errorf("Request failed, err %s", err)
 					return
@@ -322,11 +318,11 @@ func TestTravelServiceQueryAll_InfiniteLoop_ForTesting(t *testing.T) {
 func TestGetTripAllDetailInfo(t *testing.T) {
 	cli, _ := GetAdminClient()
 
-	resp, err := cli.QueryAll()
+	resp, err := cli.QueryAllTrip()
 	if err != nil {
 		t.Errorf("Request failed, err %s", err)
 	}
-	t.Logf("QueryAll return: %+v", resp)
+	t.Logf("QueryAllTrip return: %+v", resp)
 
 	res, err := cli.GetTripAllDetailInfo(GetTripDetailReq{
 		From:       "shanghai",

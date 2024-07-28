@@ -2,7 +2,6 @@ package service
 
 import (
 	"fmt"
-	"github.com/go-faker/faker/v4"
 	"math/rand"
 	"strconv"
 	"strings"
@@ -135,33 +134,48 @@ func StringToList(input string) []string {
 
 // generateRandomTime generates a random time in the format "HH:MM:SS".
 func generateRandomTime() string {
-	//// Seed the random number generator to ensure different results each run
-	//rand.Seed(time.Now().UnixNano())
-
-	// Generate random hours, minutes, and seconds
 	hour := rand.Intn(24)   // 0-23
 	minute := rand.Intn(60) // 0-59
 	second := rand.Intn(60) // 0-59
-
-	// Format the time as "HH:MM:SS"
 	return fmt.Sprintf("%02d:%02d:%02d", hour, minute, second)
 }
 
-func getRandomTime() string {
-	MockedRandomDate := faker.Date()
+type Config struct {
+	StartTime string
+}
 
-	////// Seed the random number generator to ensure different results each run
-	////rand.Seed(time.Now().UnixNano())
-	//// Generate random hours, minutes, and seconds
-	//hour := rand.Intn(24)   // 0-23
-	//minute := rand.Intn(60) // 0-59
-	//second := rand.Intn(60) // 0-59
-	//MockedRandomTime := fmt.Sprintf("%02d:%02d:%02d", hour, minute, second)
-	MockedRandomTime := generateRandomTime()
+type Option func(config *Config)
 
-	DateAndTime := MockedRandomDate + " " + MockedRandomTime
+func WithStartTime(startTime string) Option {
+	return func(config *Config) {
+		config.StartTime = startTime
+	}
+}
+func getRandomTime(opts ...Option) string {
+	config := &Config{}
+	for _, opt := range opts {
+		opt(config)
+	}
 
-	return DateAndTime
+	now := time.Now()
+
+	if config.StartTime != "" {
+		startTime, err := time.Parse("2006-01-02 15:04:05", config.StartTime)
+		if err != nil {
+			fmt.Println("Invalid StartTime format, using current time instead.")
+		} else {
+			now = startTime
+			// 生成1小时到1天之后的时间
+			randomHours := rand.Intn(24) + 1
+			randomDate := now.Add(time.Duration(randomHours) * time.Hour)
+			return randomDate.Format("2006-01-02 15:04:05")
+		}
+	}
+
+	// 保持原来的逻辑，生成从今天起到未来一个月内的随机日期
+	randomDays := rand.Intn(30) + 1
+	randomDate := now.AddDate(0, 0, randomDays)
+	return randomDate.Format("2006-01-02 15:04:05")
 }
 
 // ConvertCommaSeparatedToBracketed converts a comma-separated string to a bracketed, space-separated string

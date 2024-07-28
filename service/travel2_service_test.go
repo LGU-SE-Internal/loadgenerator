@@ -16,7 +16,7 @@ func TestTravel2Service_FullIntegration(t *testing.T) {
 	var travelSvc TravelService = cli
 	var travel2Svc Travel2Service = cli
 	var MockedTripId string
-	GetAllTravelInfo, err := travelSvc.QueryAll()
+	GetAllTravelInfo, err := travelSvc.QueryAllTrip()
 	if err != nil {
 		t.Errorf("error occurs: %v", err)
 	}
@@ -132,12 +132,12 @@ func TestTravel2Service_FullIntegration(t *testing.T) {
 	}
 	t.Logf("GetTripAllDetailInfo response: %+v", tripDetailResp)
 
-	// Test QueryAll
+	// Test QueryAllTrip
 	queryAllResp, err := travel2Svc.QueryAllTravel()
 	if err != nil {
-		t.Errorf("QueryAll failed: %v", err)
+		t.Errorf("QueryAllTrip failed: %v", err)
 	}
-	t.Logf("QueryAll response: %+v", queryAllResp)
+	t.Logf("QueryAllTrip response: %+v", queryAllResp)
 
 	// Test AdminQueryAll
 	adminQueryAllResp, err := travel2Svc.AdminQueryAllTravel()
