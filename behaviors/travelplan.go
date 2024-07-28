@@ -36,7 +36,7 @@ func (o *TravelplanBehavior) Run(cli *service.SvcImpl) {
 	var travelSvc service.TravelService = cli
 	if r0 < 0.95 {
 		// Query
-		GetAllTravelInfo, err := travelSvc.QueryAll()
+		GetAllTravelInfo, err := travelSvc.QueryAllTrip()
 		if err != nil {
 			log.Fatalf("[travelSvc]GetAllTravelInfo occurs errors: %v", err)
 		}
@@ -81,7 +81,7 @@ func (o *TravelplanBehavior) Run(cli *service.SvcImpl) {
 		}
 
 		// Query
-		GetAllTravelInfo, err := travelSvc.QueryAll()
+		GetAllTravelInfo, err := travelSvc.QueryAllTrip()
 		if err != nil {
 			log.Fatalf("[travelSvc]GetAllTravelInfo occurs errors: %v", err)
 		}
@@ -102,7 +102,7 @@ func (o *TravelplanBehavior) Run(cli *service.SvcImpl) {
 	//var travelSvc service.TravelService = cli
 	if r1 < 0.95 {
 		// Query
-		GetAllTravelInfo, err := travelSvc.QueryAll()
+		GetAllTravelInfo, err := travelSvc.QueryAllTrip()
 		if err != nil {
 			log.Fatalf("[travelSvc]GetAllTravelInfo:MockedEndPlace occurs errors: %v", err)
 		}
@@ -146,7 +146,7 @@ func (o *TravelplanBehavior) Run(cli *service.SvcImpl) {
 		}
 
 		// Query
-		GetAllTravelInfo, err := travelSvc.QueryAll()
+		GetAllTravelInfo, err := travelSvc.QueryAllTrip()
 		if err != nil {
 			log.Fatalf("[travelSvc]GetAllTravelInfo: MockedEndPlace occurs errors: %v", err)
 		}
@@ -167,7 +167,7 @@ func (o *TravelplanBehavior) Run(cli *service.SvcImpl) {
 	//var travelSvc service.TravelService = cli
 	if r2 < 0.95 {
 		// Query
-		GetAllTravelInfo, err := travelSvc.QueryAll()
+		GetAllTravelInfo, err := travelSvc.QueryAllTrip()
 		if err != nil {
 			log.Fatalf("[travelSvc]GetAllTravelInfo:MockedStartPlace occurs errors: %v", err)
 		}
@@ -211,7 +211,7 @@ func (o *TravelplanBehavior) Run(cli *service.SvcImpl) {
 		}
 
 		// Query
-		GetAllTravelInfo, err := travelSvc.QueryAll()
+		GetAllTravelInfo, err := travelSvc.QueryAllTrip()
 		if err != nil {
 			log.Fatalf("[travelSvc]GetAllTravelInfo: MockedStartPlace occurs errors: %v", err)
 		}
@@ -262,7 +262,7 @@ func (o *TravelplanBehavior) Run(cli *service.SvcImpl) {
 	//var travelSvc service.TravelService = cli
 	if r3 < 0.95 {
 		// Query
-		GetAllTravelInfo, err := travelSvc.QueryAll()
+		GetAllTravelInfo, err := travelSvc.QueryAllTrip()
 		if err != nil {
 			log.Fatalf("[travelSvc]GetAllTravelInfo:MockedEndStation occurs errors: %v", err)
 		}
@@ -306,7 +306,7 @@ func (o *TravelplanBehavior) Run(cli *service.SvcImpl) {
 		}
 
 		// Query
-		GetAllTravelInfo, err := travelSvc.QueryAll()
+		GetAllTravelInfo, err := travelSvc.QueryAllTrip()
 		if err != nil {
 			log.Fatalf("[travelSvc]GetAllTravelInfo: MockedEndStation occurs errors: %v", err)
 		}
@@ -327,7 +327,7 @@ func (o *TravelplanBehavior) Run(cli *service.SvcImpl) {
 	//var travelSvc service.TravelService = cli
 	if r4 < 0.95 {
 		// Query
-		GetAllTravelInfo, err := travelSvc.QueryAll()
+		GetAllTravelInfo, err := travelSvc.QueryAllTrip()
 		if err != nil {
 			log.Fatalf("[travelSvc]GetAllTravelInfo:MockedStartStation occurs errors: %v", err)
 		}
@@ -371,7 +371,7 @@ func (o *TravelplanBehavior) Run(cli *service.SvcImpl) {
 		}
 
 		// Query
-		GetAllTravelInfo, err := travelSvc.QueryAll()
+		GetAllTravelInfo, err := travelSvc.QueryAllTrip()
 		if err != nil {
 			log.Fatalf("[travelSvc]GetAllTravelInfo: MockedStartStation occurs errors: %v", err)
 		}
@@ -391,7 +391,7 @@ func (o *TravelplanBehavior) Run(cli *service.SvcImpl) {
 	// Travel Service
 	if r5 < 0.95 {
 		// Query
-		GetAllTravelInfo, err := travelSvc.QueryAll()
+		GetAllTravelInfo, err := travelSvc.QueryAllTrip()
 		if err != nil {
 			log.Fatalf("[travelSvc]GetAllTravelInfo:MockedStartStation occurs errors: %v", err)
 		}
@@ -435,7 +435,7 @@ func (o *TravelplanBehavior) Run(cli *service.SvcImpl) {
 		}
 
 		// Query
-		GetAllTravelInfo, err := travelSvc.QueryAll()
+		GetAllTravelInfo, err := travelSvc.QueryAllTrip()
 		if err != nil {
 			log.Fatalf("[travelSvc]GetAllTravelInfo: MockedStartStation occurs errors: %v", err)
 		}
@@ -461,7 +461,7 @@ func (o *TravelplanBehavior) Run(cli *service.SvcImpl) {
 	// Travel Servie
 	if r6 < 0.95 {
 		// Query
-		GetAllTravelInfo, err := travelSvc.QueryAll()
+		GetAllTravelInfo, err := travelSvc.QueryAllTrip()
 		if err != nil {
 			log.Fatalf("[travelSvc]GetAllTravelInfo:MockedStartStation occurs errors: %v", err)
 		}
@@ -505,7 +505,7 @@ func (o *TravelplanBehavior) Run(cli *service.SvcImpl) {
 		}
 
 		// Query
-		GetAllTravelInfo, err := travelSvc.QueryAll()
+		GetAllTravelInfo, err := travelSvc.QueryAllTrip()
 		if err != nil {
 			log.Fatalf("[travelSvc]GetAllTravelInfo: MockedStartStation occurs errors: %v", err)
 		}
@@ -525,7 +525,7 @@ func (o *TravelplanBehavior) Run(cli *service.SvcImpl) {
 	// Travel service
 	if r7 < 0.95 {
 		// Query
-		GetAllTravelInfo, err := travelSvc.QueryAll()
+		GetAllTravelInfo, err := travelSvc.QueryAllTrip()
 		if err != nil {
 			log.Fatalf("[travelSvc]GetAllTravelInfo:MockedStartStation occurs errors: %v", err)
 		}
@@ -569,7 +569,7 @@ func (o *TravelplanBehavior) Run(cli *service.SvcImpl) {
 		}
 
 		// Query
-		GetAllTravelInfo, err := travelSvc.QueryAll()
+		GetAllTravelInfo, err := travelSvc.QueryAllTrip()
 		if err != nil {
 			log.Fatalf("[travelSvc]GetAllTravelInfo: MockedStartStation occurs errors: %v", err)
 		}

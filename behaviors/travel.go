@@ -39,9 +39,9 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	var MockedEndTime string
 
 	// 1. Query
-	QueryAllRsp, err := travelSvc.QueryAll()
+	QueryAllRsp, err := travelSvc.QueryAllTrip()
 	if err != nil {
-		log.Fatalf("[Query]QueryAll error occurs: %v", err)
+		log.Fatalf("[Query]QueryAllTrip error occurs: %v", err)
 	}
 	if QueryAllRsp.Status != 1 {
 		log.Fatalf("[Query]QueryAllRsp.Status != 1")
@@ -82,9 +82,9 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	time.Sleep(2 * time.Second)
 
 	// 3. Query Again
-	QueryAllRspAgain, err2 := travelSvc.QueryAll()
+	QueryAllRspAgain, err2 := travelSvc.QueryAllTrip()
 	if err2 != nil {
-		log.Fatalf("[Query Again]QueryAll error2 occurs: %v", err2)
+		log.Fatalf("[Query Again]QueryAllTrip error2 occurs: %v", err2)
 	}
 	if QueryAllRspAgain.Status != 1 {
 		log.Fatalf("[Query Again]QueryAllRsp.Status != 1")
@@ -102,7 +102,7 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	// LoginId
 	r0 := rand.Float64()
 	if r0 < 0.95 {
-		QueryAllTravelInfo, err := travelSvc.QueryAll()
+		QueryAllTravelInfo, err := travelSvc.QueryAllTrip()
 		if err != nil {
 			log.Fatalf("error occurs: %v", err)
 		}
@@ -128,9 +128,9 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	// TripID
 	r1 := rand.Float64()
 	if r1 < 0.95 {
-		QueryAllTravelInfo, err := travelSvc.QueryAll()
+		QueryAllTravelInfo, err := travelSvc.QueryAllTrip()
 		if err != nil {
-			log.Fatalf("[TripID]QueryAll error occurs: %v", err)
+			log.Fatalf("[TripID]QueryAllTrip error occurs: %v", err)
 		}
 		if QueryAllTravelInfo.Status != 1 {
 			log.Fatalf("[Query Again]QueryAllRsp.Status != 1")
@@ -154,9 +154,9 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	// TrainTypeName
 	r2 := rand.Float64()
 	if r2 < 0.95 {
-		QueryAllTravelInfo, err := travelSvc.QueryAll()
+		QueryAllTravelInfo, err := travelSvc.QueryAllTrip()
 		if err != nil {
-			log.Fatalf("[TrainTypeName]QueryAll error occurs: %v", err)
+			log.Fatalf("[TrainTypeName]QueryAllTrip error occurs: %v", err)
 		}
 		if QueryAllTravelInfo.Status != 1 {
 			log.Fatalf("[Query AllTravelInfo.Status] != 1")
@@ -382,9 +382,9 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	// StartTime
 	r7 := rand.Float64()
 	if r7 < 0.95 {
-		QueryAllTravelInfo, err := travelSvc.QueryAll()
+		QueryAllTravelInfo, err := travelSvc.QueryAllTrip()
 		if err != nil {
-			log.Fatalf("[StartTime]QueryAll error occurs: %v", err)
+			log.Fatalf("[StartTime]QueryAllTrip error occurs: %v", err)
 		}
 		if QueryAllTravelInfo.Status != 1 {
 			log.Fatalf("[StartTime]QueryAllRsp.Status != 1")
@@ -408,9 +408,9 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	// EndTime
 	r8 := rand.Float64()
 	if r8 < 0.95 {
-		QueryAllTravelInfo, err := travelSvc.QueryAll()
+		QueryAllTravelInfo, err := travelSvc.QueryAllTrip()
 		if err != nil {
-			log.Fatalf("[EndTime]QueryAll error occurs: %v", err)
+			log.Fatalf("[EndTime]QueryAllTrip error occurs: %v", err)
 		}
 		if QueryAllTravelInfo.Status != 1 {
 			log.Fatalf("[EndTime]QueryAllRsp.Status != 1")
@@ -455,9 +455,9 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	var MockedDeleteID string
 	r9 := rand.Float64()
 	if r9 < 0.95 {
-		QueryAllTravelInfo, err := travelSvc.QueryAll()
+		QueryAllTravelInfo, err := travelSvc.QueryAllTrip()
 		if err != nil {
-			log.Fatalf("[Delete according to the ID]QueryAll error occurs: %v", err)
+			log.Fatalf("[Delete according to the ID]QueryAllTrip error occurs: %v", err)
 		}
 		if QueryAllTravelInfo.Status != 1 {
 			log.Fatalf("[Delete according to the ID] QueryAllRsp.Status != 1")
@@ -498,9 +498,9 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 			log.Fatalf("[Delete according to the ID]CreateTrip Error occurs: %v", error)
 		}
 
-		QueryAllTravelInfo, err := travelSvc.QueryAll()
+		QueryAllTravelInfo, err := travelSvc.QueryAllTrip()
 		if err != nil {
-			log.Fatalf("[Delete according to the ID]QueryAll error occurs: %v", err)
+			log.Fatalf("[Delete according to the ID]QueryAllTrip error occurs: %v", err)
 		}
 		if QueryAllTravelInfo.Status != 1 {
 			log.Fatalf("[Delete according to the ID]QueryAllTravelInfo.Status != 1")
@@ -529,9 +529,9 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	var GetTripID string
 	r10 := rand.Float64()
 	if r10 < 0.95 {
-		QueryAllTravelInfo, err := travelSvc.QueryAll()
+		QueryAllTravelInfo, err := travelSvc.QueryAllTrip()
 		if err != nil {
-			log.Fatalf("[6 & 7 & 8]QueryAll error occurs: %v", err)
+			log.Fatalf("[6 & 7 & 8]QueryAllTrip error occurs: %v", err)
 		}
 		if QueryAllTravelInfo.Status != 1 {
 			log.Fatalf("[6 & 7 & 8] QueryAllRsp.Status != 1")
@@ -572,7 +572,7 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 			log.Fatalf("[6 & 7 & 8]CreateTrip Error occurs: %v", error)
 		}
 
-		QueryAllTravelInfo, err := travelSvc.QueryAll()
+		QueryAllTravelInfo, err := travelSvc.QueryAllTrip()
 		if err != nil {
 			log.Fatalf("[6 & 7 & 8]QueryAllTravelInfo error occurs: %v", err)
 		}
@@ -785,9 +785,9 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	var MockedDepartureTime string
 	r14 := rand.Float64()
 	if r14 < 0.95 {
-		QueryAllTravelInfo, err := travelSvc.QueryAll()
+		QueryAllTravelInfo, err := travelSvc.QueryAllTrip()
 		if err != nil {
-			log.Fatalf("[10.3. DepartureTime]QueryAll error occurs: %v", err)
+			log.Fatalf("[10.3. DepartureTime]QueryAllTrip error occurs: %v", err)
 		}
 
 		if len(QueryAllTravelInfo.Data) > 0 {
@@ -837,9 +837,9 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	// TripID
 	r15 := rand.Float64()
 	if r15 < 0.95 {
-		QueryAllTravelInfo, err := travelSvc.QueryAll()
+		QueryAllTravelInfo, err := travelSvc.QueryAllTrip()
 		if err != nil {
-			log.Fatalf("[12. GetTripAllDetailInfo]QueryAll error occurs: %v", err)
+			log.Fatalf("[12. GetTripAllDetailInfo]QueryAllTrip error occurs: %v", err)
 		}
 		if QueryAllTravelInfo.Status != 1 {
 			log.Fatalf("[12. GetTripAllDetailInfo] QueryAllTravelInfo.Status != 1")
