@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/go-faker/faker/v4"
 	"math/rand"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -59,6 +60,37 @@ func GenerateTrainTypeName() string {
 	MockedTrainTypeName := trainTypes[rand.Intn(len(trainTypes))]
 
 	return MockedTrainTypeName
+}
+
+func generateDescription() string {
+	rand.Seed(time.Now().UnixNano())
+
+	// Generate a random number with one decimal place between 0.1 and 10.0
+	randomNumber := rand.Float64()*9.9 + 0.1
+	numberStr := strconv.FormatFloat(randomNumber, 'f', 1, 64)
+
+	// Determine if 'Max' should be replaced by 'Min' with a probability of 0.3
+	replaceMax := rand.Float64() < 0.3
+	description := "Max"
+	if replaceMax {
+		description = "Min"
+	}
+
+	return fmt.Sprintf("%s in %s hour", description, numberStr)
+}
+
+func generateRandomNumberString() string {
+	rand.Seed(time.Now().UnixNano())
+	numberLength := 10 // Length of the number string
+
+	// Generate a random number string of the specified length
+	numberStr := ""
+	for i := 0; i < numberLength; i++ {
+		digit := rand.Intn(10) // Generate a random digit (0-9)
+		numberStr += strconv.Itoa(digit)
+	}
+
+	return numberStr
 }
 
 func ListToString(stations []string) string {

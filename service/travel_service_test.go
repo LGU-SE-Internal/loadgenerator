@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/go-faker/faker/v4"
+	"log"
 	"sync"
 	"testing"
 )
@@ -9,6 +10,15 @@ import (
 func TestTravelService_FullIntegration(t *testing.T) {
 	cli, _ := GetAdminClient()
 	var travelSvc TravelService = cli
+
+	loginResult, err := cli.ReqUserLogin(&UserLoginInfoReq{
+		Password:         "111111",
+		UserName:         "fdse_microservice",
+		VerificationCode: "123",
+	})
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	// Query Test
 	resp, err := travelSvc.QueryAll()
@@ -20,8 +30,8 @@ func TestTravelService_FullIntegration(t *testing.T) {
 	}
 
 	// Mock para
-	MockedLoginId := faker.UUIDHyphenated()
-	MockedTrainTypeName := GenerateTrainTypeName()
+	MockedLoginId := loginResult.Data.Token
+	MockedTrainTypeName := GenerateTrainTypeName() /*"GaoTieSeven"*/
 	MockedRouteID := faker.UUIDHyphenated()
 	MockedStartStationName := faker.GetRealAddress().City
 	MockedStationsName := faker.GetRealAddress().City
