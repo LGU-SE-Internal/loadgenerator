@@ -61,6 +61,18 @@ func GenerateTrainTypeName() string {
 	return MockedTrainTypeName
 }
 
+func getMiddleElements(input string) string {
+	elements := strings.Split(input, ",")
+
+	// If the input contains less than 3 elements, return an empty string
+	if len(elements) < 3 {
+		return ""
+	}
+
+	middleElements := elements[1 : len(elements)-1]
+	return strings.Join(middleElements, ",")
+}
+
 func generateDescription() string {
 	rand.Seed(time.Now().UnixNano())
 
