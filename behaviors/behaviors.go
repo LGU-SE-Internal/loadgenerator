@@ -1,6 +1,7 @@
 package behaviors
 
 import (
+	"context"
 	"github.com/Lincyaw/loadgenerator/service"
 	"log"
 	"math/rand"
@@ -12,34 +13,118 @@ import (
 	"time"
 )
 
-var behaviors_ []BehaviorUnit
-var once sync.Once
+const Client = "client"
 
-type Behavior interface {
-	Run(cli *service.SvcImpl)
+type ContextKey string
+
+const dataKey = ContextKey("data")
+
+// Context wraps context.Context and provides additional methods
+type Context struct {
+	ctx context.Context
 }
 
-type BehaviorUnit struct {
-	B      Behavior
-	Weight int
+func NewContext(ctx context.Context) *Context {
+	return &Context{ctx: ctx}
 }
 
-func RegisterBehaviors(behaviors ...BehaviorUnit) {
-	once.Do(func() {
-		behaviors_ = make([]BehaviorUnit, 0)
-	})
-	for _, behavior := range behaviors {
-		behaviors_ = append(behaviors_, behavior)
+// Set sets a value in the context
+func (c *Context) Set(key string, value interface{}) {
+	data := c.getDataMap()
+	data[key] = value
+	c.ctx = context.WithValue(c.ctx, dataKey, data)
+}
+
+// Get retrieves a value from the context
+func (c *Context) Get(key string) interface{} {
+	data := c.getDataMap()
+	return data[key]
+}
+
+func (c *Context) getDataMap() map[string]interface{} {
+	data, ok := c.ctx.Value(dataKey).(map[string]interface{})
+	if !ok {
+		data = make(map[string]interface{})
 	}
+	return data
 }
 
-func GetBehaviors() []BehaviorUnit {
-	return behaviors_
+// Node represents a single node in the chain
+type Node interface {
+	Execute(ctx *Context) (*NodeResult, error)
+}
+
+type NodeResult struct {
+	Continue bool
+}
+
+type FuncNode struct {
+	fn func(*Context) (*NodeResult, error)
+}
+
+func (f *FuncNode) Execute(ctx *Context) (*NodeResult, error) {
+	return f.fn(ctx)
+}
+
+func NewFuncNode(fn func(*Context) (*NodeResult, error)) *FuncNode {
+	return &FuncNode{fn: fn}
+}
+
+type Chain struct {
+	nodes          []Node
+	nextChains     []chainWithProbability
+	probabilitySum float64
+}
+type chainWithProbability struct {
+	chain       *Chain
+	probability float64
+}
+
+func NewChain(nodes ...Node) *Chain {
+	return &Chain{nodes: nodes}
+}
+
+func (c *Chain) AddNode(node Node) {
+	c.nodes = append(c.nodes, node)
+}
+
+func (c *Chain) AddNextChain(next *Chain, probability float64) {
+	c.nextChains = append(c.nextChains, chainWithProbability{chain: next, probability: probability})
+	c.probabilitySum += probability
+}
+
+func (c *Chain) Execute(ctx *Context) error {
+	for _, node := range c.nodes {
+		result, err := node.Execute(ctx)
+		if err != nil {
+			return err
+		}
+		if result == nil {
+			continue
+		}
+		if !result.Continue {
+			return nil
+		}
+	}
+
+	if len(c.nextChains) > 0 {
+		randValue := rand.Float64() * c.probabilitySum
+		cumulative := 0.0
+		for _, cp := range c.nextChains {
+			cumulative += cp.probability
+			if randValue <= cumulative {
+				return cp.chain.Execute(ctx)
+			}
+		}
+	}
+
+	return nil
 }
 
 type Config struct {
 	Thread    int
 	SleepTime int
+	Chain     *Chain
 }
 
 func WithThread(thread int) func(*Config) {
@@ -50,6 +135,11 @@ func WithThread(thread int) func(*Config) {
 func WithSleep(milli int) func(*Config) {
 	return func(conf *Config) {
 		conf.SleepTime = milli
+	}
+}
+func WithChain(c *Chain) func(*Config) {
+	return func(conf *Config) {
+		conf.Chain = c
 	}
 }
 
@@ -66,12 +156,8 @@ func (l *LoadGenerator) Start(conf ...func(*Config)) {
 		config.Thread = 1
 	}
 
-	totalWeight := 0
-	weightBoundaries := make([]int, len(behaviors_))
-
-	for i, behaviorUnit := range behaviors_ {
-		totalWeight += behaviorUnit.Weight
-		weightBoundaries[i] = totalWeight
+	if config.Chain == nil {
+		panic("LoadGenerator needs chain")
 	}
 
 	var wg sync.WaitGroup
@@ -82,29 +168,21 @@ func (l *LoadGenerator) Start(conf ...func(*Config)) {
 			defer wg.Done()
 			defer func() {
 				if r := recover(); r != nil {
-					// 处理异常，比如记录日志
 					buf := make([]byte, 1024)
 					n := runtime.Stack(buf, false)
 					stackTrace := string(buf[:n])
 
-					// 记录日志，包括 panic 信息和调用栈
 					log.Printf("Recovered from panic: %v\nStack trace:\n%s", r, stackTrace)
 				}
 			}()
 
-			randSrc := rand.NewSource(time.Now().UnixNano())
-			randGen := rand.New(randSrc)
-
 			for {
-				randomWeight := randGen.Intn(totalWeight)
-				selectedIndex := 0
-				for j, boundary := range weightBoundaries {
-					if randomWeight < boundary {
-						selectedIndex = j
-						break
-					}
+				ctx := NewContext(context.Background())
+				ctx.Set(Client, service.NewSvcClients())
+				err := config.Chain.Execute(ctx)
+				if err != nil {
+					log.Printf("Error executing chain: %v", err)
 				}
-				behaviors_[selectedIndex].B.Run(service.NewSvcClients())
 				time.Sleep(time.Millisecond * time.Duration(rand.Intn(config.SleepTime)))
 			}
 		}(i)
@@ -115,7 +193,6 @@ func (l *LoadGenerator) Start(conf ...func(*Config)) {
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 	go func() {
 		<-sigs
-
 		done <- true
 	}()
 

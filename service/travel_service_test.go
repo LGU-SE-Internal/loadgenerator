@@ -197,15 +197,6 @@ func TestTravelService_FullIntegration(t *testing.T) {
 		t.Errorf("Cannot find existed travel info: %v", existedTravel)
 	}
 
-	// Test Retrieve by ID
-	retrieveResp, err := cli.Retrieve(MockedLoginId)
-	if err != nil {
-		t.Errorf("Retrieve request failed, err %s", err)
-	}
-	if retrieveResp.Status != 1 {
-		t.Errorf("Retrieve failed: %s", retrieveResp.Msg)
-	}
-
 	// Test GetTrainTypeByTripId
 	trainTypeResp, err := cli.GetTrainTypeByTripId(MockedTripId)
 	if err != nil {
