@@ -21,6 +21,33 @@ func generateVerifyCode() string {
 	return string(code)
 }
 
+func generateTrainTypeName(input string) string {
+	startLetter := strings.ToUpper(string(input[0]))
+
+	var MockedTrainType string
+
+	switch startLetter {
+	case "G":
+		if rand.Intn(2) == 0 {
+			MockedTrainType = "GaoTieOne"
+		} else {
+			MockedTrainType = "GaoTieTwo"
+		}
+	case "Z":
+		MockedTrainType = "ZhiDa"
+	case "T":
+		MockedTrainType = "TeKuai"
+	case "K":
+		MockedTrainType = "KuaiSu"
+	case "D":
+		MockedTrainType = "DongCheOne"
+	default:
+		MockedTrainType = "Unknown"
+	}
+
+	return MockedTrainType
+}
+
 func GenerateTripId() string {
 	// 设置随机数种子
 	rand.Seed(time.Now().UnixNano())
@@ -31,8 +58,8 @@ func GenerateTripId() string {
 	// 随机选择一个字母
 	startLetter := letters[rand.Intn(len(letters))]
 
-	// 生成三个随机数字
-	randomNumber := rand.Intn(1000)
+	// 生成四个随机数字
+	randomNumber := rand.Intn(10000)
 
 	// 格式化成三位数字，不足三位前面补零
 	MockedTripID := fmt.Sprintf("%c%03d", startLetter, randomNumber)
@@ -53,12 +80,24 @@ func GenerateTrainTypeName() string {
 	rand.Seed(time.Now().UnixNano())
 
 	// 定义可能的火车类型名称
-	trainTypes := []string{"GaoTieOne", "GaoTieTwo", "GaoTieSeven", "DongCheOne", "DongCheTen"}
+	trainTypes := []string{"GaoTieOne", "GaoTieTwo", "DongCheOne", "ZhiDa", "TeKuai", "KuaiSu"}
 
 	// 随机选择一个火车类型名称
 	MockedTrainTypeName := trainTypes[rand.Intn(len(trainTypes))]
 
 	return MockedTrainTypeName
+}
+
+func getMiddleElements(input string) string {
+	elements := strings.Split(input, ",")
+
+	// If the input contains less than 3 elements, return an empty string
+	if len(elements) < 3 {
+		return ""
+	}
+
+	middleElements := elements[1 : len(elements)-1]
+	return strings.Join(middleElements, ",")
 }
 
 func generateDescription() string {
