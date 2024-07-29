@@ -21,6 +21,33 @@ func generateVerifyCode() string {
 	return string(code)
 }
 
+func generateTrainTypeName(input string) string {
+	startLetter := strings.ToUpper(string(input[0]))
+
+	var MockedTrainType string
+
+	switch startLetter {
+	case "G":
+		if rand.Intn(2) == 0 {
+			MockedTrainType = "GaoTieOne"
+		} else {
+			MockedTrainType = "GaoTieTwo"
+		}
+	case "Z":
+		MockedTrainType = "ZhiDa"
+	case "T":
+		MockedTrainType = "TeKuai"
+	case "K":
+		MockedTrainType = "KuaiSu"
+	case "D":
+		MockedTrainType = "DongCheOne"
+	default:
+		MockedTrainType = "Unknown"
+	}
+
+	return MockedTrainType
+}
+
 func GenerateTripId() string {
 	// 设置随机数种子
 	rand.Seed(time.Now().UnixNano())
