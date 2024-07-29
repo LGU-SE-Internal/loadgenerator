@@ -31,8 +31,8 @@ func GenerateTripId() string {
 	// 随机选择一个字母
 	startLetter := letters[rand.Intn(len(letters))]
 
-	// 生成三个随机数字
-	randomNumber := rand.Intn(1000)
+	// 生成四个随机数字
+	randomNumber := rand.Intn(10000)
 
 	// 格式化成三位数字，不足三位前面补零
 	MockedTripID := fmt.Sprintf("%c%03d", startLetter, randomNumber)

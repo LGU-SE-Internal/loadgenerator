@@ -223,8 +223,12 @@ func TestTravelService_FullIntegration(t *testing.T) {
 		t.Errorf("Cannot find existed travel info: %v", existedTravel)
 	}
 
-	// Test GetTrainTypeByTripId - K, Z
-	trainTypeResp, err := travelSvc.GetTrainTypeByTripId(fmt.Sprintf("%s%s", updatedTravel.TripId.Type, updatedTravel.TripId.Number))
+	//TripIdForQuery := fmt.Sprintf("%s%s", updatedTravel.TripId.Type, updatedTravel.TripId.Number)
+	randIndexForQuery := rand.Intn(len(allUpdatedTravelInfos.Data))
+	randomGetTravel := allUpdatedTravelInfos.Data[randIndexForQuery]
+	TripIdForQuery := fmt.Sprintf("%s%s", randomGetTravel.TripId.Type, randomGetTravel.TripId.Number)
+	// Test GetTrainTypeByTripId
+	trainTypeResp, err := travelSvc.GetTrainTypeByTripId(TripIdForQuery)
 	if err != nil {
 		t.Errorf("GetTrainTypeByTripId request failed, err %s", err)
 	}
@@ -233,7 +237,7 @@ func TestTravelService_FullIntegration(t *testing.T) {
 	}
 
 	// Test GetRouteByTripId
-	routeResp, err := travelSvc.GetRouteByTripId(fmt.Sprintf("%s%s", updatedTravel.TripId.Type, updatedTravel.TripId.Number))
+	routeResp, err := travelSvc.GetRouteByTripId(TripIdForQuery)
 	if err != nil {
 		t.Errorf("GetRouteByTripId request failed, err %s", err)
 	}
@@ -287,12 +291,13 @@ func TestTravelService_FullIntegration(t *testing.T) {
 	//	TravelDate: "",
 	//	TripId:     "G1234",
 	//})
-	tripAllDetailResp, err := travelSvc.GetTripAllDetailInfo(GetTripDetailReq{
+	tripAllDetailReq := GetTripDetailReq{
 		From:       updatedTravel.StartStationName,
 		To:         updatedTravel.TerminalStationName,
 		TravelDate: updatedTravel.StartTime,
 		TripId:     fmt.Sprintf("%s%s", updatedTravel.TripId.Type, updatedTravel.TripId.Number),
-	})
+	}
+	tripAllDetailResp, err := travelSvc.GetTripAllDetailInfo(tripAllDetailReq)
 	if err != nil {
 		t.Errorf("GetTripAllDetailInfo request failed, err %s", err)
 	}
