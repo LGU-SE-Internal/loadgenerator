@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"github.com/go-faker/faker/v4"
 	"log"
 	"math/rand"
 	"strings"
@@ -50,14 +51,14 @@ func TestTravelService_FullIntegration(t *testing.T) {
 
 	// Mock para
 	MockedLoginId := loginResult.Data.Token
-	MockedTrainTypeName := GenerateTrainTypeName() /*"GaoTieSeven"*/
+	MockedTripId := GenerateTripId()
+	MockedTrainTypeName := generateTrainTypeName(MockedTripId) /*"GaoTieSeven"*/
 	MockedRouteID := randomRoute.Id
 	MockedStartStationName := randomRoute.StartStation
 	MockedStationsName := /*strings.Join(AllRoutesByQuery.Data[0].Stations, ",")*/ getMiddleElements(strings.Join(randomRoute.Stations, ","))
 	MockedTerminalStationName := randomRoute.EndStation
 	MockedStartTime := getRandomTime()
 	MockedEndTime := getRandomTime(WithStartTime(MockedStartTime))
-	MockedTripId := GenerateTripId()
 
 	// Mock input
 	travelInfo := TravelInfo{
@@ -100,6 +101,32 @@ func TestTravelService_FullIntegration(t *testing.T) {
 		t.Errorf("CreateTrip failed: %s. Except: %v, but get: %v", createResp.Msg, travelInfo, createResp.Data)
 	}
 	existedTravel := createResp.Data
+
+	// Create the corresponding price service at the same time
+	var priceSvc PriceService = cli
+	MockedPriceID := faker.UUIDHyphenated()
+	MockedBasicPriceRate := rand.Float64()
+	MockedFirstClassPriceRate := rand.Float64()
+	// Create a new price config
+	createReq := &PriceConfig{
+		ID:                  MockedPriceID,
+		TrainType:           generateTrainTypeName(existedTravel.TripId.Type),
+		RouteID:             existedTravel.RouteId,
+		BasicPriceRate:      MockedBasicPriceRate,
+		FirstClassPriceRate: MockedFirstClassPriceRate,
+	}
+
+	createPriceResp, err := priceSvc.CreateNewPriceConfig(createReq)
+	if err != nil {
+		t.Errorf("CreateNewPriceConfig failed: %v", err)
+	}
+	if createPriceResp.Msg == "Already exists" {
+		t.Log("price found, skip")
+		t.Skip()
+	}
+	if createPriceResp.Status != 1 {
+		t.Errorf("CreateNewPriceConfig failed, status: %d", createPriceResp.Status)
+	}
 
 	// Query all
 	allTravelInfos, err := travelSvc.QueryAllTrip()
