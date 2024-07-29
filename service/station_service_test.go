@@ -20,6 +20,9 @@ func TestStationService_FullIntegration(t *testing.T) {
 	if len(resp.Data) == 0 {
 		t.Errorf("No stations found")
 	}
+	if resp.Status != 1 {
+		t.Errorf("Status should be 1, but is %d", resp.Status)
+	}
 	t.Log(resp)
 
 	//Mock
@@ -44,12 +47,18 @@ func TestStationService_FullIntegration(t *testing.T) {
 	if resp1.Data.StayTime != input.StayTime {
 		t.Errorf("Request failed, resp1.Data.StayTime: %d, expected: %d", resp1.Data.StayTime, input.StayTime)
 	}
+	if resp1.Status != 1 {
+		t.Errorf("Request failed, resp1.Status: %d, expected: %d", resp1.Status, 1)
+	}
 	existedStation := resp1.Data
 
 	// Query all
 	QueryAll, err7 := stationSvc.QueryStations()
 	if err7 != nil {
 		t.Errorf("Request failed, err7 %s", err7)
+	}
+	if QueryAll.Status != 1 {
+		t.Errorf("Request failed, QueryAll.Status: %d, expected: %d", QueryAll.Status, 1)
 	}
 	found := false
 	for _, station := range QueryAll.Data {
