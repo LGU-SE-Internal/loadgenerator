@@ -310,11 +310,22 @@ func (s *SvcImpl) QueryInfo(tripInfo TripInfo) (*QueryInfoResponse, error) {
 }
 
 type QueryInfoInParallelTripResponse struct {
-	Status int `json:"status"`
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
 	Data   []struct {
-		SeatNo       int    `json:"seatNo"`
-		StartStation string `json:"startStation"`
-		DestStation  string `json:"destStation"`
+		TripId struct {
+			Type   string `json:"type"`
+			Number string `json:"number"`
+		} `json:"tripId"`
+		TrainTypeName        string `json:"trainTypeName"`
+		StartStation         string `json:"startStation"`
+		TerminalStation      string `json:"terminalStation"`
+		StartTime            string `json:"startTime"`
+		EndTime              string `json:"endTime"`
+		EconomyClass         int    `json:"economyClass"`
+		ConfortClass         int    `json:"confortClass"`
+		PriceForEconomyClass string `json:"priceForEconomyClass"`
+		PriceForConfortClass string `json:"priceForConfortClass"`
 	} `json:"data"`
 }
 
@@ -344,12 +355,38 @@ type GetTripAllDetailInfoResponse struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`
 	Data   struct {
-		Status       bool        `json:"status"`
-		Message      interface{} `json:"message"`
-		TripResponse interface{} `json:"tripResponse"`
-		Trip         interface{} `json:"trip"`
+		TripResponse struct {
+			TripId struct {
+				Type   string `json:"type"`
+				Number string `json:"number"`
+			} `json:"tripId"`
+			TrainTypeName        string `json:"trainTypeName"`
+			StartStation         string `json:"startStation"`
+			TerminalStation      string `json:"terminalStation"`
+			StartTime            string `json:"startTime"`
+			EndTime              string `json:"endTime"`
+			EconomyClass         int    `json:"economyClass"`
+			ConfortClass         int    `json:"confortClass"`
+			PriceForEconomyClass string `json:"priceForEconomyClass"`
+			PriceForConfortClass string `json:"priceForConfortClass"`
+		} `json:"tripResponse"`
+		Trip struct {
+			Id     string `json:"id"`
+			TripId struct {
+				Type   string `json:"type"`
+				Number string `json:"number"`
+			} `json:"tripId"`
+			TrainTypeName       string `json:"trainTypeName"`
+			RouteId             string `json:"routeId"`
+			StartStationName    string `json:"startStationName"`
+			StationsName        string `json:"stationsName"`
+			TerminalStationName string `json:"terminalStationName"`
+			StartTime           string `json:"startTime"`
+			EndTime             string `json:"endTime"`
+		} `json:"trip"`
 	} `json:"data"`
 }
+
 type GetTripDetailReq struct {
 	From       string `json:"from"`
 	To         string `json:"to"`

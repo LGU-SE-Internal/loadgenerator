@@ -100,7 +100,7 @@ func TestSvcImpl_Preserve(t *testing.T) {
 
 	// Travel Service
 	var travelSvc TravelService = cli
-	// Create Test
+	// Query
 	allTrip, err := travelSvc.QueryAllTrip()
 	if err != nil {
 		t.Errorf("QueryAllTrip failed: %v", err)
