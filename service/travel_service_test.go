@@ -265,7 +265,7 @@ func TestTravelService_FullIntegration(t *testing.T) {
 	tripInfo := TripInfo{
 		StartPlace:    updatedTravel.StartStationName,
 		EndPlace:      updatedTravel.TerminalStationName,
-		DepartureTime: updatedTravel.StartTime,
+		DepartureTime: updatedTravel.EndTime,
 	}
 	queryInfoResp, err := travelSvc.QueryInfo(tripInfo)
 	if err != nil {
