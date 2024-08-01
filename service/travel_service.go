@@ -41,13 +41,6 @@ type TripInfo struct {
 	StartPlace    string `json:"startPlace"`
 	EndPlace      string `json:"endPlace"`
 	DepartureTime string `json:"departureTime"`
-	// Add other fields as necessary
-}
-
-// TripAllDetailInfo represents the trip all detail information
-type TripAllDetailInfo struct {
-	TripId string `json:"tripId"`
-	// Add other fields as necessary
 }
 
 // TripResponse represents the trip response
