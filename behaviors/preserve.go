@@ -26,7 +26,7 @@ func Preserve(ctx *Context) (*NodeResult, error) {
 		ContactsID:      MockedContactsID,
 		TripID:          MockedTripID,
 		SeatType:        MockedSeatType,
-		LoginToken:      ctx.Get(LoginId).(string),
+		LoginToken:      ctx.Get(LoginToken).(string),
 		Date:            MockedDate,
 		From:            MockedFromCity,
 		To:              MockedToCity,
@@ -49,7 +49,8 @@ func Preserve(ctx *Context) (*NodeResult, error) {
 	if PreserveResp.Status != 1 {
 		return nil, fmt.Errorf("preserve order tickets fail. PreserveResp.Status != 1, get %v", PreserveResp.Status)
 	}
-	//return nil, err
 	fmt.Printf("The Status is: %v, and PreserveResp Data: %v\n", PreserveResp.Status, PreserveResp.Data)
+
+	//return nil, err
 	return &(NodeResult{false}), nil
 }
