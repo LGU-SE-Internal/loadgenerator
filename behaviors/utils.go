@@ -8,6 +8,35 @@ import (
 	"time"
 )
 
+func getMiddleElements(input string) string {
+	elements := strings.Split(input, ",")
+
+	// If the input contains less than 3 elements, return an empty string
+	if len(elements) < 3 {
+		return ""
+	}
+
+	middleElements := elements[1 : len(elements)-1]
+	return strings.Join(middleElements, ",")
+}
+
+func generateDescription() string {
+	rand.Seed(time.Now().UnixNano())
+
+	// Generate a random number with one decimal place between 0.1 and 10.0
+	randomNumber := rand.Float64()*9.9 + 0.1
+	numberStr := strconv.FormatFloat(randomNumber, 'f', 1, 64)
+
+	// Determine if 'Max' should be replaced by 'Min' with a probability of 0.3
+	replaceMax := rand.Float64() < 0.3
+	description := "Max"
+	if replaceMax {
+		description = "Min"
+	}
+
+	return fmt.Sprintf("%s in %s hour", description, numberStr)
+}
+
 // generateVerifyCode generates a 6-digit verification code consisting of letters and numbers.
 func generateVerifyCode() string {
 	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
