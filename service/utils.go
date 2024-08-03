@@ -48,6 +48,18 @@ func generateTrainTypeName(input string) string {
 	return MockedTrainType
 }
 
+// generateDocumentNumber generates a DocumentNumber with 50% probability for "DocumentNumber_One"
+// and 50% probability for "DocumentNumber_Two".
+func generateDocumentNumber() string {
+	rand.Seed(time.Now().UnixNano()) // Seed the random number generator
+
+	if rand.Intn(2) == 0 {
+		return "DocumentNumber_One"
+	} else {
+		return "DocumentNumber_Two"
+	}
+}
+
 func GenerateTripId() string {
 	// 设置随机数种子
 	rand.Seed(time.Now().UnixNano())

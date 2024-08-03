@@ -53,7 +53,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 	//CreateAndQuery_And_Order; Prob = 0.04
 	//Random_Create_And_Order; Prob = 0.01
 
-	// Account Service
+	// Contact Service
 	var accountSvc service.ContactsService = cli
 	// Mock AccountID
 	// Generate a random float between 0 and 1
