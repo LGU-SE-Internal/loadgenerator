@@ -11,6 +11,7 @@ import (
 )
 
 const (
+	// Preserve
 	AccountID  = "accountId"
 	ContactsID = "contactsId"
 	TripID     = "tripId"
@@ -31,6 +32,7 @@ const (
 	ConsigneeWeight = "consigneeWeight"
 	IsWithin        = "isWithin"
 
+	// Route
 	RouteID = "routeId"
 )
 
@@ -176,10 +178,10 @@ func CreateTrip(ctx *Context) (*NodeResult, error) {
 	MockedLoginId := ctx.Get(LoginToken).(string)
 	MockedTripId := GenerateTripId()
 	MockedTrainTypeName := generateTrainTypeName(MockedTripId) /*"GaoTieSeven"*/
-	MockedRouteID := randomRoute.Id
-	MockedStartStationName := randomRoute.StartStation
-	MockedStationsName := /*strings.Join(AllRoutesByQuery.Data[0].Stations, ",")*/ getMiddleElements(strings.Join(randomRoute.Stations, ","))
-	MockedTerminalStationName := randomRoute.EndStation
+	MockedRouteID := ctx.Get(RouteID).(string)
+	MockedStartStationName := ctx.Get(From).(string)
+	MockedStationsName := /*strings.Join(AllRoutesByQuery.Data[0].Stations, ",")*/ ctx.Get(StationName).(string)
+	MockedTerminalStationName := ctx.Get(To).(string)
 	MockedStartTime := getRandomTime()
 	MockedEndTime := getRandomTime(WithStartTime(MockedStartTime))
 
@@ -198,16 +200,18 @@ func CreateTrip(ctx *Context) (*NodeResult, error) {
 	}
 
 	// Create Test
-	createResp, err := travelSvc.CreateTrip(&travelInfo)
+	createResp, err := cli.CreateTrip(&travelInfo)
 	if err != nil {
-		t.Errorf("CreateTrip request failed, err %s", err)
+		log.Fatalf("CreateTrip request failed, err %s", err)
+		return nil, err
 	}
 	if createResp.Status != 1 {
-		t.Errorf("CreateTrip failed: %s", createResp.Msg)
+		log.Fatalf("CreateTrip failed: %s", createResp.Msg)
+		return nil, err
 	}
 	if createResp.Msg == "Already exists" {
-		t.Logf("Already exists: %s", createResp.Msg)
-		t.Skip()
+		log.Fatalf("Already exists: %s", createResp.Msg)
+		return nil, err
 	}
 	isMatch := false
 	if /*createResp.Data.Id == travelInfo.LoginID &&*/
@@ -221,8 +225,18 @@ func CreateTrip(ctx *Context) (*NodeResult, error) {
 		isMatch = true
 	}
 	if !isMatch {
-		t.Errorf("CreateTrip failed: %s. Except: %v, but get: %v", createResp.Msg, travelInfo, createResp.Data)
+		log.Fatalf("CreateTrip failed: %s. Except: %v, but get: %v", createResp.Msg, travelInfo, createResp.Data)
+		return nil, err
 	}
+
+	ctx.Set(TripID, createResp.Data.TripId)
+	ctx.Set(From, createResp.Data.StartStationName)
+	ctx.Set(From, createResp.Data.TerminalStationName)
+	ctx.Set(Date, createResp.Data.StartTime)
+	ctx.Set(StationName, createResp.Data.StationsName)
+	ctx.Set(HandleDate, createResp.Data.EndTime)
+
+	return nil, nil
 }
 
 func QueryRoute(ctx *Context) (*NodeResult, error) {
@@ -245,6 +259,7 @@ func QueryRoute(ctx *Context) (*NodeResult, error) {
 	ctx.Set(From, AllRoutesByQuery.Data[randomIndex].StartStation)
 	ctx.Set(To, AllRoutesByQuery.Data[randomIndex].EndStation)
 	ctx.Set(StationName, getMiddleElements(strings.Join(AllRoutesByQuery.Data[randomIndex].Stations, ",")))
+	ctx.Set(RouteID, AllRoutesByQuery.Data[randomIndex].Id)
 
 	return nil, nil
 }
@@ -301,6 +316,7 @@ func CreateRoute(ctx *Context) (*NodeResult, error) {
 	ctx.Set(From, resp.Data.StartStation)
 	ctx.Set(To, resp.Data.EndStation)
 	ctx.Set(StationName, getMiddleElements(strings.Join(resp.Data.Stations, ",")))
+	ctx.Set(RouteID, resp.Data.Id)
 
 	return nil, nil
 }
