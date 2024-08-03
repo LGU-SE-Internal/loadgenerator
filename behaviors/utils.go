@@ -2,7 +2,6 @@ package behaviors
 
 import (
 	"fmt"
-	"github.com/go-faker/faker/v4"
 	"math/rand"
 	"strconv"
 	"strings"
@@ -20,6 +19,45 @@ func generateVerifyCode() string {
 		code[i] = charset[seededRand.Intn(len(charset))]
 	}
 	return string(code)
+}
+
+func generateTrainTypeName(input string) string {
+	startLetter := strings.ToUpper(string(input[0]))
+
+	var MockedTrainType string
+
+	switch startLetter {
+	case "G":
+		if rand.Intn(2) == 0 {
+			MockedTrainType = "GaoTieOne"
+		} else {
+			MockedTrainType = "GaoTieTwo"
+		}
+	case "Z":
+		MockedTrainType = "ZhiDa"
+	case "T":
+		MockedTrainType = "TeKuai"
+	case "K":
+		MockedTrainType = "KuaiSu"
+	case "D":
+		MockedTrainType = "DongCheOne"
+	default:
+		MockedTrainType = "Unknown"
+	}
+
+	return MockedTrainType
+}
+
+// generateDocumentNumber generates a DocumentNumber with 50% probability for "DocumentNumber_One"
+// and 50% probability for "DocumentNumber_Two".
+func generateDocumentNumber() string {
+	rand.Seed(time.Now().UnixNano()) // Seed the random number generator
+
+	if rand.Intn(2) == 0 {
+		return "DocumentNumber_One"
+	} else {
+		return "DocumentNumber_Two"
+	}
 }
 
 func GenerateTripId() string {
@@ -90,6 +128,66 @@ func generateRandomStoreName() string {
 
 	// Return the randomly selected store name
 	return storeNames[randomIndex]
+}
+
+// generateRandomTime generates a random time in the format "HH:MM:SS".
+func generateRandomTime() string {
+	hour := rand.Intn(24)   // 0-23
+	minute := rand.Intn(60) // 0-59
+	second := rand.Intn(60) // 0-59
+	return fmt.Sprintf("%02d:%02d:%02d", hour, minute, second)
+}
+
+type TimeConfig struct {
+	StartTime string
+}
+
+type Option func(config *TimeConfig)
+
+func WithStartTime(startTime string) Option {
+	return func(config *TimeConfig) {
+		config.StartTime = startTime
+	}
+}
+func getRandomTime(opts ...Option) string {
+	config := &TimeConfig{}
+	for _, opt := range opts {
+		opt(config)
+	}
+
+	now := time.Now()
+
+	if config.StartTime != "" {
+		startTime, err := time.Parse("2006-01-02 15:04:05", config.StartTime)
+		if err != nil {
+			fmt.Println("Invalid StartTime format, using current time instead.")
+		} else {
+			now = startTime
+			// 生成1小时到1天之后的时间
+			randomHours := rand.Intn(24) + 1
+			randomDate := now.Add(time.Duration(randomHours) * time.Hour)
+			return randomDate.Format("2006-01-02 15:04:05")
+		}
+	}
+
+	// 保持原来的逻辑，生成从今天起到未来一个月内的随机日期
+	randomDays := rand.Intn(30) + 1
+	randomDate := now.AddDate(0, 0, randomDays)
+	return randomDate.Format("2006-01-02 15:04:05")
+}
+
+// ConvertCommaSeparatedToBracketed converts a comma-separated string to a bracketed, space-separated string
+func ConvertCommaSeparatedToBracketed(input string) string {
+	// 删除字符串前后的空白
+	input = strings.TrimSpace(input)
+	// 按逗号分隔字符串，并去除每个元素前后的空白
+	parts := strings.Split(input, ",")
+	for i := range parts {
+		parts[i] = strings.TrimSpace(parts[i])
+	}
+	// 将分隔后的元素用空格连接，并用方括号包围
+	result := fmt.Sprintf("[%s]", strings.Join(parts, " "))
+	return result
 }
 
 // helper function for Order Service
@@ -205,51 +303,6 @@ func StringToList(input string) []string {
 		parts[i] = strings.TrimSpace(parts[i])
 	}
 	return parts
-}
-
-// generateRandomTime generates a random time in the format "HH:MM:SS".
-func generateRandomTime() string {
-	//// Seed the random number generator to ensure different results each run
-	//rand.Seed(time.Now().UnixNano())
-
-	// Generate random hours, minutes, and seconds
-	hour := rand.Intn(24)   // 0-23
-	minute := rand.Intn(60) // 0-59
-	second := rand.Intn(60) // 0-59
-
-	// Format the time as "HH:MM:SS"
-	return fmt.Sprintf("%02d:%02d:%02d", hour, minute, second)
-}
-
-func getRandomTime() string {
-	MockedRandomDate := faker.Date()
-
-	////// Seed the random number generator to ensure different results each run
-	////rand.Seed(time.Now().UnixNano())
-	//// Generate random hours, minutes, and seconds
-	//hour := rand.Intn(24)   // 0-23
-	//minute := rand.Intn(60) // 0-59
-	//second := rand.Intn(60) // 0-59
-	//MockedRandomTime := fmt.Sprintf("%02d:%02d:%02d", hour, minute, second)
-	MockedRandomTime := generateRandomTime()
-
-	DateAndTime := MockedRandomDate + " " + MockedRandomTime
-
-	return DateAndTime
-}
-
-// ConvertCommaSeparatedToBracketed converts a comma-separated string to a bracketed, space-separated string
-func ConvertCommaSeparatedToBracketed(input string) string {
-	// 删除字符串前后的空白
-	input = strings.TrimSpace(input)
-	// 按逗号分隔字符串，并去除每个元素前后的空白
-	parts := strings.Split(input, ",")
-	for i := range parts {
-		parts[i] = strings.TrimSpace(parts[i])
-	}
-	// 将分隔后的元素用空格连接，并用方括号包围
-	result := fmt.Sprintf("[%s]", strings.Join(parts, " "))
-	return result
 }
 
 // IntSliceToString converts a slice of integers to a bracketed, space-separated string
