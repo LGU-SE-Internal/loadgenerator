@@ -32,6 +32,20 @@ const (
 	ConsigneeWeight = "consigneeWeight"
 	IsWithin        = "isWithin"
 
+	// Contacts
+	//Id             string `json:"id"`
+	//AccountId      string `json:"accountId"`
+	Name           = "name" // ?= ConsigneeName
+	DocumentType   = "documentType"
+	DocumentNumber = "documentNumber"
+	PhoneNumber    = "phoneNumber" // ?= ConsigneePhone
+
+	// Assurance
+	OrderId   = "orderId"
+	TypeIndex = "typeIndex"
+	TypeName  = "typeName"
+	TypePrice = "typePrice"
+
 	// Route
 	RouteID = "routeId"
 )
@@ -39,54 +53,66 @@ const (
 var PreserveChain *Chain
 
 func init() {
-	// init
+	// ------- init --------
+	// Main Chain
 	PreserveChain = NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
 		fmt.Printf("PreserveBehaviors(Chain) Statrs. Starts time: %v", time.Now().String())
 		return nil, nil
 	}))
 
-	// NewFuncNode
+	// ------------------- NewFuncNode -----------------------
+	// LoginAdmin
 	LoginAdminNode := NewFuncNode(LoginAdmin)
+	// Contacts
 	QueryContactsNode := NewFuncNode(QueryContacts)
 	CreateContactsNode := NewFuncNode(CreateContacts)
-	QueryTripNode := NewFuncNode(QueryTrip)
-	CreateTripNode := NewFuncNode(CreateTrip)
+	// Assurance
+	QueryAssuranceNode := NewFuncNode(QueryAssurance)
+	CreateAssuranceNode := NewFuncNode(CreateAssurance)
+	// Route
 	QueryRouteNode := NewFuncNode(QueryRoute)
 	CreateRouteNode := NewFuncNode(CreateRoute)
+	// Trip
+	QueryTripNode := NewFuncNode(QueryTrip)
+	CreateTripNode := NewFuncNode(CreateTrip)
 
-	// NewChain
-	LoginAdminChain := NewChain(LoginAdminNode)
-	QueryContactsChain := NewChain(QueryContactsNode)
-	CreateContactsChain := NewChain(CreateContactsNode)
+	// ------------------- NewChain -----------------------
+	// LoginAdmin
+	LoginAdminChain := NewChain(LoginAdminNode) // done
+	// Contacts
+	QueryContactsChain := NewChain(QueryContactsNode)   // done
+	CreateContactsChain := NewChain(CreateContactsNode) // done
+	// Assurance
+	AssuranceBehaviorsChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+		fmt.Printf("CreateAssuranceChain. Starts time: %v", time.Now().String())
+		return nil, nil
+	}))
+	QueryAssuranceChain := NewChain(QueryAssuranceNode)
+	CreateAssuranceChain := NewChain(CreateAssuranceNode)
+	// Trip
 	QueryTripChain := NewChain(QueryTripNode)
 	CreateTripBehaviorsChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
 		fmt.Printf("CreateTripChain. Starts time: %v", time.Now().String())
 		return nil, nil
 	}))
 	CreateTripChain := NewChain(CreateTripNode)
+	// Route
 	QueryRouteChain := NewChain(QueryRouteNode)
 	CreateRouteChain := NewChain(CreateRouteNode)
 
-	// AddNextChain
+	// ------------------- AddNextChain -----------------------
 	// PreserveChain
 	PreserveChain.AddNextChain(LoginAdminChain, 1)
 	// LoginAdminChain
 	LoginAdminChain.AddNextChain(QueryContactsChain, 0.7)
 	LoginAdminChain.AddNextChain(CreateContactsChain, 0.3)
+	// AssuranceBehaviorsChain
+	AssuranceBehaviorsChain.AddNextChain(QueryAssuranceChain, 0.7)
+	AssuranceBehaviorsChain.AddNextChain(CreateAssuranceChain, 0.3)
 	// QueryContactsChain
-	QueryContactsChain.AddNextChain(QueryTripChain, 0.7)
-	QueryContactsChain.AddNextChain(CreateTripBehaviorsChain, 0.3)
+	QueryContactsChain.AddNextChain(AssuranceBehaviorsChain, 1)
 	// CreateContactsChain
-	CreateContactsChain.AddNextChain(QueryTripChain, 0.7)
-	CreateContactsChain.AddNextChain(CreateTripBehaviorsChain, 0.3)
-	// CreateTripBehaviorsChain
-	CreateTripBehaviorsChain.AddNextChain(QueryRouteChain, 0.7)
-	CreateContactsChain.AddNextChain(CreateRouteChain, 0.3)
-	// QueryRouteChain
-	QueryRouteChain.AddNextChain(CreateTripChain, 1)
-	// CreateRouteChain
-	CreateRouteChain.AddNextChain(CreateTripChain, 1)
-
+	CreateContactsChain.AddNextChain(AssuranceBehaviorsChain, 1)
 }
 
 func QueryContacts(ctx *Context) (*NodeResult, error) {
@@ -108,6 +134,10 @@ func QueryContacts(ctx *Context) (*NodeResult, error) {
 	randomIndex := rand.Intn(len(GetAllContacts.Data))
 	ctx.Set(AccountID, GetAllContacts.Data[randomIndex].AccountId)
 	ctx.Set(ContactsID, GetAllContacts.Data[randomIndex].Id)
+	ctx.Set(Name, GetAllContacts.Data[randomIndex].Name)
+	ctx.Set(DocumentType, GetAllContacts.Data[randomIndex].DocumentType)
+	ctx.Set(DocumentNumber, GetAllContacts.Data[randomIndex].DocumentNumber)
+	ctx.Set(PhoneNumber, GetAllContacts.Data[randomIndex].PhoneNumber)
 
 	return nil, nil
 }
@@ -138,8 +168,45 @@ func CreateContacts(ctx *Context) (*NodeResult, error) {
 
 	ctx.Set(AccountID, CreateContacts.Data.AccountId)
 	ctx.Set(ContactsID, CreateContacts.Data.Id)
+	ctx.Set(Name, CreateContacts.Data.Name)
+	ctx.Set(DocumentType, CreateContacts.Data.DocumentType)
+	ctx.Set(DocumentNumber, CreateContacts.Data.DocumentNumber)
+	ctx.Set(PhoneNumber, CreateContacts.Data.PhoneNumber)
 
 	return nil, nil
+}
+
+func QueryAssurance(ctx *Context) (*NodeResult, error) {
+	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+	if !ok {
+		return nil, fmt.Errorf("service client not found in context")
+	}
+
+	Assurances, err := cli.GetAllAssurances()
+	if err != nil {
+		log.Fatalf("GetAllAssurances failed: %v", err)
+		return nil, err
+	}
+	if Assurances.Status != 1 {
+		log.Fatalf("Assurances status is not 1: %d", Assurances.Status)
+		return nil, err
+	}
+
+	randomIndex := rand.Intn(len(Assurances.Data))
+	ctx.Set(OrderId, Assurances.Data[randomIndex].OrderId)
+	ctx.Set(TypeIndex, Assurances.Data[randomIndex].TypeIndex)
+	ctx.Set(TypeName, Assurances.Data[randomIndex].TypeName)
+	ctx.Set(TypePrice, Assurances.Data[randomIndex].TypePrice)
+
+	return nil, nil
+}
+
+func CreateAssurance(ctx *Context) (*NodeResult, error) {
+	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+	if !ok {
+		return nil, fmt.Errorf("service client not found in context")
+	}
+
 }
 
 func QueryTrip(ctx *Context) (*NodeResult, error) {
