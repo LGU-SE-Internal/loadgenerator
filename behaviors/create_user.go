@@ -9,9 +9,11 @@ import (
 )
 
 const (
-	UserName   = "username"
-	Password   = "password"
-	UserId     = "userid"
+	// CreateUser
+	UserName = "username"
+	Password = "password"
+	UserId   = "userid"
+	// Login Admin
 	LoginToken = "loginToken"
 )
 
