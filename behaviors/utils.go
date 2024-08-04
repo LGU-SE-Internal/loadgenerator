@@ -89,6 +89,16 @@ func generateDocumentNumber() string {
 	}
 }
 
+func generateContactsName() string {
+	rand.Seed(time.Now().UnixNano()) // Seed the random number generator
+
+	if rand.Intn(2) == 0 {
+		return "Contacts_One"
+	} else {
+		return "Contacts_Two"
+	}
+}
+
 func GenerateTripId() string {
 	// 设置随机数种子
 	rand.Seed(time.Now().UnixNano())
@@ -106,6 +116,13 @@ func GenerateTripId() string {
 	MockedTripID := fmt.Sprintf("%c%03d", startLetter, randomNumber)
 
 	return MockedTripID
+}
+
+func generateCoachNumber() int {
+	rand.Seed(time.Now().UnixNano()) // Seed the random number generator
+
+	// Generate a random number between 1 and 10 (inclusive)
+	return rand.Intn(10) + 1
 }
 
 // toLowerCaseAndRemoveSpaces converts a given string to all lower case

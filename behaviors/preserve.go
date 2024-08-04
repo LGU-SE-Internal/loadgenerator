@@ -207,6 +207,32 @@ func CreateAssurance(ctx *Context) (*NodeResult, error) {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
+	//Create a new assurance
+	TheOrderID := ctx.Get(OrderId).(string)
+	addAssuranceResp, err := cli.CreateNewAssurance(1, TheOrderID) // typeIndex 1 -> TRAFFIC_ACCIDENT
+	if err != nil {
+		log.Fatalf("CreateNewAssurance failed: %v", err)
+		return nil, err
+	}
+	if addAssuranceResp.Msg == "Already exists" {
+		log.Fatalf("Order ID found, skip")
+		return nil, err
+	}
+	if addAssuranceResp.Data.OrderId != TheOrderID {
+		log.Fatalf("Request failed, addAssuranceResp.Data.OrderId:%s, expected: %s", addAssuranceResp.Data.OrderId, TheOrderID)
+		return nil, err
+	}
+	if addAssuranceResp.Data.Type != "TRAFFIC_ACCIDENT" {
+		log.Fatalf("Request failed, addAssuranceResp.Data.Type are expected to be 'TRAFFIC_ACCIDENT' but actually: %v", addAssuranceResp.Data.Type)
+		return nil, err
+	}
+
+	ctx.Set(OrderId, addAssuranceResp.Data.OrderId)
+	ctx.Set(TypeIndex, addAssuranceResp.Data..TypeIndex)
+	ctx.Set(TypeName, Assurances.Data[randomIndex].TypeName)
+	ctx.Set(TypePrice, Assurances.Data[randomIndex].TypePrice)
+
+	return nil, nil
 }
 
 func QueryTrip(ctx *Context) (*NodeResult, error) {
