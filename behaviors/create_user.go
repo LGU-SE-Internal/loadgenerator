@@ -22,9 +22,9 @@ var LoginChain *Chain
 func init() {
 	LoginChain = NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
 		return nil, nil
-	}))
-	LoginChain.AddNextChain(NewChain(NewFuncNode(LoginAdmin)), 0.2)
-	LoginChain.AddNextChain(NewChain(NewFuncNode(CreateUser), NewFuncNode(LoginNormal)), 0.8)
+	}, "dummy"))
+	LoginChain.AddNextChain(NewChain(NewFuncNode(LoginAdmin, "LoginAdmin")), 0.2)
+	LoginChain.AddNextChain(NewChain(NewFuncNode(CreateUser, "CreateUser"), NewFuncNode(LoginNormal, "LoginNormal")), 0.8)
 }
 func LoginAdmin(ctx *Context) (*NodeResult, error) {
 	cli, ok := ctx.Get(Client).(*service.SvcImpl)

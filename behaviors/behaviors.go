@@ -2,12 +2,14 @@ package behaviors
 
 import (
 	"context"
+	"fmt"
 	"github.com/Lincyaw/loadgenerator/service"
 	"log"
 	"math/rand"
 	"os"
 	"os/signal"
 	"runtime"
+	"strings"
 	"sync"
 	"syscall"
 	"time"
@@ -52,6 +54,7 @@ func (c *Context) getDataMap() map[string]interface{} {
 // Node represents a single node in the chain
 type Node interface {
 	Execute(ctx *Context) (*NodeResult, error)
+	GetName() string
 }
 
 type NodeResult struct {
@@ -59,21 +62,27 @@ type NodeResult struct {
 }
 
 type FuncNode struct {
-	fn func(*Context) (*NodeResult, error)
+	fn   func(*Context) (*NodeResult, error)
+	Name string
 }
 
 func (f *FuncNode) Execute(ctx *Context) (*NodeResult, error) {
 	return f.fn(ctx)
 }
 
-func NewFuncNode(fn func(*Context) (*NodeResult, error)) *FuncNode {
-	return &FuncNode{fn: fn}
+func (f *FuncNode) GetName() string {
+	return f.Name
+}
+
+func NewFuncNode(fn func(*Context) (*NodeResult, error), name string) *FuncNode {
+	return &FuncNode{fn: fn, Name: name}
 }
 
 type Chain struct {
 	nodes          []Node
 	nextChains     []chainWithProbability
 	probabilitySum float64
+	Name           string
 }
 type chainWithProbability struct {
 	chain       *Chain
@@ -93,17 +102,17 @@ func (c *Chain) AddNextChain(next *Chain, probability float64) {
 	c.probabilitySum += probability
 }
 
-func (c *Chain) Execute(ctx *Context) error {
+func (c *Chain) Execute(ctx *Context) (*NodeResult, error) {
 	for _, node := range c.nodes {
 		result, err := node.Execute(ctx)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		if result == nil {
 			continue
 		}
 		if !result.Continue {
-			return nil
+			return nil, nil
 		}
 	}
 
@@ -118,7 +127,32 @@ func (c *Chain) Execute(ctx *Context) error {
 		}
 	}
 
-	return nil
+	return nil, nil
+}
+
+func (c *Chain) GetName() string {
+	return c.Name
+}
+
+func (c *Chain) VisualizeChain(level int) string {
+	result := ""
+
+	// 打印当前链的节点
+	for _, node := range c.nodes {
+		result += fmt.Sprintf("%sNode: %s\n", getIndent(level), node.GetName())
+	}
+
+	// 打印下一级链的信息
+	for _, nextChain := range c.nextChains {
+		result += fmt.Sprintf("%sProbability: %.2f\n", getIndent(level), nextChain.probability)
+		result += nextChain.chain.VisualizeChain(level + 1)
+	}
+
+	return result
+}
+
+func getIndent(level int) string {
+	return "  " + strings.Repeat("  ", level)
 }
 
 type Config struct {
@@ -179,7 +213,7 @@ func (l *LoadGenerator) Start(conf ...func(*Config)) {
 			for {
 				ctx := NewContext(context.Background())
 				ctx.Set(Client, service.NewSvcClients())
-				err := config.Chain.Execute(ctx)
+				_, err := config.Chain.Execute(ctx)
 				if err != nil {
 					log.Printf("Error executing chain: %v", err)
 				}
