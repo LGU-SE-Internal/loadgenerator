@@ -28,6 +28,7 @@ func TestStationService_FullIntegration(t *testing.T) {
 	//Mock
 	MockedCityName := faker.GetRealAddress().City
 	input := &Station{
+		ID:       faker.UUIDHyphenated(),
 		Name:     MockedCityName,
 		StayTime: rand.Intn(30),
 	}
