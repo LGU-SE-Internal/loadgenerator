@@ -9,9 +9,12 @@ import (
 )
 
 const (
+	// CreateUser
 	UserName = "username"
 	Password = "password"
 	UserId   = "userid"
+	// Login Admin
+	LoginToken = "loginToken"
 )
 
 var LoginChain *Chain
@@ -29,12 +32,16 @@ func LoginAdmin(ctx *Context) (*NodeResult, error) {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 	// login
-	_, err := cli.ReqUserLogin(&service.UserLoginInfoReq{
+	loginResult, err := cli.ReqUserLogin(&service.UserLoginInfoReq{
 		Password:         "222222",
 		UserName:         "admin",
 		VerificationCode: "123",
 	})
-	return nil, err
+	if err != nil {
+		return nil, err
+	}
+	ctx.Set(LoginToken, loginResult.Data.Token)
+	return nil, nil
 }
 
 func LoginNormal(ctx *Context) (*NodeResult, error) {
