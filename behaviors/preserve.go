@@ -58,26 +58,29 @@ func init() {
 	PreserveChain = NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
 		fmt.Printf("PreserveBehaviors(Chain) Statrs. Starts time: %v", time.Now().String())
 		return nil, nil
-	}))
+	}, "Dummy"))
 
 	// ------------------- NewFuncNode -----------------------
 	// LoginAdmin
-	LoginAdminNode := NewFuncNode(LoginAdmin)
+	LoginAdminNode := NewFuncNode(LoginAdmin, "LoginAdmin")
 	// Contacts
-	QueryContactsNode := NewFuncNode(QueryContacts)
-	CreateContactsNode := NewFuncNode(CreateContacts)
+	QueryContactsNode := NewFuncNode(QueryContacts, "QueryContacts")
+	CreateContactsNode := NewFuncNode(CreateContacts, "CreateContacts")
 	// Assurance
-	QueryAssuranceNode := NewFuncNode(QueryAssurance)
-	CreateAssuranceNode := NewFuncNode(CreateAssurance)
+	QueryAssuranceNode := NewFuncNode(QueryAssurance, "QueryAssurance")
+	CreateAssuranceNode := NewFuncNode(CreateAssurance, "CreateAssurance")
 	// Route
-	QueryRouteNode := NewFuncNode(QueryRoute)
-	CreateRouteNode := NewFuncNode(CreateRoute)
+	QueryRouteNode := NewFuncNode(QueryRoute, "QueryRoute")
+	CreateRouteNode := NewFuncNode(CreateRoute, "CreateRoute")
 	// Trip
-	QueryTripNode := NewFuncNode(QueryTrip)
-	CreateTripNode := NewFuncNode(CreateTrip)
+	QueryTripNode := NewFuncNode(QueryTrip, "QueryTrip")
+	CreateTripNode := NewFuncNode(CreateTrip, "CreateTrip")
+	// Preserve
+	PreserveNode := NewFuncNode(Preserve, "Preserve")
 
 	// ------------------- NewChain -----------------------
 	// LoginAdmin
+
 	LoginAdminChain := NewChain(LoginAdminNode) // done
 	// Contacts
 	QueryContactsChain := NewChain(QueryContactsNode)   // done
@@ -86,7 +89,7 @@ func init() {
 	AssuranceBehaviorsChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
 		fmt.Printf("CreateAssuranceChain. Starts time: %v", time.Now().String())
 		return nil, nil
-	}))
+	}, "DummyAssurance"))
 	QueryAssuranceChain := NewChain(QueryAssuranceNode)
 	CreateAssuranceChain := NewChain(CreateAssuranceNode)
 	// Trip
@@ -94,13 +97,25 @@ func init() {
 	CreateTripBehaviorsChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
 		fmt.Printf("CreateTripChain. Starts time: %v", time.Now().String())
 		return nil, nil
-	}))
+	}, "DummyCreateChain"))
 	CreateTripChain := NewChain(CreateTripNode)
 	// Route
 	QueryRouteChain := NewChain(QueryRouteNode)
 	CreateRouteChain := NewChain(CreateRouteNode)
 
+	// call the last function
+	LastChain := NewChain(PreserveNode)
+	_ = QueryTripChain
+	_ = CreateTripBehaviorsChain
+	_ = CreateTripChain
+	_ = QueryRouteChain
+	_ = CreateRouteChain
+	_ = LastChain
+
 	// ------------------- AddNextChain -----------------------
+	// 逆序
+	// 处理逆序的第一层
+
 	// PreserveChain
 	PreserveChain.AddNextChain(LoginAdminChain, 1)
 	// LoginAdminChain
@@ -113,6 +128,9 @@ func init() {
 	QueryContactsChain.AddNextChain(AssuranceBehaviorsChain, 1)
 	// CreateContactsChain
 	CreateContactsChain.AddNextChain(AssuranceBehaviorsChain, 1)
+
+	fmt.Println(PreserveChain.VisualizeChain(0))
+	fmt.Println()
 }
 
 func QueryContacts(ctx *Context) (*NodeResult, error) {
@@ -228,9 +246,9 @@ func CreateAssurance(ctx *Context) (*NodeResult, error) {
 	}
 
 	ctx.Set(OrderId, addAssuranceResp.Data.OrderId)
-	ctx.Set(TypeIndex, addAssuranceResp.Data..TypeIndex)
-	ctx.Set(TypeName, Assurances.Data[randomIndex].TypeName)
-	ctx.Set(TypePrice, Assurances.Data[randomIndex].TypePrice)
+	//ctx.Set(TypeIndex, addAssuranceResp.Data.)
+	//ctx.Set(TypeName, Assurances.Data[randomIndex].TypeName)
+	//ctx.Set(TypePrice, Assurances.Data[randomIndex].TypePrice)
 
 	return nil, nil
 }

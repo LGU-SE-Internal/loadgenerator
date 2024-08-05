@@ -21,7 +21,7 @@ func TestChain_Execute(t *testing.T) {
 	node1 := NewFuncNode(func(ctx *Context) (*NodeResult, error) {
 		ctx.Set("key1", "value1")
 		return nil, nil
-	})
+	}, "node1")
 
 	node2 := NewFuncNode(func(ctx *Context) (*NodeResult, error) {
 		val := ctx.Get("key1")
@@ -29,10 +29,10 @@ func TestChain_Execute(t *testing.T) {
 			t.Errorf("Expected 'value1', got %v", val)
 		}
 		return nil, nil
-	})
+	}, "node2")
 
 	chain := NewChain(node1, node2)
-	err := chain.Execute(NewContext(context.Background()))
+	_, err := chain.Execute(NewContext(context.Background()))
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
@@ -42,19 +42,19 @@ func TestChain_AddNextChain(t *testing.T) {
 	node1 := NewFuncNode(func(ctx *Context) (*NodeResult, error) {
 		ctx.Set("key", "chain1")
 		return nil, nil
-	})
+	}, "node1")
 	chain1 := NewChain(node1)
 
 	node2 := NewFuncNode(func(ctx *Context) (*NodeResult, error) {
 		ctx.Set("key", "chain2")
 		return nil, nil
-	})
+	}, "node2")
 	chain2 := NewChain(node2)
 
 	chain1.AddNextChain(chain2, 1.0)
 
 	ctx := NewContext(context.Background())
-	err := chain1.Execute(ctx)
+	_, err := chain1.Execute(ctx)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
@@ -68,19 +68,19 @@ func TestLoadGenerator_Start(t *testing.T) {
 	node1 := NewFuncNode(func(ctx *Context) (*NodeResult, error) {
 		fmt.Println("node1", time.Now().String())
 		return nil, nil
-	})
+	}, "node1")
 	node2 := NewFuncNode(func(ctx *Context) (*NodeResult, error) {
 		fmt.Println("node2", time.Now().String())
 		return nil, nil
-	})
+	}, "node2")
 	node3 := NewFuncNode(func(ctx *Context) (*NodeResult, error) {
 		fmt.Println("node3", time.Now().String())
 		return nil, nil
-	})
+	}, "node3")
 	node4 := NewFuncNode(func(ctx *Context) (*NodeResult, error) {
 		fmt.Println("node4", time.Now().String())
 		return nil, nil
-	})
+	}, "node4")
 	chain1 := NewChain(node1)
 	chain2 := NewChain(node2, node3)
 	chain3 := NewChain(node4)
@@ -99,7 +99,7 @@ func TestFuncNode_Execute(t *testing.T) {
 		return nil, nil
 	}
 
-	node := NewFuncNode(fn)
+	node := NewFuncNode(fn, "node")
 	_, err := node.Execute(NewContext(context.Background()))
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
