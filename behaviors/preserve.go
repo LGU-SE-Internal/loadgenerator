@@ -59,6 +59,121 @@ func init() {
 		fmt.Printf("PreserveBehaviors(Chain) Statrs. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "Dummy"))
+	// AssuranceBehaviorChain
+	AssuranceBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+		fmt.Printf("CreateAssuranceChain. Starts time: %v", time.Now().String())
+		return nil, nil
+	}, "DummyAssurance"))
+	// UserBehaviorsChain
+	UserBehaviorsChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+		fmt.Printf("UserBehaviorsChain Starts. Starts time: %v", time.Now().String())
+		return nil, nil
+	}, "DummyUserBehaviors"))
+	// VerifyCodeBehaviorChain
+	VerifyCodeBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+		fmt.Printf("VerifyCodeBehaviorChain Starts. Start time: %v", time.Now().String())
+		return nil, nil
+	}, "DummyVerifyCodeBehavior"))
+	// AuthBehaviorChain
+	AuthBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+		fmt.Printf("AuthBehaviorChain Starts. Start time: %v", time.Now().String())
+		return nil, nil
+	}, "DummyAuthBehavior"))
+	// UserBehaviorChain
+	UserBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+		fmt.Printf("UserBehaviorChain Starts. Starts time: %v", time.Now().String())
+		return nil, nil
+	}, "DummyUserBehavior"))
+	// ContactsBehaviorChain
+	ContactsBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+		fmt.Printf("ContactsBehaviorChain Starts. Starts time: %v", time.Now().String())
+		return nil, nil
+	}, "DummyContactsBehavior"))
+	// ConsignBehaviorsChain
+	ConsignBehaviorsChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+		fmt.Printf("ConsignBehaviorsChain Starts. Starts time: %v", time.Now().String())
+		return nil, nil
+	}, "DummyConsignBehaviors"))
+	//ConsignPriceBehaviorChain
+	ConsignPriceBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+		fmt.Printf("ConsignPriceBehaviorChain Starts. Starts time: %v", time.Now().String())
+		return nil, nil
+	}, "DummyConsignPriceBehavior"))
+	// FoodBehaviorChain
+	FoodBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+		fmt.Printf("FoodBehaviorChain Starts. Starts time: %v", time.Now().String())
+		return nil, nil
+	}, "DummyFoodBehavior"))
+	// TravelBehaviorChain
+	TravelBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+		fmt.Printf("TravelBehaviorChain Starts. Starts time: %v", time.Now().String())
+		return nil, nil
+	}, "DummyTravelBehavior"))
+	// StationFoodBehaviorChain
+	StationFoodBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+		fmt.Printf("StationFoodBehaviorChain Starts. Starts time: %v", time.Now().String())
+		return nil, nil
+	}, "DummyStationFoodBehavior"))
+	//TrainFoodBehaviorChain
+	TrainFoodBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+		fmt.Printf("TrainFoodBehaviorChain Starts. Starts time: %v", time.Now().String())
+		return nil, nil
+	}, "DummyTrainFoodBehavior"))
+	// TrainBehaviorChain
+	TrainBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+		fmt.Printf("TrainBehaviorChain Starts. Starts time: %v", time.Now().String())
+		return nil, nil
+	}, "DummyTrainBehavior"))
+	//RouteBehaviorChain
+	RouteBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+		fmt.Printf("RouteBehaviorChain starts. Starts time: %v", time.Now().String())
+		return nil, nil
+	}, "DummyRouteBehavior"))
+	// BasicBehaviorChain
+	BasicBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+		fmt.Printf("BasicBehaviorChain Starts. Start time: %v", time.Now().String())
+		return nil, nil
+	}, "DummyBasicBehavior"))
+	// SeatBehaviorChain
+	SeatBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+		fmt.Printf("SeatBehaviorChain Starts. Start time: %v", time.Now().String())
+		return nil, nil
+	}, "DummySeatBehavior"))
+	// StationBehaviorChain
+	StationBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+		fmt.Printf("StationBehaviorChain Starts. Start time: %v", time.Now().String())
+		return nil, nil
+	}, "DummyStationBehavior"))
+	//PriceBehaviorChain
+	PriceBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+		fmt.Printf("PriceBehaviorChain Starts. Start time: %v", time.Now().String())
+		return nil, nil
+	}, "DummyPriceBehavior"))
+	//ConfigBehaviorChain
+	ConfigBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+		fmt.Printf("ConfigBehaviorChain Starts. Start time: %v", time.Now().String())
+		return nil, nil
+	}, "DummyConfigBehavior"))
+	//OrderBehaviorChain
+	OrderBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+		fmt.Printf("OrderBehaviorChain Starts. Start time: %v", time.Now().String())
+		return nil, nil
+	}, "DummyOrderBehavior"))
+	//OrderOtherBehaviorChain
+	OrderOtherBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+		fmt.Printf("OrderOtherBehaviorChain Starts. Strat time: %v", time.Now().String())
+		return nil, nil
+	}, "DummyOrderOtherBehavior"))
+	// StationBehaviorChain
+	StationBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+		fmt.Printf("StationBehaviorChain Starts. Start time: %v", time.Now().String())
+		return nil, nil
+	}, "DummyStationBehavior"))
+	// SecurityBehaviorChain
+	SecurityBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+		fmt.Printf("SecurityBehaviorChain Satrts. Start time: %v", time.Now().String())
+		return nil, nil
+	}, "DummySecurityBehavior"))
 
 	// ------------------- NewFuncNode -----------------------
 	// LoginAdmin
@@ -80,37 +195,21 @@ func init() {
 
 	// ------------------- NewChain -----------------------
 	// LoginAdmin
-
 	LoginAdminChain := NewChain(LoginAdminNode) // done
 	// Contacts
 	QueryContactsChain := NewChain(QueryContactsNode)   // done
 	CreateContactsChain := NewChain(CreateContactsNode) // done
-	// Assurance
-	AssuranceBehaviorsChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		fmt.Printf("CreateAssuranceChain. Starts time: %v", time.Now().String())
-		return nil, nil
-	}, "DummyAssurance"))
 	QueryAssuranceChain := NewChain(QueryAssuranceNode)
 	CreateAssuranceChain := NewChain(CreateAssuranceNode)
 	// Trip
 	QueryTripChain := NewChain(QueryTripNode)
-	CreateTripBehaviorsChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		fmt.Printf("CreateTripChain. Starts time: %v", time.Now().String())
-		return nil, nil
-	}, "DummyCreateChain"))
 	CreateTripChain := NewChain(CreateTripNode)
 	// Route
 	QueryRouteChain := NewChain(QueryRouteNode)
 	CreateRouteChain := NewChain(CreateRouteNode)
 
-	// call the last function
+	// Call The Last Chain
 	LastChain := NewChain(PreserveNode)
-	_ = QueryTripChain
-	_ = CreateTripBehaviorsChain
-	_ = CreateTripChain
-	_ = QueryRouteChain
-	_ = CreateRouteChain
-	_ = LastChain
 
 	// ------------------- AddNextChain -----------------------
 	// 逆序
@@ -118,16 +217,6 @@ func init() {
 
 	// PreserveChain
 	PreserveChain.AddNextChain(LoginAdminChain, 1)
-	// LoginAdminChain
-	LoginAdminChain.AddNextChain(QueryContactsChain, 0.7)
-	LoginAdminChain.AddNextChain(CreateContactsChain, 0.3)
-	// AssuranceBehaviorsChain
-	AssuranceBehaviorsChain.AddNextChain(QueryAssuranceChain, 0.7)
-	AssuranceBehaviorsChain.AddNextChain(CreateAssuranceChain, 0.3)
-	// QueryContactsChain
-	QueryContactsChain.AddNextChain(AssuranceBehaviorsChain, 1)
-	// CreateContactsChain
-	CreateContactsChain.AddNextChain(AssuranceBehaviorsChain, 1)
 
 	fmt.Println(PreserveChain.VisualizeChain(0))
 	fmt.Println()
@@ -469,6 +558,6 @@ func Preserve(ctx *Context) (*NodeResult, error) {
 	fmt.Printf("The Status is: %v, and PreserveResp Data: %v\n", PreserveResp.Status, PreserveResp.Data)
 	fmt.Printf("PreserveBehaviors(Chain) Ends. End time: %v", time.Now().String())
 
-	//return nil, err
+	//return nil, nil
 	return &(NodeResult{false}), nil
 }
