@@ -50,16 +50,18 @@ const (
 	RouteID = "routeId"
 )
 
-var PreserveChain *Chain
+var PreserveBehaviorChain *Chain
 
 func init() {
-	// ------- init --------
+	// ------------------------------------- init -------------------------------------------
+	// ------------------------------------- init -------------------------------------------
+	// ------------------------------------- init -------------------------------------------
 	// Main Chain
-	PreserveChain = NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+	PreserveBehaviorChain = NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
 		fmt.Printf("PreserveBehaviors(Chain) Statrs. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "Dummy"))
-	// AssuranceBehaviorChain
+	// AssuranceBehaviorChain -
 	AssuranceBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
 		fmt.Printf("CreateAssuranceChain. Starts time: %v", time.Now().String())
 		return nil, nil
@@ -175,51 +177,219 @@ func init() {
 		return nil, nil
 	}, "DummySecurityBehavior"))
 
-	// ------------------- NewFuncNode -----------------------
-	// LoginAdmin
-	LoginAdminNode := NewFuncNode(LoginAdmin, "LoginAdmin")
-	// Contacts
+	// ------------------------------------- NewFuncNode -------------------------------------------
+	// ------------------------------------- NewFuncNode -------------------------------------------
+	// ------------------------------------- NewFuncNode -------------------------------------------
+	//AssuranceBehaviorChain - Assurance
+	QueryAssuranceNode := NewFuncNode(QueryAssurance, "QueryAssurance")
+	// CreateAssuranceNode := NewFuncNode(CreateAssurance, "CreateAssurance")
+
+	//UserBehaviorsChain
+	// AuthBehaviorChain - LoginAdmin/LoginBasic
+	//LoginAdminNode := NewFuncNode(LoginAdmin, "LoginAdmin")
+	LoginBasicNode := NewFuncNode(LoginBasic, "LoginBasic")
+	//	VerifyCodeBehaviorChain
+	VerifyCodeNode := NewFuncNode(VerifyCode, "VerifyCode")
+	// UserBehaviorChain
+	QueryUserNode := NewFuncNode(QueryUser, "QueryUser")
+
+	//ContactsBehaviorChain - Contacts
 	QueryContactsNode := NewFuncNode(QueryContacts, "QueryContacts")
 	CreateContactsNode := NewFuncNode(CreateContacts, "CreateContacts")
-	// Assurance
-	QueryAssuranceNode := NewFuncNode(QueryAssurance, "QueryAssurance")
-	CreateAssuranceNode := NewFuncNode(CreateAssurance, "CreateAssurance")
-	// Route
+
+	//ConsignBehaviorsChain
+	QueryConsignNode := NewFuncNode(QueryConsign, "QueryConsign")
+	CreateConsignNode := NewFuncNode(CreateConsign, "CreateConsign")
+	// ConsignPriceBehaviorChain
+	QueryConsignPriceNode := NewFuncNode(QueryConsignPric, "QueryConsignPrice")
+	CreateConsignPriceNode := NewFuncNode(CreateConsignPrice, "CreateConsignPrice")
+
+	//FoodBehaviorChain
+	QueryFoodNode := NewFuncNode(QueryFood, "QueryFood")
+	// StationFoodBehaviorChain
+	QueryStationFoodNode := NewFuncNode(QueryStationFood, "QueryStationFood")
+	// TrainFoodBehaviorChain
+	QueryTrainFoodNode := NewFuncNode(QueryTrainFood, "QueryTrainFood")
+	// TravelBehaviorChain
+	QueryTravelNode := NewFuncNode(QueryTrip, "QueryTrip")
+	CreateTravelNode := NewFuncNode(CreateTrip, "CreateTrip")
+
+	//TravelBehaviorChain
+	// TrainBehaviorChain
+	QueryTrainNode := NewFuncNode(QueryTrain, "QueryTrain")
+	// RouteBehaviorChain
 	QueryRouteNode := NewFuncNode(QueryRoute, "QueryRoute")
-	CreateRouteNode := NewFuncNode(CreateRoute, "CreateRoute")
-	// Trip
-	QueryTripNode := NewFuncNode(QueryTrip, "QueryTrip")
-	CreateTripNode := NewFuncNode(CreateTrip, "CreateTrip")
-	// Preserve
+	// BasicBehaviorChain
+	QueryBasicNode := NewFuncNode(QueryBasic, "QueryBasic")
+	// SeatBehaviorChain
+	QuerySeatNode := NewFuncNode(QuerySeat, "QuerySeat")
+
+	//BasicBehaviorChain
+	// StationBehaviorChain
+	QueryStationNode := NewFuncNode(QueryStation, "QueryStation")
+	// PriceBehaviorChain
+	QueryPriceNode := NewFuncNode(QueryPrice, "QueryPrice")
+	// RouteBehaviorChain
+	// TrainBehaviorChain
+
+	//SeatBehaviorChain
+	// ConfigBehaviorChain
+	QueryConfigNode := NewFuncNode(QueryConfig, "QueryConfig")
+	// OrderBehaviorChain
+	QueryOrderNode := NewFuncNode(QueryOrder, "QueryOrder")
+	// OrderOtherBehaviorChain
+	QueryOrderOtherNode := NewFuncNode(QueryOrderOther, "QueryOrderOther")
+
+	//OrderBehaviorChain
+	// StationBehaviorChain
+
+	//OrderOtherBehaviorChain
+	// StationBehaviorChain
+
+	//SecurityBehaviorChain
+	// OrderBehaviorChain
+	// OrderOtherBehaviorChain
+
+	// ******* Preserve ********
 	PreserveNode := NewFuncNode(Preserve, "Preserve")
 
-	// ------------------- NewChain -----------------------
-	// LoginAdmin
-	LoginAdminChain := NewChain(LoginAdminNode) // done
-	// Contacts
-	QueryContactsChain := NewChain(QueryContactsNode)   // done
-	CreateContactsChain := NewChain(CreateContactsNode) // done
+	// ------------------------------------- NewChain -------------------------------------------
+	// ------------------------------------- NewChain -------------------------------------------
+	// ------------------------------------- NewChain -------------------------------------------
+	// AssuranceBehaviorChain - Assurance
 	QueryAssuranceChain := NewChain(QueryAssuranceNode)
-	CreateAssuranceChain := NewChain(CreateAssuranceNode)
-	// Trip
-	QueryTripChain := NewChain(QueryTripNode)
-	CreateTripChain := NewChain(CreateTripNode)
-	// Route
+	//CreateAssuranceChain := NewChain(CreateAssuranceNode)
+
+	// UserBehaviorsChain
+	// AuthBehaviorChain - LoginAdmin/LoginBasic
+	LoginBasicChain := NewChain(LoginBasicNode)
+	// VerifyCodeBehaviorChain
+	VerifyCodeChain := NewChain(VerifyCodeNode)
+	// UserBehaviorChain
+	QueryUserChain := NewChain(QueryUserNode)
+
+	// ContactsBehaviorChain - Contacts
+	QueryContactsChain := NewChain(QueryContactsNode)
+	CreateContactsChain := NewChain(CreateContactsNode)
+
+	// ConsignBehaviorsChain
+	QueryConsignChain := NewChain(QueryConsignNode)
+	CreateConsignChain := NewChain(CreateConsignNode)
+	// ConsignPriceBehaviorChain
+	QueryConsignPriceChain := NewChain(QueryConsignPriceNode)
+	CreateConsignPriceChain := NewChain(CreateConsignPriceNode)
+
+	// FoodBehaviorChain
+	QueryFoodChain := NewChain(QueryFoodNode)
+	// StationFoodBehaviorChain
+	QueryStationFoodChain := NewChain(QueryStationFoodNode)
+	// TrainFoodBehaviorChain
+	QueryTrainFoodChain := NewChain(QueryTrainFoodNode)
+	// TravelBehaviorChain
+	QueryTravelChain := NewChain(QueryTravelNode)
+	CreateTravelChain := NewChain(CreateTravelNode)
+
+	// TrainBehaviorChain
+	QueryTrainChain := NewChain(QueryTrainNode)
+	// RouteBehaviorChain
 	QueryRouteChain := NewChain(QueryRouteNode)
-	CreateRouteChain := NewChain(CreateRouteNode)
+	// BasicBehaviorChain
+	QueryBasicChain := NewChain(QueryBasicNode)
+	// SeatBehaviorChain
+	QuerySeatChain := NewChain(QuerySeatNode)
 
-	// Call The Last Chain
-	LastChain := NewChain(PreserveNode)
+	// StationBehaviorChain
+	QueryStationChain := NewChain(QueryStationNode)
+	// PriceBehaviorChain
+	QueryPriceChain := NewChain(QueryPriceNode)
 
-	// ------------------- AddNextChain -----------------------
-	// 逆序
-	// 处理逆序的第一层
+	// ConfigBehaviorChain
+	QueryConfigChain := NewChain(QueryConfigNode)
+	// OrderBehaviorChain
+	QueryOrderChain := NewChain(QueryOrderNode)
+	// OrderOtherBehaviorChain
+	QueryOrderOtherChain := NewChain(QueryOrderOtherNode)
 
-	// PreserveChain
-	PreserveChain.AddNextChain(LoginAdminChain, 1)
+	// The Last Chain - Preserve Behavior Chain
+	PreserveChain := NewChain(PreserveNode)
 
+	// ------------------------------------- AddNextChain -------------------------------------------
+	// ------------------------------------- AddNextChain -------------------------------------------
+	// ------------------------------------- AddNextChain -------------------------------------------
+	// 逆序 - 从处理逆序的第一层开始
+
+	// XXX
+	//...
+
+	// &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& Main Chain &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+	//PreserveChain
+	//PreserveChain.AddNextChain(, 1)
+
+	// ------------------------------------- VisualizeChain -------------------------------------------
 	fmt.Println(PreserveChain.VisualizeChain(0))
 	fmt.Println()
+}
+
+// ************************************* NewFuncNode_Function *******************************************
+// ************************************* NewFuncNode_Function *******************************************
+// ************************************* NewFuncNode_Function *******************************************
+func QueryAssurance(ctx *Context) (*NodeResult, error) {
+	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+	if !ok {
+		return nil, fmt.Errorf("service client not found in context")
+	}
+
+	Assurances, err := cli.GetAllAssurances()
+	if err != nil {
+		log.Fatalf("GetAllAssurances failed: %v", err)
+		return nil, err
+	}
+	if Assurances.Status != 1 {
+		log.Fatalf("Assurances status is not 1: %d", Assurances.Status)
+		return nil, err
+	}
+
+	randomIndex := rand.Intn(len(Assurances.Data))
+	ctx.Set(OrderId, Assurances.Data[randomIndex].OrderId)
+	ctx.Set(TypeIndex, Assurances.Data[randomIndex].TypeIndex)
+	ctx.Set(TypeName, Assurances.Data[randomIndex].TypeName)
+	ctx.Set(TypePrice, Assurances.Data[randomIndex].TypePrice)
+
+	return nil, nil
+}
+
+func CreateAssurance(ctx *Context) (*NodeResult, error) {
+	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+	if !ok {
+		return nil, fmt.Errorf("service client not found in context")
+	}
+
+	//Create a new assurance
+	TheOrderID := ctx.Get(OrderId).(string)
+	addAssuranceResp, err := cli.CreateNewAssurance(1, TheOrderID) // typeIndex 1 -> TRAFFIC_ACCIDENT
+	if err != nil {
+		log.Fatalf("CreateNewAssurance failed: %v", err)
+		return nil, err
+	}
+	if addAssuranceResp.Msg == "Already exists" {
+		log.Fatalf("Order ID found, skip")
+		return nil, err
+	}
+	if addAssuranceResp.Data.OrderId != TheOrderID {
+		log.Fatalf("Request failed, addAssuranceResp.Data.OrderId:%s, expected: %s", addAssuranceResp.Data.OrderId, TheOrderID)
+		return nil, err
+	}
+	if addAssuranceResp.Data.Type != "TRAFFIC_ACCIDENT" {
+		log.Fatalf("Request failed, addAssuranceResp.Data.Type are expected to be 'TRAFFIC_ACCIDENT' but actually: %v", addAssuranceResp.Data.Type)
+		return nil, err
+	}
+
+	ctx.Set(OrderId, addAssuranceResp.Data.OrderId)
+	//ctx.Set(TypeIndex, addAssuranceResp.Data.)
+	//ctx.Set(TypeName, Assurances.Data[randomIndex].TypeName)
+	//ctx.Set(TypePrice, Assurances.Data[randomIndex].TypePrice)
+
+	return nil, nil
 }
 
 func QueryContacts(ctx *Context) (*NodeResult, error) {
@@ -279,65 +449,6 @@ func CreateContacts(ctx *Context) (*NodeResult, error) {
 	ctx.Set(DocumentType, CreateContacts.Data.DocumentType)
 	ctx.Set(DocumentNumber, CreateContacts.Data.DocumentNumber)
 	ctx.Set(PhoneNumber, CreateContacts.Data.PhoneNumber)
-
-	return nil, nil
-}
-
-func QueryAssurance(ctx *Context) (*NodeResult, error) {
-	cli, ok := ctx.Get(Client).(*service.SvcImpl)
-	if !ok {
-		return nil, fmt.Errorf("service client not found in context")
-	}
-
-	Assurances, err := cli.GetAllAssurances()
-	if err != nil {
-		log.Fatalf("GetAllAssurances failed: %v", err)
-		return nil, err
-	}
-	if Assurances.Status != 1 {
-		log.Fatalf("Assurances status is not 1: %d", Assurances.Status)
-		return nil, err
-	}
-
-	randomIndex := rand.Intn(len(Assurances.Data))
-	ctx.Set(OrderId, Assurances.Data[randomIndex].OrderId)
-	ctx.Set(TypeIndex, Assurances.Data[randomIndex].TypeIndex)
-	ctx.Set(TypeName, Assurances.Data[randomIndex].TypeName)
-	ctx.Set(TypePrice, Assurances.Data[randomIndex].TypePrice)
-
-	return nil, nil
-}
-
-func CreateAssurance(ctx *Context) (*NodeResult, error) {
-	cli, ok := ctx.Get(Client).(*service.SvcImpl)
-	if !ok {
-		return nil, fmt.Errorf("service client not found in context")
-	}
-
-	//Create a new assurance
-	TheOrderID := ctx.Get(OrderId).(string)
-	addAssuranceResp, err := cli.CreateNewAssurance(1, TheOrderID) // typeIndex 1 -> TRAFFIC_ACCIDENT
-	if err != nil {
-		log.Fatalf("CreateNewAssurance failed: %v", err)
-		return nil, err
-	}
-	if addAssuranceResp.Msg == "Already exists" {
-		log.Fatalf("Order ID found, skip")
-		return nil, err
-	}
-	if addAssuranceResp.Data.OrderId != TheOrderID {
-		log.Fatalf("Request failed, addAssuranceResp.Data.OrderId:%s, expected: %s", addAssuranceResp.Data.OrderId, TheOrderID)
-		return nil, err
-	}
-	if addAssuranceResp.Data.Type != "TRAFFIC_ACCIDENT" {
-		log.Fatalf("Request failed, addAssuranceResp.Data.Type are expected to be 'TRAFFIC_ACCIDENT' but actually: %v", addAssuranceResp.Data.Type)
-		return nil, err
-	}
-
-	ctx.Set(OrderId, addAssuranceResp.Data.OrderId)
-	//ctx.Set(TypeIndex, addAssuranceResp.Data.)
-	//ctx.Set(TypeName, Assurances.Data[randomIndex].TypeName)
-	//ctx.Set(TypePrice, Assurances.Data[randomIndex].TypePrice)
 
 	return nil, nil
 }
@@ -521,7 +632,7 @@ func CreateRoute(ctx *Context) (*NodeResult, error) {
 	return nil, nil
 }
 
-// Preserve Behaviors
+// Preserve Behaviors - The Last One
 func Preserve(ctx *Context) (*NodeResult, error) {
 	cli, ok := ctx.Get(Client).(*service.SvcImpl)
 	if !ok {
