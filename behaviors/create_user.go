@@ -10,9 +10,9 @@ import (
 
 const (
 	// CreateUser
-	UserName = "username"
-	Password = "password"
-	UserId   = "userid"
+	//UserName = "username"
+	//Password = "password"
+	UserId = "userid"
 	// Login Admin
 	LoginToken = "loginToken"
 )
