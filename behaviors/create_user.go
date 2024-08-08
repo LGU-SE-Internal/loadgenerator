@@ -44,6 +44,24 @@ func LoginAdmin(ctx *Context) (*NodeResult, error) {
 	return nil, nil
 }
 
+func LoginBasic(ctx *Context) (*NodeResult, error) {
+	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+	if !ok {
+		return nil, fmt.Errorf("service client not found in context")
+	}
+	// login
+	loginResult, err := cli.ReqUserLogin(&service.UserLoginInfoReq{
+		Password:         "111111",
+		UserName:         "fdse_microservice",
+		VerificationCode: "123",
+	})
+	if err != nil {
+		return nil, err
+	}
+	ctx.Set(LoginToken, loginResult.Data.Token)
+	return nil, nil
+}
+
 func LoginNormal(ctx *Context) (*NodeResult, error) {
 	cli, ok := ctx.Get(Client).(*service.SvcImpl)
 	if !ok {
