@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	// Preserve
+	// Preserve - Main
 	AccountID  = "accountId"
 	ContactsID = "contactsId"
 	TripID     = "tripId"
@@ -32,19 +32,31 @@ const (
 	ConsigneeWeight = "consigneeWeight"
 	IsWithin        = "isWithin"
 
-	// Contacts
-	//Id             string `json:"id"`
-	//AccountId      string `json:"accountId"`
-	Name           = "name" // ?= ConsigneeName
-	DocumentType   = "documentType"
-	DocumentNumber = "documentNumber"
-	PhoneNumber    = "phoneNumber" // ?= ConsigneePhone
-
 	// Assurance
 	OrderId   = "orderId"
 	TypeIndex = "typeIndex"
 	TypeName  = "typeName"
 	TypePrice = "typePrice"
+
+	// VerifyCode
+	BooleanVerifyCode = "booleanVerifyCode"
+
+	// User
+	UserID       = "userId"
+	UserName     = "userName"
+	Password     = "password"
+	Gender       = "gender"
+	DocumentType = "documentType"
+	DocumentNum  = "documentNum"
+	Email        = "email"
+
+	// Contacts
+	//Id = "id" - ContactsID
+	AccountId = "accountId"
+	Name      = "name"
+	//DocumentType   = "documentType"
+	DocumentNumber = "documentNumber"
+	PhoneNumber    = "phoneNumber"
 
 	// Route
 	RouteID = "routeId"
@@ -348,7 +360,7 @@ func QueryAssurance(ctx *Context) (*NodeResult, error) {
 	}
 	if Assurances.Status != 1 {
 		log.Fatalf("Assurances status is not 1: %d", Assurances.Status)
-		return nil, err
+		return nil, nil
 	}
 
 	randomIndex := rand.Intn(len(Assurances.Data))
@@ -421,7 +433,19 @@ func VerifyCode(ctx *Context) (*NodeResult, error) {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
-	// TODO part; I will generate it.
+	verifyCode := generateVerifyCode()
+	verifyCodeResp, err := cli.VerifyCode(verifyCode)
+	if err != nil {
+		log.Fatalf("Request failed, err %s", err)
+		return nil, err
+	}
+	if !verifyCodeResp {
+		log.Fatalf("Verification failed")
+		return nil, err
+	}
+	log.Fatalf("Verification code verified. The result is %v and verifyCode: %v", verifyCodeResp, verifyCode)
+
+	ctx.Set(BooleanVerifyCode, verifyCodeResp)
 
 	return nil, nil
 }
@@ -432,7 +456,24 @@ func QueryUser(ctx *Context) (*NodeResult, error) {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
-	// TODO part; I will generate it.
+	allUsersResp, err := cli.GetAllUsers()
+	if err != nil {
+		log.Fatalf("Request failed, err1 %s", err)
+		return nil, err
+	}
+	if allUsersResp.Status != 1 {
+		log.Fatalf("Expected status 200, got %d", allUsersResp.Status)
+		return nil, err
+	}
+
+	randomIndex := rand.Intn(len(allUsersResp.Data))
+	ctx.Set(UserID, allUsersResp.Data[randomIndex].UserID)
+	ctx.Set(UserName, allUsersResp.Data[randomIndex].UserName)
+	ctx.Set(Password, allUsersResp.Data[randomIndex].Password)
+	ctx.Set(Gender, allUsersResp.Data[randomIndex].Gender)
+	ctx.Set(DocumentNum, allUsersResp.Data[randomIndex].DocumentNum)
+	ctx.Set(DocumentType, allUsersResp.Data[randomIndex].DocumentType)
+	ctx.Set(Email, allUsersResp.Data[randomIndex].Email)
 
 	return nil, nil
 }
@@ -861,21 +902,21 @@ func Preserve(ctx *Context) (*NodeResult, error) {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 	OrderTicketsInfo := service.OrderTicketsInfo{
-		AccountID:       ctx.Get(AccountID).(string),  // Query:Create = 0.7 : 0.3
-		ContactsID:      ctx.Get(ContactsID).(string), // Query:Create = 0.7 : 0.3
-		TripID:          ctx.Get(TripID).(string),     // Query:Create = 0.7 : 0.3
+		AccountID:       ctx.Get(AccountID).(string),  // Query:Create = 1 : 0
+		ContactsID:      ctx.Get(ContactsID).(string), // Query:Create = 1 : 0
+		TripID:          ctx.Get(TripID).(string),
 		SeatType:        ctx.Get(SeatType).(int),
-		LoginToken:      ctx.Get(LoginToken).(string), // Query:Create = 0.7 : 0.3
-		Date:            ctx.Get(Date).(string),       // Query:Create = 0.7 : 0.3
-		From:            ctx.Get(From).(string),       // Query:Create = 0.7 : 0.3
-		To:              ctx.Get(To).(string),         // Query:Create = 0.7 : 0.3
+		LoginToken:      ctx.Get(LoginToken).(string),
+		Date:            ctx.Get(Date).(string),
+		From:            ctx.Get(From).(string),
+		To:              ctx.Get(To).(string),
 		Assurance:       ctx.Get(Assurance).(int),
 		FoodType:        ctx.Get(FoodType).(int),
-		StationName:     ctx.Get(StationName).(string), // Query:Create = 0.7 : 0.3
+		StationName:     ctx.Get(StationName).(string),
 		StoreName:       ctx.Get(StoreName).(string),
 		FoodName:        ctx.Get(FoodName).(string),
 		FoodPrice:       ctx.Get(FoodPrice).(float64),
-		HandleDate:      ctx.Get(HandleDate).(string), // Query:Create = 0.7 : 0.3
+		HandleDate:      ctx.Get(HandleDate).(string),
 		ConsigneeName:   ctx.Get(ConsigneeName).(string),
 		ConsigneePhone:  ctx.Get(ConsigneePhone).(string),
 		ConsigneeWeight: ctx.Get(ConsigneeWeight).(float64),
