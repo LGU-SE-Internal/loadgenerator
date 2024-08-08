@@ -52,11 +52,27 @@ const (
 
 	// Contacts
 	//Id = "id" - ContactsID
-	AccountId = "accountId"
-	Name      = "name"
+	//AccountId = "accountId"
+	Name = "name"
 	//DocumentType   = "documentType"
 	DocumentNumber = "documentNumber"
 	PhoneNumber    = "phoneNumber"
+
+	// Consign
+	ID      = "id"
+	OrderID = "orderId"
+	//AccountID = "accountId"
+	//HandleDate = "handleDate"
+	TargetDate = "targetDate"
+	//From = "from"
+	//To = "to"
+	Consignee = "consignee"
+	Phone     = "phone"
+	Weight    = "weight"
+	//IsWithin = "isWithin"
+	Price = "price"
+
+	// FoodBehavior
 
 	// Route
 	RouteID = "routeId"
@@ -372,39 +388,39 @@ func QueryAssurance(ctx *Context) (*NodeResult, error) {
 	return nil, nil
 }
 
-//func CreateAssurance(ctx *Context) (*NodeResult, error) {
-//	cli, ok := ctx.Get(Client).(*service.SvcImpl)
-//	if !ok {
-//		return nil, fmt.Errorf("service client not found in context")
-//	}
-//
-//	//Create a new assurance
-//	TheOrderID := ctx.Get(OrderId).(string)
-//	addAssuranceResp, err := cli.CreateNewAssurance(1, TheOrderID) // typeIndex 1 -> TRAFFIC_ACCIDENT
-//	if err != nil {
-//		log.Fatalf("CreateNewAssurance failed: %v", err)
-//		return nil, err
-//	}
-//	if addAssuranceResp.Msg == "Already exists" {
-//		log.Fatalf("Order ID found, skip")
-//		return nil, err
-//	}
-//	if addAssuranceResp.Data.OrderId != TheOrderID {
-//		log.Fatalf("Request failed, addAssuranceResp.Data.OrderId:%s, expected: %s", addAssuranceResp.Data.OrderId, TheOrderID)
-//		return nil, err
-//	}
-//	if addAssuranceResp.Data.Type != "TRAFFIC_ACCIDENT" {
-//		log.Fatalf("Request failed, addAssuranceResp.Data.Type are expected to be 'TRAFFIC_ACCIDENT' but actually: %v", addAssuranceResp.Data.Type)
-//		return nil, err
-//	}
-//
-//	ctx.Set(OrderId, addAssuranceResp.Data.OrderId)
-//	//ctx.Set(TypeIndex, addAssuranceResp.Data.)
-//	//ctx.Set(TypeName, Assurances.Data[randomIndex].TypeName)
-//	//ctx.Set(TypePrice, Assurances.Data[randomIndex].TypePrice)
-//
-//	return nil, nil
-//}
+func CreateAssurance(ctx *Context) (*NodeResult, error) {
+	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+	if !ok {
+		return nil, fmt.Errorf("service client not found in context")
+	}
+
+	//Create a new assurance
+	TheOrderID := ctx.Get(OrderId).(string)
+	addAssuranceResp, err := cli.CreateNewAssurance(1, TheOrderID) // typeIndex 1 -> TRAFFIC_ACCIDENT
+	if err != nil {
+		log.Fatalf("CreateNewAssurance failed: %v", err)
+		return nil, err
+	}
+	if addAssuranceResp.Msg == "Already exists" {
+		log.Fatalf("Order ID found, skip")
+		return nil, err
+	}
+	if addAssuranceResp.Data.OrderId != TheOrderID {
+		log.Fatalf("Request failed, addAssuranceResp.Data.OrderId:%s, expected: %s", addAssuranceResp.Data.OrderId, TheOrderID)
+		return nil, err
+	}
+	if addAssuranceResp.Data.Type != "TRAFFIC_ACCIDENT" {
+		log.Fatalf("Request failed, addAssuranceResp.Data.Type are expected to be 'TRAFFIC_ACCIDENT' but actually: %v", addAssuranceResp.Data.Type)
+		return nil, err
+	}
+
+	ctx.Set(OrderId, addAssuranceResp.Data.OrderId)
+	//ctx.Set(TypeIndex, addAssuranceResp.Data.)
+	//ctx.Set(TypeName, Assurances.Data[randomIndex].TypeName)
+	//ctx.Set(TypePrice, Assurances.Data[randomIndex].TypePrice)
+
+	return nil, nil
+}
 
 //UserBehaviorsChain
 // LoginBasicChain
@@ -547,7 +563,106 @@ func QueryConsign(ctx *Context) (*NodeResult, error) {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
-	// TODO part; I will generate it.
+	//TheAccountId := ctx.Get(AccountID).(string)
+	//// Query consign records by account ID
+	//consignsByAccountId, err := cli.QueryByAccountId(TheAccountId)
+	//if err != nil {
+	//	log.Fatalf("QueryByAccountId failed: %v", err)
+	//}
+	//if consignsByAccountId.Status != 1 {
+	//	log.Fatalf("consignsByAccountId failed")
+	//
+	//}
+	///*found := false
+	//for _, consign := range consignsByAccountId.Data {
+	//	if consign.IsWithin == existedConsign.IsWithin &&
+	//		consign.To == existedConsign.To &&
+	//		consign.Weight == existedConsign.Weight &&
+	//		consign.ID == existedConsign.ID &&
+	//		consign.Phone == existedConsign.Phone &&
+	//		consign.HandleDate == existedConsign.HandleDate &&
+	//		consign.TargetDate == existedConsign.TargetDate &&
+	//		consign.OrderID == existedConsign.OrderID &&
+	//		consign.Consignee == existedConsign.Consignee &&
+	//		consign.From == existedConsign.From &&
+	//		consign.AccountID == existedConsign.AccountID {
+	//		found = true
+	//	}
+	//}
+	//if !found {
+	//	log.Fatalf("Can not find consign by accountId.")
+	//}*/
+	//log.Fatalf("QueryByAccountId response: %+v", consignsByAccountId)
+
+	// Query consign records by order ID
+	TheOrderId := ctx.Get(OrderId).(string)
+	consignsByOrderId, err := cli.QueryByOrderId(TheOrderId)
+	if err != nil {
+		log.Fatalf("QueryByOrderId failed: %v", err)
+		return nil, err
+	}
+	if consignsByOrderId.Status != 1 {
+		log.Fatalf("consignsByOrderId.Status = 1")
+		return nil, err
+	}
+	/*isMatch1 := false
+	if consignsByOrderId.Data.OrderId == existedConsign.OrderID &&
+		consignsByOrderId.Data.Id == existedConsign.ID &&
+		consignsByOrderId.Data.From == existedConsign.From &&
+		consignsByOrderId.Data.To == existedConsign.To &&
+		consignsByOrderId.Data.Phone == existedConsign.Phone &&
+		consignsByOrderId.Data.Consignee == existedConsign.Consignee &&
+		consignsByOrderId.Data.TargetDate == existedConsign.TargetDate &&
+		consignsByOrderId.Data.HandleDate == existedConsign.HandleDate &&
+		consignsByOrderId.Data.Weight == existedConsign.Weight &&
+		consignsByOrderId.Data.AccountId == existedConsign.AccountID {
+		isMatch1 = true
+	}
+	if !isMatch1 {
+		log.Fatalf("Can not find consign by orderId.")
+	}*/
+	//log.Fatalf("QueryByOrderId response: %+v", consignsByOrderId)
+
+	// Query consign records by consignee
+	//TheConsignee := ctx.Get(Name).(string)
+	//consignsByConsignee, err := cli.QueryByConsignee(TheConsignee)
+	//if err != nil {
+	//	log.Fatalf("QueryByConsignee failed: %v", err)
+	//}
+	//if consignsByConsignee.Status != 1 {
+	//	log.Fatalf("consignsByConsignee failed.")
+	//}
+	//isMatch2 := false
+	//for _, consign := range consignsByConsignee.Data {
+	//	if consign.Id == existedConsign.ID &&
+	//		consign.AccountId == existedConsign.AccountID &&
+	//		consign.OrderId == existedConsign.OrderID &&
+	//		consign.To == existedConsign.To &&
+	//		consign.From == existedConsign.From &&
+	//		consign.Weight == existedConsign.Weight &&
+	//		consign.HandleDate == existedConsign.HandleDate &&
+	//		consign.TargetDate == existedConsign.TargetDate &&
+	//		consign.Phone == existedConsign.Phone &&
+	//		consign.Consignee == existedConsign.Consignee {
+	//		isMatch2 = true
+	//	}
+	//}
+	//if !isMatch2 {
+	//	log.Fatalf("Can not find consign by consignee.")
+	//}
+	//log.Fatalf("QueryByConsignee response: %+v", consignsByConsignee)
+
+	ctx.Set(ID, consignsByOrderId.Data.Id)
+	ctx.Set(OrderId, consignsByOrderId.Data.OrderId)
+	ctx.Set(AccountID, consignsByOrderId.Data.AccountId)
+	ctx.Set(HandleDate, consignsByOrderId.Data.HandleDate)
+	ctx.Set(TargetDate, consignsByOrderId.Data.TargetDate)
+	ctx.Set(From, consignsByOrderId.Data.From)
+	ctx.Set(To, consignsByOrderId.Data.To)
+	ctx.Set(Consignee, consignsByOrderId.Data.Consignee)
+	ctx.Set(Phone, consignsByOrderId.Data.Phone)
+	ctx.Set(Weight, consignsByOrderId.Data.Weight)
+	ctx.Set(Price, consignsByOrderId.Data.Price)
 
 	return nil, nil
 }
@@ -558,29 +673,100 @@ func CreateConsign(ctx *Context) (*NodeResult, error) {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
-	// TODO part; I will generate it.
+	// Mock data
+	MockedId := faker.UUIDHyphenated()
+	MockedAccountId := ctx.Get(AccountID).(string)
+	MockedOrderId := ctx.Get(OrderId).(string)
+	MockedHandleDate := ctx.Get(HandleDate).(string)
+	MockedTargetDate := ctx.Get(TargetDate).(string)
+	MockedFromPlace := ctx.Get(From).(string)
+	MockedToPlace := ctx.Get(To).(string)
+	MockedConsignee := ctx.Get(ConsigneeName).(string)
+	MockedPhone := ctx.Get(PhoneNumber).(string)
+	MockedWeight := GenerateWeight()
+
+	// Insert a new consign record
+	insertReq := service.Consign{
+		ID:         MockedId,
+		OrderID:    MockedOrderId,
+		AccountID:  MockedAccountId,
+		HandleDate: MockedHandleDate,
+		TargetDate: MockedTargetDate,
+		From:       MockedFromPlace,
+		To:         MockedToPlace,
+		Consignee:  MockedConsignee,
+		Phone:      MockedPhone,
+		Weight:     MockedWeight,
+		IsWithin:   BooleanIsWithin(MockedWeight),
+	}
+	insertResp, err := cli.InsertConsignRecord(&insertReq)
+	if err != nil {
+		log.Fatalf("InsertConsignRecord failed: %v", err)
+		return nil, err
+	}
+	if insertResp.Msg == "Already exists" {
+		return nil, fmt.Errorf("Consign already exists")
+	}
+	if insertResp.Status != 1 {
+		log.Fatalf("InsertConsignRecord failed: %v", insertResp.Status)
+		return nil, err
+	}
+	isMatch := false
+	if /*insertResp.Data.ID == insertReq.ID &&*/
+	insertResp.Data.IsWithin == insertReq.IsWithin &&
+		insertResp.Data.AccountID == insertReq.AccountID &&
+		insertResp.Data.From == insertReq.From &&
+		insertResp.Data.Consignee == insertReq.Consignee &&
+		insertResp.Data.OrderID == insertReq.OrderID &&
+		insertResp.Data.Phone == insertReq.Phone &&
+		insertResp.Data.TargetDate == insertReq.TargetDate &&
+		insertResp.Data.HandleDate == insertReq.HandleDate &&
+		insertResp.Data.To == insertReq.To &&
+		insertResp.Data.Weight == insertReq.Weight {
+		isMatch = true
+	}
+	if !isMatch {
+		log.Fatalf("Creation not match. Expect: %v, but get: %v", insertReq, insertResp.Data)
+		return nil, err
+	}
+	//log.Fatalf("InsertConsignRecord response: %+v", insertResp)
+	//existedConsign := insertResp.Data
+
+	ctx.Set(ID, insertResp.Data.ID)
+	ctx.Set(OrderID, insertResp.Data.OrderID)
+	ctx.Set(AccountID, insertResp.Data.AccountID)
+	ctx.Set(HandleDate, insertResp.Data.HandleDate)
+	ctx.Set(TargetDate, insertResp.Data.TargetDate)
+	ctx.Set(From, insertResp.Data.From)
+	ctx.Set(To, insertResp.Data.To)
+	ctx.Set(Consignee, insertResp.Data.Consignee)
+	ctx.Set(Phone, insertResp.Data.Phone)
+	ctx.Set(Weight, insertResp.Data.Weight)
+	ctx.Set(IsWithin, insertResp.Data.IsWithin)
 
 	return nil, nil
 }
 
 func QueryConsignPric(ctx *Context) (*NodeResult, error) {
-	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+	_, ok := ctx.Get(Client).(*service.SvcImpl)
+	//cli, ok := ctx.Get(Client).(*service.SvcImpl)
 	if !ok {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
-	// TODO part; I will generate it.
+	// TODO part
 
 	return nil, nil
 }
 
 func CreateConsignPrice(ctx *Context) (*NodeResult, error) {
-	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+	_, ok := ctx.Get(Client).(*service.SvcImpl)
+	//cli, ok := ctx.Get(Client).(*service.SvcImpl)
 	if !ok {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
-	// TODO part; I will generate it.
+	// TODO part
 
 	return nil, nil
 }
@@ -592,7 +778,68 @@ func QueryFood(ctx *Context) (*NodeResult, error) {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
-	// TODO part; I will generate it.
+	// Query all
+	allFoodOrders, err := cli.FindAllFoodOrder()
+	if err != nil {
+		log.Fatalf("FindAllFoodOrder request failed, err %s", err)
+		return nil, err
+	}
+	if len(allFoodOrders.Data) == 0 {
+		log.Fatalf("FindAllFoodOrder returned empty results")
+		return nil, err
+	}
+	if allFoodOrders.Status != 1 {
+		log.Fatalf("FindAllFoodOrder failed: %v", allFoodOrders.Status)
+		return nil, err
+	}
+
+	randomIndex := rand.Intn(len(allFoodOrders.Data))
+	ctx.Set(OrderId, allFoodOrders.Data[randomIndex].OrderId)
+	ctx.Set(FoodType, allFoodOrders.Data[randomIndex].FoodType)
+	ctx.Set(StationName, allFoodOrders.Data[randomIndex].StationName)
+	ctx.Set(StoreName, allFoodOrders.Data[randomIndex].StoreName)
+	ctx.Set(FoodName, allFoodOrders.Data[randomIndex].FoodName)
+	ctx.Set(Price, allFoodOrders.Data[randomIndex].Price)
+
+	return nil, nil
+}
+
+func CreateFood(ctx *Context) (*NodeResult, error) {
+	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+	if !ok {
+		return nil, fmt.Errorf("service client not found in context")
+	}
+
+	// Mock data
+	MockedOrderID := ctx.Get(OrderId).(string)
+	MockedID := faker.UUIDHyphenated()
+	foodOrder := service.FoodOrder{
+		ID:          MockedID,
+		OrderID:     MockedOrderID,
+		FoodType:    rand.Intn(1),
+		FoodName:    generateRandomFood(),
+		StationName: ctx.Get(StationName).(string),
+		StoreName:   ctx.Get(StoreName).(string),
+		Price:       ctx.Get(Price).(float64),
+	}
+
+	// Create Test
+	newCreateResp, err := cli.CreateFoodOrder(&foodOrder)
+	if err != nil {
+		log.Fatalf("NewCreateFoodOrder request failed, err %s", err)
+		return nil, err
+	}
+	if newCreateResp.Status != 1 {
+		log.Fatalf("NEwCreateFoodOrder failed")
+		return nil, err
+	}
+
+	ctx.Set(OrderId, newCreateResp.Data.OrderId)
+	ctx.Set(FoodType, newCreateResp.Data.FoodType)
+	ctx.Set(StationName, newCreateResp.Data.StationName)
+	ctx.Set(StoreName, newCreateResp.Data.StoreName)
+	ctx.Set(FoodName, newCreateResp.Data.FoodName)
+	ctx.Set(Price, newCreateResp.Data.Price)
 
 	return nil, nil
 }
@@ -603,7 +850,28 @@ func QueryStationFood(ctx *Context) (*NodeResult, error) {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
-	// TODO part; I will generate it.
+	resp, err := cli.GetAllStationFood()
+	if err != nil {
+		log.Fatalf("Resp returns err: %v", err)
+		return nil, err
+	}
+	if resp.Status != 1 {
+		log.Fatalf("GetAllStationFood status should be 1, but is %d", resp.Status)
+		return nil, err
+	}
+
+	//Id           string  `json:"id"`
+	//StationName  string  `json:"stationName"`
+	//StoreName    string  `json:"storeName"`
+	//Telephone    string  `json:"telephone"`
+	//BusinessTime string  `json:"businessTime"`
+	//DeliveryFee  float64 `json:"deliveryFee"`
+	//FoodList     []struct {
+	//	FoodName string  `json:"foodName"`
+	//	Price    float64 `json:"price"`
+	//} `json:"foodList"`
+
+	// -------------------------------------------------------------- 01点31分
 
 	return nil, nil
 }
