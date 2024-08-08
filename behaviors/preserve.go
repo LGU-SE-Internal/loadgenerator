@@ -333,6 +333,8 @@ func init() {
 // ************************************* NewFuncNode_Function *******************************************
 // ************************************* NewFuncNode_Function *******************************************
 // ************************************* NewFuncNode_Function *******************************************
+
+// AssuranceBehaviorChain
 func QueryAssurance(ctx *Context) (*NodeResult, error) {
 	cli, ok := ctx.Get(Client).(*service.SvcImpl)
 	if !ok {
@@ -358,40 +360,84 @@ func QueryAssurance(ctx *Context) (*NodeResult, error) {
 	return nil, nil
 }
 
-func CreateAssurance(ctx *Context) (*NodeResult, error) {
+//func CreateAssurance(ctx *Context) (*NodeResult, error) {
+//	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+//	if !ok {
+//		return nil, fmt.Errorf("service client not found in context")
+//	}
+//
+//	//Create a new assurance
+//	TheOrderID := ctx.Get(OrderId).(string)
+//	addAssuranceResp, err := cli.CreateNewAssurance(1, TheOrderID) // typeIndex 1 -> TRAFFIC_ACCIDENT
+//	if err != nil {
+//		log.Fatalf("CreateNewAssurance failed: %v", err)
+//		return nil, err
+//	}
+//	if addAssuranceResp.Msg == "Already exists" {
+//		log.Fatalf("Order ID found, skip")
+//		return nil, err
+//	}
+//	if addAssuranceResp.Data.OrderId != TheOrderID {
+//		log.Fatalf("Request failed, addAssuranceResp.Data.OrderId:%s, expected: %s", addAssuranceResp.Data.OrderId, TheOrderID)
+//		return nil, err
+//	}
+//	if addAssuranceResp.Data.Type != "TRAFFIC_ACCIDENT" {
+//		log.Fatalf("Request failed, addAssuranceResp.Data.Type are expected to be 'TRAFFIC_ACCIDENT' but actually: %v", addAssuranceResp.Data.Type)
+//		return nil, err
+//	}
+//
+//	ctx.Set(OrderId, addAssuranceResp.Data.OrderId)
+//	//ctx.Set(TypeIndex, addAssuranceResp.Data.)
+//	//ctx.Set(TypeName, Assurances.Data[randomIndex].TypeName)
+//	//ctx.Set(TypePrice, Assurances.Data[randomIndex].TypePrice)
+//
+//	return nil, nil
+//}
+
+//UserBehaviorsChain
+// LoginBasicChain
+//func LoginBasic(ctx *Context) (*NodeResult, error) {
+//	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+//	if !ok {
+//		return nil, fmt.Errorf("service client not found in context")
+//	}
+//	// login
+//	loginResult, err := cli.ReqUserLogin(&service.UserLoginInfoReq{
+//		Password:         "111111",
+//		UserName:         "fdse_microservice",
+//		VerificationCode: "123",
+//	})
+//	if err != nil {
+//		return nil, err
+//	}
+//	ctx.Set(LoginToken, loginResult.Data.Token)
+//	return nil, nil
+//}
+
+// VerifyCodeBehaviorChain
+func VerifyCode(ctx *Context) (*NodeResult, error) {
 	cli, ok := ctx.Get(Client).(*service.SvcImpl)
 	if !ok {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
-	//Create a new assurance
-	TheOrderID := ctx.Get(OrderId).(string)
-	addAssuranceResp, err := cli.CreateNewAssurance(1, TheOrderID) // typeIndex 1 -> TRAFFIC_ACCIDENT
-	if err != nil {
-		log.Fatalf("CreateNewAssurance failed: %v", err)
-		return nil, err
-	}
-	if addAssuranceResp.Msg == "Already exists" {
-		log.Fatalf("Order ID found, skip")
-		return nil, err
-	}
-	if addAssuranceResp.Data.OrderId != TheOrderID {
-		log.Fatalf("Request failed, addAssuranceResp.Data.OrderId:%s, expected: %s", addAssuranceResp.Data.OrderId, TheOrderID)
-		return nil, err
-	}
-	if addAssuranceResp.Data.Type != "TRAFFIC_ACCIDENT" {
-		log.Fatalf("Request failed, addAssuranceResp.Data.Type are expected to be 'TRAFFIC_ACCIDENT' but actually: %v", addAssuranceResp.Data.Type)
-		return nil, err
-	}
-
-	ctx.Set(OrderId, addAssuranceResp.Data.OrderId)
-	//ctx.Set(TypeIndex, addAssuranceResp.Data.)
-	//ctx.Set(TypeName, Assurances.Data[randomIndex].TypeName)
-	//ctx.Set(TypePrice, Assurances.Data[randomIndex].TypePrice)
+	// TODO part; I will generate it.
 
 	return nil, nil
 }
 
+func QueryUser(ctx *Context) (*NodeResult, error) {
+	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+	if !ok {
+		return nil, fmt.Errorf("service client not found in context")
+	}
+
+	// TODO part; I will generate it.
+
+	return nil, nil
+}
+
+// ContactsBehaviorChain
 func QueryContacts(ctx *Context) (*NodeResult, error) {
 	cli, ok := ctx.Get(Client).(*service.SvcImpl)
 	if !ok {
@@ -449,6 +495,85 @@ func CreateContacts(ctx *Context) (*NodeResult, error) {
 	ctx.Set(DocumentType, CreateContacts.Data.DocumentType)
 	ctx.Set(DocumentNumber, CreateContacts.Data.DocumentNumber)
 	ctx.Set(PhoneNumber, CreateContacts.Data.PhoneNumber)
+
+	return nil, nil
+}
+
+// ConsignBehaviorsChain
+func QueryConsign(ctx *Context) (*NodeResult, error) {
+	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+	if !ok {
+		return nil, fmt.Errorf("service client not found in context")
+	}
+
+	// TODO part; I will generate it.
+
+	return nil, nil
+}
+
+func CreateConsign(ctx *Context) (*NodeResult, error) {
+	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+	if !ok {
+		return nil, fmt.Errorf("service client not found in context")
+	}
+
+	// TODO part; I will generate it.
+
+	return nil, nil
+}
+
+func QueryConsignPric(ctx *Context) (*NodeResult, error) {
+	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+	if !ok {
+		return nil, fmt.Errorf("service client not found in context")
+	}
+
+	// TODO part; I will generate it.
+
+	return nil, nil
+}
+
+func CreateConsignPrice(ctx *Context) (*NodeResult, error) {
+	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+	if !ok {
+		return nil, fmt.Errorf("service client not found in context")
+	}
+
+	// TODO part; I will generate it.
+
+	return nil, nil
+}
+
+// FoodBehaviorChain
+func QueryFood(ctx *Context) (*NodeResult, error) {
+	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+	if !ok {
+		return nil, fmt.Errorf("service client not found in context")
+	}
+
+	// TODO part; I will generate it.
+
+	return nil, nil
+}
+
+func QueryStationFood(ctx *Context) (*NodeResult, error) {
+	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+	if !ok {
+		return nil, fmt.Errorf("service client not found in context")
+	}
+
+	// TODO part; I will generate it.
+
+	return nil, nil
+}
+
+func QueryTrainFood(ctx *Context) (*NodeResult, error) {
+	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+	if !ok {
+		return nil, fmt.Errorf("service client not found in context")
+	}
+
+	// TODO part; I will generate it.
 
 	return nil, nil
 }
@@ -550,6 +675,18 @@ func CreateTrip(ctx *Context) (*NodeResult, error) {
 	return nil, nil
 }
 
+// TravelBehaviorChain
+func QueryTrain(ctx *Context) (*NodeResult, error) {
+	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+	if !ok {
+		return nil, fmt.Errorf("service client not found in context")
+	}
+
+	// TODO part; I will generate it.
+
+	return nil, nil
+}
+
 func QueryRoute(ctx *Context) (*NodeResult, error) {
 	cli, ok := ctx.Get(Client).(*service.SvcImpl)
 	if !ok {
@@ -575,62 +712,147 @@ func QueryRoute(ctx *Context) (*NodeResult, error) {
 	return nil, nil
 }
 
-func CreateRoute(ctx *Context) (*NodeResult, error) {
+//func CreateRoute(ctx *Context) (*NodeResult, error) {
+//	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+//	if !ok {
+//		return nil, fmt.Errorf("service client not found in context")
+//	}
+//
+//	// Create
+//	MockedID := faker.UUIDHyphenated()
+//	MockedStartStation := faker.GetRealAddress().City
+//	MockedEndStation := faker.GetRealAddress().City
+//	MockedStationList := fmt.Sprintf("%s,%s,%s", MockedStartStation, faker.GetRealAddress().City, MockedEndStation)
+//	MockedDistanceList := fmt.Sprintf("%d,%d,%d", rand.Intn(30), rand.Intn(30), rand.Intn(30))
+//	input := service.RouteInfo{
+//		ID:           MockedID,
+//		StartStation: MockedStartStation,
+//		EndStation:   MockedEndStation,
+//		StationList:  MockedStationList,
+//		DistanceList: MockedDistanceList,
+//	}
+//	resp, err := cli.CreateAndModifyRoute(&input)
+//	if err != nil {
+//		log.Fatalf("Request failed, err %s", err)
+//		return nil, err
+//	}
+//	if resp.Msg == "Already exists" {
+//		log.Fatalf("Route already exists, skip")
+//		return nil, err
+//	}
+//	if resp.Data.Id != input.ID {
+//		log.Fatalf("Route ID does not match, expect %s, got %s", input.ID, resp.Data.Id)
+//		return nil, err
+//	}
+//	if resp.Data.StartStation != input.StartStation {
+//		log.Fatalf("StartStation does not match, expect %s, got %s", input.StartStation, resp.Data.StartStation)
+//		return nil, err
+//	}
+//	if resp.Data.EndStation != input.EndStation {
+//		log.Fatalf("StartStation does not match, expect %s, got %s", input.StartStation, resp.Data.StartStation)
+//		return nil, err
+//	}
+//	if StringSliceToString(resp.Data.Stations) != ConvertCommaSeparatedToBracketed(input.StationList) {
+//		log.Fatalf("StationList does not match, expect %s, got %s", ConvertCommaSeparatedToBracketed(input.StationList), StringSliceToString(resp.Data.Stations))
+//		return nil, err
+//	}
+//	if IntSliceToString(resp.Data.Distances) != ConvertCommaSeparatedToBracketed(input.DistanceList) {
+//		log.Fatalf("DistanceList does not match, expect %s, got %s", ConvertCommaSeparatedToBracketed(input.DistanceList), IntSliceToString(resp.Data.Distances))
+//		return nil, err
+//	}
+//
+//	ctx.Set(From, resp.Data.StartStation)
+//	ctx.Set(To, resp.Data.EndStation)
+//	ctx.Set(StationName, getMiddleElements(strings.Join(resp.Data.Stations, ",")))
+//	ctx.Set(RouteID, resp.Data.Id)
+//
+//	return nil, nil
+//}
+
+func QueryBasic(ctx *Context) (*NodeResult, error) {
 	cli, ok := ctx.Get(Client).(*service.SvcImpl)
 	if !ok {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
-	// Create
-	MockedID := faker.UUIDHyphenated()
-	MockedStartStation := faker.GetRealAddress().City
-	MockedEndStation := faker.GetRealAddress().City
-	MockedStationList := fmt.Sprintf("%s,%s,%s", MockedStartStation, faker.GetRealAddress().City, MockedEndStation)
-	MockedDistanceList := fmt.Sprintf("%d,%d,%d", rand.Intn(30), rand.Intn(30), rand.Intn(30))
-	input := service.RouteInfo{
-		ID:           MockedID,
-		StartStation: MockedStartStation,
-		EndStation:   MockedEndStation,
-		StationList:  MockedStationList,
-		DistanceList: MockedDistanceList,
-	}
-	resp, err := cli.CreateAndModifyRoute(&input)
-	if err != nil {
-		log.Fatalf("Request failed, err %s", err)
-		return nil, err
-	}
-	if resp.Msg == "Already exists" {
-		log.Fatalf("Route already exists, skip")
-		return nil, err
-	}
-	if resp.Data.Id != input.ID {
-		log.Fatalf("Route ID does not match, expect %s, got %s", input.ID, resp.Data.Id)
-		return nil, err
-	}
-	if resp.Data.StartStation != input.StartStation {
-		log.Fatalf("StartStation does not match, expect %s, got %s", input.StartStation, resp.Data.StartStation)
-		return nil, err
-	}
-	if resp.Data.EndStation != input.EndStation {
-		log.Fatalf("StartStation does not match, expect %s, got %s", input.StartStation, resp.Data.StartStation)
-		return nil, err
-	}
-	if StringSliceToString(resp.Data.Stations) != ConvertCommaSeparatedToBracketed(input.StationList) {
-		log.Fatalf("StationList does not match, expect %s, got %s", ConvertCommaSeparatedToBracketed(input.StationList), StringSliceToString(resp.Data.Stations))
-		return nil, err
-	}
-	if IntSliceToString(resp.Data.Distances) != ConvertCommaSeparatedToBracketed(input.DistanceList) {
-		log.Fatalf("DistanceList does not match, expect %s, got %s", ConvertCommaSeparatedToBracketed(input.DistanceList), IntSliceToString(resp.Data.Distances))
-		return nil, err
-	}
-
-	ctx.Set(From, resp.Data.StartStation)
-	ctx.Set(To, resp.Data.EndStation)
-	ctx.Set(StationName, getMiddleElements(strings.Join(resp.Data.Stations, ",")))
-	ctx.Set(RouteID, resp.Data.Id)
+	// TODO part; I will generate it.
 
 	return nil, nil
 }
+
+func QuerySeat(ctx *Context) (*NodeResult, error) {
+	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+	if !ok {
+		return nil, fmt.Errorf("service client not found in context")
+	}
+
+	// TODO part; I will generate it.
+
+	return nil, nil
+}
+
+// BasicBehaviorChain
+func QueryStation(ctx *Context) (*NodeResult, error) {
+	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+	if !ok {
+		return nil, fmt.Errorf("service client not found in context")
+	}
+
+	// TODO part; I will generate it.
+
+	return nil, nil
+}
+
+func QueryPrice(ctx *Context) (*NodeResult, error) {
+	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+	if !ok {
+		return nil, fmt.Errorf("service client not found in context")
+	}
+
+	// TODO part; I will generate it.
+
+	return nil, nil
+}
+
+// SeatBehaviorChain
+func QueryConfig(ctx *Context) (*NodeResult, error) {
+	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+	if !ok {
+		return nil, fmt.Errorf("service client not found in context")
+	}
+
+	// TODO part; I will generate it.
+
+	return nil, nil
+}
+
+func QueryOrder(ctx *Context) (*NodeResult, error) {
+	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+	if !ok {
+		return nil, fmt.Errorf("service client not found in context")
+	}
+
+	// TODO part; I will generate it.
+
+	return nil, nil
+}
+
+func QueryOrderOther(ctx *Context) (*NodeResult, error) {
+	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+	if !ok {
+		return nil, fmt.Errorf("service client not found in context")
+	}
+
+	// TODO part; I will generate it.
+
+	return nil, nil
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
 
 // Preserve Behaviors - The Last One
 func Preserve(ctx *Context) (*NodeResult, error) {
@@ -670,5 +892,5 @@ func Preserve(ctx *Context) (*NodeResult, error) {
 	fmt.Printf("PreserveBehaviors(Chain) Ends. End time: %v", time.Now().String())
 
 	//return nil, nil
-	return &(NodeResult{false}), nil
+	return &(NodeResult{false}), nil // Chain End :D
 }
