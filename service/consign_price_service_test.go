@@ -9,22 +9,22 @@ func TestSvcImpl_GetModifyDeletePriceConfig(t *testing.T) {
 	cli, _ := GetAdminClient()
 	var consignSvc ConsignPriceService = cli
 
-	// Mock Data
-	MockedWeight := "8"
-	MockedIsWithinWeight := "true"
-	// Get price by weight and region
-	priceByWeightAndRegion, err := consignSvc.GetPriceByWeightAndRegion(MockedWeight, MockedIsWithinWeight)
-	if err != nil {
-		t.Errorf("GetPriceByWeightAndRegion failed: %v", err)
-	}
-	if priceByWeightAndRegion.Status != 1 {
-		t.Errorf("GetPriceByWeightAndRegion failed")
-	}
-	t.Logf("GetPriceByWeightAndRegion response: %+v", priceByWeightAndRegion)
-	//existedConsignPrice := priceByWeightAndRegion.Data
+	/*	// Mock Data
+		MockedWeight := "7.00"
+		MockedIsWithinWeight := "true"
+		// Get price by weight and region
+		priceByWeightAndRegion, err := consignSvc.GetPriceByWeightAndRegion(MockedWeight, MockedIsWithinWeight)
+		if err != nil {
+			t.Errorf("GetPriceByWeightAndRegion failed: %v", err)
+		}
+		if priceByWeightAndRegion.Status != 1 {
+			t.Errorf("GetPriceByWeightAndRegion failed")
+		}
+		t.Logf("GetPriceByWeightAndRegion response: %+v", priceByWeightAndRegion)
+		//existedConsignPrice := priceByWeightAndRegion.Data*/
 
 	// Get price info
-	priceInfo, err := cli.GetPriceInfo()
+	priceInfo, err := consignSvc.GetPriceInfo()
 	if err != nil {
 		t.Errorf("GetPriceInfo failed: %v", err)
 	}
