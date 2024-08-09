@@ -20,6 +20,12 @@ func getMiddleElements(input string) string {
 	return strings.Join(middleElements, ",")
 }
 
+// GenerateWeight generates a float64 value between 0 and 15.
+func GenerateWeight() float64 {
+	rand.Seed(time.Now().UnixNano())
+	return rand.Float64() * 15
+}
+
 func generateDescription() string {
 	rand.Seed(time.Now().UnixNano())
 
@@ -35,6 +41,11 @@ func generateDescription() string {
 	}
 
 	return fmt.Sprintf("%s in %s hour", description, numberStr)
+}
+
+// IsWithin checks if a given float64 value is 7.0 or less.
+func BooleanIsWithin(value float64) bool {
+	return value <= 7.0
 }
 
 // generateVerifyCode generates a 6-digit verification code consisting of letters and numbers.
