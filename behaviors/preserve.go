@@ -74,8 +74,30 @@ const (
 
 	// FoodBehavior
 
+	// Trip(Travel)
+	EndTime             = "endTime"
+	Id                  = "id"
+	RouteId             = "routeId"
+	StartStationName    = "startStationName"
+	StartTime           = "startTime"
+	StationsName        = "stationsName"
+	TerminalStationName = "terminalStationName"
+	TrainTypeName       = "trainTypeName"
+	TripId              = "tripId"
+
+	// Train
+	//Id           = "id" //Train-ID needed or not?
+	//Name         = "name" //Train-Name needed or not?
+	ConfortClass = "confortClass"
+	AverageSpeed = "averageSpeed"
+	EconomyClass = "economyClass"
+
 	// Route
-	RouteID = "routeId"
+	RouteID      = "routeId"
+	Stations     = "stations"
+	Distances    = "distances"
+	StartStation = "startStation"
+	EndStation   = "endStation"
 )
 
 var PreserveBehaviorChain *Chain
@@ -764,6 +786,7 @@ func CreateConsignPrice(ctx *Context) (*NodeResult, error) {
 	//cli, ok := ctx.Get(Client).(*service.SvcImpl)
 	if !ok {
 		return nil, fmt.Errorf("service client not found in context")
+
 	}
 
 	// TODO part
@@ -871,9 +894,15 @@ func QueryStationFood(ctx *Context) (*NodeResult, error) {
 	//	Price    float64 `json:"price"`
 	//} `json:"foodList"`
 
-	// -------------------------------------------------------------- 01点31分
+	randomIndex := rand.Intn(len(resp.Data))
+	//ctx.Set(ID, resp.Data[randomIndex].Id)
+	ctx.Set(StationName, resp.Data[randomIndex].StationName)
+	ctx.Set(StoreName, resp.Data[randomIndex].StoreName)
+	ctx.Set(Phone, resp.Data[randomIndex].Telephone)
+	ctx.Set(Price, resp.Data[randomIndex].DeliveryFee)
 
 	return nil, nil
+
 }
 
 func QueryTrainFood(ctx *Context) (*NodeResult, error) {
@@ -882,11 +911,34 @@ func QueryTrainFood(ctx *Context) (*NodeResult, error) {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
-	// TODO part; I will generate it.
+	resp, err := cli.GetAllTrainFood()
+	if err != nil {
+		log.Fatalf("resp returns err: %v", err)
+		return nil, err
+	}
+	if resp.Status != 1 {
+		log.Fatalf("GetAllTrainFood's status should be 1 but got %d", resp.Status)
+		return nil, nil
+	}
+
+	//	Id       string `json:"id"`
+	//	TripId   string `json:"tripId"`
+	//	FoodList []struct {
+	//		FoodName string  `json:"foodName"`
+	//		Price    float64 `json:"price"`
+	//	} `json:"foodList"`
+	//} `json:"data"`
+
+	randomIndex := rand.Intn(len(resp.Data))
+	randomFoodlistIndex := rand.Intn(len(resp.Data[randomIndex].FoodList))
+	ctx.Set(TripID, resp.Data[randomIndex].TripId)
+	ctx.Set(FoodName, resp.Data[randomIndex].FoodList[randomFoodlistIndex].FoodName)
+	ctx.Set(FoodPrice, resp.Data[randomIndex].FoodList[randomFoodlistIndex].Price)
 
 	return nil, nil
 }
 
+// TravelBehaviorChain
 func QueryTrip(ctx *Context) (*NodeResult, error) {
 	cli, ok := ctx.Get(Client).(*service.SvcImpl)
 	if !ok {
@@ -902,13 +954,26 @@ func QueryTrip(ctx *Context) (*NodeResult, error) {
 		return nil, err
 	}
 
+	//EndTime             string `json:"endTime"`
+	//Id                  string `json:"id"`
+	//RouteId             string `json:"routeId"`
+	//StartStationName    string `json:"startStationName"`
+	//StartTime           string `json:"startTime"`
+	//StationsName        string `json:"stationsName"`
+	//TerminalStationName string `json:"terminalStationName"`
+	//TrainTypeName       string `json:"trainTypeName"`
+	//TripId              TripId `json:"tripId"`
+
 	randomIndex := rand.Intn(len(QueryAllTripResp.Data))
-	ctx.Set(TripID, QueryAllTripResp.Data[randomIndex].TripId)
-	ctx.Set(From, QueryAllTripResp.Data[randomIndex].StartStationName)
-	ctx.Set(From, QueryAllTripResp.Data[randomIndex].TerminalStationName)
-	ctx.Set(Date, QueryAllTripResp.Data[randomIndex].StartTime)
-	ctx.Set(StationName, QueryAllTripResp.Data[randomIndex].StationsName)
-	ctx.Set(HandleDate, QueryAllTripResp.Data[randomIndex].EndTime)
+	ctx.Set(EndTime, QueryAllTripResp.Data[randomIndex].EndTime)
+	ctx.Set(Id, QueryAllTripResp.Data[randomIndex].Id)
+	ctx.Set(RouteID, QueryAllTripResp.Data[randomIndex].RouteId)
+	ctx.Set(StartStationName, QueryAllTripResp.Data[randomIndex].StartStationName)
+	ctx.Set(StartTime, QueryAllTripResp.Data[randomIndex].StartTime)
+	ctx.Set(StationsName, QueryAllTripResp.Data[randomIndex].StationsName)
+	ctx.Set(TerminalStationName, QueryAllTripResp.Data[randomIndex].TerminalStationName)
+	ctx.Set(TrainTypeName, QueryAllTripResp.Data[randomIndex].TrainTypeName)
+	ctx.Set(TripId, QueryAllTripResp.Data[randomIndex].TripId)
 
 	return nil, nil
 }
@@ -921,14 +986,16 @@ func CreateTrip(ctx *Context) (*NodeResult, error) {
 
 	// Mock para
 	MockedLoginId := ctx.Get(LoginToken).(string)
-	MockedTripId := GenerateTripId()
-	MockedTrainTypeName := generateTrainTypeName(MockedTripId) /*"GaoTieSeven"*/
+	//MockedTripId := GenerateTripId()
+	MockedTripId := ctx.Get(TripId).(string)
+	//MockedTrainTypeName := generateTrainTypeName(MockedTripId) /*"GaoTieSeven"*/
+	MockedTrainTypeName := ctx.Get(TrainTypeName).(string)
 	MockedRouteID := ctx.Get(RouteID).(string)
 	MockedStartStationName := ctx.Get(From).(string)
 	MockedStationsName := /*strings.Join(AllRoutesByQuery.Data[0].Stations, ",")*/ ctx.Get(StationName).(string)
 	MockedTerminalStationName := ctx.Get(To).(string)
-	MockedStartTime := getRandomTime()
-	MockedEndTime := getRandomTime(WithStartTime(MockedStartTime))
+	MockedStartTime := ctx.Get(StartTime).(string)
+	MockedEndTime := ctx.Get(EndTime).(string)
 
 	// Mock input
 	travelInfo := service.TravelInfo{
@@ -974,24 +1041,72 @@ func CreateTrip(ctx *Context) (*NodeResult, error) {
 		return nil, err
 	}
 
-	ctx.Set(TripID, createResp.Data.TripId)
-	ctx.Set(From, createResp.Data.StartStationName)
-	ctx.Set(From, createResp.Data.TerminalStationName)
-	ctx.Set(Date, createResp.Data.StartTime)
-	ctx.Set(StationName, createResp.Data.StationsName)
-	ctx.Set(HandleDate, createResp.Data.EndTime)
+	/*	EndTime             string `json:"endTime"`
+		Id                  string `json:"id"`
+		RouteId             string `json:"routeId"`
+		StartStationName    string `json:"startStationName"`
+		StartTime           string `json:"startTime"`
+		StationsName        string `json:"stationsName"`
+		TerminalStationName string `json:"terminalStationName"`
+		TrainTypeName       string `json:"trainTypeName"`
+		TripId              TripId `json:"tripId"`*/
+	ctx.Set(EndTime, createResp.Data.EndTime)
+	ctx.Set(Id, createResp.Data.Id)
+	ctx.Set(RouteID, createResp.Data.RouteId)
+	ctx.Set(StartStationName, createResp.Data.StartStationName)
+	ctx.Set(StartTime, createResp.Data.StartTime)
+	ctx.Set(StationsName, createResp.Data.StationsName)
+	ctx.Set(TerminalStationName, createResp.Data.TerminalStationName)
+	ctx.Set(TrainTypeName, createResp.Data.TrainTypeName)
+	ctx.Set(TripId, createResp.Data.TripId)
 
 	return nil, nil
 }
 
-// TravelBehaviorChain
 func QueryTrain(ctx *Context) (*NodeResult, error) {
 	cli, ok := ctx.Get(Client).(*service.SvcImpl)
 	if !ok {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
-	// TODO part; I will generate it.
+	// Query all
+	allTrainTypes, err := cli.Query()
+	if err != nil {
+		log.Fatalf("Query all request failed, err %s", err)
+		return nil, err
+	}
+	if allTrainTypes.Status != 1 {
+		log.Fatalf("allTrainTypes.Status != 1")
+		return nil, err
+	}
+	if len(allTrainTypes.Data) == 0 {
+		log.Fatalf("Query all returned no results")
+		return nil, err
+	}
+	/*found := false
+	for _, trainTypeElement := range allTrainTypes.Data {
+		if trainTypeElement.Id == createResp.Data.Id &&
+			trainTypeElement.Name == existedtrainType.Name &&
+			trainTypeElement.AverageSpeed == existedtrainType.AverageSpeed &&
+			trainTypeElement.ConfortClass == existedtrainType.ConfortClass &&
+			trainTypeElement.EconomyClass == existedtrainType.ConfortClass {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("Query all not get the corresponsing result, whcih means 'Creation Fails'")
+	}*/
+
+	/*	Id           string `json:"id"`
+		Name         string `json:"name"`
+		ConfortClass int    `json:"confortClass"`
+		AverageSpeed int    `json:"averageSpeed"`
+		EconomyClass int    `json:"economyClass"`*/
+	randomIndex := rand.Intn(len(allTrainTypes.Data))
+	ctx.Set(Name, allTrainTypes.Data[randomIndex].Name)
+	ctx.Set(ConfortClass, allTrainTypes.Data[randomIndex].ConfortClass)
+	ctx.Set(AverageSpeed, allTrainTypes.Data[randomIndex].AverageSpeed)
+	ctx.Set(EconomyClass, allTrainTypes.Data[randomIndex].EconomyClass)
 
 	return nil, nil
 }
@@ -1012,11 +1127,19 @@ func QueryRoute(ctx *Context) (*NodeResult, error) {
 		return nil, err
 	}
 
+	/*	Id           string   `json:"id"`
+		Stations     []string `json:"stations"`
+		Distances    []int    `json:"distances"`
+		StartStation string   `json:"startStation"`
+		EndStation   string   `json:"endStation"`*/
+
 	randomIndex := rand.Intn(len(AllRoutesByQuery.Data))
-	ctx.Set(From, AllRoutesByQuery.Data[randomIndex].StartStation)
-	ctx.Set(To, AllRoutesByQuery.Data[randomIndex].EndStation)
-	ctx.Set(StationName, getMiddleElements(strings.Join(AllRoutesByQuery.Data[randomIndex].Stations, ",")))
 	ctx.Set(RouteID, AllRoutesByQuery.Data[randomIndex].Id)
+	ctx.Set(StartStation, AllRoutesByQuery.Data[randomIndex].StartStation)
+	ctx.Set(EndStation, AllRoutesByQuery.Data[randomIndex].EndStation)
+	//ctx.Set(StationName, getMiddleElements(strings.Join(AllRoutesByQuery.Data[randomIndex].Stations, ",")))
+	ctx.Set(StationName, AllRoutesByQuery.Data[randomIndex].Stations)
+	ctx.Set(Distances, AllRoutesByQuery.Data[randomIndex].Distances)
 
 	return nil, nil
 }
@@ -1084,30 +1207,78 @@ func QueryBasic(ctx *Context) (*NodeResult, error) {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
-	// TODO part; I will generate it.
+	// Mock data
+	//MockedTripId := faker.UUIDHyphenated()
+	MockedTripTripId := GenerateTripId()
+	MockedTripTripIdType := MockedTripTripId[0]
+	MockedTripTripIdNumber := MockedTripTripId[1:]
+	//Input
+	travelQuery := &service.Travel{
+		Trip: service.Trip{
+			Id: existedRoute.Id,
+			TripId: service.TripId{
+				Type:   fmt.Sprintf("%c", MockedTripTripIdType),
+				Number: MockedTripTripIdNumber,
+			},
+			TrainTypeName:       trainTypes.Data[0].Name,
+			RouteId:             existedRoute.Id,
+			StartStationName:    existedRoute.StartStation,
+			StationsName:        strings.Join(existedRoute.Stations, ","), // only ok when there is exactly three stations
+			TerminalStationName: existedRoute.EndStation,
+			StartTime:           getRandomTime(),
+			EndTime:             getRandomTime(),
+		},
+		StartPlace:    existedRoute.StartStation,
+		EndPlace:      existedRoute.EndStation,
+		DepartureTime: "",
+	}
+
+	var basicSvc BasicService = cli
+	travel, err := basicSvc.QueryForTravel(travelQuery)
+	if err != nil {
+		t.Error(err)
+	}
+	if travel.Status != 1 {
+		t.Log("travel.Status != 1")
+	}
 
 	return nil, nil
 }
 
 func QuerySeat(ctx *Context) (*NodeResult, error) {
-	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+	// cli, ok := ctx.Get(Client).(*service.SvcImpl)
+	_, ok := ctx.Get(Client).(*service.SvcImpl)
 	if !ok {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
-	// TODO part; I will generate it.
+	// TODO part;
 
 	return nil, nil
 }
 
-// BasicBehaviorChain
 func QueryStation(ctx *Context) (*NodeResult, error) {
 	cli, ok := ctx.Get(Client).(*service.SvcImpl)
 	if !ok {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
-	// TODO part; I will generate it.
+	QueryAll, err7 := stationSvc.QueryStations()
+	if err7 != nil {
+		t.Errorf("Request failed, err7 %s", err7)
+	}
+	if QueryAll.Status != 1 {
+		t.Errorf("Request failed, QueryAll.Status: %d, expected: %d", QueryAll.Status, 1)
+	}
+	found := false
+	for _, station := range QueryAll.Data {
+		if station.Name == existedStation.Name {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("Request failed, station not found")
+	}
 
 	return nil, nil
 }
@@ -1118,7 +1289,31 @@ func QueryPrice(ctx *Context) (*NodeResult, error) {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
-	// TODO part; I will generate it.
+	/*	// Query all price configs
+		allPriceConfigs, err1 := priceSvc.FindAllPriceConfig()
+		if err1 != nil {
+			t.Errorf("FindAllPriceConfig failed: %v", err1)
+		}
+		found := false
+		for _, price := range allPriceConfigs.Data {
+			if price.Id == existedPrice.Id {
+				found = true
+			}
+		}
+		if !found {
+			t.Errorf("Request failed, station not found")
+		}*/
+	// Query price config by route ID and train type
+	priceByRouteAndTrain, err := priceSvc.FindByRouteIdAndTrainType(existedPrice.RouteId, existedPrice.TrainType)
+	if err != nil {
+		t.Errorf("FindByRouteIdAndTrainType failed: %v", err)
+	}
+	if priceByRouteAndTrain.Status != 1 {
+		t.Errorf("priceByRouteAndTrain.Status != 1")
+	}
+	if priceByRouteAndTrain.Data.Id != existedPrice.Id {
+		t.Errorf("priceByRouteAndTrain.Data.Id != existedPrice.Id")
+	}
 
 	return nil, nil
 }
