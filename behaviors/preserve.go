@@ -155,6 +155,12 @@ const (
 	//EconomyClass = "economyClass"
 	//} `json:"prices"`
 
+	// Security
+	SecurityID          = "id"
+	SecurityName        = "name"
+	SecurityValue       = "value"
+	SecurityDescription = "description"
+
 	// Station
 	StationId    = "id"
 	StationNames = "name"
@@ -233,12 +239,20 @@ func init() {
 		return nil, nil
 	}, "DummyTrainFoodBehavior"))
 	// TrainBehaviorChain
-	TrainBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+	TrainBehaviorChain1 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+		fmt.Printf("TrainBehaviorChain Starts. Starts time: %v", time.Now().String())
+		return nil, nil
+	}, "DummyTrainBehavior"))
+	TrainBehaviorChain2 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
 		fmt.Printf("TrainBehaviorChain Starts. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyTrainBehavior"))
 	//RouteBehaviorChain
-	RouteBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+	RouteBehaviorChain1 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+		fmt.Printf("RouteBehaviorChain starts. Starts time: %v", time.Now().String())
+		return nil, nil
+	}, "DummyRouteBehavior"))
+	RouteBehaviorChain2 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
 		fmt.Printf("RouteBehaviorChain starts. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyRouteBehavior"))
@@ -253,7 +267,15 @@ func init() {
 		return nil, nil
 	}, "DummySeatBehavior"))
 	// StationBehaviorChain
-	StationBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+	StationBehaviorChain1 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+		fmt.Printf("StationBehaviorChain Starts. Start time: %v", time.Now().String())
+		return nil, nil
+	}, "DummyStationBehavior"))
+	StationBehaviorChain2 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+		fmt.Printf("StationBehaviorChain Starts. Start time: %v", time.Now().String())
+		return nil, nil
+	}, "DummyStationBehavior"))
+	StationBehaviorChain3 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
 		fmt.Printf("StationBehaviorChain Starts. Start time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyStationBehavior"))
@@ -268,20 +290,23 @@ func init() {
 		return nil, nil
 	}, "DummyConfigBehavior"))
 	//OrderBehaviorChain
-	OrderBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+	OrderBehaviorChain1 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+		fmt.Printf("OrderBehaviorChain Starts. Start time: %v", time.Now().String())
+		return nil, nil
+	}, "DummyOrderBehavior"))
+	OrderBehaviorChain2 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
 		fmt.Printf("OrderBehaviorChain Starts. Start time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyOrderBehavior"))
 	//OrderOtherBehaviorChain
-	OrderOtherBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+	OrderOtherBehaviorChain1 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
 		fmt.Printf("OrderOtherBehaviorChain Starts. Strat time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyOrderOtherBehavior"))
-	// StationBehaviorChain
-	StationBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		fmt.Printf("StationBehaviorChain Starts. Start time: %v", time.Now().String())
+	OrderOtherBehaviorChain2 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+		fmt.Printf("OrderOtherBehaviorChain Starts. Strat time: %v", time.Now().String())
 		return nil, nil
-	}, "DummyStationBehavior"))
+	}, "DummyOrderOtherBehavior"))
 	// SecurityBehaviorChain
 	SecurityBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
 		fmt.Printf("SecurityBehaviorChain Satrts. Start time: %v", time.Now().String())
@@ -309,11 +334,11 @@ func init() {
 	CreateContactsNode := NewFuncNode(CreateContacts, "CreateContacts")
 
 	//ConsignBehaviorsChain
-	QueryConsignNode := NewFuncNode(QueryConsign, "QueryConsign")
+	//QueryConsignNode := NewFuncNode(QueryConsign, "QueryConsign")
 	CreateConsignNode := NewFuncNode(CreateConsign, "CreateConsign")
 	// ConsignPriceBehaviorChain
-	QueryConsignPriceNode := NewFuncNode(QueryConsignPric, "QueryConsignPrice")
-	CreateConsignPriceNode := NewFuncNode(CreateConsignPrice, "CreateConsignPrice")
+	//QueryConsignPriceNode := NewFuncNode(QueryConsignPric, "QueryConsignPrice")
+	//CreateConsignPriceNode := NewFuncNode(CreateConsignPrice, "CreateConsignPrice")
 
 	//FoodBehaviorChain
 	QueryFoodNode := NewFuncNode(QueryFood, "QueryFood")
@@ -323,7 +348,7 @@ func init() {
 	QueryTrainFoodNode := NewFuncNode(QueryTrainFood, "QueryTrainFood")
 	// TravelBehaviorChain
 	QueryTravelNode := NewFuncNode(QueryTrip, "QueryTrip")
-	CreateTravelNode := NewFuncNode(CreateTrip, "CreateTrip")
+	//CreateTravelNode := NewFuncNode(CreateTrip, "CreateTrip")
 
 	//TravelBehaviorChain
 	// TrainBehaviorChain
@@ -360,6 +385,7 @@ func init() {
 	//SecurityBehaviorChain
 	// OrderBehaviorChain
 	// OrderOtherBehaviorChain
+	QuerySecurityNode := NewFuncNode(QuerySecurity, "QuerySecurity")
 
 	// ******* Preserve ********
 	PreserveNode := NewFuncNode(Preserve, "Preserve")
@@ -384,11 +410,11 @@ func init() {
 	CreateContactsChain := NewChain(CreateContactsNode)
 
 	// ConsignBehaviorsChain
-	QueryConsignChain := NewChain(QueryConsignNode)
+	//QueryConsignChain := NewChain(QueryConsignNode)
 	CreateConsignChain := NewChain(CreateConsignNode)
 	// ConsignPriceBehaviorChain
-	QueryConsignPriceChain := NewChain(QueryConsignPriceNode)
-	CreateConsignPriceChain := NewChain(CreateConsignPriceNode)
+	//QueryConsignPriceChain := NewChain(QueryConsignPriceNode)
+	//CreateConsignPriceChain := NewChain(CreateConsignPriceNode)
 
 	// FoodBehaviorChain
 	QueryFoodChain := NewChain(QueryFoodNode)
@@ -398,31 +424,97 @@ func init() {
 	QueryTrainFoodChain := NewChain(QueryTrainFoodNode)
 	// TravelBehaviorChain
 	QueryTravelChain := NewChain(QueryTravelNode)
-	CreateTravelChain := NewChain(CreateTravelNode)
+	//CreateTravelChain := NewChain(CreateTravelNode)
 
 	// TrainBehaviorChain
-	QueryTrainChain := NewChain(QueryTrainNode)
+	QueryTrainChain1 := NewChain(QueryTrainNode)
+	QueryTrainChain2 := NewChain(QueryTrainNode)
 	// RouteBehaviorChain
-	QueryRouteChain := NewChain(QueryRouteNode)
+	QueryRouteChain1 := NewChain(QueryRouteNode)
+	QueryRouteChain2 := NewChain(QueryRouteNode)
 	// BasicBehaviorChain
 	QueryBasicChain := NewChain(QueryBasicNode)
 	// SeatBehaviorChain
 	QuerySeatChain := NewChain(QuerySeatNode)
 
 	// StationBehaviorChain
-	QueryStationChain := NewChain(QueryStationNode)
+	QueryStationChain1 := NewChain(QueryStationNode)
+	QueryStationChain2 := NewChain(QueryStationNode)
+	QueryStationChain3 := NewChain(QueryStationNode)
 	// PriceBehaviorChain
 	QueryPriceChain := NewChain(QueryPriceNode)
 
 	// ConfigBehaviorChain
 	QueryConfigChain := NewChain(QueryConfigNode)
 	// OrderBehaviorChain
-	QueryOrderChain := NewChain(QueryOrderNode)
+	QueryOrderChain1 := NewChain(QueryOrderNode)
+	QueryOrderChain2 := NewChain(QueryOrderNode)
 	// OrderOtherBehaviorChain
-	QueryOrderOtherChain := NewChain(QueryOrderOtherNode)
+	QueryOrderOtherChain1 := NewChain(QueryOrderOtherNode)
+	QueryOrderOtherChain2 := NewChain(QueryOrderOtherNode)
+
+	// SecurityBehaviorChain
+	QuerySecurityChain := NewChain(QuerySecurityNode)
 
 	// The Last Chain - Preserve Behavior Chain
 	PreserveChain := NewChain(PreserveNode)
+
+	// -------------(AddNextChain)AssignEachChainWithItsCorrespondingBehaviorChain-------------------
+	// -------------(AddNextChain)AssignEachChainWithItsCorrespondingBehaviorChain-------------------
+	// -------------(AddNextChain)AssignEachChainWithItsCorrespondingBehaviorChain-------------------
+	//AssuranceBehaviorChain
+	AssuranceBehaviorChain.AddNextChain(QueryAssuranceChain, 1)
+	//VerifyCodeBehaviorChain
+	VerifyCodeBehaviorChain.AddNextChain(VerifyCodeChain, 1)
+	//AuthBehaviorChain
+	AuthBehaviorChain.AddNextChain(LoginBasicChain, 1)
+	//UserBehaviorChain
+	UserBehaviorChain.AddNextChain(QueryUserChain, 1)
+	//UserBehaviorsChain
+	UserBehaviorsChain.AddNextChain(VerifyCodeBehaviorChain, 1)
+	VerifyCodeBehaviorChain.AddNextChain(AuthBehaviorChain, 1)
+	AuthBehaviorChain.AddNextChain(UserBehaviorChain, 1)
+	//ContactsBehaviorChain
+	ContactsBehaviorChain.AddNextChain(QueryContactsChain, 0.7)
+	ContactsBehaviorChain.AddNextChain(CreateContactsChain, 0.3)
+	//ConsignPriceBehaviorChain
+	//ConsignBehaviorsChain
+	ConsignBehaviorsChain.AddNextChain(ConsignPriceBehaviorChain, 1)
+	ConsignPriceBehaviorChain.AddNextChain(CreateConsignChain, 1)
+	//StationBehaviorChain
+	StationBehaviorChain1.AddNextChain(QueryStationChain1, 1)
+	StationBehaviorChain2.AddNextChain(QueryStationChain2, 1)
+	StationBehaviorChain3.AddNextChain(QueryStationChain3, 1)
+	//OrderOtherBehaviorChain
+	OrderOtherBehaviorChain1.AddNextChain(QueryOrderOtherChain1, 1)
+	OrderOtherBehaviorChain2.AddNextChain(QueryOrderOtherChain2, 1)
+	//OrderBehaviorChain
+	OrderBehaviorChain1.AddNextChain(QueryOrderChain1, 1)
+	OrderBehaviorChain2.AddNextChain(QueryOrderChain2, 1)
+	//SecurityBehaviorChain
+	SecurityBehaviorChain.AddNextChain(QuerySecurityChain, 1)
+	//ConfigBehaviorChain
+	ConfigBehaviorChain.AddNextChain(QueryConfigChain, 1)
+	//SeatBehaviorChain
+	SeatBehaviorChain.AddNextChain(QuerySeatChain, 1)
+	//PriceBehaviorChain
+	PriceBehaviorChain.AddNextChain(QueryPriceChain, 1)
+	//TrainBehaviorChain
+	TrainBehaviorChain1.AddNextChain(QueryTrainChain1, 1)
+	TrainBehaviorChain2.AddNextChain(QueryTrainChain2, 1)
+	//RouteBehaviorChain
+	RouteBehaviorChain1.AddNextChain(QueryRouteChain1, 1)
+	RouteBehaviorChain2.AddNextChain(QueryRouteChain2, 1)
+	//BasicBehaviorChain
+	BasicBehaviorChain.AddNextChain(QueryBasicChain, 1)
+	//TravelBehaviorChain
+	TravelBehaviorChain.AddNextChain(QueryTravelChain, 1)
+	//StationFoodBehaviorChain
+	StationFoodBehaviorChain.AddNextChain(QueryStationFoodChain, 1)
+	//TrainFoodBehaviorChain
+	TrainFoodBehaviorChain.AddNextChain(QueryTrainFoodChain, 1)
+	//FoodBehaviorChain
+	FoodBehaviorChain.AddNextChain(QueryFoodChain, 1)
 
 	// ------------------------------------- AddNextChain -------------------------------------------
 	// ------------------------------------- AddNextChain -------------------------------------------
@@ -1426,6 +1518,49 @@ func QueryPrice(ctx *Context) (*NodeResult, error) {
 	ctx.Set(RouteID, priceByRouteAndTrain.Data.RouteId)
 	ctx.Set(BasicPriceRate, priceByRouteAndTrain.Data.BasicPriceRate)
 	ctx.Set(FirstClassPriceRate, priceByRouteAndTrain.Data.FirstClassPriceRate)
+
+	return nil, nil
+}
+
+func QuerySecurity(ctx *Context) (*NodeResult, error) {
+	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+	if !ok {
+		return nil, fmt.Errorf("service client not found in context")
+	}
+
+	// Get All Security Configs
+	configs, err3 := cli.FindAllSecurityConfig()
+	if err3 != nil {
+		log.Fatalf("FindAllSecurityConfig failed: %v", err3)
+		return nil, err3
+	}
+	if configs.Status != 1 {
+		log.Fatalf("[Security Service]Status != 1")
+		return nil, err3
+	}
+	/*found := false
+	for _, security := range configs.Data {
+		if security.ID == existedSecurity.ID &&
+			security.Name == existedSecurity.Name &&
+			security.Value == existedSecurity.Value &&
+			security.Description == existedSecurity.Description {
+			found = true
+		}
+	}
+	if !found {
+		log.Fatalf("[Security Service]Cannot find existed security config")
+		return nil, err3
+	}*/
+
+	/*	ID          string `json:"id"`
+		Name        string `json:"name"`
+		Value       string `json:"value"`
+		Description string `json:"description"`*/
+	randomIndex := rand.Intn(len(configs.Data))
+	ctx.Set(SecurityID, configs.Data[randomIndex].ID)
+	ctx.Set(SecurityName, configs.Data[randomIndex].Name)
+	ctx.Set(SecurityValue, configs.Data[randomIndex].Value)
+	ctx.Set(SecurityDescription, configs.Data[randomIndex].Description)
 
 	return nil, nil
 }
