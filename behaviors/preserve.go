@@ -75,9 +75,9 @@ const (
 	// FoodBehavior
 
 	// Trip(Travel)
-	EndTime             = "endTime"
-	Id                  = "id"
-	RouteId             = "routeId"
+	EndTime = "endTime"
+	Id      = "id"
+	//RouteId             = "routeId"
 	StartStationName    = "startStationName"
 	StartTime           = "startTime"
 	StationsName        = "stationsName"
@@ -122,6 +122,43 @@ const (
 	TrainNumber = "trainNumber"
 	TravelDate  = "travelDate"
 	TravelTime  = "travelTime"
+
+	// Price
+	//Id                  = "id"
+	TrainType           = "trainType"
+	RouteId             = "routeId"
+	BasicPriceRate      = "basicPriceRate"
+	FirstClassPriceRate = "firstClassPriceRate"
+
+	// Basic
+	//Status = "status"
+	Percent = "percent"
+	//TrainType = "trainType"
+	//TrainType struct {
+	//Id = "id"
+	//Name = "name"
+	//EconomyClass = "economyClass"
+	//ConfortClass = "confortClass"
+	//AverageSpeed = "averageSpeed"
+	//} `json:"trainType"`
+	Route = "route"
+	//Route struct {
+	//RouteID = "id"
+	//Stations = "stations"
+	//Distances = "distances"
+	//StartStation = "startStation"
+	//EndStation = "endStation"
+	//} `json:"route"`
+	Prices = "prices"
+	//Prices struct {
+	//ConfortClass = "confortClass"
+	//EconomyClass = "economyClass"
+	//} `json:"prices"`
+
+	// Station
+	StationId    = "id"
+	StationNames = "name"
+	StayTime     = "stayTime"
 )
 
 var PreserveBehaviorChain *Chain
@@ -1239,32 +1276,60 @@ func QueryBasic(ctx *Context) (*NodeResult, error) {
 	//Input
 	travelQuery := &service.Travel{
 		Trip: service.Trip{
-			Id: existedRoute.Id,
+			Id: ctx.Get(ID).(string),
 			TripId: service.TripId{
 				Type:   fmt.Sprintf("%c", MockedTripTripIdType),
 				Number: MockedTripTripIdNumber,
 			},
-			TrainTypeName:       trainTypes.Data[0].Name,
-			RouteId:             existedRoute.Id,
-			StartStationName:    existedRoute.StartStation,
-			StationsName:        strings.Join(existedRoute.Stations, ","), // only ok when there is exactly three stations
-			TerminalStationName: existedRoute.EndStation,
-			StartTime:           getRandomTime(),
-			EndTime:             getRandomTime(),
+			TrainTypeName:       ctx.Get(TrainTypeName).(string),
+			RouteId:             ctx.Get(RouteId).(string),
+			StartStationName:    ctx.Get(StartStationName).(string),
+			StationsName:        getMiddleElements(strings.Join(ctx.Get(Stations).([]string), ",")), // only ok when there is exactly three stations
+			TerminalStationName: ctx.Get(TerminalStationName).(string),
+			StartTime:           ctx.Get(StartTime).(string),
+			EndTime:             ctx.Get(EndTime).(string),
 		},
-		StartPlace:    existedRoute.StartStation,
-		EndPlace:      existedRoute.EndStation,
+		StartPlace:    ctx.Get(StartStation).(string),
+		EndPlace:      ctx.Get(EndStation).(string),
 		DepartureTime: "",
 	}
 
-	var basicSvc BasicService = cli
+	var basicSvc service.BasicService = cli
 	travel, err := basicSvc.QueryForTravel(travelQuery)
 	if err != nil {
-		t.Error(err)
+		log.Fatalf("Query travel request failed, err %s", err)
+		return nil, err
 	}
 	if travel.Status != 1 {
-		t.Log("travel.Status != 1")
+		log.Fatalf("travel.Status != 1")
+		return nil, err
 	}
+
+	/*	//Status = "status"
+		Percent = "percent"
+		//TrainType struct {
+		//Id = "id"
+		//Name = "name"
+		//EconomyClass = "economyClass"
+		//ConfortClass = "confortClass"
+		//AverageSpeed = "averageSpeed"
+		//} `json:"trainType"`
+		//Route struct {
+		//RouteID = "id"
+		//Stations = "stations"
+		//Distances = "distances"
+		//StartStation = "startStation"
+		//EndStation = "endStation"
+		//} `json:"route"`
+		//Prices struct {
+		//ConfortClass = "confortClass"
+		//EconomyClass = "economyClass"
+		//} `json:"prices"`*/
+	ctx.Set(Status, travel.Data.Status)
+	ctx.Set(Percent, travel.Data.Percent)
+	ctx.Set(TrainType, travel.Data.TrainType)
+	ctx.Set(Route, travel.Data.Route)
+	ctx.Set(Prices, travel.Data.Prices)
 
 	return nil, nil
 }
@@ -1287,14 +1352,16 @@ func QueryStation(ctx *Context) (*NodeResult, error) {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
-	QueryAll, err7 := stationSvc.QueryStations()
+	QueryAll, err7 := cli.QueryStations()
 	if err7 != nil {
-		t.Errorf("Request failed, err7 %s", err7)
+		log.Fatalf("Request failed, err7 %s", err7)
+		return nil, err7
 	}
 	if QueryAll.Status != 1 {
-		t.Errorf("Request failed, QueryAll.Status: %d, expected: %d", QueryAll.Status, 1)
+		log.Fatalf("Request failed, QueryAll.Status: %d, expected: %d", QueryAll.Status, 1)
+		return nil, err7
 	}
-	found := false
+	/*found := false
 	for _, station := range QueryAll.Data {
 		if station.Name == existedStation.Name {
 			found = true
@@ -1302,7 +1369,15 @@ func QueryStation(ctx *Context) (*NodeResult, error) {
 	}
 	if !found {
 		t.Errorf("Request failed, station not found")
-	}
+	}*/
+
+	/*	StationId       = "id"
+		StationNames     = "name"
+		StayTime = "stayTime"*/
+	randomIndex := rand.Intn(len(QueryAll.Data))
+	ctx.Set(StationId, QueryAll.Data[randomIndex].Id)
+	ctx.Set(StationNames, QueryAll.Data[randomIndex].Name)
+	ctx.Set(StayTime, QueryAll.Data[randomIndex].StayTime)
 
 	return nil, nil
 }
@@ -1328,21 +1403,34 @@ func QueryPrice(ctx *Context) (*NodeResult, error) {
 			t.Errorf("Request failed, station not found")
 		}*/
 	// Query price config by route ID and train type
-	priceByRouteAndTrain, err := priceSvc.FindByRouteIdAndTrainType(existedPrice.RouteId, existedPrice.TrainType)
+	priceByRouteAndTrain, err := cli.FindByRouteIdAndTrainType(ctx.Get(RouteID).(string), ctx.Get(TrainTypeName).(string))
 	if err != nil {
-		t.Errorf("FindByRouteIdAndTrainType failed: %v", err)
+		log.Fatalf("FindByRouteIdAndTrainType failed: %v", err)
+		return nil, err
 	}
 	if priceByRouteAndTrain.Status != 1 {
-		t.Errorf("priceByRouteAndTrain.Status != 1")
+		log.Fatalf("priceByRouteAndTrain.Status != 1")
+		return nil, err
 	}
-	if priceByRouteAndTrain.Data.Id != existedPrice.Id {
-		t.Errorf("priceByRouteAndTrain.Data.Id != existedPrice.Id")
-	}
+	/*	if priceByRouteAndTrain.Data.Id != ctx.Get(ID) {
+		log.Fatalf("priceByRouteAndTrain.Data.Id != existedPrice.Id")
+		return nil, err
+	}*/
+
+	/*	Id                  string  `json:"id"`
+		TrainType           string  `json:"trainType"`
+		RouteId             string  `json:"routeId"`
+		BasicPriceRate      float64 `json:"basicPriceRate"`
+		FirstClassPriceRate float64 `json:"firstClassPriceRate"`*/
+	ctx.Set(TrainType, priceByRouteAndTrain.Data.TrainType)
+	ctx.Set(RouteID, priceByRouteAndTrain.Data.RouteId)
+	ctx.Set(BasicPriceRate, priceByRouteAndTrain.Data.BasicPriceRate)
+	ctx.Set(FirstClassPriceRate, priceByRouteAndTrain.Data.FirstClassPriceRate)
 
 	return nil, nil
 }
 
-// SeatBehaviorChain
+// ConfigBehaviorChain
 func QueryConfig(ctx *Context) (*NodeResult, error) {
 	cli, ok := ctx.Get(Client).(*service.SvcImpl)
 	if !ok {
