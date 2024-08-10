@@ -98,6 +98,30 @@ const (
 	Distances    = "distances"
 	StartStation = "startStation"
 	EndStation   = "endStation"
+
+	// Config
+	ConfigName  = "name"
+	Value       = "value"
+	Description = "description"
+
+	// Order
+	//AccountId              = "accountId"
+	BoughtDate             = "boughtDate"
+	CoachNumber            = "coachNumber"
+	ContactsDocumentNumber = "contactsDocumentNumber"
+	//ContactsName           = "contactsName"
+	DifferenceMoney = "differenceMoney"
+	//DocumentType           = "documentType"
+	//From                   = "from"
+	//Id                     = "id"
+	//Price                  = "price"
+	SeatClass  = "seatClass"
+	SeatNumber = "seatNumber"
+	Status     = "status"
+	//To                     = "to"
+	TrainNumber = "trainNumber"
+	TravelDate  = "travelDate"
+	TravelTime  = "travelTime"
 )
 
 var PreserveBehaviorChain *Chain
@@ -1325,7 +1349,24 @@ func QueryConfig(ctx *Context) (*NodeResult, error) {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
-	// TODO part; I will generate it.
+	// Query All Configs Test
+	queryAllResp, err := cli.QueryAllConfigs()
+	if err != nil {
+		log.Fatalf("QueryAllConfigs request failed, err %s", err)
+		return nil, err
+	}
+	if queryAllResp.Status != 1 {
+		log.Fatalf("QueryAllConfigs status != 1")
+		return nil, err
+	}
+
+	/*	Name        string `json:"name"`
+		Value       string `json:"value"`
+		Description string `json:"description"`*/
+	randomIndex := rand.Intn(len(queryAllResp.Data))
+	ctx.Set(ConfigName, queryAllResp.Data[randomIndex].Name)
+	ctx.Set(Value, queryAllResp.Data[randomIndex].Value)
+	ctx.Set(Description, queryAllResp.Data[randomIndex].Description)
 
 	return nil, nil
 }
@@ -1336,7 +1377,104 @@ func QueryOrder(ctx *Context) (*NodeResult, error) {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
-	// TODO part; I will generate it.
+	Resp, err := cli.ReqFindAllOrder()
+	if err != nil {
+		log.Fatalf("Request failed, err %s", err)
+		return nil, err
+	}
+	if len(Resp.Data) == 0 {
+		log.Fatalf("no data found.")
+		return nil, err
+	}
+
+	/*	//AccountId              = "accountId"
+		BoughtDate             = "boughtDate"
+		CoachNumber            = "coachNumber"
+		ContactsDocumentNumber = "contactsDocumentNumber"
+		ContactsName           = "contactsName"
+		DifferenceMoney        = "differenceMoney"
+		//DocumentType           = "documentType"
+		//From                   = "from"
+		//Id                     = "id"
+		//Price                  = "price"
+		SeatClass  = "seatClass"
+		SeatNumber = "seatNumber"
+		Status     = "status"
+		//To                     = "to"
+		TrainNumber = "trainNumber"
+		TravelDate  = "travelDate"
+		TravelTime  = "travelTime"*/
+	randomIndex := rand.Intn(len(Resp.Data))
+	//ctx.Set(AccountID, Resp.Data[randomIndex].AccountId)
+	ctx.Set(BoughtDate, Resp.Data[randomIndex].BoughtDate)
+	ctx.Set(CoachNumber, Resp.Data[randomIndex].CoachNumber)
+	ctx.Set(ContactsDocumentNumber, Resp.Data[randomIndex].ContactsDocumentNumber)
+	//ctx.Set(ContactsName, Resp.Data[randomIndex].ContactsName)
+	ctx.Set(Name, Resp.Data[randomIndex].ContactsName)
+	ctx.Set(DifferenceMoney, Resp.Data[randomIndex].DifferenceMoney)
+	ctx.Set(SeatClass, Resp.Data[randomIndex].SeatClass)
+	ctx.Set(SeatNumber, Resp.Data[randomIndex].SeatNumber)
+	ctx.Set(Status, Resp.Data[randomIndex].Status)
+	ctx.Set(TrainNumber, Resp.Data[randomIndex].TrainNumber)
+	ctx.Set(TravelDate, Resp.Data[randomIndex].TravelDate)
+	ctx.Set(TravelTime, Resp.Data[randomIndex].TravelTime)
+
+	return nil, nil
+}
+
+func CreateOrder(ctx *Context) (*NodeResult, error) {
+	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+	if !ok {
+		return nil, fmt.Errorf("service client not found in context")
+	}
+
+	originOrder0 := service.Order{
+		AccountId:              ctx.Get(AccountID).(string),
+		BoughtDate:             faker.Date(),
+		CoachNumber:            generateCoachNumber(),
+		ContactsDocumentNumber: generateDocumentNumber(),
+		//ContactsName:           ctx.Get(ContactsName).(string),
+		ContactsName:    ctx.Get(Name).(string),
+		DifferenceMoney: "",
+		DocumentType:    0,
+		//From:                   ctx.Get(From).(string),
+		From: ctx.Get(From).(string), // First, create/query get the station;
+		// then put them here -> If you want to create a new Order, you have to do the whole process.
+		Id:         "nil",
+		Price:      RandomDecimalStringBetween(1, 10),
+		SeatClass:  GetTrainTicketClass(),
+		SeatNumber: service.GenerateSeatNumber(),
+		Status:     0,
+		//To:                     ctx.Get(To).(string),
+		To:          ctx.Get(To).(string),
+		TrainNumber: ctx.Get(TrainNumber).(string),
+		TravelDate:  getRandomTime(),
+		TravelTime:  generateRandomTime(),
+	}
+
+	CreateNewOrderResp, err := cli.ReqCreateNewOrder(&originOrder0)
+	if err != nil {
+		log.Fatalf("Request failed, err %s", err)
+		return nil, err
+	}
+	if CreateNewOrderResp.Status != 1 {
+		log.Fatalf("Request failed, CreateNewOrder status != 1")
+		return nil, err
+	}
+
+	//ctx.Set(AccountID, Resp.Data[randomIndex].AccountId)
+	ctx.Set(BoughtDate, CreateNewOrderResp.Data.BoughtDate)
+	ctx.Set(CoachNumber, CreateNewOrderResp.Data.CoachNumber)
+	ctx.Set(ContactsDocumentNumber, CreateNewOrderResp.Data.ContactsDocumentNumber)
+	//ctx.Set(ContactsName, Resp.Data[randomIndex].ContactsName)
+	ctx.Set(Name, CreateNewOrderResp.Data.ContactsName)
+	ctx.Set(DifferenceMoney, CreateNewOrderResp.Data.DifferenceMoney)
+	ctx.Set(SeatClass, CreateNewOrderResp.Data.SeatClass)
+	ctx.Set(SeatNumber, CreateNewOrderResp.Data.SeatNumber)
+	ctx.Set(Status, CreateNewOrderResp.Data.Status)
+	ctx.Set(TrainNumber, CreateNewOrderResp.Data.TrainNumber)
+	ctx.Set(TravelDate, CreateNewOrderResp.Data.TravelDate)
+	ctx.Set(TravelTime, CreateNewOrderResp.Data.TravelTime)
 
 	return nil, nil
 }
@@ -1347,16 +1485,94 @@ func QueryOrderOther(ctx *Context) (*NodeResult, error) {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
-	// TODO part; I will generate it.
+	GetResp, err := cli.ReqFindAllOrderOther()
+
+	if err != nil {
+		log.Fatalf("Request failed, err %s", err)
+		return nil, err
+	}
+	if GetResp.Status != 1 {
+		log.Fatalf("Request failed, CreateNewOrder status != 1")
+		return nil, err
+	}
+
+	randomIndex := rand.Intn(len(GetResp.Data))
+	//ctx.Set(AccountID, Resp.Data[randomIndex].AccountId)
+	ctx.Set(BoughtDate, GetResp.Data[randomIndex].BoughtDate)
+	ctx.Set(CoachNumber, AddResp.Data.CoachNumber)
+	ctx.Set(ContactsDocumentNumber, AddResp.Data.ContactsDocumentNumber)
+	//ctx.Set(ContactsName, Resp.Data[randomIndex].ContactsName)
+	ctx.Set(Name, AddResp.Data.ContactsName)
+	ctx.Set(DifferenceMoney, AddResp.Data.DifferenceMoney)
+	ctx.Set(SeatClass, AddResp.Data.SeatClass)
+	ctx.Set(SeatNumber, AddResp.Data.SeatNumber)
+	ctx.Set(Status, AddResp.Data.Status)
+	ctx.Set(TrainNumber, AddResp.Data.TrainNumber)
+	ctx.Set(TravelDate, AddResp.Data.TravelDate)
+	ctx.Set(TravelTime, AddResp.Data.TravelTime)
 
 	return nil, nil
 }
 
-/////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////
+func CreateOrderOther(ctx *Context) (*NodeResult, error) {
+	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+	if !ok {
+		return nil, fmt.Errorf("service client not found in context")
+	}
+
+	AddResp, err := cli.ReqCreateNewOrderOther(&service.Order{
+		AccountId:              ctx.Get(AccountID).(string),
+		BoughtDate:             faker.Date(),
+		CoachNumber:            generateCoachNumber(),
+		ContactsDocumentNumber: generateDocumentNumber(),
+		//ContactsName:           ctx.Get(ContactsName).(string),
+		ContactsName:    ctx.Get(Name).(string),
+		DifferenceMoney: "",
+		DocumentType:    0,
+		//From:                   ctx.Get(From).(string),
+		From: ctx.Get(From).(string), // First, create/query get the station;
+		// then put them here -> If you want to create a new Order, you have to do the whole process.
+		Id:         "nil",
+		Price:      RandomDecimalStringBetween(1, 10),
+		SeatClass:  GetTrainTicketClass(),
+		SeatNumber: service.GenerateSeatNumber(),
+		Status:     0,
+		//To:                     ctx.Get(To).(string),
+		To:          ctx.Get(To).(string),
+		TrainNumber: ctx.Get(TrainNumber).(string),
+		TravelDate:  getRandomTime(),
+		TravelTime:  generateRandomTime(),
+	})
+
+	if err != nil {
+		log.Fatalf("Request failed, err %s", err)
+		return nil, err
+	}
+	if AddResp.Status != 1 {
+		log.Fatalf("Request failed, CreateNewOrder status != 1")
+		return nil, err
+	}
+
+	//ctx.Set(AccountID, Resp.Data[randomIndex].AccountId)
+	ctx.Set(BoughtDate, AddResp.Data.BoughtDate)
+	ctx.Set(CoachNumber, AddResp.Data.CoachNumber)
+	ctx.Set(ContactsDocumentNumber, AddResp.Data.ContactsDocumentNumber)
+	//ctx.Set(ContactsName, Resp.Data[randomIndex].ContactsName)
+	ctx.Set(Name, AddResp.Data.ContactsName)
+	ctx.Set(DifferenceMoney, AddResp.Data.DifferenceMoney)
+	ctx.Set(SeatClass, AddResp.Data.SeatClass)
+	ctx.Set(SeatNumber, AddResp.Data.SeatNumber)
+	ctx.Set(Status, AddResp.Data.Status)
+	ctx.Set(TrainNumber, AddResp.Data.TrainNumber)
+	ctx.Set(TravelDate, AddResp.Data.TravelDate)
+	ctx.Set(TravelTime, AddResp.Data.TravelTime)
+
+	return nil, nil
+}
+
+/////////////////////////////--- Preserve Behaviors ---///////////////////////////////
+/////////////////////////////--- Preserve Behaviors ---///////////////////////////////
+/////////////////////////////--- Preserve Behaviors ---///////////////////////////////
 
 // Preserve Behaviors - The Last One
 func Preserve(ctx *Context) (*NodeResult, error) {
