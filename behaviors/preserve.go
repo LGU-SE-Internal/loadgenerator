@@ -518,13 +518,6 @@ func init() {
 	//FoodBehaviorChain
 	FoodBehaviorChain.AddNextChain(QueryFoodChain, 1)
 
-	//ConsignBehaviorsChain
-	ConsignBehaviorsChain.AddNextChain(ConsignPriceBehaviorChain, 1)
-	ConsignPriceBehaviorChain.AddNextChain(CreateConsignChain, 1)
-	//ContactsBehaviorChain
-	ContactsBehaviorChain.AddNextChain(QueryContactsChain, 0.7)
-	ContactsBehaviorChain.AddNextChain(CreateContactsChain, 0.3)
-
 	// ------------------------------------- AddNextChain -------------------------------------------
 	// ------------------------------------- AddNextChain -------------------------------------------
 	// ------------------------------------- AddNextChain -------------------------------------------
