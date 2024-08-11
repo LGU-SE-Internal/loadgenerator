@@ -443,7 +443,7 @@ func init() {
 	QueryRouteChain1 := NewChain(QueryRouteNode)
 	QueryRouteChain2 := NewChain(QueryRouteNode)
 	// BasicBehaviorChain
-	QueryBasicChain := NewChain(QueryBasicNode)
+	QueryBasicChain := NewChain(QueryRouteNode, QueryStationNode, QueryPriceNode, QueryTrainNode, QueryBasicNode)
 	// SeatBehaviorChain
 	QuerySeatChain := NewChain(QuerySeatNode)
 
@@ -489,8 +489,8 @@ func init() {
 	UserBehaviorChain.AddNextChain(QueryUserChain, 1)
 	//UserBehaviorsChain
 	UserBehaviorsChain.AddNextChain(VerifyCodeBehaviorChain, 1)
-	VerifyCodeBehaviorChain.AddNextChain(AuthBehaviorChain, 1)
-	AuthBehaviorChain.AddNextChain(UserBehaviorChain, 1)
+	VerifyCodeChain.AddNextChain(AuthBehaviorChain, 1)
+	LoginBasicChain.AddNextChain(UserBehaviorChain, 1)
 	//ContactsBehaviorChain
 	ContactsBehaviorChain.AddNextChain(QueryContactsChain, 0.7)
 	ContactsBehaviorChain.AddNextChain(CreateContactsChain, 0.3)
@@ -546,7 +546,13 @@ func init() {
 		SecurityBehaviorChain | OrderBehaviorChain1 | StationBehaviorChain0 |
 		0. UserBehaviorsChain */
 	PreserveBehaviorChain.AddNextChain(UserBehaviorsChain, 1)
-	UserBehaviorsChain.AddNextChain(BasicBehaviorChain, 1)
+	UserBehaviorChain.AddNextChain(BasicBehaviorChain, 1)
+	BasicBehaviorChain.AddNextChain(TravelBehaviorChain, 1)
+	TravelBehaviorChain.AddNextChain(ContactsBehaviorChain, 1)
+	ContactsBehaviorChain.AddNextChain(AssuranceBehaviorChain, 1)
+	AssuranceBehaviorChain.AddNextChain(FoodBehaviorChain, 1)
+	FoodBehaviorChain.AddNextChain(ConsignBehaviorsChain, 1)
+	ConsignBehaviorsChain.AddNextChain(PreserveChain, 1)
 
 	// ------------------------------------- VisualizeChain -------------------------------------------
 	// ------------------------------------- VisualizeChain -------------------------------------------
@@ -1118,13 +1124,29 @@ func QueryTrip(ctx *Context) (*NodeResult, error) {
 	if !ok {
 		return nil, fmt.Errorf("service client not found in context")
 	}
-	QueryAllTripResp, err := cli.QueryAllTrip()
+
+	/*QueryAllTripResp, err := cli.QueryAllTrip()
 	if err != nil {
 		log.Fatalf("Request failed, err %s", err)
 		return nil, err
 	}
 	if QueryAllTripResp.Status != 1 {
 		log.Fatalf("Request failed, status: %d", QueryAllTripResp.Status)
+		return nil, err
+	}*/
+	// Test QueryInfo
+	tripInfo := service.TripInfo{
+		StartPlace:    ctx.Get(StartStation).(string),
+		EndPlace:      ctx.Get(EndStation).(string),
+		DepartureTime: ctx.Get(StartTime).(string), //????????????????????????????????????
+	}
+	queryInfoResp, err := cli.QueryInfo(tripInfo)
+	if err != nil {
+		log.Fatalf("QueryInfo request failed, err %s", err)
+		return nil, err
+	}
+	if queryInfoResp.Status != 1 {
+		log.Fatalf("QueryInfo failed, status: %d", queryInfoResp.Status)
 		return nil, err
 	}
 
@@ -1138,16 +1160,16 @@ func QueryTrip(ctx *Context) (*NodeResult, error) {
 	//TrainTypeName       string `json:"trainTypeName"`
 	//TripId              TripId `json:"tripId"`
 
-	randomIndex := rand.Intn(len(QueryAllTripResp.Data))
-	ctx.Set(EndTime, QueryAllTripResp.Data[randomIndex].EndTime)
-	ctx.Set(Id, QueryAllTripResp.Data[randomIndex].Id)
-	ctx.Set(RouteID, QueryAllTripResp.Data[randomIndex].RouteId)
-	ctx.Set(StartStationName, QueryAllTripResp.Data[randomIndex].StartStationName)
-	ctx.Set(StartTime, QueryAllTripResp.Data[randomIndex].StartTime)
-	ctx.Set(StationsName, QueryAllTripResp.Data[randomIndex].StationsName)
-	ctx.Set(TerminalStationName, QueryAllTripResp.Data[randomIndex].TerminalStationName)
-	ctx.Set(TrainTypeName, QueryAllTripResp.Data[randomIndex].TrainTypeName)
-	ctx.Set(TripId, QueryAllTripResp.Data[randomIndex].TripId)
+	ctx.Set(EndTime, queryInfoResp.EndTime)
+	ctx.Set(Id, queryInfoResp.Id)
+	ctx.Set(RouteID, queryInfoResp.RouteId)
+	ctx.Set(StartStationName, queryInfoResp.StartStationName)
+	ctx.Set(StartTime, queryInfoResp.StartTime)
+	ctx.Set(StationsName, queryInfoResp.StationsName)
+	ctx.Set(TerminalStationName, queryInfoResp.TerminalStationName)
+	ctx.Set(TrainTypeName, queryInfoResp.TrainTypeName)
+	ctx.Set(TripId, queryInfoResp.TripId)
+	// ????????????????????????
 
 	return nil, nil
 }
@@ -1390,9 +1412,9 @@ func QueryBasic(ctx *Context) (*NodeResult, error) {
 	MockedTripTripIdType := MockedTripTripId[0]
 	MockedTripTripIdNumber := MockedTripTripId[1:]
 
-	// **********************************  Input-Mock *****************************************
-	// **********************************  Input-Mock *****************************************
-	// **********************************  Input-Mock *****************************************
+	// ********************************* Input_By_Mock ****************************************
+	// ********************************* Input_By_Mock ****************************************
+	// ********************************* Input_By_Mock ****************************************
 	travelQuery := &service.Travel{
 		Trip: service.Trip{
 			Id: faker.UUIDHyphenated(), // randomly generated
@@ -1400,7 +1422,7 @@ func QueryBasic(ctx *Context) (*NodeResult, error) {
 				Type:   fmt.Sprintf("%c", MockedTripTripIdType),
 				Number: MockedTripTripIdNumber,
 			},
-			TrainTypeName:       ctx.Get(TrainTypeName).(string),
+			TrainTypeName:       GenerateTrainTypeName(),
 			RouteId:             ctx.Get(RouteId).(string),
 			StartStationName:    ctx.Get(StartStationName).(string),
 			StationsName:        getMiddleElements(strings.Join(ctx.Get(Stations).([]string), ",")), // only ok when there is exactly three stations
@@ -1410,7 +1432,7 @@ func QueryBasic(ctx *Context) (*NodeResult, error) {
 		},
 		StartPlace:    ctx.Get(StartStation).(string),
 		EndPlace:      ctx.Get(EndStation).(string),
-		DepartureTime: getRandomTime(),
+		DepartureTime: getRandomTime(), // 生成1小时到1天之后的时间
 	}
 
 	var basicSvc service.BasicService = cli
