@@ -130,7 +130,7 @@ const (
 	BasicPriceRate      = "basicPriceRate"
 	FirstClassPriceRate = "firstClassPriceRate"
 
-	// Basic
+	// Basic - Query
 	//Status = "status"
 	Percent = "percent"
 	//TrainType = "trainType"
@@ -267,6 +267,10 @@ func init() {
 		return nil, nil
 	}, "DummySeatBehavior"))
 	// StationBehaviorChain
+	StationBehaviorChain0 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+		fmt.Printf("StationBehaviorChain Starts. Start time: %v", time.Now().String())
+		return nil, nil
+	}, "DummyStationBehavior"))
 	StationBehaviorChain1 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
 		fmt.Printf("StationBehaviorChain Starts. Start time: %v", time.Now().String())
 		return nil, nil
@@ -295,6 +299,10 @@ func init() {
 		return nil, nil
 	}, "DummyOrderBehavior"))
 	OrderBehaviorChain2 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+		fmt.Printf("OrderBehaviorChain Starts. Start time: %v", time.Now().String())
+		return nil, nil
+	}, "DummyOrderBehavior"))
+	OrderBehaviorChain3 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
 		fmt.Printf("OrderBehaviorChain Starts. Start time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyOrderBehavior"))
@@ -440,6 +448,7 @@ func init() {
 	QuerySeatChain := NewChain(QuerySeatNode)
 
 	// StationBehaviorChain
+	QueryStationChain0 := NewChain(QueryStationNode)
 	QueryStationChain1 := NewChain(QueryStationNode)
 	QueryStationChain2 := NewChain(QueryStationNode)
 	QueryStationChain3 := NewChain(QueryStationNode)
@@ -451,6 +460,7 @@ func init() {
 	// OrderBehaviorChain
 	QueryOrderChain1 := NewChain(QueryOrderNode)
 	QueryOrderChain2 := NewChain(QueryOrderNode)
+	QueryOrderChain3 := NewChain(QueryOrderNode)
 	// OrderOtherBehaviorChain
 	QueryOrderOtherChain1 := NewChain(QueryOrderOtherNode)
 	QueryOrderOtherChain2 := NewChain(QueryOrderOtherNode)
@@ -460,6 +470,11 @@ func init() {
 
 	// The Last Chain - Preserve Behavior Chain
 	PreserveChain := NewChain(PreserveNode)
+
+	// ------------------------------------- AddNextChain -------------------------------------------
+	// ------------------------------------- AddNextChain -------------------------------------------
+	// ------------------------------------- AddNextChain -------------------------------------------
+	// 逆序 - 从处理逆序的第一层开始
 
 	// -------------(AddNextChain)AssignEachChainWithItsCorrespondingBehaviorChain-------------------
 	// -------------(AddNextChain)AssignEachChainWithItsCorrespondingBehaviorChain-------------------
@@ -484,6 +499,7 @@ func init() {
 	ConsignBehaviorsChain.AddNextChain(ConsignPriceBehaviorChain, 1)
 	ConsignPriceBehaviorChain.AddNextChain(CreateConsignChain, 1)
 	//StationBehaviorChain
+	StationBehaviorChain0.AddNextChain(QueryStationChain0, 1)
 	StationBehaviorChain1.AddNextChain(QueryStationChain1, 1)
 	StationBehaviorChain2.AddNextChain(QueryStationChain2, 1)
 	StationBehaviorChain3.AddNextChain(QueryStationChain3, 1)
@@ -493,6 +509,7 @@ func init() {
 	//OrderBehaviorChain
 	OrderBehaviorChain1.AddNextChain(QueryOrderChain1, 1)
 	OrderBehaviorChain2.AddNextChain(QueryOrderChain2, 1)
+	OrderBehaviorChain3.AddNextChain(QueryOrderChain3, 1)
 	//SecurityBehaviorChain
 	SecurityBehaviorChain.AddNextChain(QuerySecurityChain, 1)
 	//ConfigBehaviorChain
@@ -518,18 +535,20 @@ func init() {
 	//FoodBehaviorChain
 	FoodBehaviorChain.AddNextChain(QueryFoodChain, 1)
 
-	// ------------------------------------- AddNextChain -------------------------------------------
-	// ------------------------------------- AddNextChain -------------------------------------------
-	// ------------------------------------- AddNextChain -------------------------------------------
-	// 逆序 - 从处理逆序的第一层开始
-
-	// XXX
-	//...
-
+	// &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& Main Chain &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+	// &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& Main Chain &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+	// &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& Main Chain &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+	// &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& Main Chain &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 	// &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& Main Chain &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 	//PreserveChain
-	//PreserveChain.AddNextChain(, 1)
+	/*	AssuranceBehaviorChain | 1. BasicBehaviorChain | ConsignBehaviorsChain |
+		ContactsBehaviorChain | FoodBehaviorChain | TravelBehaviorChain | SeatBehaviorChain |
+		SecurityBehaviorChain | OrderBehaviorChain1 | StationBehaviorChain0 |
+		0. UserBehaviorsChain */
+	PreserveBehaviorChain.AddNextChain(UserBehaviorsChain, 1)
+	UserBehaviorsChain.AddNextChain(BasicBehaviorChain, 1)
 
+	// ------------------------------------- VisualizeChain -------------------------------------------
 	// ------------------------------------- VisualizeChain -------------------------------------------
 	fmt.Println(PreserveChain.VisualizeChain(0))
 	fmt.Println()
@@ -1301,6 +1320,7 @@ func QueryRoute(ctx *Context) (*NodeResult, error) {
 
 //func CreateRoute(ctx *Context) (*NodeResult, error) {
 //	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+
 //	if !ok {
 //		return nil, fmt.Errorf("service client not found in context")
 //	}
@@ -1362,15 +1382,20 @@ func QueryBasic(ctx *Context) (*NodeResult, error) {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
-	// Mock data
+	// ----------------------------------  Mock data  -----------------------------------------
+	// ----------------------------------  Mock data  -----------------------------------------
+	// ----------------------------------  Mock data  -----------------------------------------
 	//MockedTripId := faker.UUIDHyphenated()
 	MockedTripTripId := GenerateTripId()
 	MockedTripTripIdType := MockedTripTripId[0]
 	MockedTripTripIdNumber := MockedTripTripId[1:]
-	//Input
+
+	// **********************************  Input-Mock *****************************************
+	// **********************************  Input-Mock *****************************************
+	// **********************************  Input-Mock *****************************************
 	travelQuery := &service.Travel{
 		Trip: service.Trip{
-			Id: ctx.Get(ID).(string),
+			Id: faker.UUIDHyphenated(), // randomly generated
 			TripId: service.TripId{
 				Type:   fmt.Sprintf("%c", MockedTripTripIdType),
 				Number: MockedTripTripIdNumber,
@@ -1385,7 +1410,7 @@ func QueryBasic(ctx *Context) (*NodeResult, error) {
 		},
 		StartPlace:    ctx.Get(StartStation).(string),
 		EndPlace:      ctx.Get(EndStation).(string),
-		DepartureTime: "",
+		DepartureTime: getRandomTime(),
 	}
 
 	var basicSvc service.BasicService = cli
