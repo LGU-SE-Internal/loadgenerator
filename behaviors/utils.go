@@ -295,7 +295,7 @@ func GenerateTrainTypeName() string {
 	rand.Seed(time.Now().UnixNano())
 
 	// 定义可能的火车类型名称
-	trainTypes := []string{"GaoTieOne", "GaoTieTwo", "GaoTieSeven", "DongCheOne", "DongCheTen"}
+	trainTypes := []string{"GaoTieOne", "GaoTieTwo", "DongCheOne", "ZhiDa", "TeKuai", "KuaiSu"}
 
 	// 随机选择一个火车类型名称
 	MockedTrainTypeName := trainTypes[rand.Intn(len(trainTypes))]

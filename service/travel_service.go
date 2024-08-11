@@ -274,10 +274,21 @@ func (s *SvcImpl) DeleteTrip(tripId string) (*DeleteTripResponse, error) {
 	return &result, nil
 }
 
+//	type QueryInfoResponse struct {
+//		Status int           `json:"status"`
+//		Msg    string        `json:"msg"`
+//		Data   []interface{} `json:"data"`
+//	}
 type QueryInfoResponse struct {
-	Status int           `json:"status"`
-	Msg    string        `json:"msg"`
-	Data   []interface{} `json:"data"`
+	EndTime             string `json:"endTime"`
+	Id                  string `json:"id"`
+	RouteId             string `json:"routeId"`
+	StartStationName    string `json:"startStationName"`
+	StartTime           string `json:"startTime"`
+	StationsName        string `json:"stationsName"`
+	TerminalStationName string `json:"terminalStationName"`
+	TrainTypeName       string `json:"trainTypeName"`
+	TripId              TripId `json:"tripId"`
 }
 
 func (s *SvcImpl) QueryInfo(tripInfo TripInfo) (*QueryInfoResponse, error) {
