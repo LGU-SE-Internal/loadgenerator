@@ -393,6 +393,8 @@ func init() {
 	// ------------------------------------- NewChain -------------------------------------------
 	// ------------------------------------- NewChain -------------------------------------------
 	// ------------------------------------- NewChain -------------------------------------------
+	// ------------------------------------- NewChain -------------------------------------------
+	// ------------------------------------- NewChain -------------------------------------------
 	// AssuranceBehaviorChain - Assurance
 	QueryAssuranceChain := NewChain(QueryAssuranceNode)
 	//CreateAssuranceChain := NewChain(CreateAssuranceNode)
@@ -515,6 +517,13 @@ func init() {
 	TrainFoodBehaviorChain.AddNextChain(QueryTrainFoodChain, 1)
 	//FoodBehaviorChain
 	FoodBehaviorChain.AddNextChain(QueryFoodChain, 1)
+
+	//ConsignBehaviorsChain
+	ConsignBehaviorsChain.AddNextChain(ConsignPriceBehaviorChain, 1)
+	ConsignPriceBehaviorChain.AddNextChain(CreateConsignChain, 1)
+	//ContactsBehaviorChain
+	ContactsBehaviorChain.AddNextChain(QueryContactsChain, 0.7)
+	ContactsBehaviorChain.AddNextChain(CreateContactsChain, 0.3)
 
 	// ------------------------------------- AddNextChain -------------------------------------------
 	// ------------------------------------- AddNextChain -------------------------------------------
