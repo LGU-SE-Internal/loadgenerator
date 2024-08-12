@@ -547,13 +547,21 @@ func init() {
 		0. UserBehaviorsChain */
 
 	PreserveBehaviorChain.AddNextChain(UserBehaviorsChain, 1)
+	// UserBehaviorsChain
 	UserBehaviorChain.AddNextChain(BasicBehaviorChain, 1)
-	BasicBehaviorChain.AddNextChain(TravelBehaviorChain, 1)
-	TravelBehaviorChain.AddNextChain(ContactsBehaviorChain, 1)
-	ContactsBehaviorChain.AddNextChain(AssuranceBehaviorChain, 1)
-	AssuranceBehaviorChain.AddNextChain(FoodBehaviorChain, 1)
-	FoodBehaviorChain.AddNextChain(ConsignBehaviorsChain, 1)
-	ConsignBehaviorsChain.AddNextChain(PreserveChain, 1)
+	// BasicBehaviorChain
+	QueryBasicChain.AddNextChain(TravelBehaviorChain, 1)
+	// TravelBehaviorChain
+	QueryTravelChain.AddNextChain(ContactsBehaviorChain, 1)
+	// ContactsBehaviorChain
+	QueryContactsChain.AddNextChain(AssuranceBehaviorChain, 1)
+	CreateContactsChain.AddNextChain(AssuranceBehaviorChain, 1)
+	// AssuranceBehaviorChain
+	QueryAssuranceChain.AddNextChain(FoodBehaviorChain, 1)
+	// FoodBehaviorChain
+	QueryFoodChain.AddNextChain(ConsignBehaviorsChain, 1)
+	// ConsignBehaviorsChain
+	CreateConsignChain.AddNextChain(PreserveChain, 1)
 
 	// ------------------------------------- VisualizeChain -------------------------------------------
 	// ------------------------------------- VisualizeChain -------------------------------------------
