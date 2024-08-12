@@ -545,6 +545,7 @@ func init() {
 		ContactsBehaviorChain | FoodBehaviorChain | TravelBehaviorChain | SeatBehaviorChain |
 		SecurityBehaviorChain | OrderBehaviorChain1 | StationBehaviorChain0 |
 		0. UserBehaviorsChain */
+
 	PreserveBehaviorChain.AddNextChain(UserBehaviorsChain, 1)
 	UserBehaviorChain.AddNextChain(BasicBehaviorChain, 1)
 	BasicBehaviorChain.AddNextChain(TravelBehaviorChain, 1)
@@ -1160,15 +1161,15 @@ func QueryTrip(ctx *Context) (*NodeResult, error) {
 	//TrainTypeName       string `json:"trainTypeName"`
 	//TripId              TripId `json:"tripId"`
 
-	ctx.Set(EndTime, queryInfoResp.EndTime)
-	ctx.Set(Id, queryInfoResp.Id)
-	ctx.Set(RouteID, queryInfoResp.RouteId)
-	ctx.Set(StartStationName, queryInfoResp.StartStationName)
-	ctx.Set(StartTime, queryInfoResp.StartTime)
-	ctx.Set(StationsName, queryInfoResp.StationsName)
-	ctx.Set(TerminalStationName, queryInfoResp.TerminalStationName)
-	ctx.Set(TrainTypeName, queryInfoResp.TrainTypeName)
-	ctx.Set(TripId, queryInfoResp.TripId)
+	ctx.Set(EndTime, queryInfoResp.Data.EndTime)
+	ctx.Set(Id, queryInfoResp.Data.Id)
+	ctx.Set(RouteID, queryInfoResp.Data.RouteId)
+	ctx.Set(StartStationName, queryInfoResp.Data.StartStationName)
+	ctx.Set(StartTime, queryInfoResp.Data.StartTime)
+	ctx.Set(StationsName, queryInfoResp.Data.StationsName)
+	ctx.Set(TerminalStationName, queryInfoResp.Data.TerminalStationName)
+	ctx.Set(TrainTypeName, queryInfoResp.Data.TrainTypeName)
+	ctx.Set(TripId, queryInfoResp.Data.TripId)
 	// ????????????????????????
 
 	return nil, nil
