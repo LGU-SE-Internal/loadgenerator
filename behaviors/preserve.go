@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/Lincyaw/loadgenerator/service"
 	"github.com/go-faker/faker/v4"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"math/rand"
 	"strings"
 	"time"
@@ -133,29 +133,9 @@ const (
 	FirstClassPriceRate = "firstClassPriceRate"
 
 	// Basic - Query
-	//Status = "status"
 	Percent = "percent"
-	//TrainType = "trainType"
-	//TrainType struct {
-	//Id = "id"
-	//Name = "name"
-	//EconomyClass = "economyClass"
-	//ConfortClass = "confortClass"
-	//AverageSpeed = "averageSpeed"
-	//} `json:"trainType"`
-	Route = "route"
-	//Route struct {
-	//RouteID = "id"
-	//Stations = "stations"
-	//Distances = "distances"
-	//StartStation = "startStation"
-	//EndStation = "endStation"
-	//} `json:"route"`
-	Prices = "prices"
-	//Prices struct {
-	//ConfortClass = "confortClass"
-	//EconomyClass = "economyClass"
-	//} `json:"prices"`
+	Route   = "route"
+	Prices  = "prices"
 
 	// Security
 	SecurityID          = "id"
@@ -180,8 +160,6 @@ const (
 var PreserveBehaviorChain *Chain
 
 func init() {
-	// ------------------------------------- init -------------------------------------------
-	// ------------------------------------- init -------------------------------------------
 	// ------------------------------------- init -------------------------------------------
 	// Main Chain
 	PreserveBehaviorChain = NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
@@ -340,11 +318,8 @@ func init() {
 	// ------------------------------------- NewFuncNode -------------------------------------------
 	//AssuranceBehaviorChain - Assurance
 	QueryAssuranceNode := NewFuncNode(QueryAssurance, "QueryAssurance")
-	// CreateAssuranceNode := NewFuncNode(CreateAssurance, "CreateAssurance")
 
 	//UserBehaviorsChain
-	// AuthBehaviorChain - LoginAdmin/LoginBasic
-	//LoginAdminNode := NewFuncNode(LoginAdmin, "LoginAdmin")
 	LoginBasicNode := NewFuncNode(LoginBasic, "LoginBasic")
 	//	VerifyCodeBehaviorChain
 	VerifyCodeNode := NewFuncNode(VerifyCode, "VerifyCode")
@@ -373,7 +348,6 @@ func init() {
 	//CreateTravelNode := NewFuncNode(CreateTrip, "CreateTrip")
 
 	//TravelBehaviorChain
-	// TrainBehaviorChain
 	QueryTrainNode := NewFuncNode(QueryTrain, "QueryTrain")
 	// RouteBehaviorChain
 	QueryRouteNode := NewFuncNode(QueryRoute, "QueryRoute")
@@ -398,24 +372,11 @@ func init() {
 	// OrderOtherBehaviorChain
 	QueryOrderOtherNode := NewFuncNode(QueryOrderOther, "QueryOrderOther")
 
-	//OrderBehaviorChain
-	// StationBehaviorChain
-
-	//OrderOtherBehaviorChain
-	// StationBehaviorChain
-
-	//SecurityBehaviorChain
-	// OrderBehaviorChain
-	// OrderOtherBehaviorChain
 	QuerySecurityNode := NewFuncNode(QuerySecurity, "QuerySecurity")
 
 	// ******* Preserve ********
 	PreserveNode := NewFuncNode(Preserve, "Preserve")
 
-	// ------------------------------------- NewChain -------------------------------------------
-	// ------------------------------------- NewChain -------------------------------------------
-	// ------------------------------------- NewChain -------------------------------------------
-	// ------------------------------------- NewChain -------------------------------------------
 	// ------------------------------------- NewChain -------------------------------------------
 	// AssuranceBehaviorChain - Assurance
 	QueryAssuranceChain := NewChain(QueryAssuranceNode)
@@ -437,9 +398,6 @@ func init() {
 	//QueryConsignChain := NewChain(QueryConsignNode)
 	CreateConsignChain := NewChain(CreateConsignNode)
 	// ConsignPriceBehaviorChain
-	//QueryConsignPriceChain := NewChain(QueryConsignPriceNode)
-	//CreateConsignPriceChain := NewChain(CreateConsignPriceNode)
-
 	// FoodBehaviorChain
 	QueryFoodChain := NewChain(QueryFoodNode)
 	// StationFoodBehaviorChain
@@ -493,14 +451,6 @@ func init() {
 	// The Last Chain - Preserve Behavior Chain
 	PreserveChain := NewChain(PreserveNode)
 
-	// ------------------------------------- AddNextChain -------------------------------------------
-	// ------------------------------------- AddNextChain -------------------------------------------
-	// ------------------------------------- AddNextChain -------------------------------------------
-	// 逆序 - 从处理逆序的第一层开始
-
-	// -------------(AddNextChain)AssignEachChainWithItsCorrespondingBehaviorChain-------------------
-	// -------------(AddNextChain)AssignEachChainWithItsCorrespondingBehaviorChain-------------------
-	// -------------(AddNextChain)AssignEachChainWithItsCorrespondingBehaviorChain-------------------
 	//AssuranceBehaviorChain
 	AssuranceBehaviorChain.AddNextChain(QueryAssuranceChain, 1)
 	//VerifyCodeBehaviorChain
@@ -564,16 +514,6 @@ func init() {
 	QueryTrainFoodChain.AddNextChain(QueryFoodChain, 1)
 
 	// &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& Main Chain &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-	// &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& Main Chain &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-	// &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& Main Chain &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-	// &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& Main Chain &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-	// &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& Main Chain &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-	//PreserveChain
-	/*	AssuranceBehaviorChain | 1. BasicBehaviorChain | ConsignBehaviorsChain |
-		ContactsBehaviorChain | FoodBehaviorChain | TravelBehaviorChain | SeatBehaviorChain |
-		SecurityBehaviorChain | OrderBehaviorChain1 | StationBehaviorChain0 |
-		0. UserBehaviorsChain */
-
 	PreserveBehaviorChain.AddNextChain(UserBehaviorsChain, 1)
 	// UserBehaviorsChain
 	QueryUserChain.AddNextChain(BasicBehaviorChain, 1)
@@ -612,11 +552,11 @@ func QueryAssurance(ctx *Context) (*NodeResult, error) {
 
 	Assurances, err := cli.GetAllAssurances()
 	if err != nil {
-		log.Println("GetAllAssurances failed: %v", err)
+		log.Errorf("GetAllAssurances failed: %v", err)
 		return nil, err
 	}
 	if Assurances.Status != 1 {
-		log.Println("Assurances status is not 1: %d", Assurances.Status)
+		log.Errorf("Assurances status is not 1: %d", Assurances.Status)
 		return nil, nil
 	}
 
@@ -639,19 +579,19 @@ func CreateAssurance(ctx *Context) (*NodeResult, error) {
 	TheOrderID := ctx.Get(OrderId).(string)
 	addAssuranceResp, err := cli.CreateNewAssurance(1, TheOrderID) // typeIndex 1 -> TRAFFIC_ACCIDENT
 	if err != nil {
-		log.Println("CreateNewAssurance failed: %v", err)
+		log.Errorf("CreateNewAssurance failed: %v", err)
 		return nil, err
 	}
 	if addAssuranceResp.Msg == "Already exists" {
-		log.Println("Order ID found, skip")
+		log.Errorf("Order ID found, skip")
 		return nil, err
 	}
 	if addAssuranceResp.Data.OrderId != TheOrderID {
-		log.Println("Request failed, addAssuranceResp.Data.OrderId:%s, expected: %s", addAssuranceResp.Data.OrderId, TheOrderID)
+		log.Errorf("Request failed, addAssuranceResp.Data.OrderId:%s, expected: %s", addAssuranceResp.Data.OrderId, TheOrderID)
 		return nil, err
 	}
 	if addAssuranceResp.Data.Type != "TRAFFIC_ACCIDENT" {
-		log.Println("Request failed, addAssuranceResp.Data.Type are expected to be 'TRAFFIC_ACCIDENT' but actually: %v", addAssuranceResp.Data.Type)
+		log.Errorf("Request failed, addAssuranceResp.Data.Type are expected to be 'TRAFFIC_ACCIDENT' but actually: %v", addAssuranceResp.Data.Type)
 		return nil, err
 	}
 
@@ -693,14 +633,14 @@ func VerifyCode(ctx *Context) (*NodeResult, error) {
 	verifyCode := generateVerifyCode()
 	verifyCodeResp, err := cli.VerifyCode(verifyCode)
 	if err != nil {
-		log.Println("Request failed, err %s", err)
+		log.Errorf("Request failed, err %s", err)
 		return nil, err
 	}
 	if !verifyCodeResp {
-		log.Println("Verification failed")
+		log.Errorf("Verification failed")
 		return nil, err
 	}
-	//log.Println("Verification code verified. The result is %v and verifyCode: %v", verifyCodeResp, verifyCode)
+	//log.Errorf("Verification code verified. The result is %v and verifyCode: %v", verifyCodeResp, verifyCode)
 
 	ctx.Set(BooleanVerifyCode, verifyCodeResp)
 
@@ -715,11 +655,11 @@ func QueryUser(ctx *Context) (*NodeResult, error) {
 
 	allUsersResp, err := cli.GetAllUsers()
 	if err != nil {
-		log.Println("Request failed, err1 %s", err)
+		log.Errorf("Request failed, err1 %s", err)
 		return nil, err
 	}
 	if allUsersResp.Status != 1 {
-		log.Println("Expected status 200, got %d", allUsersResp.Status)
+		log.Errorf("Expected status 200, got %d", allUsersResp.Status)
 		return nil, err
 	}
 
@@ -746,11 +686,11 @@ func QueryContacts(ctx *Context) (*NodeResult, error) {
 	TheAccountId := ctx.Get(UserId).(string)
 	GetAllContacts, err := contactsSvc.GetContactByAccountId(TheAccountId)
 	if err != nil {
-		log.Println("[Mock AccountID]GetAllContacts fail. The error occurs: %v", err)
+		log.Errorf("[Mock AccountID]GetAllContacts fail. The error occurs: %v", err)
 		return nil, err
 	}
 	if GetAllContacts.Status != 1 {
-		log.Println("[Mock AccountID]GetAllContacts.Status != 1")
+		log.Errorf("[Mock AccountID]GetAllContacts.Status != 1")
 		return nil, err
 	}
 
@@ -781,11 +721,11 @@ func CreateContacts(ctx *Context) (*NodeResult, error) {
 	}
 	CreateContacts, err := cli.AddContact(&CreateContactsInput)
 	if err != nil {
-		log.Println("[Mock AccountID] CreateContacts error occurs: %v", err)
+		log.Errorf("[Mock AccountID] CreateContacts error occurs: %v", err)
 		return nil, err
 	}
 	if CreateContacts.Status != 1 {
-		log.Println("[Mock AccountID] CreateContacts.Status != 1")
+		log.Errorf("[Mock AccountID] CreateContacts.Status != 1, resp: %+v", CreateContacts)
 		return nil, err
 	}
 
@@ -810,10 +750,10 @@ func QueryConsign(ctx *Context) (*NodeResult, error) {
 	//// Query consign records by account ID
 	//consignsByAccountId, err := cli.QueryByAccountId(TheAccountId)
 	//if err != nil {
-	//	log.Println("QueryByAccountId failed: %v", err)
+	//	log.Errorf("QueryByAccountId failed: %v", err)
 	//}
 	//if consignsByAccountId.Status != 1 {
-	//	log.Println("consignsByAccountId failed")
+	//	log.Errorf("consignsByAccountId failed")
 	//
 	//}
 	///*found := false
@@ -833,19 +773,19 @@ func QueryConsign(ctx *Context) (*NodeResult, error) {
 	//	}
 	//}
 	//if !found {
-	//	log.Println("Can not find consign by accountId.")
+	//	log.Errorf("Can not find consign by accountId.")
 	//}*/
-	//log.Println("QueryByAccountId response: %+v", consignsByAccountId)
+	//log.Errorf("QueryByAccountId response: %+v", consignsByAccountId)
 
 	// Query consign records by order ID
 	TheOrderId := ctx.Get(OrderId).(string)
 	consignsByOrderId, err := cli.QueryByOrderId(TheOrderId)
 	if err != nil {
-		log.Println("QueryByOrderId failed: %v", err)
+		log.Errorf("QueryByOrderId failed: %v", err)
 		return nil, err
 	}
 	if consignsByOrderId.Status != 1 {
-		log.Println("consignsByOrderId.Status = 1")
+		log.Errorf("consignsByOrderId.Status = 1")
 		return nil, err
 	}
 	/*isMatch1 := false
@@ -862,18 +802,18 @@ func QueryConsign(ctx *Context) (*NodeResult, error) {
 		isMatch1 = true
 	}
 	if !isMatch1 {
-		log.Println("Can not find consign by orderId.")
+		log.Errorf("Can not find consign by orderId.")
 	}*/
-	//log.Println("QueryByOrderId response: %+v", consignsByOrderId)
+	//log.Errorf("QueryByOrderId response: %+v", consignsByOrderId)
 
 	// Query consign records by consignee
 	//TheConsignee := ctx.Get(Name).(string)
 	//consignsByConsignee, err := cli.QueryByConsignee(TheConsignee)
 	//if err != nil {
-	//	log.Println("QueryByConsignee failed: %v", err)
+	//	log.Errorf("QueryByConsignee failed: %v", err)
 	//}
 	//if consignsByConsignee.Status != 1 {
-	//	log.Println("consignsByConsignee failed.")
+	//	log.Errorf("consignsByConsignee failed.")
 	//}
 	//isMatch2 := false
 	//for _, consign := range consignsByConsignee.Data {
@@ -891,9 +831,9 @@ func QueryConsign(ctx *Context) (*NodeResult, error) {
 	//	}
 	//}
 	//if !isMatch2 {
-	//	log.Println("Can not find consign by consignee.")
+	//	log.Errorf("Can not find consign by consignee.")
 	//}
-	//log.Println("QueryByConsignee response: %+v", consignsByConsignee)
+	//log.Errorf("QueryByConsignee response: %+v", consignsByConsignee)
 
 	ctx.Set(ID, consignsByOrderId.Data.Id)
 	ctx.Set(OrderId, consignsByOrderId.Data.OrderId)
@@ -946,14 +886,14 @@ func CreateConsign(ctx *Context) (*NodeResult, error) {
 	}
 	insertResp, err := cli.InsertConsignRecord(&insertReq)
 	if err != nil {
-		log.Println("InsertConsignRecord failed: %v", err)
+		log.Errorf("InsertConsignRecord failed: %v", err)
 		return nil, err
 	}
 	if insertResp.Msg == "Already exists" {
 		return nil, fmt.Errorf("Consign already exists")
 	}
 	if insertResp.Status != 1 {
-		log.Println("InsertConsignRecord failed: %v", insertResp.Status)
+		log.Errorf("InsertConsignRecord failed: %v", insertResp.Status)
 		return nil, err
 	}
 	isMatch := false
@@ -971,10 +911,10 @@ func CreateConsign(ctx *Context) (*NodeResult, error) {
 		isMatch = true
 	}
 	if !isMatch {
-		log.Println("Creation not match. Expect: %v, but get: %v", insertReq, insertResp.Data)
+		log.Errorf("Creation not match. Expect: %v, but get: %v", insertReq, insertResp.Data)
 		return nil, err
 	}
-	//log.Println("InsertConsignRecord response: %+v", insertResp)
+	//log.Errorf("InsertConsignRecord response: %+v", insertResp)
 	//existedConsign := insertResp.Data
 
 	ctx.Set(ID, insertResp.Data.ID)
@@ -1027,15 +967,15 @@ func QueryFood(ctx *Context) (*NodeResult, error) {
 	// Query all
 	allFoodOrders, err := cli.FindAllFoodOrder()
 	if err != nil {
-		log.Println("FindAllFoodOrder request failed, err %s", err)
+		log.Errorf("FindAllFoodOrder request failed, err %s", err)
 		return nil, err
 	}
 	if len(allFoodOrders.Data) == 0 {
-		log.Println("FindAllFoodOrder returned empty results")
+		log.Errorf("FindAllFoodOrder returned empty results")
 		return nil, err
 	}
 	if allFoodOrders.Status != 1 {
-		log.Println("FindAllFoodOrder failed: %v", allFoodOrders.Status)
+		log.Errorf("FindAllFoodOrder failed: %v", allFoodOrders.Status)
 		return nil, err
 	}
 
@@ -1072,11 +1012,11 @@ func CreateFood(ctx *Context) (*NodeResult, error) {
 	// Create Test
 	newCreateResp, err := cli.CreateFoodOrder(&foodOrder)
 	if err != nil {
-		log.Println("NewCreateFoodOrder request failed, err %s", err)
+		log.Errorf("NewCreateFoodOrder request failed, err %s", err)
 		return nil, err
 	}
 	if newCreateResp.Status != 1 {
-		log.Println("NEwCreateFoodOrder failed")
+		log.Errorf("NEwCreateFoodOrder failed")
 		return nil, err
 	}
 
@@ -1098,11 +1038,11 @@ func QueryStationFood(ctx *Context) (*NodeResult, error) {
 
 	resp, err := cli.GetAllStationFood()
 	if err != nil {
-		log.Println("Resp returns err: %v", err)
+		log.Errorf("Resp returns err: %v", err)
 		return nil, err
 	}
 	if resp.Status != 1 {
-		log.Println("GetAllStationFood status should be 1, but is %d", resp.Status)
+		log.Errorf("GetAllStationFood status should be 1, but is %d", resp.Status)
 		return nil, err
 	}
 
@@ -1136,11 +1076,11 @@ func QueryTrainFood(ctx *Context) (*NodeResult, error) {
 
 	resp, err := cli.GetAllTrainFood()
 	if err != nil {
-		log.Println("resp returns err: %v", err)
+		log.Errorf("resp returns err: %v", err)
 		return nil, err
 	}
 	if resp.Status != 1 {
-		log.Println("GetAllTrainFood's status should be 1 but got %d", resp.Status)
+		log.Errorf("GetAllTrainFood's status should be 1 but got %d", resp.Status)
 		return nil, nil
 	}
 
@@ -1167,17 +1107,6 @@ func QueryTrip(ctx *Context) (*NodeResult, error) {
 	if !ok {
 		return nil, fmt.Errorf("service client not found in context")
 	}
-
-	/*QueryAllTripResp, err := cli.QueryAllTrip()
-	if err != nil {
-		log.Println("Request failed, err %s", err)
-		return nil, err
-	}
-	if QueryAllTripResp.Status != 1 {
-		log.Println("Request failed, status: %d", QueryAllTripResp.Status)
-		return nil, err
-	}*/
-	// Test QueryInfo
 	tripInfo := service.TripInfo{
 		StartPlace:    ctx.Get(StartStation).(string),
 		EndPlace:      ctx.Get(EndStation).(string),
@@ -1186,24 +1115,17 @@ func QueryTrip(ctx *Context) (*NodeResult, error) {
 	}
 	queryInfoResp, err := cli.QueryInfo(tripInfo)
 	if err != nil {
-		log.Println("QueryInfo request failed, err %s", err)
+		log.Errorf("QueryInfo request failed, err %s", err)
 		return nil, err
 	}
 	if queryInfoResp.Status != 1 {
-		log.Println("QueryInfo failed, status: %d", queryInfoResp.Status)
+		log.Errorf("QueryInfo failed, status: %d", queryInfoResp.Status)
 		return nil, err
 	}
 
-	/*	TripId = "tripId"
-		TrainTypeName = "trainTypeName"
-		StartStation = "startStation"
-		TerminalStation = "terminalStation"
-		StartTime = "startTime"
-		EndTime = "endTime"
-		EconomyClass = "economyClass"
-		ConfortClass = "confortClass"
-		PriceForEconomyClass = "priceForEconomyClass"
-		PriceForConfortClass = "priceForConfortClass"*/
+	if len(queryInfoResp.Data) == 0 {
+		log.Errorf("QueryInfo response is empty")
+	}
 
 	randomIndex := rand.Intn(len(queryInfoResp.Data))
 	ctx.Set(TripId, fmt.Sprintf("%s%s", queryInfoResp.Data[randomIndex].TripId.Type, queryInfoResp.Data[randomIndex].TripId.Number))
@@ -1257,15 +1179,15 @@ func CreateTrip(ctx *Context) (*NodeResult, error) {
 	// Create Test
 	createResp, err := cli.CreateTrip(&travelInfo)
 	if err != nil {
-		log.Println("CreateTrip request failed, err %s", err)
+		log.Errorf("CreateTrip request failed, err %s", err)
 		return nil, err
 	}
 	if createResp.Status != 1 {
-		log.Println("CreateTrip failed: %s", createResp.Msg)
+		log.Errorf("CreateTrip failed: %s", createResp.Msg)
 		return nil, err
 	}
 	if createResp.Msg == "Already exists" {
-		log.Println("Already exists: %s", createResp.Msg)
+		log.Errorf("Already exists: %s", createResp.Msg)
 		return nil, err
 	}
 	isMatch := false
@@ -1280,7 +1202,7 @@ func CreateTrip(ctx *Context) (*NodeResult, error) {
 		isMatch = true
 	}
 	if !isMatch {
-		log.Println("CreateTrip failed: %s. Except: %v, but get: %v", createResp.Msg, travelInfo, createResp.Data)
+		log.Errorf("CreateTrip failed: %s. Except: %v, but get: %v", createResp.Msg, travelInfo, createResp.Data)
 		return nil, err
 	}
 
@@ -1316,15 +1238,15 @@ func QueryTrain(ctx *Context) (*NodeResult, error) {
 	// Query all
 	allTrainTypes, err := cli.Query()
 	if err != nil {
-		log.Println("Query all request failed, err %s", err)
+		log.Errorf("Query all request failed, err %s", err)
 		return nil, err
 	}
 	if allTrainTypes.Status != 1 {
-		log.Println("allTrainTypes.Status != 1")
+		log.Errorf("allTrainTypes.Status != 1")
 		return nil, err
 	}
 	if len(allTrainTypes.Data) == 0 {
-		log.Println("Query all returned no results")
+		log.Errorf("Query all returned no results")
 		return nil, err
 	}
 	/*found := false
@@ -1363,7 +1285,7 @@ func QueryRoute(ctx *Context) (*NodeResult, error) {
 
 	AllRoutesByQuery, err := cli.QueryAllRoutes()
 	if err != nil {
-		log.Println("Request failed, err2 %s", err)
+		log.Errorf("Request failed, err2 %s", err)
 		return nil, err
 	}
 	if AllRoutesByQuery.Status != 1 {
@@ -1371,13 +1293,9 @@ func QueryRoute(ctx *Context) (*NodeResult, error) {
 		return nil, err
 	}
 
-	/*	Id           string   `json:"id"`
-		Stations     []string `json:"stations"`
-		Distances    []int    `json:"distances"`
-		StartStation string   `json:"startStation"`
-		EndStation   string   `json:"endStation"`*/
-
 	randomIndex := rand.Intn(len(AllRoutesByQuery.Data))
+	debug := AllRoutesByQuery.Data[randomIndex]
+	fmt.Println(debug)
 	ctx.Set(RouteID, AllRoutesByQuery.Data[randomIndex].Id)
 	ctx.Set(StartStation, AllRoutesByQuery.Data[randomIndex].StartStation)
 	ctx.Set(EndStation, AllRoutesByQuery.Data[randomIndex].EndStation)
@@ -1410,31 +1328,31 @@ func QueryRoute(ctx *Context) (*NodeResult, error) {
 //	}
 //	resp, err := cli.CreateAndModifyRoute(&input)
 //	if err != nil {
-//		log.Println("Request failed, err %s", err)
+//		log.Errorf("Request failed, err %s", err)
 //		return nil, err
 //	}
 //	if resp.Msg == "Already exists" {
-//		log.Println("Route already exists, skip")
+//		log.Errorf("Route already exists, skip")
 //		return nil, err
 //	}
 //	if resp.Data.Id != input.ID {
-//		log.Println("Route ID does not match, expect %s, got %s", input.ID, resp.Data.Id)
+//		log.Errorf("Route ID does not match, expect %s, got %s", input.ID, resp.Data.Id)
 //		return nil, err
 //	}
 //	if resp.Data.StartStation != input.StartStation {
-//		log.Println("StartStation does not match, expect %s, got %s", input.StartStation, resp.Data.StartStation)
+//		log.Errorf("StartStation does not match, expect %s, got %s", input.StartStation, resp.Data.StartStation)
 //		return nil, err
 //	}
 //	if resp.Data.EndStation != input.EndStation {
-//		log.Println("StartStation does not match, expect %s, got %s", input.StartStation, resp.Data.StartStation)
+//		log.Errorf("StartStation does not match, expect %s, got %s", input.StartStation, resp.Data.StartStation)
 //		return nil, err
 //	}
 //	if StringSliceToString(resp.Data.Stations) != ConvertCommaSeparatedToBracketed(input.StationList) {
-//		log.Println("StationList does not match, expect %s, got %s", ConvertCommaSeparatedToBracketed(input.StationList), StringSliceToString(resp.Data.Stations))
+//		log.Errorf("StationList does not match, expect %s, got %s", ConvertCommaSeparatedToBracketed(input.StationList), StringSliceToString(resp.Data.Stations))
 //		return nil, err
 //	}
 //	if IntSliceToString(resp.Data.Distances) != ConvertCommaSeparatedToBracketed(input.DistanceList) {
-//		log.Println("DistanceList does not match, expect %s, got %s", ConvertCommaSeparatedToBracketed(input.DistanceList), IntSliceToString(resp.Data.Distances))
+//		log.Errorf("DistanceList does not match, expect %s, got %s", ConvertCommaSeparatedToBracketed(input.DistanceList), IntSliceToString(resp.Data.Distances))
 //		return nil, err
 //	}
 //
@@ -1473,7 +1391,7 @@ func QueryBasic(ctx *Context) (*NodeResult, error) {
 			TrainTypeName:       GenerateTrainTypeName(),
 			RouteId:             ctx.Get(RouteID).(string),
 			StartStationName:    ctx.Get(StartStation).(string),
-			StationsName:        getMiddleElements(strings.Join(ctx.Get(StationName).([]string), ",")), // only ok when there is exactly three stations
+			StationsName:        strings.Join(ctx.Get(StationName).([]string), ","),
 			TerminalStationName: ctx.Get(EndStation).(string),
 			StartTime:           "", // can be any
 			EndTime:             "", // can be any
@@ -1487,11 +1405,11 @@ func QueryBasic(ctx *Context) (*NodeResult, error) {
 	var basicSvc service.BasicService = cli
 	travel, err := basicSvc.QueryForTravel(travelQuery)
 	if err != nil {
-		log.Println("Query travel request failed, err %s", err)
+		log.Errorf("Query travel request failed, err %s", err)
 		return nil, err
 	}
 	if travel.Status != 1 {
-		log.Println("travel.Status != 1")
+		log.Errorf("travel.Status != 1")
 		return nil, err
 	}
 
@@ -1547,11 +1465,11 @@ func CreateSeat(ctx *Context) (*NodeResult, error) {
 	resp, err := cli.ReqSeatCreate(seatCreateInfoReq)
 
 	if err != nil {
-		log.Println(err)
+		log.Errorln(err)
 		return nil, err
 	}
 	if resp.Status != 1 {
-		log.Println("SeatCreateInfoReq.Status != 1")
+		log.Errorf("SeatCreateInfoReq.Status != 1, resp: %+v", resp)
 		return nil, err
 	}
 
@@ -1570,11 +1488,11 @@ func QueryStation(ctx *Context) (*NodeResult, error) {
 
 	QueryAll, err7 := cli.QueryStations()
 	if err7 != nil {
-		log.Println("Request failed, err7 %s", err7)
+		log.Errorf("Request failed, err7 %s", err7)
 		return nil, err7
 	}
 	if QueryAll.Status != 1 {
-		log.Println("Request failed, QueryAll.Status: %d, expected: %d", QueryAll.Status, 1)
+		log.Errorf("Request failed, QueryAll.Status: %d, expected: %d", QueryAll.Status, 1)
 		return nil, err7
 	}
 	/*found := false
@@ -1624,15 +1542,15 @@ func QueryPrice(ctx *Context) (*NodeResult, error) {
 	TheTrainType := ctx.Get(TrainTypeName).(string)
 	priceByRouteAndTrain, err := cli.FindByRouteIdAndTrainType(TheRouteId, TheTrainType)
 	if err != nil {
-		log.Println("FindByRouteIdAndTrainType failed: %v", err)
+		log.Errorf("FindByRouteIdAndTrainType failed: %v", err)
 		return nil, err
 	}
 	if priceByRouteAndTrain.Status != 1 {
-		log.Println("There is not corresponding Ticket available.")
+		log.Errorf("There is not corresponding Ticket available.")
 		return &(NodeResult{false}), err
 	}
 	/*	if priceByRouteAndTrain.Data.Id != ctx.Get(ID) {
-		log.Println("priceByRouteAndTrain.Data.Id != existedPrice.Id")
+		log.Errorf("priceByRouteAndTrain.Data.Id != existedPrice.Id")
 		return nil, err
 	}*/
 
@@ -1658,11 +1576,11 @@ func QuerySecurity(ctx *Context) (*NodeResult, error) {
 	// Get All Security Configs
 	configs, err3 := cli.FindAllSecurityConfig()
 	if err3 != nil {
-		log.Println("FindAllSecurityConfig failed: %v", err3)
+		log.Errorf("FindAllSecurityConfig failed: %v", err3)
 		return nil, err3
 	}
 	if configs.Status != 1 {
-		log.Println("[Security Service]Status != 1")
+		log.Errorf("[Security Service]Status != 1")
 		return nil, err3
 	}
 	/*found := false
@@ -1675,7 +1593,7 @@ func QuerySecurity(ctx *Context) (*NodeResult, error) {
 		}
 	}
 	if !found {
-		log.Println("[Security Service]Cannot find existed security config")
+		log.Errorf("[Security Service]Cannot find existed security config")
 		return nil, err3
 	}*/
 
@@ -1702,11 +1620,11 @@ func QueryConfig(ctx *Context) (*NodeResult, error) {
 	// Query All Configs Test
 	queryAllResp, err := cli.QueryAllConfigs()
 	if err != nil {
-		log.Println("QueryAllConfigs request failed, err %s", err)
+		log.Errorf("QueryAllConfigs request failed, err %s", err)
 		return nil, err
 	}
 	if queryAllResp.Status != 1 {
-		log.Println("QueryAllConfigs status != 1")
+		log.Errorf("QueryAllConfigs status != 1")
 		return nil, err
 	}
 
@@ -1729,11 +1647,11 @@ func QueryOrder(ctx *Context) (*NodeResult, error) {
 
 	Resp, err := cli.ReqFindAllOrder()
 	if err != nil {
-		log.Println("Request failed, err %s", err)
+		log.Errorf("Request failed, err %s", err)
 		return nil, err
 	}
 	if len(Resp.Data) == 0 {
-		log.Println("no data found.")
+		log.Errorf("no data found.")
 		return nil, err
 	}
 
@@ -1804,11 +1722,11 @@ func CreateOrder(ctx *Context) (*NodeResult, error) {
 
 	CreateNewOrderResp, err := cli.ReqCreateNewOrder(&originOrder0)
 	if err != nil {
-		log.Println("Request failed, err %s", err)
+		log.Errorf("Request failed, err %s", err)
 		return nil, err
 	}
 	if CreateNewOrderResp.Status != 1 {
-		log.Println("Request failed, CreateNewOrder status != 1")
+		log.Errorf("Request failed, CreateNewOrder status != 1")
 		return nil, err
 	}
 
@@ -1838,11 +1756,11 @@ func QueryOrderOther(ctx *Context) (*NodeResult, error) {
 	GetResp, err := cli.ReqFindAllOrderOther()
 
 	if err != nil {
-		log.Println("Request failed, err %s", err)
+		log.Errorf("Request failed, err %s", err)
 		return nil, err
 	}
 	if GetResp.Status != 1 {
-		log.Println("Request failed, CreateNewOrder status != 1")
+		log.Errorf("Request failed, CreateNewOrder status != 1")
 		return nil, err
 	}
 
@@ -1895,11 +1813,11 @@ func CreateOrderOther(ctx *Context) (*NodeResult, error) {
 	})
 
 	if err != nil {
-		log.Println("Request failed, err %s", err)
+		log.Errorf("Request failed, err %s", err)
 		return nil, err
 	}
 	if AddResp.Status != 1 {
-		log.Println("Request failed, CreateNewOrder status != 1")
+		log.Errorf("Request failed, CreateNewOrder status != 1")
 		return nil, err
 	}
 
@@ -1958,8 +1876,8 @@ func Preserve(ctx *Context) (*NodeResult, error) {
 	if PreserveResp.Status != 1 {
 		return nil, fmt.Errorf("preserve order tickets fail. PreserveResp.Status != 1, get %v", PreserveResp.Status)
 	}
-	log.Println("The Status is: %v, and PreserveResp Data: %v\n", PreserveResp.Status, PreserveResp.Data)
-	log.Println("PreserveBehaviors(Chain) Ends. End time: %v", time.Now().String())
+	log.Errorf("The Status is: %v, and PreserveResp Data: %v\n", PreserveResp.Status, PreserveResp.Data)
+	log.Errorf("PreserveBehaviors(Chain) Ends. End time: %v", time.Now().String())
 
 	//return nil, nil
 	return &(NodeResult{false}), nil // Chain End :D
