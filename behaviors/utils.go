@@ -187,6 +187,16 @@ func generateRandomStoreName() string {
 	return storeNames[randomIndex]
 }
 
+func extractDate(dateTimeStr string) string {
+	// Parse the string to time.Time
+	t, err := time.Parse("2006-01-02 15:04:05", dateTimeStr)
+	if err != nil {
+		return ""
+	}
+	// Format the time.Time to only include the date
+	return t.Format("2006-01-02")
+}
+
 // generateRandomTime generates a random time in the format "HH:MM:SS".
 func generateRandomTime() string {
 	hour := rand.Intn(24)   // 0-23

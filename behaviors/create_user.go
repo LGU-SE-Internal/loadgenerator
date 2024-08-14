@@ -58,6 +58,7 @@ func LoginBasic(ctx *Context) (*NodeResult, error) {
 	if err != nil {
 		return nil, err
 	}
+	ctx.Set(UserId, loginResult.Data.UserId)
 	ctx.Set(LoginToken, loginResult.Data.Token)
 	return nil, nil
 }
