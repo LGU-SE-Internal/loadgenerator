@@ -33,10 +33,10 @@ const (
 	IsWithin        = "isWithin"
 
 	// Assurance
-	OrderId   = "orderId"
-	TypeIndex = "typeIndex"
-	TypeName  = "typeName"
-	TypePrice = "typePrice"
+	OrderId            = "orderId"
+	AssuranceTypeIndex = "typeIndex"
+	AssuranceTypeName  = "typeName"
+	AssuranceTypePrice = "typePrice"
 
 	// VerifyCode
 	BooleanVerifyCode = "booleanVerifyCode"
@@ -75,19 +75,21 @@ const (
 	// FoodBehavior
 
 	// Trip(Travel)
-	EndTime = "endTime"
-	Id      = "id"
-	//RouteId             = "routeId"
-	StartStationName    = "startStationName"
-	StartTime           = "startTime"
-	StationsName        = "stationsName"
-	TerminalStationName = "terminalStationName"
-	TrainTypeName       = "trainTypeName"
-	TripId              = "tripId"
+	TripId        = "tripId"
+	TrainTypeName = "trainTypeName"
+	//StartStation         = "startStation"
+	TerminalStation = "terminalStation"
+	StartTime       = "startTime"
+	EndTime         = "endTime"
+	//EconomyClass         = "economyClass"
+	//ConfortClass         = "confortClass"
+	PriceForEconomyClass = "priceForEconomyClass"
+	PriceForConfortClass = "priceForConfortClass"
 
 	// Train
 	//Id           = "id" //Train-ID needed or not?
 	//Name         = "name" //Train-Name needed or not?
+	TrainTypName = "trainTypeName"
 	ConfortClass = "confortClass"
 	AverageSpeed = "averageSpeed"
 	EconomyClass = "economyClass"
@@ -165,6 +167,14 @@ const (
 	StationId    = "id"
 	StationNames = "name"
 	StayTime     = "stayTime"
+
+	// Basic
+	DepartureTime = "departureTime"
+
+	// Seat
+	SeatNo = "seatNo"
+	//StartStation = "startStation"
+	DestStation = "destStation"
 )
 
 var PreserveBehaviorChain *Chain
@@ -175,149 +185,153 @@ func init() {
 	// ------------------------------------- init -------------------------------------------
 	// Main Chain
 	PreserveBehaviorChain = NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		fmt.Printf("PreserveBehaviors(Chain) Statrs. Starts time: %v", time.Now().String())
+		log.Printf("PreserveBehaviors(Chain) Statrs. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "Dummy"))
 	// AssuranceBehaviorChain -
 	AssuranceBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		fmt.Printf("CreateAssuranceChain. Starts time: %v", time.Now().String())
+		log.Printf("CreateAssuranceChain. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyAssurance"))
 	// UserBehaviorsChain
 	UserBehaviorsChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		fmt.Printf("UserBehaviorsChain Starts. Starts time: %v", time.Now().String())
+		log.Printf("UserBehaviorsChain Starts. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyUserBehaviors"))
 	// VerifyCodeBehaviorChain
 	VerifyCodeBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		fmt.Printf("VerifyCodeBehaviorChain Starts. Start time: %v", time.Now().String())
+		log.Printf("VerifyCodeBehaviorChain Starts. Start time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyVerifyCodeBehavior"))
 	// AuthBehaviorChain
 	AuthBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		fmt.Printf("AuthBehaviorChain Starts. Start time: %v", time.Now().String())
+		log.Printf("AuthBehaviorChain Starts. Start time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyAuthBehavior"))
 	// UserBehaviorChain
 	UserBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		fmt.Printf("UserBehaviorChain Starts. Starts time: %v", time.Now().String())
+		log.Printf("UserBehaviorChain Starts. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyUserBehavior"))
 	// ContactsBehaviorChain
 	ContactsBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		fmt.Printf("ContactsBehaviorChain Starts. Starts time: %v", time.Now().String())
+		log.Printf("ContactsBehaviorChain Starts. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyContactsBehavior"))
 	// ConsignBehaviorsChain
 	ConsignBehaviorsChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		fmt.Printf("ConsignBehaviorsChain Starts. Starts time: %v", time.Now().String())
+		log.Printf("ConsignBehaviorsChain Starts. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyConsignBehaviors"))
 	//ConsignPriceBehaviorChain
 	ConsignPriceBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		fmt.Printf("ConsignPriceBehaviorChain Starts. Starts time: %v", time.Now().String())
+		log.Printf("ConsignPriceBehaviorChain Starts. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyConsignPriceBehavior"))
 	// FoodBehaviorChain
 	FoodBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		fmt.Printf("FoodBehaviorChain Starts. Starts time: %v", time.Now().String())
+		log.Printf("FoodBehaviorChain Starts. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyFoodBehavior"))
 	// TravelBehaviorChain
-	TravelBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		fmt.Printf("TravelBehaviorChain Starts. Starts time: %v", time.Now().String())
+	TravelBehaviorChain1 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+		log.Printf("TravelBehaviorChain Starts. Starts time: %v", time.Now().String())
+		return nil, nil
+	}, "DummyTravelBehavior"))
+	TravelBehaviorChain2 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+		log.Printf("TravelBehaviorChain Starts. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyTravelBehavior"))
 	// StationFoodBehaviorChain
 	StationFoodBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		fmt.Printf("StationFoodBehaviorChain Starts. Starts time: %v", time.Now().String())
+		log.Printf("StationFoodBehaviorChain Starts. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyStationFoodBehavior"))
 	//TrainFoodBehaviorChain
 	TrainFoodBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		fmt.Printf("TrainFoodBehaviorChain Starts. Starts time: %v", time.Now().String())
+		log.Printf("TrainFoodBehaviorChain Starts. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyTrainFoodBehavior"))
 	// TrainBehaviorChain
 	TrainBehaviorChain1 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		fmt.Printf("TrainBehaviorChain Starts. Starts time: %v", time.Now().String())
+		log.Printf("TrainBehaviorChain Starts. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyTrainBehavior"))
 	TrainBehaviorChain2 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		fmt.Printf("TrainBehaviorChain Starts. Starts time: %v", time.Now().String())
+		log.Printf("TrainBehaviorChain Starts. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyTrainBehavior"))
 	//RouteBehaviorChain
 	RouteBehaviorChain1 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		fmt.Printf("RouteBehaviorChain starts. Starts time: %v", time.Now().String())
+		log.Printf("RouteBehaviorChain starts. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyRouteBehavior"))
 	RouteBehaviorChain2 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		fmt.Printf("RouteBehaviorChain starts. Starts time: %v", time.Now().String())
+		log.Printf("RouteBehaviorChain starts. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyRouteBehavior"))
 	// BasicBehaviorChain
 	BasicBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		fmt.Printf("BasicBehaviorChain Starts. Start time: %v", time.Now().String())
+		log.Printf("BasicBehaviorChain Starts. Start time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyBasicBehavior"))
 	// SeatBehaviorChain
 	SeatBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		fmt.Printf("SeatBehaviorChain Starts. Start time: %v", time.Now().String())
+		log.Printf("SeatBehaviorChain Starts. Start time: %v", time.Now().String())
 		return nil, nil
 	}, "DummySeatBehavior"))
 	// StationBehaviorChain
 	StationBehaviorChain0 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		fmt.Printf("StationBehaviorChain Starts. Start time: %v", time.Now().String())
+		log.Printf("StationBehaviorChain Starts. Start time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyStationBehavior"))
 	StationBehaviorChain1 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		fmt.Printf("StationBehaviorChain Starts. Start time: %v", time.Now().String())
+		log.Printf("StationBehaviorChain Starts. Start time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyStationBehavior"))
 	StationBehaviorChain2 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		fmt.Printf("StationBehaviorChain Starts. Start time: %v", time.Now().String())
+		log.Printf("StationBehaviorChain Starts. Start time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyStationBehavior"))
 	StationBehaviorChain3 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		fmt.Printf("StationBehaviorChain Starts. Start time: %v", time.Now().String())
+		log.Printf("StationBehaviorChain Starts. Start time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyStationBehavior"))
 	//PriceBehaviorChain
 	PriceBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		fmt.Printf("PriceBehaviorChain Starts. Start time: %v", time.Now().String())
+		log.Printf("PriceBehaviorChain Starts. Start time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyPriceBehavior"))
 	//ConfigBehaviorChain
 	ConfigBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		fmt.Printf("ConfigBehaviorChain Starts. Start time: %v", time.Now().String())
+		log.Printf("ConfigBehaviorChain Starts. Start time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyConfigBehavior"))
 	//OrderBehaviorChain
 	OrderBehaviorChain1 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		fmt.Printf("OrderBehaviorChain Starts. Start time: %v", time.Now().String())
+		log.Printf("OrderBehaviorChain Starts. Start time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyOrderBehavior"))
 	OrderBehaviorChain2 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		fmt.Printf("OrderBehaviorChain Starts. Start time: %v", time.Now().String())
+		log.Printf("OrderBehaviorChain Starts. Start time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyOrderBehavior"))
 	OrderBehaviorChain3 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		fmt.Printf("OrderBehaviorChain Starts. Start time: %v", time.Now().String())
+		log.Printf("OrderBehaviorChain Starts. Start time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyOrderBehavior"))
 	//OrderOtherBehaviorChain
 	OrderOtherBehaviorChain1 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		fmt.Printf("OrderOtherBehaviorChain Starts. Strat time: %v", time.Now().String())
+		log.Printf("OrderOtherBehaviorChain Starts. Strat time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyOrderOtherBehavior"))
 	OrderOtherBehaviorChain2 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		fmt.Printf("OrderOtherBehaviorChain Starts. Strat time: %v", time.Now().String())
+		log.Printf("OrderOtherBehaviorChain Starts. Strat time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyOrderOtherBehavior"))
 	// SecurityBehaviorChain
 	SecurityBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		fmt.Printf("SecurityBehaviorChain Satrts. Start time: %v", time.Now().String())
+		log.Printf("SecurityBehaviorChain Satrts. Start time: %v", time.Now().String())
 		return nil, nil
 	}, "DummySecurityBehavior"))
 
@@ -366,7 +380,7 @@ func init() {
 	// BasicBehaviorChain
 	QueryBasicNode := NewFuncNode(QueryBasic, "QueryBasic")
 	// SeatBehaviorChain
-	QuerySeatNode := NewFuncNode(QuerySeat, "QuerySeat")
+	CreateSeatNode := NewFuncNode(CreateSeat, "QuerySeat")
 
 	//BasicBehaviorChain
 	// StationBehaviorChain
@@ -433,7 +447,8 @@ func init() {
 	// TrainFoodBehaviorChain
 	QueryTrainFoodChain := NewChain(QueryTrainFoodNode)
 	// TravelBehaviorChain
-	QueryTravelChain := NewChain(QueryTravelNode)
+	QueryTravelChain1 := NewChain(QueryTravelNode)
+	QueryTravelChain2 := NewChain(QueryTravelNode)
 	//CreateTravelChain := NewChain(CreateTravelNode)
 
 	// TrainBehaviorChain
@@ -443,9 +458,16 @@ func init() {
 	QueryRouteChain1 := NewChain(QueryRouteNode)
 	QueryRouteChain2 := NewChain(QueryRouteNode)
 	// BasicBehaviorChain
-	QueryBasicChain := NewChain(QueryRouteNode, QueryStationNode, QueryPriceNode, QueryTrainNode, QueryBasicNode)
+	QueryBasicChain := NewChain(QueryRouteNode)
+	QueryBasicChain.AddNode(QueryStationNode)
+	QueryBasicChain.AddNode(QueryTrainNode)
+	QueryBasicChain.AddNode(QueryBasicNode)
+	QueryBasicChain.AddNode(QueryPriceNode)
 	// SeatBehaviorChain
-	QuerySeatChain := NewChain(QuerySeatNode)
+	CreateSeatChain := NewChain(QueryConfigNode)
+	CreateSeatChain.AddNode(QueryOrderNode)
+	CreateSeatChain.AddNode(QueryOrderOtherNode)
+	CreateSeatChain.AddNode(CreateSeatNode)
 
 	// StationBehaviorChain
 	QueryStationChain0 := NewChain(QueryStationNode)
@@ -515,7 +537,9 @@ func init() {
 	//ConfigBehaviorChain
 	ConfigBehaviorChain.AddNextChain(QueryConfigChain, 1)
 	//SeatBehaviorChain
-	SeatBehaviorChain.AddNextChain(QuerySeatChain, 1)
+	SeatBehaviorChain.AddNextChain(OrderBehaviorChain2, 1)
+	QueryOrderChain2.AddNextChain(OrderOtherBehaviorChain2, 1)
+	QueryOrderOtherChain2.AddNextChain(CreateSeatChain, 1)
 	//PriceBehaviorChain
 	PriceBehaviorChain.AddNextChain(QueryPriceChain, 1)
 	//TrainBehaviorChain
@@ -527,13 +551,17 @@ func init() {
 	//BasicBehaviorChain
 	BasicBehaviorChain.AddNextChain(QueryBasicChain, 1)
 	//TravelBehaviorChain
-	TravelBehaviorChain.AddNextChain(QueryTravelChain, 1)
+	TravelBehaviorChain1.AddNextChain(QueryTravelChain1, 1)
+	TravelBehaviorChain2.AddNextChain(QueryTravelChain2, 1)
 	//StationFoodBehaviorChain
 	StationFoodBehaviorChain.AddNextChain(QueryStationFoodChain, 1)
 	//TrainFoodBehaviorChain
 	TrainFoodBehaviorChain.AddNextChain(QueryTrainFoodChain, 1)
 	//FoodBehaviorChain
-	FoodBehaviorChain.AddNextChain(QueryFoodChain, 1)
+	//FoodBehaviorChain.AddNextChain(TravelBehaviorChain2, 1)
+	FoodBehaviorChain.AddNextChain(StationFoodBehaviorChain, 1)
+	QueryStationFoodChain.AddNextChain(TrainFoodBehaviorChain, 1)
+	QueryTrainFoodChain.AddNextChain(QueryFoodChain, 1)
 
 	// &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& Main Chain &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 	// &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& Main Chain &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -548,14 +576,16 @@ func init() {
 
 	PreserveBehaviorChain.AddNextChain(UserBehaviorsChain, 1)
 	// UserBehaviorsChain
-	UserBehaviorChain.AddNextChain(BasicBehaviorChain, 1)
+	QueryUserChain.AddNextChain(BasicBehaviorChain, 1)
 	// BasicBehaviorChain
-	QueryBasicChain.AddNextChain(TravelBehaviorChain, 1)
+	QueryBasicChain.AddNextChain(SeatBehaviorChain, 1)
+	// SeatBehaviorChain
+	CreateSeatChain.AddNextChain(ContactsBehaviorChain, 1)
 	// TravelBehaviorChain
-	QueryTravelChain.AddNextChain(ContactsBehaviorChain, 1)
+	QueryContactsChain.AddNextChain(TravelBehaviorChain1, 1)
+	CreateContactsChain.AddNextChain(TravelBehaviorChain1, 1)
 	// ContactsBehaviorChain
-	QueryContactsChain.AddNextChain(AssuranceBehaviorChain, 1)
-	CreateContactsChain.AddNextChain(AssuranceBehaviorChain, 1)
+	QueryTravelChain1.AddNextChain(AssuranceBehaviorChain, 1)
 	// AssuranceBehaviorChain
 	QueryAssuranceChain.AddNextChain(FoodBehaviorChain, 1)
 	// FoodBehaviorChain
@@ -582,19 +612,19 @@ func QueryAssurance(ctx *Context) (*NodeResult, error) {
 
 	Assurances, err := cli.GetAllAssurances()
 	if err != nil {
-		log.Fatalf("GetAllAssurances failed: %v", err)
+		log.Println("GetAllAssurances failed: %v", err)
 		return nil, err
 	}
 	if Assurances.Status != 1 {
-		log.Fatalf("Assurances status is not 1: %d", Assurances.Status)
+		log.Println("Assurances status is not 1: %d", Assurances.Status)
 		return nil, nil
 	}
 
 	randomIndex := rand.Intn(len(Assurances.Data))
 	ctx.Set(OrderId, Assurances.Data[randomIndex].OrderId)
-	ctx.Set(TypeIndex, Assurances.Data[randomIndex].TypeIndex)
-	ctx.Set(TypeName, Assurances.Data[randomIndex].TypeName)
-	ctx.Set(TypePrice, Assurances.Data[randomIndex].TypePrice)
+	ctx.Set(AssuranceTypeIndex, Assurances.Data[randomIndex].TypeIndex)
+	ctx.Set(AssuranceTypeName, Assurances.Data[randomIndex].TypeName)
+	ctx.Set(AssuranceTypePrice, Assurances.Data[randomIndex].TypePrice)
 
 	return nil, nil
 }
@@ -609,19 +639,19 @@ func CreateAssurance(ctx *Context) (*NodeResult, error) {
 	TheOrderID := ctx.Get(OrderId).(string)
 	addAssuranceResp, err := cli.CreateNewAssurance(1, TheOrderID) // typeIndex 1 -> TRAFFIC_ACCIDENT
 	if err != nil {
-		log.Fatalf("CreateNewAssurance failed: %v", err)
+		log.Println("CreateNewAssurance failed: %v", err)
 		return nil, err
 	}
 	if addAssuranceResp.Msg == "Already exists" {
-		log.Fatalf("Order ID found, skip")
+		log.Println("Order ID found, skip")
 		return nil, err
 	}
 	if addAssuranceResp.Data.OrderId != TheOrderID {
-		log.Fatalf("Request failed, addAssuranceResp.Data.OrderId:%s, expected: %s", addAssuranceResp.Data.OrderId, TheOrderID)
+		log.Println("Request failed, addAssuranceResp.Data.OrderId:%s, expected: %s", addAssuranceResp.Data.OrderId, TheOrderID)
 		return nil, err
 	}
 	if addAssuranceResp.Data.Type != "TRAFFIC_ACCIDENT" {
-		log.Fatalf("Request failed, addAssuranceResp.Data.Type are expected to be 'TRAFFIC_ACCIDENT' but actually: %v", addAssuranceResp.Data.Type)
+		log.Println("Request failed, addAssuranceResp.Data.Type are expected to be 'TRAFFIC_ACCIDENT' but actually: %v", addAssuranceResp.Data.Type)
 		return nil, err
 	}
 
@@ -663,14 +693,14 @@ func VerifyCode(ctx *Context) (*NodeResult, error) {
 	verifyCode := generateVerifyCode()
 	verifyCodeResp, err := cli.VerifyCode(verifyCode)
 	if err != nil {
-		log.Fatalf("Request failed, err %s", err)
+		log.Println("Request failed, err %s", err)
 		return nil, err
 	}
 	if !verifyCodeResp {
-		log.Fatalf("Verification failed")
+		log.Println("Verification failed")
 		return nil, err
 	}
-	log.Fatalf("Verification code verified. The result is %v and verifyCode: %v", verifyCodeResp, verifyCode)
+	//log.Println("Verification code verified. The result is %v and verifyCode: %v", verifyCodeResp, verifyCode)
 
 	ctx.Set(BooleanVerifyCode, verifyCodeResp)
 
@@ -685,11 +715,11 @@ func QueryUser(ctx *Context) (*NodeResult, error) {
 
 	allUsersResp, err := cli.GetAllUsers()
 	if err != nil {
-		log.Fatalf("Request failed, err1 %s", err)
+		log.Println("Request failed, err1 %s", err)
 		return nil, err
 	}
 	if allUsersResp.Status != 1 {
-		log.Fatalf("Expected status 200, got %d", allUsersResp.Status)
+		log.Println("Expected status 200, got %d", allUsersResp.Status)
 		return nil, err
 	}
 
@@ -712,13 +742,15 @@ func QueryContacts(ctx *Context) (*NodeResult, error) {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
-	GetAllContacts, err := cli.GetAllContacts()
+	var contactsSvc service.ContactsService = cli
+	TheAccountId := ctx.Get(UserId).(string)
+	GetAllContacts, err := contactsSvc.GetContactByAccountId(TheAccountId)
 	if err != nil {
-		log.Fatalf("[Mock AccountID]GetAllContacts fail. The error occurs: %v", err)
+		log.Println("[Mock AccountID]GetAllContacts fail. The error occurs: %v", err)
 		return nil, err
 	}
 	if GetAllContacts.Status != 1 {
-		log.Fatalf("[Mock AccountID]GetAllContacts.Status != 1")
+		log.Println("[Mock AccountID]GetAllContacts.Status != 1")
 		return nil, err
 	}
 
@@ -741,7 +773,7 @@ func CreateContacts(ctx *Context) (*NodeResult, error) {
 
 	CreateContactsInput := service.AdminContacts{
 		Id:             faker.UUIDHyphenated(),
-		AccountId:      faker.UUIDHyphenated(),
+		AccountId:      ctx.Get(UserId).(string),
 		Name:           faker.Name(),
 		DocumentType:   rand.Intn(1),
 		DocumentNumber: generateDocumentNumber(),
@@ -749,11 +781,11 @@ func CreateContacts(ctx *Context) (*NodeResult, error) {
 	}
 	CreateContacts, err := cli.AddContact(&CreateContactsInput)
 	if err != nil {
-		log.Fatalf("[Mock AccountID] CreateContacts error occurs: %v", err)
+		log.Println("[Mock AccountID] CreateContacts error occurs: %v", err)
 		return nil, err
 	}
 	if CreateContacts.Status != 1 {
-		log.Fatalf("[Mock AccountID] CreateContacts.Status != 1")
+		log.Println("[Mock AccountID] CreateContacts.Status != 1")
 		return nil, err
 	}
 
@@ -778,10 +810,10 @@ func QueryConsign(ctx *Context) (*NodeResult, error) {
 	//// Query consign records by account ID
 	//consignsByAccountId, err := cli.QueryByAccountId(TheAccountId)
 	//if err != nil {
-	//	log.Fatalf("QueryByAccountId failed: %v", err)
+	//	log.Println("QueryByAccountId failed: %v", err)
 	//}
 	//if consignsByAccountId.Status != 1 {
-	//	log.Fatalf("consignsByAccountId failed")
+	//	log.Println("consignsByAccountId failed")
 	//
 	//}
 	///*found := false
@@ -801,19 +833,19 @@ func QueryConsign(ctx *Context) (*NodeResult, error) {
 	//	}
 	//}
 	//if !found {
-	//	log.Fatalf("Can not find consign by accountId.")
+	//	log.Println("Can not find consign by accountId.")
 	//}*/
-	//log.Fatalf("QueryByAccountId response: %+v", consignsByAccountId)
+	//log.Println("QueryByAccountId response: %+v", consignsByAccountId)
 
 	// Query consign records by order ID
 	TheOrderId := ctx.Get(OrderId).(string)
 	consignsByOrderId, err := cli.QueryByOrderId(TheOrderId)
 	if err != nil {
-		log.Fatalf("QueryByOrderId failed: %v", err)
+		log.Println("QueryByOrderId failed: %v", err)
 		return nil, err
 	}
 	if consignsByOrderId.Status != 1 {
-		log.Fatalf("consignsByOrderId.Status = 1")
+		log.Println("consignsByOrderId.Status = 1")
 		return nil, err
 	}
 	/*isMatch1 := false
@@ -830,18 +862,18 @@ func QueryConsign(ctx *Context) (*NodeResult, error) {
 		isMatch1 = true
 	}
 	if !isMatch1 {
-		log.Fatalf("Can not find consign by orderId.")
+		log.Println("Can not find consign by orderId.")
 	}*/
-	//log.Fatalf("QueryByOrderId response: %+v", consignsByOrderId)
+	//log.Println("QueryByOrderId response: %+v", consignsByOrderId)
 
 	// Query consign records by consignee
 	//TheConsignee := ctx.Get(Name).(string)
 	//consignsByConsignee, err := cli.QueryByConsignee(TheConsignee)
 	//if err != nil {
-	//	log.Fatalf("QueryByConsignee failed: %v", err)
+	//	log.Println("QueryByConsignee failed: %v", err)
 	//}
 	//if consignsByConsignee.Status != 1 {
-	//	log.Fatalf("consignsByConsignee failed.")
+	//	log.Println("consignsByConsignee failed.")
 	//}
 	//isMatch2 := false
 	//for _, consign := range consignsByConsignee.Data {
@@ -859,9 +891,9 @@ func QueryConsign(ctx *Context) (*NodeResult, error) {
 	//	}
 	//}
 	//if !isMatch2 {
-	//	log.Fatalf("Can not find consign by consignee.")
+	//	log.Println("Can not find consign by consignee.")
 	//}
-	//log.Fatalf("QueryByConsignee response: %+v", consignsByConsignee)
+	//log.Println("QueryByConsignee response: %+v", consignsByConsignee)
 
 	ctx.Set(ID, consignsByOrderId.Data.Id)
 	ctx.Set(OrderId, consignsByOrderId.Data.OrderId)
@@ -888,12 +920,14 @@ func CreateConsign(ctx *Context) (*NodeResult, error) {
 	MockedId := faker.UUIDHyphenated()
 	MockedAccountId := ctx.Get(AccountID).(string)
 	MockedOrderId := ctx.Get(OrderId).(string)
-	MockedHandleDate := ctx.Get(HandleDate).(string)
-	MockedTargetDate := ctx.Get(TargetDate).(string)
-	MockedFromPlace := ctx.Get(From).(string)
-	MockedToPlace := ctx.Get(To).(string)
-	MockedConsignee := ctx.Get(ConsigneeName).(string)
-	MockedPhone := ctx.Get(PhoneNumber).(string)
+	MockedHandleDate := ctx.Get(DepartureTime).(string)
+	//MockedHandleDate := ""
+	MockedTargetDate := ctx.Get(DepartureTime).(string)
+	//MockedTargetDate := ""
+	MockedFromPlace := ctx.Get(StartStation).(string)
+	MockedToPlace := ctx.Get(EndStation).(string)
+	MockedConsignee := faker.Name()
+	MockedPhone := faker.Phonenumber()
 	MockedWeight := GenerateWeight()
 
 	// Insert a new consign record
@@ -912,20 +946,20 @@ func CreateConsign(ctx *Context) (*NodeResult, error) {
 	}
 	insertResp, err := cli.InsertConsignRecord(&insertReq)
 	if err != nil {
-		log.Fatalf("InsertConsignRecord failed: %v", err)
+		log.Println("InsertConsignRecord failed: %v", err)
 		return nil, err
 	}
 	if insertResp.Msg == "Already exists" {
 		return nil, fmt.Errorf("Consign already exists")
 	}
 	if insertResp.Status != 1 {
-		log.Fatalf("InsertConsignRecord failed: %v", insertResp.Status)
+		log.Println("InsertConsignRecord failed: %v", insertResp.Status)
 		return nil, err
 	}
 	isMatch := false
 	if /*insertResp.Data.ID == insertReq.ID &&*/
-	insertResp.Data.IsWithin == insertReq.IsWithin &&
-		insertResp.Data.AccountID == insertReq.AccountID &&
+	/*insertResp.Data.IsWithin == insertReq.IsWithin &&*/
+	insertResp.Data.AccountID == insertReq.AccountID &&
 		insertResp.Data.From == insertReq.From &&
 		insertResp.Data.Consignee == insertReq.Consignee &&
 		insertResp.Data.OrderID == insertReq.OrderID &&
@@ -937,15 +971,15 @@ func CreateConsign(ctx *Context) (*NodeResult, error) {
 		isMatch = true
 	}
 	if !isMatch {
-		log.Fatalf("Creation not match. Expect: %v, but get: %v", insertReq, insertResp.Data)
+		log.Println("Creation not match. Expect: %v, but get: %v", insertReq, insertResp.Data)
 		return nil, err
 	}
-	//log.Fatalf("InsertConsignRecord response: %+v", insertResp)
+	//log.Println("InsertConsignRecord response: %+v", insertResp)
 	//existedConsign := insertResp.Data
 
 	ctx.Set(ID, insertResp.Data.ID)
-	ctx.Set(OrderID, insertResp.Data.OrderID)
-	ctx.Set(AccountID, insertResp.Data.AccountID)
+	//ctx.Set(OrderID, insertResp.Data.OrderID)
+	//ctx.Set(AccountID, insertResp.Data.AccountID)
 	ctx.Set(HandleDate, insertResp.Data.HandleDate)
 	ctx.Set(TargetDate, insertResp.Data.TargetDate)
 	ctx.Set(From, insertResp.Data.From)
@@ -993,22 +1027,22 @@ func QueryFood(ctx *Context) (*NodeResult, error) {
 	// Query all
 	allFoodOrders, err := cli.FindAllFoodOrder()
 	if err != nil {
-		log.Fatalf("FindAllFoodOrder request failed, err %s", err)
+		log.Println("FindAllFoodOrder request failed, err %s", err)
 		return nil, err
 	}
 	if len(allFoodOrders.Data) == 0 {
-		log.Fatalf("FindAllFoodOrder returned empty results")
+		log.Println("FindAllFoodOrder returned empty results")
 		return nil, err
 	}
 	if allFoodOrders.Status != 1 {
-		log.Fatalf("FindAllFoodOrder failed: %v", allFoodOrders.Status)
+		log.Println("FindAllFoodOrder failed: %v", allFoodOrders.Status)
 		return nil, err
 	}
 
 	randomIndex := rand.Intn(len(allFoodOrders.Data))
-	ctx.Set(OrderId, allFoodOrders.Data[randomIndex].OrderId)
+	//ctx.Set(OrderId, allFoodOrders.Data[randomIndex].OrderId)
 	ctx.Set(FoodType, allFoodOrders.Data[randomIndex].FoodType)
-	ctx.Set(StationName, allFoodOrders.Data[randomIndex].StationName)
+	//ctx.Set(StationName, allFoodOrders.Data[randomIndex].StationName)
 	ctx.Set(StoreName, allFoodOrders.Data[randomIndex].StoreName)
 	ctx.Set(FoodName, allFoodOrders.Data[randomIndex].FoodName)
 	ctx.Set(Price, allFoodOrders.Data[randomIndex].Price)
@@ -1038,11 +1072,11 @@ func CreateFood(ctx *Context) (*NodeResult, error) {
 	// Create Test
 	newCreateResp, err := cli.CreateFoodOrder(&foodOrder)
 	if err != nil {
-		log.Fatalf("NewCreateFoodOrder request failed, err %s", err)
+		log.Println("NewCreateFoodOrder request failed, err %s", err)
 		return nil, err
 	}
 	if newCreateResp.Status != 1 {
-		log.Fatalf("NEwCreateFoodOrder failed")
+		log.Println("NEwCreateFoodOrder failed")
 		return nil, err
 	}
 
@@ -1064,11 +1098,11 @@ func QueryStationFood(ctx *Context) (*NodeResult, error) {
 
 	resp, err := cli.GetAllStationFood()
 	if err != nil {
-		log.Fatalf("Resp returns err: %v", err)
+		log.Println("Resp returns err: %v", err)
 		return nil, err
 	}
 	if resp.Status != 1 {
-		log.Fatalf("GetAllStationFood status should be 1, but is %d", resp.Status)
+		log.Println("GetAllStationFood status should be 1, but is %d", resp.Status)
 		return nil, err
 	}
 
@@ -1102,11 +1136,11 @@ func QueryTrainFood(ctx *Context) (*NodeResult, error) {
 
 	resp, err := cli.GetAllTrainFood()
 	if err != nil {
-		log.Fatalf("resp returns err: %v", err)
+		log.Println("resp returns err: %v", err)
 		return nil, err
 	}
 	if resp.Status != 1 {
-		log.Fatalf("GetAllTrainFood's status should be 1 but got %d", resp.Status)
+		log.Println("GetAllTrainFood's status should be 1 but got %d", resp.Status)
 		return nil, nil
 	}
 
@@ -1136,48 +1170,52 @@ func QueryTrip(ctx *Context) (*NodeResult, error) {
 
 	/*QueryAllTripResp, err := cli.QueryAllTrip()
 	if err != nil {
-		log.Fatalf("Request failed, err %s", err)
+		log.Println("Request failed, err %s", err)
 		return nil, err
 	}
 	if QueryAllTripResp.Status != 1 {
-		log.Fatalf("Request failed, status: %d", QueryAllTripResp.Status)
+		log.Println("Request failed, status: %d", QueryAllTripResp.Status)
 		return nil, err
 	}*/
 	// Test QueryInfo
 	tripInfo := service.TripInfo{
 		StartPlace:    ctx.Get(StartStation).(string),
 		EndPlace:      ctx.Get(EndStation).(string),
-		DepartureTime: ctx.Get(StartTime).(string), //????????????????????????????????????
+		DepartureTime: ctx.Get(DepartureTime).(string), // make no sence
+		//DepartureTime: "",                              //????????????????????????????????????
 	}
 	queryInfoResp, err := cli.QueryInfo(tripInfo)
 	if err != nil {
-		log.Fatalf("QueryInfo request failed, err %s", err)
+		log.Println("QueryInfo request failed, err %s", err)
 		return nil, err
 	}
 	if queryInfoResp.Status != 1 {
-		log.Fatalf("QueryInfo failed, status: %d", queryInfoResp.Status)
+		log.Println("QueryInfo failed, status: %d", queryInfoResp.Status)
 		return nil, err
 	}
 
-	//EndTime             string `json:"endTime"`
-	//Id                  string `json:"id"`
-	//RouteId             string `json:"routeId"`
-	//StartStationName    string `json:"startStationName"`
-	//StartTime           string `json:"startTime"`
-	//StationsName        string `json:"stationsName"`
-	//TerminalStationName string `json:"terminalStationName"`
-	//TrainTypeName       string `json:"trainTypeName"`
-	//TripId              TripId `json:"tripId"`
+	/*	TripId = "tripId"
+		TrainTypeName = "trainTypeName"
+		StartStation = "startStation"
+		TerminalStation = "terminalStation"
+		StartTime = "startTime"
+		EndTime = "endTime"
+		EconomyClass = "economyClass"
+		ConfortClass = "confortClass"
+		PriceForEconomyClass = "priceForEconomyClass"
+		PriceForConfortClass = "priceForConfortClass"*/
 
-	ctx.Set(EndTime, queryInfoResp.Data.EndTime)
-	ctx.Set(Id, queryInfoResp.Data.Id)
-	ctx.Set(RouteID, queryInfoResp.Data.RouteId)
-	ctx.Set(StartStationName, queryInfoResp.Data.StartStationName)
-	ctx.Set(StartTime, queryInfoResp.Data.StartTime)
-	ctx.Set(StationsName, queryInfoResp.Data.StationsName)
-	ctx.Set(TerminalStationName, queryInfoResp.Data.TerminalStationName)
-	ctx.Set(TrainTypeName, queryInfoResp.Data.TrainTypeName)
-	ctx.Set(TripId, queryInfoResp.Data.TripId)
+	randomIndex := rand.Intn(len(queryInfoResp.Data))
+	ctx.Set(TripId, fmt.Sprintf("%s%s", queryInfoResp.Data[randomIndex].TripId.Type, queryInfoResp.Data[randomIndex].TripId.Number))
+	//ctx.Set(TrainTypeName, queryInfoResp.Data[randomIndex].TrainTypeName)
+	ctx.Set(StartStation, queryInfoResp.Data[randomIndex].StartStation)
+	ctx.Set(TerminalStation, queryInfoResp.Data[randomIndex].TerminalStation)
+	ctx.Set(StartTime, queryInfoResp.Data[randomIndex].StartTime)
+	ctx.Set(EndTime, queryInfoResp.Data[randomIndex].EndTime)
+	ctx.Set(EconomyClass, queryInfoResp.Data[randomIndex].EconomyClass)
+	ctx.Set(ConfortClass, queryInfoResp.Data[randomIndex].ConfortClass)
+	ctx.Set(PriceForEconomyClass, queryInfoResp.Data[randomIndex].PriceForEconomyClass)
+	ctx.Set(PriceForConfortClass, queryInfoResp.Data[randomIndex].PriceForConfortClass)
 	// ????????????????????????
 
 	return nil, nil
@@ -1219,15 +1257,15 @@ func CreateTrip(ctx *Context) (*NodeResult, error) {
 	// Create Test
 	createResp, err := cli.CreateTrip(&travelInfo)
 	if err != nil {
-		log.Fatalf("CreateTrip request failed, err %s", err)
+		log.Println("CreateTrip request failed, err %s", err)
 		return nil, err
 	}
 	if createResp.Status != 1 {
-		log.Fatalf("CreateTrip failed: %s", createResp.Msg)
+		log.Println("CreateTrip failed: %s", createResp.Msg)
 		return nil, err
 	}
 	if createResp.Msg == "Already exists" {
-		log.Fatalf("Already exists: %s", createResp.Msg)
+		log.Println("Already exists: %s", createResp.Msg)
 		return nil, err
 	}
 	isMatch := false
@@ -1242,7 +1280,7 @@ func CreateTrip(ctx *Context) (*NodeResult, error) {
 		isMatch = true
 	}
 	if !isMatch {
-		log.Fatalf("CreateTrip failed: %s. Except: %v, but get: %v", createResp.Msg, travelInfo, createResp.Data)
+		log.Println("CreateTrip failed: %s. Except: %v, but get: %v", createResp.Msg, travelInfo, createResp.Data)
 		return nil, err
 	}
 
@@ -1255,16 +1293,17 @@ func CreateTrip(ctx *Context) (*NodeResult, error) {
 		TerminalStationName string `json:"terminalStationName"`
 		TrainTypeName       string `json:"trainTypeName"`
 		TripId              TripId `json:"tripId"`*/
-	ctx.Set(EndTime, createResp.Data.EndTime)
-	ctx.Set(Id, createResp.Data.Id)
-	ctx.Set(RouteID, createResp.Data.RouteId)
-	ctx.Set(StartStationName, createResp.Data.StartStationName)
-	ctx.Set(StartTime, createResp.Data.StartTime)
-	ctx.Set(StationsName, createResp.Data.StationsName)
-	ctx.Set(TerminalStationName, createResp.Data.TerminalStationName)
-	ctx.Set(TrainTypeName, createResp.Data.TrainTypeName)
-	ctx.Set(TripId, createResp.Data.TripId)
 
+	//ctx.Set(TripId, createResp.Data.TripId)
+	//ctx.Set(TrainTypeName, createResp.Data.TrainTypeName)
+	//ctx.Set(StartStation, createResp.Data.StartStation)
+	//ctx.Set(TerminalStation, createResp.Data.TerminalStation)
+	//ctx.Set(StartTime, queryInfoResp.Data[randomIndex].StartTime)
+	//ctx.Set(EndTime, queryInfoResp.Data[randomIndex].EndTime)
+	//ctx.Set(EconomyClass, queryInfoResp.Data[randomIndex].EconomyClass)
+	//ctx.Set(ConfortClass, queryInfoResp.Data[randomIndex].ConfortClass)
+	//ctx.Set(PriceForEconomyClass, queryInfoResp.Data[randomIndex].PriceForEconomyClass)
+	//ctx.Set(PriceForConfortClass, queryInfoResp.Data[randomIndex].PriceForConfortClass)
 	return nil, nil
 }
 
@@ -1277,15 +1316,15 @@ func QueryTrain(ctx *Context) (*NodeResult, error) {
 	// Query all
 	allTrainTypes, err := cli.Query()
 	if err != nil {
-		log.Fatalf("Query all request failed, err %s", err)
+		log.Println("Query all request failed, err %s", err)
 		return nil, err
 	}
 	if allTrainTypes.Status != 1 {
-		log.Fatalf("allTrainTypes.Status != 1")
+		log.Println("allTrainTypes.Status != 1")
 		return nil, err
 	}
 	if len(allTrainTypes.Data) == 0 {
-		log.Fatalf("Query all returned no results")
+		log.Println("Query all returned no results")
 		return nil, err
 	}
 	/*found := false
@@ -1308,7 +1347,7 @@ func QueryTrain(ctx *Context) (*NodeResult, error) {
 		AverageSpeed int    `json:"averageSpeed"`
 		EconomyClass int    `json:"economyClass"`*/
 	randomIndex := rand.Intn(len(allTrainTypes.Data))
-	ctx.Set(Name, allTrainTypes.Data[randomIndex].Name)
+	ctx.Set(TrainTypName, allTrainTypes.Data[randomIndex].Name)
 	ctx.Set(ConfortClass, allTrainTypes.Data[randomIndex].ConfortClass)
 	ctx.Set(AverageSpeed, allTrainTypes.Data[randomIndex].AverageSpeed)
 	ctx.Set(EconomyClass, allTrainTypes.Data[randomIndex].EconomyClass)
@@ -1324,7 +1363,7 @@ func QueryRoute(ctx *Context) (*NodeResult, error) {
 
 	AllRoutesByQuery, err := cli.QueryAllRoutes()
 	if err != nil {
-		log.Fatalf("Request failed, err2 %s", err)
+		log.Println("Request failed, err2 %s", err)
 		return nil, err
 	}
 	if AllRoutesByQuery.Status != 1 {
@@ -1371,31 +1410,31 @@ func QueryRoute(ctx *Context) (*NodeResult, error) {
 //	}
 //	resp, err := cli.CreateAndModifyRoute(&input)
 //	if err != nil {
-//		log.Fatalf("Request failed, err %s", err)
+//		log.Println("Request failed, err %s", err)
 //		return nil, err
 //	}
 //	if resp.Msg == "Already exists" {
-//		log.Fatalf("Route already exists, skip")
+//		log.Println("Route already exists, skip")
 //		return nil, err
 //	}
 //	if resp.Data.Id != input.ID {
-//		log.Fatalf("Route ID does not match, expect %s, got %s", input.ID, resp.Data.Id)
+//		log.Println("Route ID does not match, expect %s, got %s", input.ID, resp.Data.Id)
 //		return nil, err
 //	}
 //	if resp.Data.StartStation != input.StartStation {
-//		log.Fatalf("StartStation does not match, expect %s, got %s", input.StartStation, resp.Data.StartStation)
+//		log.Println("StartStation does not match, expect %s, got %s", input.StartStation, resp.Data.StartStation)
 //		return nil, err
 //	}
 //	if resp.Data.EndStation != input.EndStation {
-//		log.Fatalf("StartStation does not match, expect %s, got %s", input.StartStation, resp.Data.StartStation)
+//		log.Println("StartStation does not match, expect %s, got %s", input.StartStation, resp.Data.StartStation)
 //		return nil, err
 //	}
 //	if StringSliceToString(resp.Data.Stations) != ConvertCommaSeparatedToBracketed(input.StationList) {
-//		log.Fatalf("StationList does not match, expect %s, got %s", ConvertCommaSeparatedToBracketed(input.StationList), StringSliceToString(resp.Data.Stations))
+//		log.Println("StationList does not match, expect %s, got %s", ConvertCommaSeparatedToBracketed(input.StationList), StringSliceToString(resp.Data.Stations))
 //		return nil, err
 //	}
 //	if IntSliceToString(resp.Data.Distances) != ConvertCommaSeparatedToBracketed(input.DistanceList) {
-//		log.Fatalf("DistanceList does not match, expect %s, got %s", ConvertCommaSeparatedToBracketed(input.DistanceList), IntSliceToString(resp.Data.Distances))
+//		log.Println("DistanceList does not match, expect %s, got %s", ConvertCommaSeparatedToBracketed(input.DistanceList), IntSliceToString(resp.Data.Distances))
 //		return nil, err
 //	}
 //
@@ -1432,26 +1471,27 @@ func QueryBasic(ctx *Context) (*NodeResult, error) {
 				Number: MockedTripTripIdNumber,
 			},
 			TrainTypeName:       GenerateTrainTypeName(),
-			RouteId:             ctx.Get(RouteId).(string),
-			StartStationName:    ctx.Get(StartStationName).(string),
-			StationsName:        getMiddleElements(strings.Join(ctx.Get(Stations).([]string), ",")), // only ok when there is exactly three stations
-			TerminalStationName: ctx.Get(TerminalStationName).(string),
-			StartTime:           ctx.Get(StartTime).(string),
-			EndTime:             ctx.Get(EndTime).(string),
+			RouteId:             ctx.Get(RouteID).(string),
+			StartStationName:    ctx.Get(StartStation).(string),
+			StationsName:        getMiddleElements(strings.Join(ctx.Get(StationName).([]string), ",")), // only ok when there is exactly three stations
+			TerminalStationName: ctx.Get(EndStation).(string),
+			StartTime:           "", // can be any
+			EndTime:             "", // can be any
 		},
-		StartPlace:    ctx.Get(StartStation).(string),
-		EndPlace:      ctx.Get(EndStation).(string),
+		StartPlace: ctx.Get(StartStation).(string),
+		EndPlace:   ctx.Get(EndStation).(string),
+		//DepartureTime: extractDate(getRandomTime()), // 生成1小时到1天之后的时间
 		DepartureTime: getRandomTime(), // 生成1小时到1天之后的时间
 	}
 
 	var basicSvc service.BasicService = cli
 	travel, err := basicSvc.QueryForTravel(travelQuery)
 	if err != nil {
-		log.Fatalf("Query travel request failed, err %s", err)
+		log.Println("Query travel request failed, err %s", err)
 		return nil, err
 	}
 	if travel.Status != 1 {
-		log.Fatalf("travel.Status != 1")
+		log.Println("travel.Status != 1")
 		return nil, err
 	}
 
@@ -1480,18 +1520,44 @@ func QueryBasic(ctx *Context) (*NodeResult, error) {
 	ctx.Set(TrainType, travel.Data.TrainType)
 	ctx.Set(Route, travel.Data.Route)
 	ctx.Set(Prices, travel.Data.Prices)
+	//
+	ctx.Set(DepartureTime, travelQuery.DepartureTime)
+	ctx.Set(TrainTypeName, travelQuery.Trip.TrainTypeName)
 
 	return nil, nil
 }
 
-func QuerySeat(ctx *Context) (*NodeResult, error) {
+func CreateSeat(ctx *Context) (*NodeResult, error) {
 	// cli, ok := ctx.Get(Client).(*service.SvcImpl)
-	_, ok := ctx.Get(Client).(*service.SvcImpl)
+	cli, ok := ctx.Get(Client).(*service.SvcImpl)
 	if !ok {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
-	// TODO part;
+	totalNum := rand.Intn(10)
+	seatCreateInfoReq := &service.SeatCreateInfoReq{
+		TravelDate:  ctx.Get(TravelDate).(string),
+		TrainNumber: ctx.Get(TrainNumber).(string),
+		DestStation: ctx.Get(EndStation).(string),
+		SeatType:    ctx.Get(SeatClass).(int),
+		TotalNum:    totalNum,
+		Stations:    ctx.Get(StationName).([]string),
+	}
+
+	resp, err := cli.ReqSeatCreate(seatCreateInfoReq)
+
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	if resp.Status != 1 {
+		log.Println("SeatCreateInfoReq.Status != 1")
+		return nil, err
+	}
+
+	ctx.Set(SeatNo, resp.Data.SeatNo)
+	ctx.Set(DestStation, resp.Data.DestStation)
+	//ctx.Set(StartStation, resp.Data.StartStation)
 
 	return nil, nil
 }
@@ -1504,11 +1570,11 @@ func QueryStation(ctx *Context) (*NodeResult, error) {
 
 	QueryAll, err7 := cli.QueryStations()
 	if err7 != nil {
-		log.Fatalf("Request failed, err7 %s", err7)
+		log.Println("Request failed, err7 %s", err7)
 		return nil, err7
 	}
 	if QueryAll.Status != 1 {
-		log.Fatalf("Request failed, QueryAll.Status: %d, expected: %d", QueryAll.Status, 1)
+		log.Println("Request failed, QueryAll.Status: %d, expected: %d", QueryAll.Status, 1)
 		return nil, err7
 	}
 	/*found := false
@@ -1553,17 +1619,20 @@ func QueryPrice(ctx *Context) (*NodeResult, error) {
 			t.Errorf("Request failed, station not found")
 		}*/
 	// Query price config by route ID and train type
-	priceByRouteAndTrain, err := cli.FindByRouteIdAndTrainType(ctx.Get(RouteID).(string), ctx.Get(TrainTypeName).(string))
+	//println("RouteID: %v, TrainType: %v", ctx.Get(RouteID).(string), ctx.Get(TrainTypeName).(string))
+	TheRouteId := ctx.Get(RouteID).(string)
+	TheTrainType := ctx.Get(TrainTypeName).(string)
+	priceByRouteAndTrain, err := cli.FindByRouteIdAndTrainType(TheRouteId, TheTrainType)
 	if err != nil {
-		log.Fatalf("FindByRouteIdAndTrainType failed: %v", err)
+		log.Println("FindByRouteIdAndTrainType failed: %v", err)
 		return nil, err
 	}
 	if priceByRouteAndTrain.Status != 1 {
-		log.Fatalf("priceByRouteAndTrain.Status != 1")
-		return nil, err
+		log.Println("There is not corresponding Ticket available.")
+		return &(NodeResult{false}), err
 	}
 	/*	if priceByRouteAndTrain.Data.Id != ctx.Get(ID) {
-		log.Fatalf("priceByRouteAndTrain.Data.Id != existedPrice.Id")
+		log.Println("priceByRouteAndTrain.Data.Id != existedPrice.Id")
 		return nil, err
 	}*/
 
@@ -1572,8 +1641,8 @@ func QueryPrice(ctx *Context) (*NodeResult, error) {
 		RouteId             string  `json:"routeId"`
 		BasicPriceRate      float64 `json:"basicPriceRate"`
 		FirstClassPriceRate float64 `json:"firstClassPriceRate"`*/
-	ctx.Set(TrainType, priceByRouteAndTrain.Data.TrainType)
-	ctx.Set(RouteID, priceByRouteAndTrain.Data.RouteId)
+	//ctx.Set(TrainType, priceByRouteAndTrain.Data.TrainType)
+	//ctx.Set(RouteID, priceByRouteAndTrain.Data.RouteId)
 	ctx.Set(BasicPriceRate, priceByRouteAndTrain.Data.BasicPriceRate)
 	ctx.Set(FirstClassPriceRate, priceByRouteAndTrain.Data.FirstClassPriceRate)
 
@@ -1589,11 +1658,11 @@ func QuerySecurity(ctx *Context) (*NodeResult, error) {
 	// Get All Security Configs
 	configs, err3 := cli.FindAllSecurityConfig()
 	if err3 != nil {
-		log.Fatalf("FindAllSecurityConfig failed: %v", err3)
+		log.Println("FindAllSecurityConfig failed: %v", err3)
 		return nil, err3
 	}
 	if configs.Status != 1 {
-		log.Fatalf("[Security Service]Status != 1")
+		log.Println("[Security Service]Status != 1")
 		return nil, err3
 	}
 	/*found := false
@@ -1606,7 +1675,7 @@ func QuerySecurity(ctx *Context) (*NodeResult, error) {
 		}
 	}
 	if !found {
-		log.Fatalf("[Security Service]Cannot find existed security config")
+		log.Println("[Security Service]Cannot find existed security config")
 		return nil, err3
 	}*/
 
@@ -1633,11 +1702,11 @@ func QueryConfig(ctx *Context) (*NodeResult, error) {
 	// Query All Configs Test
 	queryAllResp, err := cli.QueryAllConfigs()
 	if err != nil {
-		log.Fatalf("QueryAllConfigs request failed, err %s", err)
+		log.Println("QueryAllConfigs request failed, err %s", err)
 		return nil, err
 	}
 	if queryAllResp.Status != 1 {
-		log.Fatalf("QueryAllConfigs status != 1")
+		log.Println("QueryAllConfigs status != 1")
 		return nil, err
 	}
 
@@ -1660,11 +1729,11 @@ func QueryOrder(ctx *Context) (*NodeResult, error) {
 
 	Resp, err := cli.ReqFindAllOrder()
 	if err != nil {
-		log.Fatalf("Request failed, err %s", err)
+		log.Println("Request failed, err %s", err)
 		return nil, err
 	}
 	if len(Resp.Data) == 0 {
-		log.Fatalf("no data found.")
+		log.Println("no data found.")
 		return nil, err
 	}
 
@@ -1735,11 +1804,11 @@ func CreateOrder(ctx *Context) (*NodeResult, error) {
 
 	CreateNewOrderResp, err := cli.ReqCreateNewOrder(&originOrder0)
 	if err != nil {
-		log.Fatalf("Request failed, err %s", err)
+		log.Println("Request failed, err %s", err)
 		return nil, err
 	}
 	if CreateNewOrderResp.Status != 1 {
-		log.Fatalf("Request failed, CreateNewOrder status != 1")
+		log.Println("Request failed, CreateNewOrder status != 1")
 		return nil, err
 	}
 
@@ -1769,11 +1838,11 @@ func QueryOrderOther(ctx *Context) (*NodeResult, error) {
 	GetResp, err := cli.ReqFindAllOrderOther()
 
 	if err != nil {
-		log.Fatalf("Request failed, err %s", err)
+		log.Println("Request failed, err %s", err)
 		return nil, err
 	}
 	if GetResp.Status != 1 {
-		log.Fatalf("Request failed, CreateNewOrder status != 1")
+		log.Println("Request failed, CreateNewOrder status != 1")
 		return nil, err
 	}
 
@@ -1826,11 +1895,11 @@ func CreateOrderOther(ctx *Context) (*NodeResult, error) {
 	})
 
 	if err != nil {
-		log.Fatalf("Request failed, err %s", err)
+		log.Println("Request failed, err %s", err)
 		return nil, err
 	}
 	if AddResp.Status != 1 {
-		log.Fatalf("Request failed, CreateNewOrder status != 1")
+		log.Println("Request failed, CreateNewOrder status != 1")
 		return nil, err
 	}
 
@@ -1864,22 +1933,22 @@ func Preserve(ctx *Context) (*NodeResult, error) {
 	OrderTicketsInfo := service.OrderTicketsInfo{
 		AccountID:       ctx.Get(AccountID).(string),  // Query:Create = 1 : 0
 		ContactsID:      ctx.Get(ContactsID).(string), // Query:Create = 1 : 0
-		TripID:          ctx.Get(TripID).(string),
-		SeatType:        ctx.Get(SeatType).(int),
+		TripID:          ctx.Get(TripId).(string),
+		SeatType:        ctx.Get(SeatClass).(int),
 		LoginToken:      ctx.Get(LoginToken).(string),
-		Date:            ctx.Get(Date).(string),
+		Date:            extractDate(ctx.Get(DepartureTime).(string)),
 		From:            ctx.Get(From).(string),
 		To:              ctx.Get(To).(string),
-		Assurance:       ctx.Get(Assurance).(int),
+		Assurance:       ctx.Get(AssuranceTypeIndex).(int),
 		FoodType:        ctx.Get(FoodType).(int),
 		StationName:     ctx.Get(StationName).(string),
 		StoreName:       ctx.Get(StoreName).(string),
 		FoodName:        ctx.Get(FoodName).(string),
 		FoodPrice:       ctx.Get(FoodPrice).(float64),
-		HandleDate:      ctx.Get(HandleDate).(string),
-		ConsigneeName:   ctx.Get(ConsigneeName).(string),
-		ConsigneePhone:  ctx.Get(ConsigneePhone).(string),
-		ConsigneeWeight: ctx.Get(ConsigneeWeight).(float64),
+		HandleDate:      extractDate(ctx.Get(HandleDate).(string)),
+		ConsigneeName:   ctx.Get(Consignee).(string),
+		ConsigneePhone:  ctx.Get(Phone).(string),
+		ConsigneeWeight: ctx.Get(Weight).(float64),
 		IsWithin:        ctx.Get(IsWithin).(bool),
 	}
 	PreserveResp, err := cli.Preserve(&OrderTicketsInfo)
@@ -1889,8 +1958,8 @@ func Preserve(ctx *Context) (*NodeResult, error) {
 	if PreserveResp.Status != 1 {
 		return nil, fmt.Errorf("preserve order tickets fail. PreserveResp.Status != 1, get %v", PreserveResp.Status)
 	}
-	fmt.Printf("The Status is: %v, and PreserveResp Data: %v\n", PreserveResp.Status, PreserveResp.Data)
-	fmt.Printf("PreserveBehaviors(Chain) Ends. End time: %v", time.Now().String())
+	log.Println("The Status is: %v, and PreserveResp Data: %v\n", PreserveResp.Status, PreserveResp.Data)
+	log.Println("PreserveBehaviors(Chain) Ends. End time: %v", time.Now().String())
 
 	//return nil, nil
 	return &(NodeResult{false}), nil // Chain End :D
