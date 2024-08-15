@@ -1,6 +1,7 @@
 package behaviors
 
 import (
+	"errors"
 	"fmt"
 	"github.com/Lincyaw/loadgenerator/service"
 	"github.com/go-faker/faker/v4"
@@ -125,14 +126,12 @@ const (
 	TravelDate  = "travelDate"
 	TravelTime  = "travelTime"
 
-	// Price
-	//Id                  = "id"
 	TrainType           = "trainType"
 	RouteId             = "routeId"
 	BasicPriceRate      = "basicPriceRate"
 	FirstClassPriceRate = "firstClassPriceRate"
 
-	// Basic - Query
+	// Basic - QueryTraintype
 	Percent = "percent"
 	Route   = "route"
 	Prices  = "prices"
@@ -230,25 +229,7 @@ func init() {
 		log.Printf("TrainFoodBehaviorChain Starts. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyTrainFoodBehavior"))
-	// TrainBehaviorChain
-	TrainBehaviorChain1 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		log.Printf("TrainBehaviorChain Starts. Starts time: %v", time.Now().String())
-		return nil, nil
-	}, "DummyTrainBehavior"))
-	TrainBehaviorChain2 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		log.Printf("TrainBehaviorChain Starts. Starts time: %v", time.Now().String())
-		return nil, nil
-	}, "DummyTrainBehavior"))
-	//RouteBehaviorChain
-	RouteBehaviorChain1 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		log.Printf("RouteBehaviorChain starts. Starts time: %v", time.Now().String())
-		return nil, nil
-	}, "DummyRouteBehavior"))
-	RouteBehaviorChain2 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		log.Printf("RouteBehaviorChain starts. Starts time: %v", time.Now().String())
-		return nil, nil
-	}, "DummyRouteBehavior"))
-	// BasicBehaviorChain
+
 	BasicBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
 		log.Printf("BasicBehaviorChain Starts. Start time: %v", time.Now().String())
 		return nil, nil
@@ -347,13 +328,6 @@ func init() {
 	QueryTravelNode := NewFuncNode(QueryTrip, "QueryTrip")
 	//CreateTravelNode := NewFuncNode(CreateTrip, "CreateTrip")
 
-	//TravelBehaviorChain
-	QueryTrainNode := NewFuncNode(QueryTrain, "QueryTrain")
-	// RouteBehaviorChain
-	QueryRouteNode := NewFuncNode(QueryRoute, "QueryRoute")
-	// BasicBehaviorChain
-	QueryBasicNode := NewFuncNode(QueryBasic, "QueryBasic")
-	// SeatBehaviorChain
 	CreateSeatNode := NewFuncNode(CreateSeat, "QuerySeat")
 
 	//BasicBehaviorChain
@@ -409,17 +383,16 @@ func init() {
 	QueryTravelChain2 := NewChain(QueryTravelNode)
 	//CreateTravelChain := NewChain(CreateTravelNode)
 
-	// TrainBehaviorChain
-	QueryTrainChain1 := NewChain(QueryTrainNode)
-	QueryTrainChain2 := NewChain(QueryTrainNode)
-	// RouteBehaviorChain
-	QueryRouteChain1 := NewChain(QueryRouteNode)
-	QueryRouteChain2 := NewChain(QueryRouteNode)
 	// BasicBehaviorChain
-	QueryBasicChain := NewChain(QueryRouteNode)
-	QueryBasicChain.AddNode(QueryStationNode)
-	QueryBasicChain.AddNode(QueryTrainNode)
-	QueryBasicChain.AddNode(QueryBasicNode)
+	QueryBasicChain := NewChain(NewFuncNode(QueryRoute, "QueryRoute"))
+	QueryBasicChain.AddNode(NewFuncNode(QueryTrain, "QueryTrain"))
+	QueryBasicChain.AddNode(NewFuncNode(QueryTripInfo, "QueryTripInfo"))
+	QueryBasicChain.AddNode(NewFuncNode(QuerySeatInfo, "QuerySeat"))
+	QueryBasicChain.AddNode(NewFuncNode(QueryContacts, "QueryContacts"))
+	QueryBasicChain.AddNode(NewFuncNode(QueryTripId, "QueryContacts"))
+	QueryBasicChain.AddNode(NewFuncNode(QueryFood, "QueryFood"))
+	QueryBasicChain.AddNode(NewFuncNode(Preserve, "Preserve"))
+	//QueryBasicChain.AddNode(NewFuncNode(QueryBasic, "QueryBasic"))
 	QueryBasicChain.AddNode(QueryPriceNode)
 	// SeatBehaviorChain
 	CreateSeatChain := NewChain(QueryConfigNode)
@@ -492,13 +465,7 @@ func init() {
 	QueryOrderOtherChain2.AddNextChain(CreateSeatChain, 1)
 	//PriceBehaviorChain
 	PriceBehaviorChain.AddNextChain(QueryPriceChain, 1)
-	//TrainBehaviorChain
-	TrainBehaviorChain1.AddNextChain(QueryTrainChain1, 1)
-	TrainBehaviorChain2.AddNextChain(QueryTrainChain2, 1)
-	//RouteBehaviorChain
-	RouteBehaviorChain1.AddNextChain(QueryRouteChain1, 1)
-	RouteBehaviorChain2.AddNextChain(QueryRouteChain2, 1)
-	//BasicBehaviorChain
+
 	BasicBehaviorChain.AddNextChain(QueryBasicChain, 1)
 	//TravelBehaviorChain
 	TravelBehaviorChain1.AddNextChain(QueryTravelChain1, 1)
@@ -507,8 +474,7 @@ func init() {
 	StationFoodBehaviorChain.AddNextChain(QueryStationFoodChain, 1)
 	//TrainFoodBehaviorChain
 	TrainFoodBehaviorChain.AddNextChain(QueryTrainFoodChain, 1)
-	//FoodBehaviorChain
-	//FoodBehaviorChain.AddNextChain(TravelBehaviorChain2, 1)
+
 	FoodBehaviorChain.AddNextChain(StationFoodBehaviorChain, 1)
 	QueryStationFoodChain.AddNextChain(TrainFoodBehaviorChain, 1)
 	QueryTrainFoodChain.AddNextChain(QueryFoodChain, 1)
@@ -525,7 +491,7 @@ func init() {
 	QueryContactsChain.AddNextChain(TravelBehaviorChain1, 1)
 	CreateContactsChain.AddNextChain(TravelBehaviorChain1, 1)
 	// ContactsBehaviorChain
-	QueryTravelChain1.AddNextChain(AssuranceBehaviorChain, 1)
+	//QueryTravelChain1.AddNextChain(AssuranceBehaviorChain, 1)
 	// AssuranceBehaviorChain
 	QueryAssuranceChain.AddNextChain(FoodBehaviorChain, 1)
 	// FoodBehaviorChain
@@ -535,12 +501,10 @@ func init() {
 
 	// ------------------------------------- VisualizeChain -------------------------------------------
 	// ------------------------------------- VisualizeChain -------------------------------------------
-	fmt.Println(PreserveChain.VisualizeChain(0))
+	fmt.Println(PreserveBehaviorChain.VisualizeChain(0))
 	fmt.Println()
 }
 
-// ************************************* NewFuncNode_Function *******************************************
-// ************************************* NewFuncNode_Function *******************************************
 // ************************************* NewFuncNode_Function *******************************************
 
 // AssuranceBehaviorChain
@@ -556,7 +520,7 @@ func QueryAssurance(ctx *Context) (*NodeResult, error) {
 		return nil, err
 	}
 	if Assurances.Status != 1 {
-		log.Errorf("Assurances status is not 1: %d", Assurances.Status)
+		log.Errorf("Assurances status is not 1: %+v", Assurances)
 		return nil, nil
 	}
 
@@ -603,26 +567,6 @@ func CreateAssurance(ctx *Context) (*NodeResult, error) {
 	return nil, nil
 }
 
-//UserBehaviorsChain
-// LoginBasicChain
-//func LoginBasic(ctx *Context) (*NodeResult, error) {
-//	cli, ok := ctx.Get(Client).(*service.SvcImpl)
-//	if !ok {
-//		return nil, fmt.Errorf("service client not found in context")
-//	}
-//	// login
-//	loginResult, err := cli.ReqUserLogin(&service.UserLoginInfoReq{
-//		Password:         "111111",
-//		UserName:         "fdse_microservice",
-//		VerificationCode: "123",
-//	})
-//	if err != nil {
-//		return nil, err
-//	}
-//	ctx.Set(LoginToken, loginResult.Data.Token)
-//	return nil, nil
-//}
-
 // VerifyCodeBehaviorChain
 func VerifyCode(ctx *Context) (*NodeResult, error) {
 	cli, ok := ctx.Get(Client).(*service.SvcImpl)
@@ -648,12 +592,12 @@ func VerifyCode(ctx *Context) (*NodeResult, error) {
 }
 
 func QueryUser(ctx *Context) (*NodeResult, error) {
-	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+	cli, ok := ctx.Get(Client).(service.UserService)
 	if !ok {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
-	allUsersResp, err := cli.GetAllUsers()
+	allUsersResp, err := cli.GetUserByUserId(ctx.Get(UserId).(string))
 	if err != nil {
 		log.Errorf("Request failed, err1 %s", err)
 		return nil, err
@@ -663,14 +607,12 @@ func QueryUser(ctx *Context) (*NodeResult, error) {
 		return nil, err
 	}
 
-	randomIndex := rand.Intn(len(allUsersResp.Data))
-	ctx.Set(UserID, allUsersResp.Data[randomIndex].UserID)
-	ctx.Set(UserName, allUsersResp.Data[randomIndex].UserName)
-	ctx.Set(Password, allUsersResp.Data[randomIndex].Password)
-	ctx.Set(Gender, allUsersResp.Data[randomIndex].Gender)
-	ctx.Set(DocumentNum, allUsersResp.Data[randomIndex].DocumentNum)
-	ctx.Set(DocumentType, allUsersResp.Data[randomIndex].DocumentType)
-	ctx.Set(Email, allUsersResp.Data[randomIndex].Email)
+	ctx.Set(UserName, allUsersResp.Data.UserName)
+	ctx.Set(Password, allUsersResp.Data.Password)
+	ctx.Set(Gender, allUsersResp.Data.Gender)
+	ctx.Set(DocumentNum, allUsersResp.Data.DocumentNum)
+	ctx.Set(DocumentType, allUsersResp.Data.DocumentType)
+	ctx.Set(Email, allUsersResp.Data.Email)
 
 	return nil, nil
 }
@@ -746,38 +688,7 @@ func QueryConsign(ctx *Context) (*NodeResult, error) {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
-	//TheAccountId := ctx.Get(AccountID).(string)
-	//// Query consign records by account ID
-	//consignsByAccountId, err := cli.QueryByAccountId(TheAccountId)
-	//if err != nil {
-	//	log.Errorf("QueryByAccountId failed: %v", err)
-	//}
-	//if consignsByAccountId.Status != 1 {
-	//	log.Errorf("consignsByAccountId failed")
-	//
-	//}
-	///*found := false
-	//for _, consign := range consignsByAccountId.Data {
-	//	if consign.IsWithin == existedConsign.IsWithin &&
-	//		consign.To == existedConsign.To &&
-	//		consign.Weight == existedConsign.Weight &&
-	//		consign.ID == existedConsign.ID &&
-	//		consign.Phone == existedConsign.Phone &&
-	//		consign.HandleDate == existedConsign.HandleDate &&
-	//		consign.TargetDate == existedConsign.TargetDate &&
-	//		consign.OrderID == existedConsign.OrderID &&
-	//		consign.Consignee == existedConsign.Consignee &&
-	//		consign.From == existedConsign.From &&
-	//		consign.AccountID == existedConsign.AccountID {
-	//		found = true
-	//	}
-	//}
-	//if !found {
-	//	log.Errorf("Can not find consign by accountId.")
-	//}*/
-	//log.Errorf("QueryByAccountId response: %+v", consignsByAccountId)
-
-	// Query consign records by order ID
+	// QueryTraintype consign records by order ID
 	TheOrderId := ctx.Get(OrderId).(string)
 	consignsByOrderId, err := cli.QueryByOrderId(TheOrderId)
 	if err != nil {
@@ -788,52 +699,6 @@ func QueryConsign(ctx *Context) (*NodeResult, error) {
 		log.Errorf("consignsByOrderId.Status = 1")
 		return nil, err
 	}
-	/*isMatch1 := false
-	if consignsByOrderId.Data.OrderId == existedConsign.OrderID &&
-		consignsByOrderId.Data.Id == existedConsign.ID &&
-		consignsByOrderId.Data.From == existedConsign.From &&
-		consignsByOrderId.Data.To == existedConsign.To &&
-		consignsByOrderId.Data.Phone == existedConsign.Phone &&
-		consignsByOrderId.Data.Consignee == existedConsign.Consignee &&
-		consignsByOrderId.Data.TargetDate == existedConsign.TargetDate &&
-		consignsByOrderId.Data.HandleDate == existedConsign.HandleDate &&
-		consignsByOrderId.Data.Weight == existedConsign.Weight &&
-		consignsByOrderId.Data.AccountId == existedConsign.AccountID {
-		isMatch1 = true
-	}
-	if !isMatch1 {
-		log.Errorf("Can not find consign by orderId.")
-	}*/
-	//log.Errorf("QueryByOrderId response: %+v", consignsByOrderId)
-
-	// Query consign records by consignee
-	//TheConsignee := ctx.Get(Name).(string)
-	//consignsByConsignee, err := cli.QueryByConsignee(TheConsignee)
-	//if err != nil {
-	//	log.Errorf("QueryByConsignee failed: %v", err)
-	//}
-	//if consignsByConsignee.Status != 1 {
-	//	log.Errorf("consignsByConsignee failed.")
-	//}
-	//isMatch2 := false
-	//for _, consign := range consignsByConsignee.Data {
-	//	if consign.Id == existedConsign.ID &&
-	//		consign.AccountId == existedConsign.AccountID &&
-	//		consign.OrderId == existedConsign.OrderID &&
-	//		consign.To == existedConsign.To &&
-	//		consign.From == existedConsign.From &&
-	//		consign.Weight == existedConsign.Weight &&
-	//		consign.HandleDate == existedConsign.HandleDate &&
-	//		consign.TargetDate == existedConsign.TargetDate &&
-	//		consign.Phone == existedConsign.Phone &&
-	//		consign.Consignee == existedConsign.Consignee {
-	//		isMatch2 = true
-	//	}
-	//}
-	//if !isMatch2 {
-	//	log.Errorf("Can not find consign by consignee.")
-	//}
-	//log.Errorf("QueryByConsignee response: %+v", consignsByConsignee)
 
 	ctx.Set(ID, consignsByOrderId.Data.Id)
 	ctx.Set(OrderId, consignsByOrderId.Data.OrderId)
@@ -964,7 +829,7 @@ func QueryFood(ctx *Context) (*NodeResult, error) {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
-	// Query all
+	// QueryTraintype all
 	allFoodOrders, err := cli.FindAllFoodOrder()
 	if err != nil {
 		log.Errorf("FindAllFoodOrder request failed, err %s", err)
@@ -1022,7 +887,6 @@ func CreateFood(ctx *Context) (*NodeResult, error) {
 
 	ctx.Set(OrderId, newCreateResp.Data.OrderId)
 	ctx.Set(FoodType, newCreateResp.Data.FoodType)
-	ctx.Set(StationName, newCreateResp.Data.StationName)
 	ctx.Set(StoreName, newCreateResp.Data.StoreName)
 	ctx.Set(FoodName, newCreateResp.Data.FoodName)
 	ctx.Set(Price, newCreateResp.Data.Price)
@@ -1045,21 +909,7 @@ func QueryStationFood(ctx *Context) (*NodeResult, error) {
 		log.Errorf("GetAllStationFood status should be 1, but is %d", resp.Status)
 		return nil, err
 	}
-
-	//Id           string  `json:"id"`
-	//StationName  string  `json:"stationName"`
-	//StoreName    string  `json:"storeName"`
-	//Telephone    string  `json:"telephone"`
-	//BusinessTime string  `json:"businessTime"`
-	//DeliveryFee  float64 `json:"deliveryFee"`
-	//FoodList     []struct {
-	//	FoodName string  `json:"foodName"`
-	//	Price    float64 `json:"price"`
-	//} `json:"foodList"`
-
 	randomIndex := rand.Intn(len(resp.Data))
-	//ctx.Set(ID, resp.Data[randomIndex].Id)
-	ctx.Set(StationName, resp.Data[randomIndex].StationName)
 	ctx.Set(StoreName, resp.Data[randomIndex].StoreName)
 	ctx.Set(Phone, resp.Data[randomIndex].Telephone)
 	ctx.Set(Price, resp.Data[randomIndex].DeliveryFee)
@@ -1101,7 +951,6 @@ func QueryTrainFood(ctx *Context) (*NodeResult, error) {
 	return nil, nil
 }
 
-// TravelBehaviorChain
 func QueryTrip(ctx *Context) (*NodeResult, error) {
 	cli, ok := ctx.Get(Client).(*service.SvcImpl)
 	if !ok {
@@ -1110,8 +959,7 @@ func QueryTrip(ctx *Context) (*NodeResult, error) {
 	tripInfo := service.TripInfo{
 		StartPlace:    ctx.Get(StartStation).(string),
 		EndPlace:      ctx.Get(EndStation).(string),
-		DepartureTime: ctx.Get(DepartureTime).(string), // make no sence
-		//DepartureTime: "",                              //????????????????????????????????????
+		DepartureTime: ctx.Get(DepartureTime).(string),
 	}
 	queryInfoResp, err := cli.QueryInfo(tripInfo)
 	if err != nil {
@@ -1125,6 +973,7 @@ func QueryTrip(ctx *Context) (*NodeResult, error) {
 
 	if len(queryInfoResp.Data) == 0 {
 		log.Errorf("QueryInfo response is empty")
+		return nil, errors.New("QueryInfo response is empty")
 	}
 
 	randomIndex := rand.Intn(len(queryInfoResp.Data))
@@ -1138,7 +987,6 @@ func QueryTrip(ctx *Context) (*NodeResult, error) {
 	ctx.Set(ConfortClass, queryInfoResp.Data[randomIndex].ConfortClass)
 	ctx.Set(PriceForEconomyClass, queryInfoResp.Data[randomIndex].PriceForEconomyClass)
 	ctx.Set(PriceForConfortClass, queryInfoResp.Data[randomIndex].PriceForConfortClass)
-	// ????????????????????????
 
 	return nil, nil
 }
@@ -1157,7 +1005,7 @@ func CreateTrip(ctx *Context) (*NodeResult, error) {
 	MockedTrainTypeName := ctx.Get(TrainTypeName).(string)
 	MockedRouteID := ctx.Get(RouteID).(string)
 	MockedStartStationName := ctx.Get(From).(string)
-	MockedStationsName := /*strings.Join(AllRoutesByQuery.Data[0].Stations, ",")*/ ctx.Get(StationName).(string)
+	MockedStationsName := ctx.Get(StationName).([]string)
 	MockedTerminalStationName := ctx.Get(To).(string)
 	MockedStartTime := ctx.Get(StartTime).(string)
 	MockedEndTime := ctx.Get(EndTime).(string)
@@ -1170,7 +1018,7 @@ func CreateTrip(ctx *Context) (*NodeResult, error) {
 		RouteID:          MockedRouteID,
 		StartStationName: MockedStartStationName,
 		//StationsName:        fmt.Sprintf("%v,%v", MockedStartStationName, MockedTerminalStationName),
-		StationsName:        MockedStationsName,
+		StationsName:        strings.Join(MockedStationsName, ","),
 		TerminalStationName: MockedTerminalStationName,
 		StartTime:           MockedStartTime,
 		EndTime:             MockedEndTime,
@@ -1235,10 +1083,10 @@ func QueryTrain(ctx *Context) (*NodeResult, error) {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
-	// Query all
-	allTrainTypes, err := cli.Query()
+	// QueryTraintype all
+	allTrainTypes, err := cli.QueryTraintype()
 	if err != nil {
-		log.Errorf("Query all request failed, err %s", err)
+		log.Errorf("QueryTraintype all request failed, err %s", err)
 		return nil, err
 	}
 	if allTrainTypes.Status != 1 {
@@ -1246,28 +1094,9 @@ func QueryTrain(ctx *Context) (*NodeResult, error) {
 		return nil, err
 	}
 	if len(allTrainTypes.Data) == 0 {
-		log.Errorf("Query all returned no results")
+		log.Errorf("QueryTraintype all returned no results")
 		return nil, err
 	}
-	/*found := false
-	for _, trainTypeElement := range allTrainTypes.Data {
-		if trainTypeElement.Id == createResp.Data.Id &&
-			trainTypeElement.Name == existedtrainType.Name &&
-			trainTypeElement.AverageSpeed == existedtrainType.AverageSpeed &&
-			trainTypeElement.ConfortClass == existedtrainType.ConfortClass &&
-			trainTypeElement.EconomyClass == existedtrainType.ConfortClass {
-			found = true
-		}
-	}
-	if !found {
-		t.Errorf("Query all not get the corresponsing result, whcih means 'Creation Fails'")
-	}*/
-
-	/*	Id           string `json:"id"`
-		Name         string `json:"name"`
-		ConfortClass int    `json:"confortClass"`
-		AverageSpeed int    `json:"averageSpeed"`
-		EconomyClass int    `json:"economyClass"`*/
 	randomIndex := rand.Intn(len(allTrainTypes.Data))
 	ctx.Set(TrainTypName, allTrainTypes.Data[randomIndex].Name)
 	ctx.Set(ConfortClass, allTrainTypes.Data[randomIndex].ConfortClass)
@@ -1299,70 +1128,11 @@ func QueryRoute(ctx *Context) (*NodeResult, error) {
 	ctx.Set(RouteID, AllRoutesByQuery.Data[randomIndex].Id)
 	ctx.Set(StartStation, AllRoutesByQuery.Data[randomIndex].StartStation)
 	ctx.Set(EndStation, AllRoutesByQuery.Data[randomIndex].EndStation)
-	//ctx.Set(StationName, getMiddleElements(strings.Join(AllRoutesByQuery.Data[randomIndex].Stations, ",")))
 	ctx.Set(StationName, AllRoutesByQuery.Data[randomIndex].Stations)
 	ctx.Set(Distances, AllRoutesByQuery.Data[randomIndex].Distances)
 
 	return nil, nil
 }
-
-//func CreateRoute(ctx *Context) (*NodeResult, error) {
-//	cli, ok := ctx.Get(Client).(*service.SvcImpl)
-
-//	if !ok {
-//		return nil, fmt.Errorf("service client not found in context")
-//	}
-//
-//	// Create
-//	MockedID := faker.UUIDHyphenated()
-//	MockedStartStation := faker.GetRealAddress().City
-//	MockedEndStation := faker.GetRealAddress().City
-//	MockedStationList := fmt.Sprintf("%s,%s,%s", MockedStartStation, faker.GetRealAddress().City, MockedEndStation)
-//	MockedDistanceList := fmt.Sprintf("%d,%d,%d", rand.Intn(30), rand.Intn(30), rand.Intn(30))
-//	input := service.RouteInfo{
-//		ID:           MockedID,
-//		StartStation: MockedStartStation,
-//		EndStation:   MockedEndStation,
-//		StationList:  MockedStationList,
-//		DistanceList: MockedDistanceList,
-//	}
-//	resp, err := cli.CreateAndModifyRoute(&input)
-//	if err != nil {
-//		log.Errorf("Request failed, err %s", err)
-//		return nil, err
-//	}
-//	if resp.Msg == "Already exists" {
-//		log.Errorf("Route already exists, skip")
-//		return nil, err
-//	}
-//	if resp.Data.Id != input.ID {
-//		log.Errorf("Route ID does not match, expect %s, got %s", input.ID, resp.Data.Id)
-//		return nil, err
-//	}
-//	if resp.Data.StartStation != input.StartStation {
-//		log.Errorf("StartStation does not match, expect %s, got %s", input.StartStation, resp.Data.StartStation)
-//		return nil, err
-//	}
-//	if resp.Data.EndStation != input.EndStation {
-//		log.Errorf("StartStation does not match, expect %s, got %s", input.StartStation, resp.Data.StartStation)
-//		return nil, err
-//	}
-//	if StringSliceToString(resp.Data.Stations) != ConvertCommaSeparatedToBracketed(input.StationList) {
-//		log.Errorf("StationList does not match, expect %s, got %s", ConvertCommaSeparatedToBracketed(input.StationList), StringSliceToString(resp.Data.Stations))
-//		return nil, err
-//	}
-//	if IntSliceToString(resp.Data.Distances) != ConvertCommaSeparatedToBracketed(input.DistanceList) {
-//		log.Errorf("DistanceList does not match, expect %s, got %s", ConvertCommaSeparatedToBracketed(input.DistanceList), IntSliceToString(resp.Data.Distances))
-//		return nil, err
-//	}
-//
-//	ctx.Set(From, resp.Data.StartStation)
-//	ctx.Set(To, resp.Data.EndStation)
-//	ctx.Set(StationName, getMiddleElements(strings.Join(resp.Data.Stations, ",")))
-//	ctx.Set(RouteID, resp.Data.Id)
-//
-//	return nil, nil
-//}
 
 func QueryBasic(ctx *Context) (*NodeResult, error) {
 	cli, ok := ctx.Get(Client).(*service.SvcImpl)
@@ -1370,17 +1140,10 @@ func QueryBasic(ctx *Context) (*NodeResult, error) {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
-	// ----------------------------------  Mock data  -----------------------------------------
-	// ----------------------------------  Mock data  -----------------------------------------
-	// ----------------------------------  Mock data  -----------------------------------------
-	//MockedTripId := faker.UUIDHyphenated()
 	MockedTripTripId := GenerateTripId()
 	MockedTripTripIdType := MockedTripTripId[0]
 	MockedTripTripIdNumber := MockedTripTripId[1:]
 
-	// ********************************* Input_By_Mock ****************************************
-	// ********************************* Input_By_Mock ****************************************
-	// ********************************* Input_By_Mock ****************************************
 	travelQuery := &service.Travel{
 		Trip: service.Trip{
 			Id: faker.UUIDHyphenated(), // randomly generated
@@ -1405,7 +1168,7 @@ func QueryBasic(ctx *Context) (*NodeResult, error) {
 	var basicSvc service.BasicService = cli
 	travel, err := basicSvc.QueryForTravel(travelQuery)
 	if err != nil {
-		log.Errorf("Query travel request failed, err %s", err)
+		log.Errorf("QueryTraintype travel request failed, err %s", err)
 		return nil, err
 	}
 	if travel.Status != 1 {
@@ -1413,26 +1176,6 @@ func QueryBasic(ctx *Context) (*NodeResult, error) {
 		return nil, err
 	}
 
-	/*	//Status = "status"
-		Percent = "percent"
-		//TrainType struct {
-		//Id = "id"
-		//Name = "name"
-		//EconomyClass = "economyClass"
-		//ConfortClass = "confortClass"
-		//AverageSpeed = "averageSpeed"
-		//} `json:"trainType"`
-		//Route struct {
-		//RouteID = "id"
-		//Stations = "stations"
-		//Distances = "distances"
-		//StartStation = "startStation"
-		//EndStation = "endStation"
-		//} `json:"route"`
-		//Prices struct {
-		//ConfortClass = "confortClass"
-		//EconomyClass = "economyClass"
-		//} `json:"prices"`*/
 	ctx.Set(Status, travel.Data.Status)
 	ctx.Set(Percent, travel.Data.Percent)
 	ctx.Set(TrainType, travel.Data.TrainType)
@@ -1452,7 +1195,7 @@ func CreateSeat(ctx *Context) (*NodeResult, error) {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
-	totalNum := rand.Intn(10)
+	totalNum := rand.Intn(10) + 10
 	seatCreateInfoReq := &service.SeatCreateInfoReq{
 		TravelDate:  ctx.Get(TravelDate).(string),
 		TrainNumber: ctx.Get(TrainNumber).(string),
@@ -1495,19 +1238,6 @@ func QueryStation(ctx *Context) (*NodeResult, error) {
 		log.Errorf("Request failed, QueryAll.Status: %d, expected: %d", QueryAll.Status, 1)
 		return nil, err7
 	}
-	/*found := false
-	for _, station := range QueryAll.Data {
-		if station.Name == existedStation.Name {
-			found = true
-		}
-	}
-	if !found {
-		t.Errorf("Request failed, station not found")
-	}*/
-
-	/*	StationId       = "id"
-		StationNames     = "name"
-		StayTime = "stayTime"*/
 	randomIndex := rand.Intn(len(QueryAll.Data))
 	ctx.Set(StationId, QueryAll.Data[randomIndex].Id)
 	ctx.Set(StationNames, QueryAll.Data[randomIndex].Name)
@@ -1522,22 +1252,6 @@ func QueryPrice(ctx *Context) (*NodeResult, error) {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
-	/*	// Query all price configs
-		allPriceConfigs, err1 := priceSvc.FindAllPriceConfig()
-		if err1 != nil {
-			t.Errorf("FindAllPriceConfig failed: %v", err1)
-		}
-		found := false
-		for _, price := range allPriceConfigs.Data {
-			if price.Id == existedPrice.Id {
-				found = true
-			}
-		}
-		if !found {
-			t.Errorf("Request failed, station not found")
-		}*/
-	// Query price config by route ID and train type
-	//println("RouteID: %v, TrainType: %v", ctx.Get(RouteID).(string), ctx.Get(TrainTypeName).(string))
 	TheRouteId := ctx.Get(RouteID).(string)
 	TheTrainType := ctx.Get(TrainTypeName).(string)
 	priceByRouteAndTrain, err := cli.FindByRouteIdAndTrainType(TheRouteId, TheTrainType)
@@ -1549,18 +1263,7 @@ func QueryPrice(ctx *Context) (*NodeResult, error) {
 		log.Errorf("There is not corresponding Ticket available.")
 		return &(NodeResult{false}), err
 	}
-	/*	if priceByRouteAndTrain.Data.Id != ctx.Get(ID) {
-		log.Errorf("priceByRouteAndTrain.Data.Id != existedPrice.Id")
-		return nil, err
-	}*/
 
-	/*	Id                  string  `json:"id"`
-		TrainType           string  `json:"trainType"`
-		RouteId             string  `json:"routeId"`
-		BasicPriceRate      float64 `json:"basicPriceRate"`
-		FirstClassPriceRate float64 `json:"firstClassPriceRate"`*/
-	//ctx.Set(TrainType, priceByRouteAndTrain.Data.TrainType)
-	//ctx.Set(RouteID, priceByRouteAndTrain.Data.RouteId)
 	ctx.Set(BasicPriceRate, priceByRouteAndTrain.Data.BasicPriceRate)
 	ctx.Set(FirstClassPriceRate, priceByRouteAndTrain.Data.FirstClassPriceRate)
 
@@ -1583,24 +1286,7 @@ func QuerySecurity(ctx *Context) (*NodeResult, error) {
 		log.Errorf("[Security Service]Status != 1")
 		return nil, err3
 	}
-	/*found := false
-	for _, security := range configs.Data {
-		if security.ID == existedSecurity.ID &&
-			security.Name == existedSecurity.Name &&
-			security.Value == existedSecurity.Value &&
-			security.Description == existedSecurity.Description {
-			found = true
-		}
-	}
-	if !found {
-		log.Errorf("[Security Service]Cannot find existed security config")
-		return nil, err3
-	}*/
 
-	/*	ID          string `json:"id"`
-		Name        string `json:"name"`
-		Value       string `json:"value"`
-		Description string `json:"description"`*/
 	randomIndex := rand.Intn(len(configs.Data))
 	ctx.Set(SecurityID, configs.Data[randomIndex].ID)
 	ctx.Set(SecurityName, configs.Data[randomIndex].Name)
@@ -1617,7 +1303,7 @@ func QueryConfig(ctx *Context) (*NodeResult, error) {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
-	// Query All Configs Test
+	// QueryTraintype All Configs Test
 	queryAllResp, err := cli.QueryAllConfigs()
 	if err != nil {
 		log.Errorf("QueryAllConfigs request failed, err %s", err)
@@ -1655,23 +1341,6 @@ func QueryOrder(ctx *Context) (*NodeResult, error) {
 		return nil, err
 	}
 
-	/*	//AccountId              = "accountId"
-		BoughtDate             = "boughtDate"
-		CoachNumber            = "coachNumber"
-		ContactsDocumentNumber = "contactsDocumentNumber"
-		ContactsName           = "contactsName"
-		DifferenceMoney        = "differenceMoney"
-		//DocumentType           = "documentType"
-		//From                   = "from"
-		//Id                     = "id"
-		//Price                  = "price"
-		SeatClass  = "seatClass"
-		SeatNumber = "seatNumber"
-		Status     = "status"
-		//To                     = "to"
-		TrainNumber = "trainNumber"
-		TravelDate  = "travelDate"
-		TravelTime  = "travelTime"*/
 	randomIndex := rand.Intn(len(Resp.Data))
 	//ctx.Set(AccountID, Resp.Data[randomIndex].AccountId)
 	ctx.Set(BoughtDate, Resp.Data[randomIndex].BoughtDate)
@@ -1821,11 +1490,9 @@ func CreateOrderOther(ctx *Context) (*NodeResult, error) {
 		return nil, err
 	}
 
-	//ctx.Set(AccountID, Resp.Data[randomIndex].AccountId)
 	ctx.Set(BoughtDate, AddResp.Data.BoughtDate)
 	ctx.Set(CoachNumber, AddResp.Data.CoachNumber)
 	ctx.Set(ContactsDocumentNumber, AddResp.Data.ContactsDocumentNumber)
-	//ctx.Set(ContactsName, Resp.Data[randomIndex].ContactsName)
 	ctx.Set(Name, AddResp.Data.ContactsName)
 	ctx.Set(DifferenceMoney, AddResp.Data.DifferenceMoney)
 	ctx.Set(SeatClass, AddResp.Data.SeatClass)
@@ -1838,10 +1505,6 @@ func CreateOrderOther(ctx *Context) (*NodeResult, error) {
 	return nil, nil
 }
 
-/////////////////////////////--- Preserve Behaviors ---///////////////////////////////
-/////////////////////////////--- Preserve Behaviors ---///////////////////////////////
-/////////////////////////////--- Preserve Behaviors ---///////////////////////////////
-
 // Preserve Behaviors - The Last One
 func Preserve(ctx *Context) (*NodeResult, error) {
 	cli, ok := ctx.Get(Client).(*service.SvcImpl)
@@ -1849,25 +1512,19 @@ func Preserve(ctx *Context) (*NodeResult, error) {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 	OrderTicketsInfo := service.OrderTicketsInfo{
-		AccountID:       ctx.Get(AccountID).(string),  // Query:Create = 1 : 0
-		ContactsID:      ctx.Get(ContactsID).(string), // Query:Create = 1 : 0
-		TripID:          ctx.Get(TripId).(string),
-		SeatType:        ctx.Get(SeatClass).(int),
-		LoginToken:      ctx.Get(LoginToken).(string),
-		Date:            extractDate(ctx.Get(DepartureTime).(string)),
-		From:            ctx.Get(From).(string),
-		To:              ctx.Get(To).(string),
-		Assurance:       ctx.Get(AssuranceTypeIndex).(int),
-		FoodType:        ctx.Get(FoodType).(int),
-		StationName:     ctx.Get(StationName).(string),
-		StoreName:       ctx.Get(StoreName).(string),
-		FoodName:        ctx.Get(FoodName).(string),
-		FoodPrice:       ctx.Get(FoodPrice).(float64),
-		HandleDate:      extractDate(ctx.Get(HandleDate).(string)),
-		ConsigneeName:   ctx.Get(Consignee).(string),
-		ConsigneePhone:  ctx.Get(Phone).(string),
-		ConsigneeWeight: ctx.Get(Weight).(float64),
-		IsWithin:        ctx.Get(IsWithin).(bool),
+		AccountID:  "4d2a46c7-71cb-4cf1-b5bb-b68406d9da6f",
+		ContactsID: "ffff5155-2d6d-43ea-a27c-da709097f22d",
+		TripID:     "D1345",
+		SeatType:   ctx.Get(SeatClass).(int),
+		LoginToken: ctx.Get(LoginToken).(string),
+		Date:       "2024-08-22",
+		From:       "shanghai",
+		To:         "suzhou",
+		Assurance:  0,
+		FoodType:   1,
+		FoodName:   "Bone Soup",
+		FoodPrice:  2.5,
+		HandleDate: "2024-08-22",
 	}
 	PreserveResp, err := cli.Preserve(&OrderTicketsInfo)
 	if err != nil {

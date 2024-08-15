@@ -24,7 +24,7 @@ func TestBasicServiceFullIntegration(t *testing.T) {
 	}
 
 	var trainSvc TrainService = cli
-	trainTypes, err := trainSvc.Query()
+	trainTypes, err := trainSvc.QueryTraintype()
 	if err != nil {
 		t.Error(err)
 	}
