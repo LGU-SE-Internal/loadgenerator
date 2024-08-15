@@ -38,13 +38,13 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	var MockedStartTime string
 	var MockedEndTime string
 
-	// 1. Query
+	// 1. QueryTraintype
 	QueryAllRsp, err := travelSvc.QueryAllTrip()
 	if err != nil {
-		log.Fatalf("[Query]QueryAllTrip error occurs: %v", err)
+		log.Fatalf("[QueryTraintype]QueryAllTrip error occurs: %v", err)
 	}
 	if QueryAllRsp.Status != 1 {
-		log.Fatalf("[Query]QueryAllRsp.Status != 1")
+		log.Fatalf("[QueryTraintype]QueryAllRsp.Status != 1")
 	}
 	time.Sleep(2 * time.Second)
 
@@ -81,13 +81,13 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 	}
 	time.Sleep(2 * time.Second)
 
-	// 3. Query Again
+	// 3. QueryTraintype Again
 	QueryAllRspAgain, err2 := travelSvc.QueryAllTrip()
 	if err2 != nil {
-		log.Fatalf("[Query Again]QueryAllTrip error2 occurs: %v", err2)
+		log.Fatalf("[QueryTraintype Again]QueryAllTrip error2 occurs: %v", err2)
 	}
 	if QueryAllRspAgain.Status != 1 {
-		log.Fatalf("[Query Again]QueryAllRsp.Status != 1")
+		log.Fatalf("[QueryTraintype Again]QueryAllRsp.Status != 1")
 	}
 	time.Sleep(2 * time.Second)
 
@@ -107,7 +107,7 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 			log.Fatalf("error occurs: %v", err)
 		}
 		if QueryAllTravelInfo.Status != 1 {
-			log.Fatalf("[Query AllTravelInfo.Status] != 1")
+			log.Fatalf("[QueryTraintype AllTravelInfo.Status] != 1")
 		}
 
 		if len(QueryAllTravelInfo.Data) > 0 {
@@ -133,7 +133,7 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 			log.Fatalf("[TripID]QueryAllTrip error occurs: %v", err)
 		}
 		if QueryAllTravelInfo.Status != 1 {
-			log.Fatalf("[Query Again]QueryAllRsp.Status != 1")
+			log.Fatalf("[QueryTraintype Again]QueryAllRsp.Status != 1")
 		}
 
 		if len(QueryAllTravelInfo.Data) > 0 {
@@ -159,7 +159,7 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 			log.Fatalf("[TrainTypeName]QueryAllTrip error occurs: %v", err)
 		}
 		if QueryAllTravelInfo.Status != 1 {
-			log.Fatalf("[Query AllTravelInfo.Status] != 1")
+			log.Fatalf("[QueryTraintype AllTravelInfo.Status] != 1")
 		}
 
 		if len(QueryAllTravelInfo.Data) > 0 {
@@ -470,7 +470,7 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 			MockedDeleteID = faker.UUIDHyphenated()
 		}
 	} else if r9 < 0.99 {
-		// Create And Query
+		// Create And QueryTraintype
 		MockedLoginId = faker.UUIDHyphenated()
 		MockedTripID = GenerateTripId()
 		MockedTrainTypeName = GenerateTrainTypeName()
@@ -544,7 +544,7 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 			GetTripID = GenerateTripId()
 		}
 	} else if r10 < 0.99 {
-		// Create And Query
+		// Create And QueryTraintype
 		MockedLoginId = faker.UUIDHyphenated()
 		MockedTripID = GenerateTripId()
 		MockedTrainTypeName = GenerateTrainTypeName()
@@ -633,7 +633,7 @@ func (o *TravelBehavior) Run(cli *service.SvcImpl) {
 			GetRouteIDs = []string{faker.UUIDHyphenated(), faker.UUIDHyphenated(), faker.UUIDHyphenated()}
 		}
 	} else if r11 < 0.99 {
-		// Create And Query
+		// Create And QueryTraintype
 		MockedRouteInfoID := faker.UUIDHyphenated()
 		MockedRouteInfoStartStation := faker.GetRealAddress().City
 		MockedRouteInfoEndStation := faker.GetRealAddress().City

@@ -76,7 +76,7 @@ func TestSvcImpl_AddUpdateQueryDeletePrice(t *testing.T) {
 	t.Logf("CreateNewPriceConfig response: %+v", createResp)
 	existedPrice := createResp.Data
 
-	// Query all price configs
+	// QueryTraintype all price configs
 	allPriceConfigs, err1 := priceSvc.FindAllPriceConfig()
 	if err1 != nil {
 		t.Errorf("FindAllPriceConfig failed: %v", err1)
@@ -109,7 +109,7 @@ func TestSvcImpl_AddUpdateQueryDeletePrice(t *testing.T) {
 	}
 	t.Logf("UpdatePriceConfig response: %+v", updateResp)
 
-	// Query price config by route ID and train type
+	// QueryTraintype price config by route ID and train type
 	priceByRouteAndTrain, err := priceSvc.FindByRouteIdAndTrainType(existedPrice.RouteId, existedPrice.TrainType)
 	if err != nil {
 		t.Errorf("FindByRouteIdAndTrainType failed: %v", err)

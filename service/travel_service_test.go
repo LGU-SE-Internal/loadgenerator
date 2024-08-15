@@ -28,7 +28,7 @@ func TestTravelService_FullIntegration(t *testing.T) {
 		log.Fatalln(err)
 	}
 
-	// Query Test
+	// QueryTraintype Test
 	resp, err := travelSvc.QueryAllTrip()
 	if err != nil {
 		t.Errorf("Request failed, err %s", err)
@@ -132,7 +132,7 @@ func TestTravelService_FullIntegration(t *testing.T) {
 		t.Errorf("CreateNewPriceConfig failed, status: %d", createPriceResp.Status)
 	}
 
-	// Query all
+	// QueryTraintype all
 	allTravelInfos, err := travelSvc.QueryAllTrip()
 	if err != nil {
 		t.Errorf("QueryAllTrip request failed, err %s", err)
@@ -172,7 +172,7 @@ func TestTravelService_FullIntegration(t *testing.T) {
 	}
 
 	// Test Update
-	// Query for the Stations
+	// QueryTraintype for the Stations
 	// Station Service
 	var stationSvc StationService = cli
 
@@ -228,7 +228,7 @@ func TestTravelService_FullIntegration(t *testing.T) {
 	}
 	updatedTravel := updateResp.Data
 
-	// Query all UpdatedInfo
+	// QueryTraintype all UpdatedInfo
 	allUpdatedTravelInfos, err := travelSvc.QueryAllTrip()
 	if err != nil {
 		t.Errorf("QueryAllTrip request failed, err %s", err)
@@ -359,7 +359,7 @@ func TestTravelServiceQueryAll_InfiniteLoop_ForTesting(t *testing.T) {
 
 			cli, _ := GetAdminClient()
 			for {
-				// Query Test
+				// QueryTraintype Test
 				_, err := cli.QueryAllTrip()
 				if err != nil {
 					t.Errorf("Request failed, err %s", err)

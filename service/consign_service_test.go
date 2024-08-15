@@ -65,7 +65,7 @@ func TestSvcImpl_AddUpdateQueryDeleteConsign(t *testing.T) {
 	t.Logf("InsertConsignRecord response: %+v", insertResp)
 	existedConsign := insertResp.Data
 
-	// Query consign records by account ID
+	// QueryTraintype consign records by account ID
 	consignsByAccountId, err := consignSvc.QueryByAccountId(MockedAccountId)
 	if err != nil {
 		t.Errorf("QueryByAccountId failed: %v", err)
@@ -94,7 +94,7 @@ func TestSvcImpl_AddUpdateQueryDeleteConsign(t *testing.T) {
 	}
 	t.Logf("QueryByAccountId response: %+v", consignsByAccountId)
 
-	// Query consign records by order ID
+	// QueryTraintype consign records by order ID
 	consignsByOrderId, err := consignSvc.QueryByOrderId(MockedOrderId)
 	if err != nil {
 		t.Errorf("QueryByOrderId failed: %v", err)
@@ -120,7 +120,7 @@ func TestSvcImpl_AddUpdateQueryDeleteConsign(t *testing.T) {
 	}
 	t.Logf("QueryByOrderId response: %+v", consignsByOrderId)
 
-	// Query consign records by consignee
+	// QueryTraintype consign records by consignee
 	consignsByConsignee, err := consignSvc.QueryByConsignee(MockedConsignee)
 	if err != nil {
 		t.Errorf("QueryByConsignee failed: %v", err)
