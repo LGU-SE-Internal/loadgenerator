@@ -9,7 +9,7 @@ import (
 
 func TestStationService_FullIntegration(t *testing.T) {
 	// Admin Test
-	// Query Test
+	// QueryTraintype Test
 	cli, _ := GetAdminClient()
 	var stationSvc StationService = cli
 
@@ -53,7 +53,7 @@ func TestStationService_FullIntegration(t *testing.T) {
 	}
 	existedStation := resp1.Data
 
-	// Query all
+	// QueryTraintype all
 	QueryAll, err7 := stationSvc.QueryStations()
 	if err7 != nil {
 		t.Errorf("Request failed, err7 %s", err7)
@@ -87,8 +87,8 @@ func TestStationService_FullIntegration(t *testing.T) {
 		t.Errorf("Request failed. Expected %d, got %d", input1.StayTime, resp2.Data.StayTime)
 	}
 
-	// Test Query By name
-	// Get name by Query
+	// Test QueryTraintype By name
+	// Get name by QueryTraintype
 	resp4, err4 := stationSvc.QueryStationIdByName(existedStation.Name)
 	if err4 != nil {
 		t.Errorf("Request failed, err4 %s", err4)
@@ -99,9 +99,9 @@ func TestStationService_FullIntegration(t *testing.T) {
 	if resp4.Data != existedStation.Id {
 		t.Errorf("resp4.Data != input.ID, expected: '%s', actual: '%s'", existedStation.Id, resp4.Data)
 	}
-	t.Logf("Query By name response: %v", resp4)
+	t.Logf("QueryTraintype By name response: %v", resp4)
 
-	// Test Query by names
+	// Test QueryTraintype by names
 	stationNames := []string{existedStation.Name}
 	resp5, err5 := stationSvc.QueryStationIdsByNames(stationNames)
 	if err5 != nil {
@@ -114,7 +114,7 @@ func TestStationService_FullIntegration(t *testing.T) {
 		t.Errorf("len(resp5.Data) != len(stationNames): %d, expected: %d", len(resp5.Data), len(stationNames))
 	}
 
-	// Test Query Name by ID
+	// Test QueryTraintype Name by ID
 	resp6, err6 := stationSvc.QueryStationNameById(existedStation.Id)
 	if err6 != nil {
 		t.Errorf("Request failed, err6 %s", err6)

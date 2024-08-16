@@ -275,10 +275,36 @@ func (s *SvcImpl) DeleteTrip(tripId string) (*DeleteTripResponse, error) {
 }
 
 type QueryInfoResponse struct {
-	Status int           `json:"status"`
-	Msg    string        `json:"msg"`
-	Data   []interface{} `json:"data"`
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   []struct {
+		TripId struct {
+			Type   string `json:"type"`
+			Number string `json:"number"`
+		} `json:"tripId"`
+		TrainTypeName        string `json:"trainTypeName"`
+		StartStation         string `json:"startStation"`
+		TerminalStation      string `json:"terminalStation"`
+		StartTime            string `json:"startTime"`
+		EndTime              string `json:"endTime"`
+		EconomyClass         int    `json:"economyClass"`
+		ConfortClass         int    `json:"confortClass"`
+		PriceForEconomyClass string `json:"priceForEconomyClass"`
+		PriceForConfortClass string `json:"priceForConfortClass"`
+	} `json:"data"`
 }
+
+/*type QueryInfoResponse struct {
+	EndTime             string `json:"endTime"`
+	Id                  string `json:"id"`
+	RouteId             string `json:"routeId"`
+	StartStationName    string `json:"startStationName"`
+	StartTime           string `json:"startTime"`
+	StationsName        string `json:"stationsName"`
+	TerminalStationName string `json:"terminalStationName"`
+	TrainTypeName       string `json:"trainTypeName"`
+	TripId              TripId `json:"tripId"`
+}*/
 
 func (s *SvcImpl) QueryInfo(tripInfo TripInfo) (*QueryInfoResponse, error) {
 	url := fmt.Sprintf("%s/api/v1/travelservice/trips/left", s.BaseUrl)

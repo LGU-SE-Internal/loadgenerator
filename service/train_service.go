@@ -47,7 +47,7 @@ type TrainService interface {
 	RetrieveByNames(names []string) (*TrainRetrieveByNamesType, error)
 	Update(trainType *TrainType) (*TrainUpdateResponse, error)
 	Delete(id string) (*TrainDeleteResponse, error)
-	Query() (*TrainResponseType, error)
+	QueryTraintype() (*TrainResponseType, error)
 }
 
 type CreateStationResponse struct {
@@ -236,7 +236,7 @@ type TrainResponseType struct {
 	Data   []TrainType `json:"data"`
 }
 
-func (s *SvcImpl) Query() (*TrainResponseType, error) {
+func (s *SvcImpl) QueryTraintype() (*TrainResponseType, error) {
 	url := fmt.Sprintf("%s/api/v1/trainservice/trains", s.BaseUrl)
 	resp, err := s.cli.SendRequest("GET", url, nil)
 	if err != nil {

@@ -20,6 +20,12 @@ func getMiddleElements(input string) string {
 	return strings.Join(middleElements, ",")
 }
 
+// GenerateWeight generates a float64 value between 0 and 15.
+func GenerateWeight() float64 {
+	rand.Seed(time.Now().UnixNano())
+	return rand.Float64() * 15
+}
+
 func generateDescription() string {
 	rand.Seed(time.Now().UnixNano())
 
@@ -35,6 +41,11 @@ func generateDescription() string {
 	}
 
 	return fmt.Sprintf("%s in %s hour", description, numberStr)
+}
+
+// IsWithin checks if a given float64 value is 7.0 or less.
+func BooleanIsWithin(value float64) bool {
+	return value <= 7.0
 }
 
 // generateVerifyCode generates a 6-digit verification code consisting of letters and numbers.
@@ -176,6 +187,16 @@ func generateRandomStoreName() string {
 	return storeNames[randomIndex]
 }
 
+func extractDate(dateTimeStr string) string {
+	// Parse the string to time.Time
+	t, err := time.Parse("2006-01-02 15:04:05", dateTimeStr)
+	if err != nil {
+		return ""
+	}
+	// Format the time.Time to only include the date
+	return t.Format("2006-01-02")
+}
+
 // generateRandomTime generates a random time in the format "HH:MM:SS".
 func generateRandomTime() string {
 	hour := rand.Intn(24)   // 0-23
@@ -284,7 +305,7 @@ func GenerateTrainTypeName() string {
 	rand.Seed(time.Now().UnixNano())
 
 	// 定义可能的火车类型名称
-	trainTypes := []string{"GaoTieOne", "GaoTieTwo", "GaoTieSeven", "DongCheOne", "DongCheTen"}
+	trainTypes := []string{"GaoTieOne", "GaoTieTwo", "DongCheOne", "ZhiDa", "TeKuai", "KuaiSu"}
 
 	// 随机选择一个火车类型名称
 	MockedTrainTypeName := trainTypes[rand.Intn(len(trainTypes))]

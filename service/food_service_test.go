@@ -58,7 +58,7 @@ func TestSvcImpl_FoodService(t *testing.T) {
 		t.Errorf("NEwCreateFoodOrder failed")
 	}
 
-	// Query all
+	// QueryTraintype all
 	allFoodOrders, err := cli.FindAllFoodOrder()
 	if err != nil {
 		t.Errorf("FindAllFoodOrder request failed, err %s", err)

@@ -40,13 +40,13 @@ func TestSvcImpl_AddUpdateDeleteAssurance(t *testing.T) {
 
 	newOrderInfo, err := orderSvc.ReqCreateNewOrder(&createdOrder)
 	if err != nil {
-		t.Errorf("Query All Order Info failed, err:%v\n", err)
+		t.Errorf("QueryTraintype All Order Info failed, err:%v\n", err)
 	}
 
 	//if len(QueryAllOrderInfo.Data) > 0 {
 	//	CreatedExistedOrderID = QueryAllOrderInfo.Data[0].Id
 	//} else {
-	//	t.Errorf("Query All Order Info failed -> CreatedExistedOrderID fails, err:%v\n", err)
+	//	t.Errorf("QueryTraintype All Order Info failed -> CreatedExistedOrderID fails, err:%v\n", err)
 	//}
 
 	CreatedExistedOrderID = newOrderInfo.Data.Id

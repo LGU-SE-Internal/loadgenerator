@@ -55,23 +55,23 @@ func TestTrainService_FullIntegration(t *testing.T) {
 	}
 	existedtrainType := trainType
 
-	// Query Test
-	resp, err := trainSvc.Query()
+	// QueryTraintype Test
+	resp, err := trainSvc.QueryTraintype()
 	if err != nil {
 		t.Errorf("Request failed, err %s; while response: %v", err, resp)
 	}
-	//t.Logf("Query returned results: %v", resp)
+	//t.Logf("QueryTraintype returned results: %v", resp)
 
-	// Query all
-	allTrainTypes, err := trainSvc.Query()
+	// QueryTraintype all
+	allTrainTypes, err := trainSvc.QueryTraintype()
 	if err != nil {
-		t.Errorf("Query all request failed, err %s", err)
+		t.Errorf("QueryTraintype all request failed, err %s", err)
 	}
 	if allTrainTypes.Status != 1 {
 		t.Errorf("allTrainTypes.Status != 1")
 	}
 	if len(allTrainTypes.Data) == 0 {
-		t.Errorf("Query all returned no results")
+		t.Errorf("QueryTraintype all returned no results")
 	}
 	found := false
 	for _, trainTypeElement := range allTrainTypes.Data {
@@ -84,7 +84,7 @@ func TestTrainService_FullIntegration(t *testing.T) {
 		}
 	}
 	if !found {
-		t.Errorf("Query all not get the corresponsing result, whcih means 'Creation Fails'")
+		t.Errorf("QueryTraintype all not get the corresponsing result, whcih means 'Creation Fails'")
 	}
 
 	// Test Update
@@ -140,7 +140,7 @@ func TestTrainService_FullIntegration(t *testing.T) {
 	//if len(allTrainTypes.Data) > 0 {
 	//	deleteID = allTrainTypes.Data[len(allTrainTypes.Data)-1].Id
 	//} else {
-	//	t.Errorf("Query all returned empty data")
+	//	t.Errorf("QueryTraintype all returned empty data")
 	//}
 	deleteResp, err := trainSvc.Delete(createResp.Data.Id)
 	if err != nil {
