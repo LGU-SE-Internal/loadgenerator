@@ -9,7 +9,7 @@ import (
 func TestConfigService_FullIntegration(t *testing.T) {
 	cli, _ := GetBasicClient() // Assuming GetBasicClient is implemented elsewhere
 
-	// Query All Configs Test
+	// QueryTraintype All Configs Test
 	queryAllResp, err := cli.QueryAllConfigs()
 	if err != nil {
 		t.Errorf("QueryAllConfigs request failed, err %s", err)
@@ -33,7 +33,7 @@ func TestConfigService_FullIntegration(t *testing.T) {
 	}
 	t.Logf("CreateConfig returned results: %v", createResp)
 
-	// Query All Configs again to get the ID of the created config
+	// QueryTraintype All Configs again to get the ID of the created config
 	allConfigsResp, err := cli.QueryAllConfigs()
 	if err != nil {
 		t.Errorf("QueryAllConfigs request failed, err %s", err)
@@ -82,7 +82,7 @@ func TestConfigService_FullIntegration(t *testing.T) {
 func TestConfigService_FullIntegration_v2(t *testing.T) {
 	cli, _ := GetBasicClient() // Assuming GetBasicClient is implemented elsewhere
 
-	// Query All Configs Test
+	// QueryTraintype All Configs Test
 	queryAllResp, err := cli.QueryAllConfigs()
 	if len(queryAllResp.Data) < 1 {
 		t.Errorf("No configs found.")

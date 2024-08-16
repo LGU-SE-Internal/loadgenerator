@@ -7,6 +7,7 @@ require (
 	github.com/go-faker/faker/v4 v4.4.1
 	github.com/google/uuid v1.6.0
 	github.com/rivo/tview v0.0.0-20240524063012-037df494fb76
+	github.com/sirupsen/logrus v1.9.3
 )
 
 require (

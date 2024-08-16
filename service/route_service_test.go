@@ -49,7 +49,7 @@ func TestRouteService_FullIntegration(t *testing.T) {
 	}
 	existedRoute := resp.Data
 
-	//Test Query
+	//Test QueryTraintype
 	AllRoutesByQuery, err2 := routeSvc.QueryAllRoutes()
 	if err2 != nil {
 		t.Errorf("Request failed, err2 %s", err2)
