@@ -59,22 +59,22 @@ func init() {
 		fmt.Printf("PreserveBehaviors(Chain) Statrs. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "Dummy"))
-	// AssuranceBehaviorChain
+	// AssuranceBehaviorChain -
 	AssuranceBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
 		fmt.Printf("CreateAssuranceChain. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyAssurance"))
-	// UserBehaviorsChain
+	// UserBehaviorsChain -
 	UserBehaviorsChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
 		fmt.Printf("UserBehaviorsChain Starts. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyUserBehaviors"))
-	// VerifyCodeBehaviorChain
+	// VerifyCodeBehaviorChain -
 	VerifyCodeBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
 		fmt.Printf("VerifyCodeBehaviorChain Starts. Start time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyVerifyCodeBehavior"))
-	// AuthBehaviorChain
+	// AuthBehaviorChain -
 	AuthBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
 		fmt.Printf("AuthBehaviorChain Starts. Start time: %v", time.Now().String())
 		return nil, nil
@@ -176,14 +176,22 @@ func init() {
 	}, "DummySecurityBehavior"))
 
 	// ------------------- NewFuncNode -----------------------
-	// LoginAdmin
-	LoginAdminNode := NewFuncNode(LoginAdmin, "LoginAdmin")
-	// Contacts
-	QueryContactsNode := NewFuncNode(QueryContacts, "QueryContacts")
-	CreateContactsNode := NewFuncNode(CreateContacts, "CreateContacts")
-	// Assurance
+	//AssuranceBehaviorChain - Assurance
 	QueryAssuranceNode := NewFuncNode(QueryAssurance, "QueryAssurance")
 	CreateAssuranceNode := NewFuncNode(CreateAssurance, "CreateAssurance")
+
+	//UserBehaviorsChain
+	// AuthBehaviorChain - LoginAdmin
+	LoginAdminNode := NewFuncNode(LoginAdmin, "LoginAdmin")
+	// VerifyCodeBehaviorChain
+	VerifyCodeNode := NewFuncNode(VerifyCode, "VerifyCode")
+	// UserBehaviorChain
+	UserBehaviorNode := NewFuncNode(User, "User")
+
+	// ContactsBehaviorChain - Contacts
+	QueryContactsNode := NewFuncNode(QueryContacts, "QueryContacts")
+	CreateContactsNode := NewFuncNode(CreateContacts, "CreateContacts")
+
 	// Route
 	QueryRouteNode := NewFuncNode(QueryRoute, "QueryRoute")
 	CreateRouteNode := NewFuncNode(CreateRoute, "CreateRoute")
