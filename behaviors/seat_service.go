@@ -10,6 +10,7 @@ func QuerySeatInfo(ctx *Context) (*NodeResult, error) {
 	if !ok {
 		return nil, fmt.Errorf("service client not found in context")
 	}
+
 	_ = cli
 
 	ctx.Set(SeatClass, 2)
