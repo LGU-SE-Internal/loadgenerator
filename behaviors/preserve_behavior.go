@@ -226,10 +226,10 @@ func init() {
 		return nil, nil
 	}, "DummyTrainFoodBehavior"))
 
-	BasicBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
+	/*	BasicBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
 		log.Printf("BasicBehaviorChain Starts. Start time: %v", time.Now().String())
 		return nil, nil
-	}, "DummyBasicBehavior"))
+	}, "DummyBasicBehavior"))*/
 	// SeatBehaviorChain
 	SeatBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
 		log.Printf("SeatBehaviorChain Starts. Start time: %v", time.Now().String())
@@ -344,8 +344,8 @@ func init() {
 
 	QuerySecurityNode := NewFuncNode(QuerySecurity, "QuerySecurity")
 
-	// ******* Preserve ********
-	PreserveNode := NewFuncNode(Preserve, "Preserve")
+	/*	// ******* Preserve ********
+		PreserveNode := NewFuncNode(Preserve, "Preserve")*/
 
 	// ------------------------------------- NewChain -------------------------------------------
 	// AssuranceBehaviorChain - Assurance
@@ -380,16 +380,22 @@ func init() {
 	//CreateTravelChain := NewChain(CreateTravelNode)
 
 	// BasicBehaviorChain
-	QueryBasicChain := NewChain(NewFuncNode(QueryRoute, "QueryRoute"))
-	QueryBasicChain.AddNode(NewFuncNode(QueryTrain, "QueryTrain"))
-	QueryBasicChain.AddNode(NewFuncNode(QueryTripInfo, "QueryTripInfo"))
-	QueryBasicChain.AddNode(NewFuncNode(QuerySeatInfo, "QuerySeat"))
-	QueryBasicChain.AddNode(NewFuncNode(QueryContacts, "QueryContacts"))
-	QueryBasicChain.AddNode(NewFuncNode(QueryTripId, "QueryContacts"))
-	QueryBasicChain.AddNode(NewFuncNode(QueryFood, "QueryFood"))
-	QueryBasicChain.AddNode(NewFuncNode(Preserve, "Preserve"))
+
+	// TravelBehaviorChain
+	TravelBehaviorChain := NewChain(NewFuncNode(QueryRoute, "QueryRoute"))
+	TravelBehaviorChain.AddNode(NewFuncNode(QueryTrain, "QueryTrain"))
+	TravelBehaviorChain.AddNode(NewFuncNode(QueryTripInfo, "QueryTripInfo"))
+	TravelBehaviorChain.AddNode(NewFuncNode(QuerySeatInfo, "QuerySeat"))
+	TravelBehaviorChain.AddNode(NewFuncNode(QueryContacts, "QueryContacts"))
+	TravelBehaviorChain.AddNode(NewFuncNode(QueryTripId, "QueryContacts"))
+	TravelBehaviorChain.AddNode(NewFuncNode(QueryFood, "QueryFood"))
+	TravelBehaviorChain.AddNode(NewFuncNode(Preserve, "Preserve")) // END
 	//QueryBasicChain.AddNode(NewFuncNode(QueryBasic, "QueryBasic"))
-	QueryBasicChain.AddNode(QueryPriceNode)
+	//QueryBasicChain.AddNode(QueryPriceNode)
+
+	TravelBehaviorChain1.AddNextChain(QueryTravelChain1, 1)
+	TravelBehaviorChain2.AddNextChain(QueryTravelChain2, 1)
+
 	// SeatBehaviorChain
 	CreateSeatChain := NewChain(QueryConfigNode)
 	CreateSeatChain.AddNode(QueryOrderNode)
@@ -417,8 +423,8 @@ func init() {
 	// SecurityBehaviorChain
 	QuerySecurityChain := NewChain(QuerySecurityNode)
 
-	// The Last Chain - Preserve Behavior Chain
-	PreserveChain := NewChain(PreserveNode)
+	/*	// The Last Chain - Preserve Behavior Chain
+		PreserveChain := NewChain(PreserveNode)*/
 
 	//AssuranceBehaviorChain
 	AssuranceBehaviorChain.AddNextChain(QueryAssuranceChain, 1)
@@ -462,10 +468,8 @@ func init() {
 	//PriceBehaviorChain
 	PriceBehaviorChain.AddNextChain(QueryPriceChain, 1)
 
-	BasicBehaviorChain.AddNextChain(QueryBasicChain, 1)
-	//TravelBehaviorChain
-	TravelBehaviorChain1.AddNextChain(QueryTravelChain1, 1)
-	TravelBehaviorChain2.AddNextChain(QueryTravelChain2, 1)
+	TravelBehaviorChain.AddNextChain(TravelBehaviorChain, 1)
+
 	//StationFoodBehaviorChain
 	StationFoodBehaviorChain.AddNextChain(QueryStationFoodChain, 1)
 	//TrainFoodBehaviorChain
@@ -476,24 +480,10 @@ func init() {
 	QueryTrainFoodChain.AddNextChain(QueryFoodChain, 1)
 
 	// &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& Main Chain &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+	// &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& Main Chain &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 	PreserveBehaviorChain.AddNextChain(UserBehaviorsChain, 1)
 	// UserBehaviorsChain
-	QueryUserChain.AddNextChain(BasicBehaviorChain, 1)
-	// BasicBehaviorChain
-	QueryBasicChain.AddNextChain(SeatBehaviorChain, 1)
-	// SeatBehaviorChain
-	CreateSeatChain.AddNextChain(ContactsBehaviorChain, 1)
-	// TravelBehaviorChain
-	QueryContactsChain.AddNextChain(TravelBehaviorChain1, 1)
-	CreateContactsChain.AddNextChain(TravelBehaviorChain1, 1)
-	// ContactsBehaviorChain
-	//QueryTravelChain1.AddNextChain(AssuranceBehaviorChain, 1)
-	// AssuranceBehaviorChain
-	QueryAssuranceChain.AddNextChain(FoodBehaviorChain, 1)
-	// FoodBehaviorChain
-	QueryFoodChain.AddNextChain(ConsignBehaviorsChain, 1)
-	// ConsignBehaviorsChain
-	CreateConsignChain.AddNextChain(PreserveChain, 1)
+	QueryUserChain.AddNextChain(TravelBehaviorChain, 1)
 
 	// ------------------------------------- VisualizeChain -------------------------------------------
 	// ------------------------------------- VisualizeChain -------------------------------------------
