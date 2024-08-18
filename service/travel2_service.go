@@ -15,7 +15,7 @@ type Travel2Service interface {
 	RetrieveTrip2(tripId string) (*RetrieveTripResponse, error)
 	UpdateTrip2(travelInfo *TravelInfo) (*UpdateTripResponse, error)
 	DeleteTrip2(tripId string) (*DeleteTripResponse, error)
-	QueryByBatch(tripInfo *TripInfo) (*QueryByBatchResponse, error)
+	QueryByBatch(tripInfo *TripInfo) (*QueryInfoResponse, error)
 	GetTrip2AllDetailInfo(tripAllDetailInfo *Trip2AllDetailInfo) (*GetTripAllDetailInfoResponse, error)
 	QueryAllTravel() (*QueryAllResponse, error)
 	AdminQueryAllTravel() (*AdminQueryAllResponse, error)
@@ -307,7 +307,7 @@ func (s *SvcImpl) DeleteTrip2(tripId string) (*DeleteTripResponse, error) {
 	return &result, nil
 }
 
-func (s *SvcImpl) QueryByBatch(tripInfo *TripInfo) (*QueryByBatchResponse, error) {
+func (s *SvcImpl) QueryByBatch(tripInfo *TripInfo) (*QueryInfoResponse, error) {
 	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/travel2service/trips/left", tripInfo)
 	if err != nil {
 		return nil, err
@@ -319,7 +319,7 @@ func (s *SvcImpl) QueryByBatch(tripInfo *TripInfo) (*QueryByBatchResponse, error
 		return nil, err
 	}
 
-	var result QueryByBatchResponse
+	var result QueryInfoResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
