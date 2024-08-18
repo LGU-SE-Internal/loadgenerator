@@ -20,8 +20,8 @@ func QueryPrice(ctx *Context) (*NodeResult, error) {
 		return nil, err
 	}
 	if priceByRouteAndTrain.Status != 1 {
-		log.Errorf("There is not corresponding Ticket available.")
-		return &(NodeResult{false}), err
+		log.Infof("[Please change the traintype and try again] There is not corresponding Ticket available.")
+		return &(NodeResult{false}), err // immediately end
 	}
 
 	ctx.Set(BasicPriceRate, priceByRouteAndTrain.Data.BasicPriceRate)

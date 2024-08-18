@@ -14,7 +14,8 @@ func QueryTrain(ctx *Context) (*NodeResult, error) {
 	}
 
 	// QueryTraintype all
-	allTrainTypes, err := cli.QueryTraintype()
+	var trainSvc service.TrainService = cli
+	allTrainTypes, err := trainSvc.QueryTraintype()
 	if err != nil {
 		log.Errorf("QueryTraintype all request failed, err %s", err)
 		return nil, err
@@ -28,7 +29,7 @@ func QueryTrain(ctx *Context) (*NodeResult, error) {
 		return nil, err
 	}
 	randomIndex := rand.Intn(len(allTrainTypes.Data))
-	ctx.Set(TrainTypName, allTrainTypes.Data[randomIndex].Name)
+	ctx.Set(TrainTypeName, allTrainTypes.Data[randomIndex].Name)
 	ctx.Set(ConfortClass, allTrainTypes.Data[randomIndex].ConfortClass)
 	ctx.Set(AverageSpeed, allTrainTypes.Data[randomIndex].AverageSpeed)
 	ctx.Set(EconomyClass, allTrainTypes.Data[randomIndex].EconomyClass)

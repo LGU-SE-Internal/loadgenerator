@@ -9,17 +9,17 @@ import (
 	"strings"
 )
 
-func QueryTripId(ctx *Context) (*NodeResult, error) {
-	cli, ok := ctx.Get(Client).(service.SeatService)
-	if !ok {
-		return nil, fmt.Errorf("service client not found in context")
-	}
-
-	_ = cli
-
-	ctx.Set(TripId, "D1345")
-	return nil, nil
-}
+//func QueryTripId(ctx *Context) (*NodeResult, error) {
+//	cli, ok := ctx.Get(Client).(service.SeatService)
+//	if !ok {
+//		return nil, fmt.Errorf("service client not found in context")
+//	}
+//
+//	_ = cli
+//
+//	ctx.Set(TripID, "D1345")
+//	return nil, nil
+//}
 
 func QueryTrip(ctx *Context) (*NodeResult, error) {
 	cli, ok := ctx.Get(Client).(*service.SvcImpl)
@@ -31,7 +31,9 @@ func QueryTrip(ctx *Context) (*NodeResult, error) {
 		EndPlace:      ctx.Get(EndStation).(string),
 		DepartureTime: ctx.Get(DepartureTime).(string),
 	}
-	queryInfoResp, err := cli.QueryInfo(tripInfo)
+
+	var travelSvc service.TravelService = cli
+	queryInfoResp, err := travelSvc.QueryInfo(tripInfo)
 	if err != nil {
 		log.Errorf("QueryInfo request failed, err %s", err)
 		return nil, err
@@ -43,14 +45,14 @@ func QueryTrip(ctx *Context) (*NodeResult, error) {
 
 	if len(queryInfoResp.Data) == 0 {
 		log.Errorf("QueryInfo response is empty")
-		return nil, errors.New("QueryInfo response is empty")
+		return &(NodeResult{false}), errors.New("QueryInfo response is empty")
 	}
 
 	randomIndex := rand.Intn(len(queryInfoResp.Data))
-	ctx.Set(TripId, fmt.Sprintf("%s%s", queryInfoResp.Data[randomIndex].TripId.Type, queryInfoResp.Data[randomIndex].TripId.Number))
+	ctx.Set(TripID, fmt.Sprintf("%s%s", queryInfoResp.Data[randomIndex].TripId.Type, queryInfoResp.Data[randomIndex].TripId.Number))
 	//ctx.Set(TrainTypeName, queryInfoResp.Data[randomIndex].TrainTypeName)
-	ctx.Set(StartStation, queryInfoResp.Data[randomIndex].StartStation)
-	ctx.Set(TerminalStation, queryInfoResp.Data[randomIndex].TerminalStation)
+	/*	ctx.Set(StartStation, queryInfoResp.Data[randomIndex].StartStation)
+		ctx.Set(TerminalStation, queryInfoResp.Data[randomIndex].TerminalStation)*/
 	ctx.Set(StartTime, queryInfoResp.Data[randomIndex].StartTime)
 	ctx.Set(EndTime, queryInfoResp.Data[randomIndex].EndTime)
 	ctx.Set(EconomyClass, queryInfoResp.Data[randomIndex].EconomyClass)
@@ -70,7 +72,7 @@ func CreateTrip(ctx *Context) (*NodeResult, error) {
 	// Mock para
 	MockedLoginId := ctx.Get(LoginToken).(string)
 	//MockedTripId := GenerateTripId()
-	MockedTripId := ctx.Get(TripId).(string)
+	MockedTripId := ctx.Get(TripID).(string)
 	//MockedTrainTypeName := generateTrainTypeName(MockedTripId) /*"GaoTieSeven"*/
 	MockedTrainTypeName := ctx.Get(TrainTypeName).(string)
 	MockedRouteID := ctx.Get(RouteID).(string)

@@ -2,11 +2,31 @@ package behaviors
 
 import (
 	"fmt"
+	"github.com/Lincyaw/loadgenerator/service"
 	"math/rand"
 	"strconv"
 	"strings"
 	"time"
 )
+
+func randomlyChoosePlaces(data []service.Place) (string, string, error) {
+	if len(data) < 2 {
+		return "", "", fmt.Errorf("not enough places to choose from")
+	}
+
+	var names []string
+	for _, place := range data {
+		names = append(names, place.Name)
+	}
+
+	rand.Seed(time.Now().UnixNano())
+	i, j := rand.Intn(len(names)), rand.Intn(len(names))
+	for i == j {
+		j = rand.Intn(len(names))
+	}
+
+	return names[i], names[j], nil
+}
 
 func getMiddleElements(input string) string {
 	elements := strings.Split(input, ",")

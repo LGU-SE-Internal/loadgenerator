@@ -33,7 +33,7 @@ func QueryTrainFood(ctx *Context) (*NodeResult, error) {
 
 	randomIndex := rand.Intn(len(resp.Data))
 	randomFoodlistIndex := rand.Intn(len(resp.Data[randomIndex].FoodList))
-	ctx.Set(TripID, resp.Data[randomIndex].TripId)
+
 	ctx.Set(FoodName, resp.Data[randomIndex].FoodList[randomFoodlistIndex].FoodName)
 	ctx.Set(FoodPrice, resp.Data[randomIndex].FoodList[randomFoodlistIndex].Price)
 

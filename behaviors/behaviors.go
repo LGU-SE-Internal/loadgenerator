@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/Lincyaw/loadgenerator/service"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"math/rand"
 	"os"
 	"os/signal"
@@ -206,7 +206,7 @@ func (l *LoadGenerator) Start(conf ...func(*Config)) {
 					n := runtime.Stack(buf, false)
 					stackTrace := string(buf[:n])
 
-					log.Printf("Recovered from panic: %v\nStack trace:\n%s", r, stackTrace)
+					log.Infof("Recovered from panic: %v\nStack trace:\n%s", r, stackTrace)
 				}
 			}()
 
@@ -215,7 +215,7 @@ func (l *LoadGenerator) Start(conf ...func(*Config)) {
 				ctx.Set(Client, service.NewSvcClients())
 				_, err := config.Chain.Execute(ctx)
 				if err != nil {
-					log.Printf("Error executing chain: %v", err)
+					log.Infof("Error executing chain: %v", err)
 				}
 				time.Sleep(time.Millisecond * time.Duration(rand.Intn(config.SleepTime)))
 			}
