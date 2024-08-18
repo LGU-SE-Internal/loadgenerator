@@ -23,6 +23,12 @@ type Station struct {
 	StayTime int    `json:"stayTime"`
 }
 
+type Place struct {
+	Id       string `json:"id"`
+	Name     string `json:"name"`
+	StayTime int    `json:"stayTime"`
+}
+
 type DeleteStationResponse struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`
@@ -32,14 +38,11 @@ type DeleteStationResponse struct {
 		StayTime int    `json:"stayTime"`
 	} `json:"data"`
 }
+
 type GetStationResponse struct {
-	Status int    `json:"status"`
-	Msg    string `json:"msg"`
-	Data   []struct {
-		Id       string `json:"id"`
-		Name     string `json:"name"`
-		StayTime int    `json:"stayTime"`
-	} `json:"data"`
+	Status int     `json:"status"`
+	Msg    string  `json:"msg"`
+	Data   []Place `json:"data"`
 }
 
 type StationCreateResponse struct {

@@ -4,7 +4,7 @@ import (
 	"github.com/Lincyaw/loadgenerator/service"
 	"github.com/go-faker/faker/v4"
 	"github.com/google/uuid"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"math/rand"
 	"strconv"
 	"time"
@@ -134,7 +134,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 			log.Fatalf("[Mock AccountID] CreateContacts.Status != 1")
 		}
 		if CreateContacts.Data.Id == "" {
-			log.Printf("Create AdminContacts Fail: %+v", CreateContacts)
+			log.Infof("Create AdminContacts Fail: %+v", CreateContacts)
 		}
 		MockedContactsID = CreateContacts.Data.Id
 	}
@@ -1088,7 +1088,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 	if result.Status != 1 {
 		log.Fatalf("[Input]Preserve Status != 1. The result Status is %v", result.Status)
 	}
-	log.Printf("preserve response: %+v", result)
+	log.Infof("preserve response: %+v", result)
 	time.Sleep(1 * time.Millisecond)
 }
 
