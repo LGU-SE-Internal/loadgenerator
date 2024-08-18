@@ -9,25 +9,18 @@ import (
 
 const (
 	// Preserve - Main
-	AccountID  = "accountId"
-	ContactsID = "contactsId"
-	TripID     = "tripId"
-	SeatType   = "seatType"
-	//LoginToken = "loginToken"
-	Date            = "date"
-	From            = "from"
-	To              = "to"
-	Assurance       = "assurance"
-	FoodType        = "foodType"
-	StationName     = "stationName"
-	StoreName       = "storeName"
-	FoodName        = "foodName"
-	FoodPrice       = "foodPrice"
-	HandleDate      = "handleDate"
-	ConsigneeName   = "consigneeName"
-	ConsigneePhone  = "consigneePhone"
-	ConsigneeWeight = "consigneeWeight"
-	IsWithin        = "isWithin"
+	AccountID   = "accountId"
+	ContactsID  = "contactsId"
+	TripID      = "tripId"
+	From        = "from"
+	To          = "to"
+	FoodType    = "foodType"
+	StationName = "stationName"
+	StoreName   = "storeName"
+	FoodName    = "foodName"
+	FoodPrice   = "foodPrice"
+	HandleDate  = "handleDate"
+	IsWithin    = "isWithin"
 
 	// Assurance
 	OrderId            = "orderId"
@@ -39,7 +32,6 @@ const (
 	BooleanVerifyCode = "booleanVerifyCode"
 
 	// User
-	UserID       = "userId"
 	UserName     = "userName"
 	Password     = "password"
 	Gender       = "gender"
@@ -48,52 +40,34 @@ const (
 	Email        = "email"
 
 	// Contacts
-	//Id = "id" - ContactsID
-	//AccountId = "accountId"
-	Name = "name"
-	//DocumentType   = "documentType"
+	Name           = "name"
 	DocumentNumber = "documentNumber"
 	PhoneNumber    = "phoneNumber"
 
 	// Consign
-	ID      = "id"
-	OrderID = "orderId"
-	//AccountID = "accountId"
-	//HandleDate = "handleDate"
+	ID         = "id"
 	TargetDate = "targetDate"
-	//From = "from"
-	//To = "to"
-	Consignee = "consignee"
-	Phone     = "phone"
-	Weight    = "weight"
-	//IsWithin = "isWithin"
-	Price = "price"
+	Consignee  = "consignee"
+	Phone      = "phone"
+	Weight     = "weight"
+	Price      = "price"
 
 	// FoodBehavior
 
 	// Trip(Travel)
-	TripId        = "tripId"
-	TrainTypeName = "trainTypeName"
-	//StartStation         = "startStation"
-	TerminalStation = "terminalStation"
-	StartTime       = "startTime"
-	EndTime         = "endTime"
-	//EconomyClass         = "economyClass"
-	//ConfortClass         = "confortClass"
+	TrainTypeName        = "trainTypeName"
+	StartTime            = "startTime"
+	EndTime              = "endTime"
 	PriceForEconomyClass = "priceForEconomyClass"
 	PriceForConfortClass = "priceForConfortClass"
 
 	// Train
-	//Id           = "id" //Train-ID needed or not?
-	//Name         = "name" //Train-Name needed or not?
-	TrainTypName = "trainTypeName"
 	ConfortClass = "confortClass"
 	AverageSpeed = "averageSpeed"
 	EconomyClass = "economyClass"
 
 	// Route
 	RouteID      = "routeId"
-	Stations     = "stations"
 	Distances    = "distances"
 	StartStation = "startStation"
 	EndStation   = "endStation"
@@ -104,26 +78,17 @@ const (
 	Description = "description"
 
 	// Order
-	//AccountId              = "accountId"
 	BoughtDate             = "boughtDate"
 	CoachNumber            = "coachNumber"
 	ContactsDocumentNumber = "contactsDocumentNumber"
-	//ContactsName           = "contactsName"
-	DifferenceMoney = "differenceMoney"
-	//DocumentType           = "documentType"
-	//From                   = "from"
-	//Id                     = "id"
-	//Price                  = "price"
-	SeatClass  = "seatClass"
-	SeatNumber = "seatNumber"
-	Status     = "status"
-	//To                     = "to"
-	TrainNumber = "trainNumber"
-	TravelDate  = "travelDate"
-	TravelTime  = "travelTime"
+	DifferenceMoney        = "differenceMoney"
+	SeatClass              = "seatClass"
+	SeatNumber             = "seatNumber"
+	Status                 = "status"
+	TrainNumber            = "trainNumber"
+	TravelDate             = "travelDate"
+	TravelTime             = "travelTime"
 
-	TrainType           = "trainType"
-	RouteId             = "routeId"
 	BasicPriceRate      = "basicPriceRate"
 	FirstClassPriceRate = "firstClassPriceRate"
 
@@ -147,8 +112,7 @@ const (
 	DepartureTime = "departureTime"
 
 	// Seat
-	SeatNo = "seatNo"
-	//StartStation = "startStation"
+	SeatNo      = "seatNo"
 	DestStation = "destStation"
 )
 
@@ -156,141 +120,141 @@ var PreserveBehaviorChain *Chain
 
 func init() {
 	// ------------------------------------- init -------------------------------------------
+	// ------------------------------------- init -------------------------------------------
 	// Main Chain
 	PreserveBehaviorChain = NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		log.Printf("PreserveBehaviors(Chain) Statrs. Starts time: %v", time.Now().String())
+		log.Infof("PreserveBehaviors(Chain) Starts. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "Dummy"))
 	// AssuranceBehaviorChain -
 	AssuranceBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		log.Printf("CreateAssuranceChain. Starts time: %v", time.Now().String())
+		log.Infof("CreateAssuranceChain. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyAssurance"))
 	// UserBehaviorsChain
 	UserBehaviorsChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		log.Printf("UserBehaviorsChain Starts. Starts time: %v", time.Now().String())
+		log.Infof("UserBehaviorsChain Starts. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyUserBehaviors"))
 	// VerifyCodeBehaviorChain
 	VerifyCodeBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		log.Printf("VerifyCodeBehaviorChain Starts. Start time: %v", time.Now().String())
+		log.Infof("VerifyCodeBehaviorChain Starts. Start time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyVerifyCodeBehavior"))
 	// AuthBehaviorChain
 	AuthBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		log.Printf("AuthBehaviorChain Starts. Start time: %v", time.Now().String())
+		log.Infof("AuthBehaviorChain Starts. Start time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyAuthBehavior"))
 	// UserBehaviorChain
 	UserBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		log.Printf("UserBehaviorChain Starts. Starts time: %v", time.Now().String())
+		log.Infof("UserBehaviorChain Starts. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyUserBehavior"))
 	// ContactsBehaviorChain
 	ContactsBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		log.Printf("ContactsBehaviorChain Starts. Starts time: %v", time.Now().String())
+		log.Infof("ContactsBehaviorChain Starts. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyContactsBehavior"))
 	// ConsignBehaviorsChain
 	ConsignBehaviorsChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		log.Printf("ConsignBehaviorsChain Starts. Starts time: %v", time.Now().String())
+		log.Infof("ConsignBehaviorsChain Starts. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyConsignBehaviors"))
 	//ConsignPriceBehaviorChain
 	ConsignPriceBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		log.Printf("ConsignPriceBehaviorChain Starts. Starts time: %v", time.Now().String())
+		log.Infof("ConsignPriceBehaviorChain Starts. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyConsignPriceBehavior"))
 	// FoodBehaviorChain
 	FoodBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		log.Printf("FoodBehaviorChain Starts. Starts time: %v", time.Now().String())
+		log.Infof("FoodBehaviorChain Starts. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyFoodBehavior"))
 	// TravelBehaviorChain
 	TravelBehaviorChain1 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		log.Printf("TravelBehaviorChain Starts. Starts time: %v", time.Now().String())
+		log.Infof("TravelBehaviorChain Starts. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyTravelBehavior"))
 	TravelBehaviorChain2 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		log.Printf("TravelBehaviorChain Starts. Starts time: %v", time.Now().String())
+		log.Infof("TravelBehaviorChain Starts. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyTravelBehavior"))
 	// StationFoodBehaviorChain
 	StationFoodBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		log.Printf("StationFoodBehaviorChain Starts. Starts time: %v", time.Now().String())
+		log.Infof("StationFoodBehaviorChain Starts. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyStationFoodBehavior"))
 	//TrainFoodBehaviorChain
 	TrainFoodBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		log.Printf("TrainFoodBehaviorChain Starts. Starts time: %v", time.Now().String())
+		log.Infof("TrainFoodBehaviorChain Starts. Starts time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyTrainFoodBehavior"))
 
 	/*	BasicBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		log.Printf("BasicBehaviorChain Starts. Start time: %v", time.Now().String())
+		log.Infof("BasicBehaviorChain Starts. Start time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyBasicBehavior"))*/
 	// SeatBehaviorChain
 	SeatBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		log.Printf("SeatBehaviorChain Starts. Start time: %v", time.Now().String())
+		log.Infof("SeatBehaviorChain Starts. Start time: %v", time.Now().String())
 		return nil, nil
 	}, "DummySeatBehavior"))
 	// StationBehaviorChain
 	StationBehaviorChain0 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		log.Printf("StationBehaviorChain Starts. Start time: %v", time.Now().String())
+		log.Infof("StationBehaviorChain Starts. Start time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyStationBehavior"))
 	StationBehaviorChain1 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		log.Printf("StationBehaviorChain Starts. Start time: %v", time.Now().String())
+		log.Infof("StationBehaviorChain Starts. Start time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyStationBehavior"))
 	StationBehaviorChain2 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		log.Printf("StationBehaviorChain Starts. Start time: %v", time.Now().String())
+		log.Infof("StationBehaviorChain Starts. Start time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyStationBehavior"))
 	StationBehaviorChain3 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		log.Printf("StationBehaviorChain Starts. Start time: %v", time.Now().String())
+		log.Infof("StationBehaviorChain Starts. Start time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyStationBehavior"))
 	//PriceBehaviorChain
 	PriceBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		log.Printf("PriceBehaviorChain Starts. Start time: %v", time.Now().String())
+		log.Infof("PriceBehaviorChain Starts. Start time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyPriceBehavior"))
 	//ConfigBehaviorChain
 	ConfigBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		log.Printf("ConfigBehaviorChain Starts. Start time: %v", time.Now().String())
+		log.Infof("ConfigBehaviorChain Starts. Start time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyConfigBehavior"))
 	//OrderBehaviorChain
 	OrderBehaviorChain1 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		log.Printf("OrderBehaviorChain Starts. Start time: %v", time.Now().String())
+		log.Infof("OrderBehaviorChain Starts. Start time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyOrderBehavior"))
 	OrderBehaviorChain2 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		log.Printf("OrderBehaviorChain Starts. Start time: %v", time.Now().String())
+		log.Infof("OrderBehaviorChain Starts. Start time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyOrderBehavior"))
 	OrderBehaviorChain3 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		log.Printf("OrderBehaviorChain Starts. Start time: %v", time.Now().String())
+		log.Infof("OrderBehaviorChain Starts. Start time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyOrderBehavior"))
 	//OrderOtherBehaviorChain
 	OrderOtherBehaviorChain1 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		log.Printf("OrderOtherBehaviorChain Starts. Strat time: %v", time.Now().String())
+		log.Infof("OrderOtherBehaviorChain Starts. Strat time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyOrderOtherBehavior"))
 	OrderOtherBehaviorChain2 := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		log.Printf("OrderOtherBehaviorChain Starts. Strat time: %v", time.Now().String())
+		log.Infof("OrderOtherBehaviorChain Starts. Strat time: %v", time.Now().String())
 		return nil, nil
 	}, "DummyOrderOtherBehavior"))
 	// SecurityBehaviorChain
 	SecurityBehaviorChain := NewChain(NewFuncNode(func(context *Context) (*NodeResult, error) {
-		log.Printf("SecurityBehaviorChain Satrts. Start time: %v", time.Now().String())
+		log.Infof("SecurityBehaviorChain Satrts. Start time: %v", time.Now().String())
 		return nil, nil
 	}, "DummySecurityBehavior"))
 
-	// ------------------------------------- NewFuncNode -------------------------------------------
 	// ------------------------------------- NewFuncNode -------------------------------------------
 	// ------------------------------------- NewFuncNode -------------------------------------------
 	//AssuranceBehaviorChain - Assurance
@@ -303,9 +267,32 @@ func init() {
 	// UserBehaviorChain
 	QueryUserNode := NewFuncNode(QueryUser, "QueryUser")
 
+	InputStartEndAndDateNode := NewFuncNode(InputStartEndAndDate, "InputStartEndAndDate")
+
+	// QueryRouteNode
+	QueryRouteByStartAndEndNode := NewFuncNode(QueryRouteByStartAndEnd, "QueryRoute")
+
+	// QueryTrainNode
+	QueryTrainNode := NewFuncNode(QueryTrain, "QueryTrain")
+
+	/*	// QueryTrainNode
+		QueryTrainNode := NewFuncNode(QueryTrain, "QueryTrain")*/
+
+	// TravelBehaviorChain & Travel2BehaviorChain
+	//QueryTripInfoNode
+	QueryTripInfoNode := NewFuncNode(QueryTripInfo, "QueryTripInfo")
+	//CreateTripNode
+	//CreateTripNode := NewFuncNode(CreateTrip, "CreateTrip")
+
+	//QuerySeatInfoNode
+	QuerySeatInfoNode := NewFuncNode(QuerySeatInfo, "QuerySeatInfo")
+
 	//ContactsBehaviorChain - Contacts
 	QueryContactsNode := NewFuncNode(QueryContacts, "QueryContacts")
 	CreateContactsNode := NewFuncNode(CreateContacts, "CreateContacts")
+
+	/*	// QueryTripIdNode
+		QueryTripIdNode := NewFuncNode(QueryTripId, "QueryTripId")*/
 
 	//ConsignBehaviorsChain
 	//QueryConsignNode := NewFuncNode(QueryConsign, "QueryConsign")
@@ -316,13 +303,12 @@ func init() {
 
 	//FoodBehaviorChain
 	QueryFoodNode := NewFuncNode(QueryFood, "QueryFood")
+
 	// StationFoodBehaviorChain
 	QueryStationFoodNode := NewFuncNode(QueryStationFood, "QueryStationFood")
+
 	// TrainFoodBehaviorChain
 	QueryTrainFoodNode := NewFuncNode(QueryTrainFood, "QueryTrainFood")
-	// TravelBehaviorChain
-	QueryTravelNode := NewFuncNode(QueryTrip, "QueryTrip")
-	//CreateTravelNode := NewFuncNode(CreateTrip, "CreateTrip")
 
 	CreateSeatNode := NewFuncNode(CreateSeat, "QuerySeat")
 
@@ -344,9 +330,10 @@ func init() {
 
 	QuerySecurityNode := NewFuncNode(QuerySecurity, "QuerySecurity")
 
-	/*	// ******* Preserve ********
-		PreserveNode := NewFuncNode(Preserve, "Preserve")*/
+	// ******* Preserve ********
+	PreserveNode := NewFuncNode(Preserve, "Preserve") // END
 
+	// ------------------------------------- NewChain -------------------------------------------
 	// ------------------------------------- NewChain -------------------------------------------
 	// AssuranceBehaviorChain - Assurance
 	QueryAssuranceChain := NewChain(QueryAssuranceNode)
@@ -375,26 +362,28 @@ func init() {
 	// TrainFoodBehaviorChain
 	QueryTrainFoodChain := NewChain(QueryTrainFoodNode)
 	// TravelBehaviorChain
-	QueryTravelChain1 := NewChain(QueryTravelNode)
-	QueryTravelChain2 := NewChain(QueryTravelNode)
+	QueryTripChain1 := NewChain(QueryTripInfoNode)
+	QueryTripChain2 := NewChain(QueryTripInfoNode)
 	//CreateTravelChain := NewChain(CreateTravelNode)
 
 	// BasicBehaviorChain
 
 	// TravelBehaviorChain
-	TravelBehaviorChain := NewChain(NewFuncNode(QueryRoute, "QueryRoute"))
-	TravelBehaviorChain.AddNode(NewFuncNode(QueryTrain, "QueryTrain"))
-	TravelBehaviorChain.AddNode(NewFuncNode(QueryTripInfo, "QueryTripInfo"))
-	TravelBehaviorChain.AddNode(NewFuncNode(QuerySeatInfo, "QuerySeat"))
-	TravelBehaviorChain.AddNode(NewFuncNode(QueryContacts, "QueryContacts"))
-	TravelBehaviorChain.AddNode(NewFuncNode(QueryTripId, "QueryContacts"))
-	TravelBehaviorChain.AddNode(NewFuncNode(QueryFood, "QueryFood"))
-	TravelBehaviorChain.AddNode(NewFuncNode(Preserve, "Preserve")) // END
+	//TravelBehaviorChain := NewChain(NewFuncNode(QueryRoute, "QueryRoute"))
+	TravelBehaviorChain := NewChain(InputStartEndAndDateNode)
+	TravelBehaviorChain.AddNode(QueryTrainNode)
+	TravelBehaviorChain.AddNode(QueryRouteByStartAndEndNode)
+	TravelBehaviorChain.AddNode(QueryTripInfoNode)
+	TravelBehaviorChain.AddNode(QuerySeatInfoNode)
+	TravelBehaviorChain.AddNode(QueryContactsNode)
+	TravelBehaviorChain.AddNode(QueryFoodNode)
+	TravelBehaviorChain.AddNode(QueryAssuranceNode)
+	TravelBehaviorChain.AddNode(PreserveNode) // END
 	//QueryBasicChain.AddNode(NewFuncNode(QueryBasic, "QueryBasic"))
 	//QueryBasicChain.AddNode(QueryPriceNode)
 
-	TravelBehaviorChain1.AddNextChain(QueryTravelChain1, 1)
-	TravelBehaviorChain2.AddNextChain(QueryTravelChain2, 1)
+	TravelBehaviorChain1.AddNextChain(QueryTripChain1, 1)
+	TravelBehaviorChain2.AddNextChain(QueryTripChain2, 1)
 
 	// SeatBehaviorChain
 	CreateSeatChain := NewChain(QueryConfigNode)
@@ -468,8 +457,6 @@ func init() {
 	//PriceBehaviorChain
 	PriceBehaviorChain.AddNextChain(QueryPriceChain, 1)
 
-	TravelBehaviorChain.AddNextChain(TravelBehaviorChain, 1)
-
 	//StationFoodBehaviorChain
 	StationFoodBehaviorChain.AddNextChain(QueryStationFoodChain, 1)
 	//TrainFoodBehaviorChain
@@ -481,13 +468,14 @@ func init() {
 
 	// &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& Main Chain &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 	// &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& Main Chain &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+	// 0. UserBehaviorChain
 	PreserveBehaviorChain.AddNextChain(UserBehaviorsChain, 1)
-	// UserBehaviorsChain
+	// TravelBehaviorChain
 	QueryUserChain.AddNextChain(TravelBehaviorChain, 1)
 
 	// ------------------------------------- VisualizeChain -------------------------------------------
 	// ------------------------------------- VisualizeChain -------------------------------------------
-	fmt.Println(PreserveBehaviorChain.VisualizeChain(0))
+	//fmt.Println(PreserveBehaviorChain.VisualizeChain(0))
 	fmt.Println()
 }
 
@@ -498,29 +486,49 @@ func Preserve(ctx *Context) (*NodeResult, error) {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 	OrderTicketsInfo := service.OrderTicketsInfo{
-		AccountID:  "4d2a46c7-71cb-4cf1-b5bb-b68406d9da6f",
-		ContactsID: "ffff5155-2d6d-43ea-a27c-da709097f22d",
-		TripID:     "D1345",
+		AccountID:  ctx.Get(AccountID).(string),
+		ContactsID: ctx.Get(ContactsID).(string),
+		TripID:     ctx.Get(TripID).(string),
 		SeatType:   ctx.Get(SeatClass).(int),
 		LoginToken: ctx.Get(LoginToken).(string),
-		Date:       "2024-08-22",
-		From:       "shanghai",
-		To:         "suzhou",
-		Assurance:  0,
-		FoodType:   1,
-		FoodName:   "Bone Soup",
-		FoodPrice:  2.5,
-		HandleDate: "2024-08-22",
+		Date:       ctx.Get(DepartureTime).(string),
+		From:       ctx.Get(StartStation).(string),
+		To:         ctx.Get(EndStation).(string),
+		Assurance:  ctx.Get(AssuranceTypeIndex).(int),
+		FoodType:   ctx.Get(FoodType).(int),
+		FoodName:   ctx.Get(FoodName).(string),
+		FoodPrice:  ctx.Get(Price).(float64),
+		HandleDate: ctx.Get(DepartureTime).(string),
 	}
-	PreserveResp, err := cli.Preserve(&OrderTicketsInfo)
-	if err != nil {
-		return nil, err
+
+	TheTrainTypeName := ctx.Get(TrainTypeName).(string)
+
+	switch TheTrainTypeName {
+	case "GaoTieOne", "GaoTieTwo", "DongCheOne": // preserve
+		var preserveSvc service.PreserveService = cli
+		PreserveResp, err := preserveSvc.Preserve(&OrderTicketsInfo)
+		if err != nil {
+			return nil, err
+		}
+		if PreserveResp.Status != 1 {
+			return nil, fmt.Errorf("preserve order tickets fail. PreserveResp.Status != 1, get %v", PreserveResp.Status)
+		}
+		log.Infof("The Status is: %v, and PreserveResp Data: %v", PreserveResp.Status, PreserveResp.Data)
+		log.Infof("[Success]PreserveBehaviors(Chain) Finished. End time: %v", time.Now().String())
+
+	default: //preserveOther
+		var preserveOtherSvc service.PreserveOtherService = cli
+		PreserveOtherResp, err := preserveOtherSvc.PreserveOther(&OrderTicketsInfo)
+		if err != nil {
+			return nil, err
+		}
+		if PreserveOtherResp.Status != 1 {
+			return nil, fmt.Errorf("preserve other order tickets fail. PreserveResp.Status != 1, get %v", PreserveOtherResp.Status)
+		}
+		log.Infof("The Status is: %v, and PreserveResp Data: %v", PreserveOtherResp.Status, PreserveOtherResp.Data)
+		log.Infof("[Success]PreserveBehaviors(Chain) Finished. End time: %v", time.Now().String())
+
 	}
-	if PreserveResp.Status != 1 {
-		return nil, fmt.Errorf("preserve order tickets fail. PreserveResp.Status != 1, get %v", PreserveResp.Status)
-	}
-	log.Errorf("The Status is: %v, and PreserveResp Data: %v\n", PreserveResp.Status, PreserveResp.Data)
-	log.Errorf("PreserveBehaviors(Chain) Ends. End time: %v", time.Now().String())
 
 	//return nil, nil
 	return &(NodeResult{false}), nil // Chain End :D

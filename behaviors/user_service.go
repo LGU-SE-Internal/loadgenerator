@@ -22,6 +22,7 @@ func QueryUser(ctx *Context) (*NodeResult, error) {
 		return nil, err
 	}
 
+	ctx.Set(AccountID, allUsersResp.Data.UserID)
 	ctx.Set(UserName, allUsersResp.Data.UserName)
 	ctx.Set(Password, allUsersResp.Data.Password)
 	ctx.Set(Gender, allUsersResp.Data.Gender)

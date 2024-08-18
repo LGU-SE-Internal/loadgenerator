@@ -36,7 +36,7 @@ func QueryBasic(ctx *Context) (*NodeResult, error) {
 		StartPlace: ctx.Get(StartStation).(string),
 		EndPlace:   ctx.Get(EndStation).(string),
 		//DepartureTime: extractDate(getRandomTime()), // 生成1小时到1天之后的时间
-		DepartureTime: getRandomTime(), // 生成1小时到1天之后的时间
+		DepartureTime: ctx.Get(DepartureTime).(string), // 生成1小时到1天之后的时间
 	}
 
 	var basicSvc service.BasicService = cli
@@ -52,11 +52,11 @@ func QueryBasic(ctx *Context) (*NodeResult, error) {
 
 	ctx.Set(Status, travel.Data.Status)
 	ctx.Set(Percent, travel.Data.Percent)
-	ctx.Set(TrainType, travel.Data.TrainType)
+	//ctx.Set(TrainTypeName, travel.Data.TrainType)
 	ctx.Set(Route, travel.Data.Route)
 	ctx.Set(Prices, travel.Data.Prices)
 	//
-	ctx.Set(DepartureTime, travelQuery.DepartureTime)
+	//ctx.Set(DepartureTime, travelQuery.DepartureTime)
 	ctx.Set(TrainTypeName, travelQuery.Trip.TrainTypeName)
 
 	return nil, nil

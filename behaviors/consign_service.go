@@ -28,7 +28,7 @@ func QueryConsign(ctx *Context) (*NodeResult, error) {
 
 	ctx.Set(ID, consignsByOrderId.Data.Id)
 	ctx.Set(OrderId, consignsByOrderId.Data.OrderId)
-	ctx.Set(AccountID, consignsByOrderId.Data.AccountId)
+	//ctx.Set(AccountID, consignsByOrderId.Data.AccountId)
 	ctx.Set(HandleDate, consignsByOrderId.Data.HandleDate)
 	ctx.Set(TargetDate, consignsByOrderId.Data.TargetDate)
 	ctx.Set(From, consignsByOrderId.Data.From)

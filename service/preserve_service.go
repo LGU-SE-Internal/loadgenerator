@@ -37,9 +37,9 @@ type OrderTicketsInfo struct {
 
 // PreserveResponse represents the response structure for a preserve request
 type PreserveResponse struct {
-	Status int         `json:"status"`
-	Msg    string      `json:"msg"`
-	Data   interface{} `json:"data"`
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   string `json:"data"`
 }
 
 func (s *SvcImpl) Preserve(orderTicketsInfo *OrderTicketsInfo) (*PreserveResponse, error) {

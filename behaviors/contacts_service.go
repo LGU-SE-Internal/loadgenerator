@@ -28,7 +28,7 @@ func QueryContacts(ctx *Context) (*NodeResult, error) {
 	}
 
 	randomIndex := rand.Intn(len(GetAllContacts.Data))
-	ctx.Set(AccountID, GetAllContacts.Data[randomIndex].AccountId)
+	//ctx.Set(AccountID, GetAllContacts.Data[randomIndex].AccountId)
 	ctx.Set(ContactsID, GetAllContacts.Data[randomIndex].Id)
 	ctx.Set(Name, GetAllContacts.Data[randomIndex].Name)
 	ctx.Set(DocumentType, GetAllContacts.Data[randomIndex].DocumentType)
@@ -62,7 +62,7 @@ func CreateContacts(ctx *Context) (*NodeResult, error) {
 		return nil, err
 	}
 
-	ctx.Set(AccountID, CreateContacts.Data.AccountId)
+	//ctx.Set(AccountID, CreateContacts.Data.AccountId)
 	ctx.Set(ContactsID, CreateContacts.Data.Id)
 	ctx.Set(Name, CreateContacts.Data.Name)
 	ctx.Set(DocumentType, CreateContacts.Data.DocumentType)

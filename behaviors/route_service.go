@@ -7,30 +7,31 @@ import (
 	"math/rand"
 )
 
-func QueryRoute(ctx *Context) (*NodeResult, error) {
+func QueryRouteByStartAndEnd(ctx *Context) (*NodeResult, error) {
 	cli, ok := ctx.Get(Client).(*service.SvcImpl)
 	if !ok {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
-	AllRoutesByQuery, err := cli.QueryAllRoutes()
+	TheStart := ctx.Get(StartStation).(string)
+	TheEnd := ctx.Get(EndStation).(string)
+	var routeSvc service.RouteService = cli
+	AllRoutesByQueryStartAndEnd, err := routeSvc.QueryRoutesByStartAndEnd(TheStart, TheEnd)
 	if err != nil {
-		log.Errorf("Request failed, err2 %s", err)
+		log.Errorf("Request failed, err %s", err)
 		return nil, err
 	}
-	if AllRoutesByQuery.Status != 1 {
-		log.Fatal("AllRoutes_By_Query.Status != 1")
-		return nil, err
+	if AllRoutesByQueryStartAndEnd.Status != 1 { // With Prob = (156-10) / 156 approximately equivalent to 94%
+		log.Infof("[Please Try other Start-End pair] Can not find the Start-End pair. AllRoutes_By_Query.Status != 1, but =: %v", AllRoutesByQueryStartAndEnd.Status)
+		return &(NodeResult{false}), err // immediately end
 	}
 
-	randomIndex := rand.Intn(len(AllRoutesByQuery.Data))
-	debug := AllRoutesByQuery.Data[randomIndex]
-	fmt.Println(debug)
-	ctx.Set(RouteID, AllRoutesByQuery.Data[randomIndex].Id)
-	ctx.Set(StartStation, AllRoutesByQuery.Data[randomIndex].StartStation)
-	ctx.Set(EndStation, AllRoutesByQuery.Data[randomIndex].EndStation)
-	ctx.Set(StationName, AllRoutesByQuery.Data[randomIndex].Stations)
-	ctx.Set(Distances, AllRoutesByQuery.Data[randomIndex].Distances)
+	randomIndex := rand.Intn(len(AllRoutesByQueryStartAndEnd.Data))
+	ctx.Set(RouteID, AllRoutesByQueryStartAndEnd.Data[randomIndex].Id)
+	/*	ctx.Set(StartStation, AllRoutesByQueryStartAndEnd.Data[randomIndex].StartStation)
+		ctx.Set(EndStation, AllRoutesByQueryStartAndEnd.Data[randomIndex].EndStation)*/
+	ctx.Set(StationName, AllRoutesByQueryStartAndEnd.Data[randomIndex].Stations)
+	ctx.Set(Distances, AllRoutesByQueryStartAndEnd.Data[randomIndex].Distances)
 
 	return nil, nil
 }
