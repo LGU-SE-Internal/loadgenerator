@@ -40,7 +40,11 @@ func (c *Context) Set(key string, value interface{}) {
 // Get retrieves a value from the context
 func (c *Context) Get(key string) interface{} {
 	data := c.getDataMap()
-	return data[key]
+	value, ok := data[key]
+	if !ok {
+		log.Errorf("There is no value for key %s", key)
+	}
+	return value
 }
 
 func (c *Context) getDataMap() map[string]interface{} {
