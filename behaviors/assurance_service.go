@@ -7,7 +7,6 @@ import (
 	"math/rand"
 )
 
-// AssuranceBehaviorChain
 func QueryAssurance(ctx *Context) (*NodeResult, error) {
 	cli, ok := ctx.Get(Client).(*service.SvcImpl)
 	if !ok {

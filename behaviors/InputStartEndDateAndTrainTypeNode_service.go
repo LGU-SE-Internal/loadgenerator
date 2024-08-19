@@ -24,12 +24,10 @@ func InputStartEndAndDate(ctx *Context) (*NodeResult, error) {
 
 	TheStartStationName, TheEndStationName, _ := randomlyChoosePlaces(QueryAll.Data)
 	TheDepartureTime := extractDate(getRandomTime())
-	//TheTrainTypeName :=
 
 	ctx.Set(StartStation, TheStartStationName)
 	ctx.Set(EndStation, TheEndStationName)
 	ctx.Set(DepartureTime, TheDepartureTime)
-	//ctx.Set(TrainTypeName, TheTrainTypeName)
 
 	return nil, nil
 }
