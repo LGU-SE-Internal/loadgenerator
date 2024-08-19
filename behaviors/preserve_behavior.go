@@ -154,6 +154,5 @@ func Preserve(ctx *Context) (*NodeResult, error) {
 
 	}
 
-	//return nil, nil
 	return &(NodeResult{false}), nil // Chain End :D
 }
