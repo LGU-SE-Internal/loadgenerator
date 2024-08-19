@@ -22,7 +22,7 @@ func QueryRouteByStartAndEnd(ctx *Context) (*NodeResult, error) {
 		return nil, err
 	}
 	if AllRoutesByQueryStartAndEnd.Status != 1 { // With Prob = (156-10) / 156 approximately equivalent to 94%
-		log.Infof("[Please Try other Start-End pair] Can not find the Start-End pair. AllRoutes_By_Query.Status != 1, but =: %v", AllRoutesByQueryStartAndEnd.Status)
+		log.Infof("Can not find the Start-End pair, query parameter, start:[%s], end[%s]", TheStart, TheEnd)
 		return &(NodeResult{false}), err // immediately end
 	}
 

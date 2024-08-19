@@ -23,7 +23,6 @@ func VerifyCode(ctx *Context) (*NodeResult, error) {
 		log.Errorf("Verification failed")
 		return nil, err
 	}
-	//log.Errorf("Verification code verified. The result is %v and verifyCode: %v", verifyCodeResp, verifyCode)
 
 	ctx.Set(BooleanVerifyCode, verifyCodeResp)
 
