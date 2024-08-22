@@ -104,6 +104,7 @@ func init() {
 }
 
 // Preserve Behaviors Function
+
 func Preserve(ctx *Context) (*NodeResult, error) {
 	cli, ok := ctx.Get(Client).(*service.SvcImpl)
 	if !ok {
