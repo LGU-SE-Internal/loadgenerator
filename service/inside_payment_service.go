@@ -7,6 +7,17 @@ import (
 	"io"
 )
 
+type InsidePaymentService interface {
+	ReqPay_InsidePayment(input *TripPayment) (*TripPaymentResponse, error)
+	ReqCreateAccount(input *AccountInfo) (*TripPaymentResponse, error)
+	ReqPayDifference(input *TripPayment) (*TripPaymentResponse, error)
+	ReqQueryAccount() (*TripPaymentArrResponse, error)
+	ReqDrawBack(userId string, money string) (*MoneyResponse, error)
+	ReqQueryAddMoney() (*MoneyResponse, error)
+	ReqQueryInsidePayment() (*TripPaymentArrResponse, error)
+	ReqAddMoney_Inside(userId string, money string) (*TripPaymentResponse, error)
+}
+
 func (s *SvcImpl) ReqPay_InsidePayment(input *TripPayment) (*TripPaymentResponse, error) {
 	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/inside_pay_service/inside_payment", input)
 	if err != nil {

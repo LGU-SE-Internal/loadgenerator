@@ -152,7 +152,7 @@ func TestSvcImpl_ReqGetOrderPrice_Other(t *testing.T) {
 
 func TestSvcImpl_ReqQueryOrders_Other(t *testing.T) {
 	cli, _ := GetAdminClient()
-	Resp, err := cli.ReqQueryOrdersOther(&Qi{
+	Resp, err := cli.ReqQueryOrdersOther(&OrderInfo{
 		BoughtDateEnd:         faker.Date(),
 		BoughtDateStart:       faker.Date(),
 		EnableBoughtDateQuery: true,
@@ -172,7 +172,7 @@ func TestSvcImpl_ReqQueryOrders_Other(t *testing.T) {
 
 func TestSvcImpl_ReqQueryOrderForRefresh_Other(t *testing.T) {
 	cli, _ := GetAdminClient()
-	Resp, err := cli.ReqQueryOrderForRefreshOther(&Qi{
+	Resp, err := cli.ReqQueryOrderForRefreshOther(&OrderInfo{
 		BoughtDateEnd:         faker.Date(),
 		BoughtDateStart:       faker.Date(),
 		EnableBoughtDateQuery: true,
@@ -388,7 +388,7 @@ func TestSvcImpl_End2End_OrderOtherService_another(t *testing.T) {
 	prevBDay, nextBDay, err := getAdjacentDates(randomOrder.BoughtDate)
 	prevTDay, nextTDay, err := getAdjacentDates(randomOrder.TravelDate)
 
-	Resp6, err := orderSvc.ReqQueryOrdersOther(&Qi{
+	Resp6, err := orderSvc.ReqQueryOrdersOther(&OrderInfo{
 		BoughtDateEnd:         nextBDay,
 		BoughtDateStart:       prevBDay,
 		EnableBoughtDateQuery: true,
@@ -443,7 +443,7 @@ func TestSvcImpl_End2End_OrderOtherService_another(t *testing.T) {
 	prevBDay, nextBDay, err = getAdjacentDates(randomOrder.BoughtDate)
 	prevTDay, nextTDay, err = getAdjacentDates(randomOrder.TravelDate)
 
-	Resp9, _ := orderSvc.ReqQueryOrderForRefreshOther(&Qi{
+	Resp9, _ := orderSvc.ReqQueryOrderForRefreshOther(&OrderInfo{
 		BoughtDateEnd:         nextBDay,
 		BoughtDateStart:       prevBDay,
 		EnableBoughtDateQuery: true,
