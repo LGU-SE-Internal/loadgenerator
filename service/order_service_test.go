@@ -140,7 +140,7 @@ func TestSvcImpl_End2End_OrderService_another(t *testing.T) {
 	prevBDay, nextBDay, err := getAdjacentDates(randomOrder.BoughtDate)
 	prevTDay, nextTDay, err := getAdjacentDates(randomOrder.TravelDate)
 
-	Resp6, err := orderSvc.ReqQueryOrders(&Qi{
+	Resp6, err := orderSvc.ReqQueryOrders(&OrderInfo{
 		BoughtDateEnd:         nextBDay,
 		BoughtDateStart:       prevBDay,
 		EnableBoughtDateQuery: true,
@@ -195,7 +195,7 @@ func TestSvcImpl_End2End_OrderService_another(t *testing.T) {
 	prevBDay, nextBDay, err = getAdjacentDates(randomOrder.BoughtDate)
 	prevTDay, nextTDay, err = getAdjacentDates(randomOrder.TravelDate)
 
-	Resp9, _ := orderSvc.ReqQueryOrderForRefresh(&Qi{
+	orderInfo := OrderInfo{
 		BoughtDateEnd:         nextBDay,
 		BoughtDateStart:       prevBDay,
 		EnableBoughtDateQuery: true,
@@ -205,7 +205,9 @@ func TestSvcImpl_End2End_OrderService_another(t *testing.T) {
 		State:                 0,
 		TravelDateEnd:         nextTDay,
 		TravelDateStart:       prevTDay,
-	})
+	}
+
+	Resp9, _ := orderSvc.ReqQueryOrderForRefresh(&orderInfo)
 	if err != nil {
 		t.Errorf("Request failed, err %s", err)
 		t.Skip()
