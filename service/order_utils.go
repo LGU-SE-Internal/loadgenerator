@@ -215,12 +215,13 @@ type GetOrderPriceResp struct {
 }
 
 type OrderArrResp struct {
-	Status int     `json:"status"`
-	Msg    string  `json:"msg"`
-	Data   []Order `json:"data"`
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	//Data   []Order `json:"data"`
+	Data []Order `json:"data"`
 }
 
-type Qi struct {
+type OrderInfo struct {
 	BoughtDateEnd         string `json:"boughtDateEnd"`
 	BoughtDateStart       string `json:"boughtDateStart"`
 	EnableBoughtDateQuery bool   `json:"enableBoughtDateQuery"`

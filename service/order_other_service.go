@@ -16,8 +16,8 @@ type OrderOtherService interface {
 	ReqUpdateOrderOrderServiceOther(input *Order) (*OrderResp, error)
 	ReqPayOrderOther(orderId string) (*OrderResp, error)
 	ReqGetOrderPriceOther(orderId string) (*GetOrderPriceResp, error)
-	ReqQueryOrdersOther(input *Qi) (*OrderArrResp, error)
-	ReqQueryOrderForRefreshOther(input *Qi) (*OrderArrResp, error)
+	ReqQueryOrdersOther(input *OrderInfo) (*OrderArrResp, error)
+	ReqQueryOrderForRefreshOther(input *OrderInfo) (*OrderArrResp, error)
 	ReqSecurityInfoCheckOther(checkDate string, accountId string) (*OrderSecurityResp, error)
 	ReqModifyOrderOther(orderId string, status int) (*OrderResp, error)
 	ReqGetTicketsListOther(input *Seat) (*TicketResp, error)
@@ -152,7 +152,7 @@ func (s *SvcImpl) ReqGetOrderPriceOther(orderId string) (*GetOrderPriceResp, err
 	return &result, nil
 }
 
-func (s *SvcImpl) ReqQueryOrdersOther(input *Qi) (*OrderArrResp, error) {
+func (s *SvcImpl) ReqQueryOrdersOther(input *OrderInfo) (*OrderArrResp, error) {
 	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/orderOtherService/orderOther/query", input)
 	if err != nil {
 		return nil, err
@@ -170,7 +170,7 @@ func (s *SvcImpl) ReqQueryOrdersOther(input *Qi) (*OrderArrResp, error) {
 	return &result, nil
 }
 
-func (s *SvcImpl) ReqQueryOrderForRefreshOther(input *Qi) (*OrderArrResp, error) {
+func (s *SvcImpl) ReqQueryOrderForRefreshOther(input *OrderInfo) (*OrderArrResp, error) {
 	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/orderOtherService/orderOther/refresh", input)
 	if err != nil {
 		return nil, err
