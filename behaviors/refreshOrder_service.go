@@ -7,6 +7,10 @@ import (
 	"math/rand"
 )
 
+const (
+	State = "state"
+)
+
 func RefreshOrder(ctx *Context) (*NodeResult, error) {
 	cli, ok := ctx.Get(Client).(*service.SvcImpl)
 	if !ok {
@@ -36,8 +40,20 @@ func RefreshOrder(ctx *Context) (*NodeResult, error) {
 		return nil, err
 	}
 
+	orderOtherInfo := service.OrderInfo{
+		BoughtDateEnd:         "",
+		BoughtDateStart:       "",
+		EnableBoughtDateQuery: false,
+		EnableStateQuery:      true,
+		EnableTravelDateQuery: false,
+		LoginId:               ctx.Get(AccountID).(string),
+		State:                 1,
+		TravelDateEnd:         "",
+		TravelDateStart:       "",
+	}
+
 	var orderOtherSvc service.OrderOtherService = cli
-	RefreshOtherResp, errOther := orderOtherSvc.ReqQueryOrderForRefreshOther(&orderInfo)
+	RefreshOtherResp, errOther := orderOtherSvc.ReqQueryOrderForRefreshOther(&orderOtherInfo)
 	if errOther != nil {
 		log.Errorf("Refresh Other Order Request failed, errOther %s", errOther)
 		return nil, errOther
@@ -48,17 +64,17 @@ func RefreshOrder(ctx *Context) (*NodeResult, error) {
 	}
 
 	var randomIndex int
-	if rand.Intn(2) == 0 {
-		randomIndex = rand.Intn(len(RefreshResp.Data))
-		ctx.Set(TrainNumber, RefreshResp.Data[randomIndex].TrainNumber)
-		ctx.Set(Price, RefreshResp.Data[randomIndex].Price)
-		ctx.Set(OrderId, RefreshResp.Data[randomIndex].Id) // ID here is exactly the OrderId
-	} else {
-		randomIndex = rand.Intn(len(RefreshOtherResp.Data))
-		ctx.Set(TrainNumber, RefreshOtherResp.Data[randomIndex].TrainNumber)
-		ctx.Set(Price, RefreshOtherResp.Data[randomIndex].Price)
-		ctx.Set(OrderId, RefreshOtherResp.Data[randomIndex].Id)
-	}
+	//if rand.Intn(2) == 0 {
+	randomIndex = rand.Intn(len(RefreshResp.Data))
+	ctx.Set(TrainNumber, RefreshResp.Data[randomIndex].TrainNumber)
+	ctx.Set(Price, RefreshResp.Data[randomIndex].Price)
+	ctx.Set(OrderId, RefreshResp.Data[randomIndex].Id) // ID here is exactly the OrderId
+	//} else {
+	//	randomIndex = rand.Intn(len(RefreshOtherResp.Data))
+	//	ctx.Set(TrainNumber, RefreshOtherResp.Data[randomIndex].TrainNumber)
+	//	ctx.Set(Price, RefreshOtherResp.Data[randomIndex].Price)
+	//	ctx.Set(OrderId, RefreshOtherResp.Data[randomIndex].Id)
+	//}
 
 	return nil, nil
 }
