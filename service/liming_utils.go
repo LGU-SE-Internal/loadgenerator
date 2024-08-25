@@ -87,9 +87,15 @@ type TripPayment struct {
 }
 
 type TripPaymentResponse struct {
-	Status int         `json:"status"`
-	Msg    string      `json:"msg"`
-	Data   TripPayment `json:"data"`
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   struct {
+		Id      string `json:"id"`
+		OrderId string `json:"orderId"`
+		UserId  string `json:"userId"`
+		Price   string `json:"price"`
+		Type    string `json:"type"`
+	} `json:"data"`
 }
 
 type TripPaymentArrResponse struct {
