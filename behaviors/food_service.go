@@ -1,43 +1,51 @@
 package behaviors
 
 import (
+	"errors"
 	"fmt"
 	"github.com/Lincyaw/loadgenerator/service"
 	"github.com/go-faker/faker/v4"
 	log "github.com/sirupsen/logrus"
 	"math/rand"
+	"time"
 )
 
 // FoodBehaviorChain
 func QueryFood(ctx *Context) (*NodeResult, error) {
-	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+	cli, ok := ctx.Get(Client).(service.FoodService)
 	if !ok {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
 	// QueryTraintype all
-	allFoodOrders, err := cli.FindAllFoodOrder()
+	allFood, err := cli.GetAllFood(time.Now().Format("2006-01-02"), ctx.Get(StartStation).(string), ctx.Get(EndStation).(string), ctx.Get(TripID).(string))
 	if err != nil {
 		log.Errorf("FindAllFoodOrder request failed, err %s", err)
-		return nil, err
-	}
-	if len(allFoodOrders.Data) == 0 {
-		log.Errorf("FindAllFoodOrder returned empty results")
-		return nil, err
-	}
-	if allFoodOrders.Status != 1 {
-		log.Errorf("FindAllFoodOrder failed: %v", allFoodOrders.Status)
-		return nil, err
+		return &NodeResult{false}, err
 	}
 
-	randomIndex := rand.Intn(len(allFoodOrders.Data))
-	//ctx.Set(OrderId, allFoodOrders.Data[randomIndex].OrderId)
-	ctx.Set(FoodType, allFoodOrders.Data[randomIndex].FoodType)
-	//ctx.Set(StationName, allFoodOrders.Data[randomIndex].StationName)
-	ctx.Set(StoreName, allFoodOrders.Data[randomIndex].StoreName)
-	ctx.Set(FoodName, allFoodOrders.Data[randomIndex].FoodName)
-	ctx.Set(Price, allFoodOrders.Data[randomIndex].Price)
+	if allFood.Status != 1 {
+		log.Errorf("Get all food order request, %+v, parameters: date[%v] startstation[%v] endstation[%v] tripid[%v]", allFood, time.Now().Format("2006-01-02"), ctx.Get(StartStation).(string), ctx.Get(EndStation).(string), ctx.Get(TripID).(string))
+		return &NodeResult{false}, errors.New("food service responded with status error")
+	}
+	foodType := rand.Int()%2 + 1 // service 代码内部 hardcode 了1 是 train food，2 是food store
+	switch foodType {
+	case 1:
+		idx := rand.Intn(len(allFood.Data.TrainFoodList))
+		ctx.Set(FoodName, allFood.Data.TrainFoodList[idx].FoodName)
+		ctx.Set(Price, allFood.Data.TrainFoodList[idx].Price)
+	case 2:
+		for _, v := range allFood.Data.FoodStoreListMap {
+			if len(v) != 0 {
+				idx := rand.Intn(len(v))
+				ctx.Set(StoreName, v[idx].StoreName)
+				ctx.Set(FoodName, v[idx].FoodList[rand.Intn(len(v[idx].FoodList))].FoodName)
+				ctx.Set(Price, v[idx].FoodList[rand.Intn(len(v[idx].FoodList))].Price)
+			}
+		}
 
+	}
+	ctx.Set(FoodType, foodType)
 	return nil, nil
 }
 

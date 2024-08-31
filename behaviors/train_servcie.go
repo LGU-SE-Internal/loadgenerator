@@ -30,9 +30,6 @@ func QueryTrain(ctx *Context) (*NodeResult, error) {
 	}
 	randomIndex := rand.Intn(len(allTrainTypes.Data))
 	ctx.Set(TrainTypeName, allTrainTypes.Data[randomIndex].Name)
-	ctx.Set(ConfortClass, allTrainTypes.Data[randomIndex].ConfortClass)
-	ctx.Set(AverageSpeed, allTrainTypes.Data[randomIndex].AverageSpeed)
-	ctx.Set(EconomyClass, allTrainTypes.Data[randomIndex].EconomyClass)
 
 	return nil, nil
 }
