@@ -40,7 +40,8 @@ func OrderPay(ctx *Context) (*NodeResult, error) {
 	if InsidePaymentResp.Status != 1 {
 		return nil, fmt.Errorf("pay order tickets fail. InsidePaymentResp.Status != 1, get %v", InsidePaymentResp.Status)
 	}
-	log.Infof("The Status is: %v, and InsidePaymentResp Data: %v", InsidePaymentResp.Status, InsidePaymentResp.Data)
+	log.Infof("[Success]The Status is: %v, and InsidePaymentResp Data: %v", InsidePaymentResp.Status, InsidePaymentResp.Data)
 
-	return &(NodeResult{false}), nil // Chain End :D
+	//return &(NodeResult{false}), nil // Chain End :D
+	return nil, nil
 }
