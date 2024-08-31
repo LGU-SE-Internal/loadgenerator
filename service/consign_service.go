@@ -36,10 +36,28 @@ type ConsignResponse struct {
 	Data   Consign `json:"data"`
 }
 
-type AllConsignResponse struct {
+/*type AllConsignResponse struct {
 	Status int       `json:"status"`
 	Msg    string    `json:"msg"`
 	Data   []Consign `json:"data"`
+}*/
+
+type AllConsignResponse struct {
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   []struct {
+		Id         string  `json:"id"`
+		OrderId    string  `json:"orderId"`
+		AccountId  string  `json:"accountId"`
+		HandleDate string  `json:"handleDate"`
+		TargetDate string  `json:"targetDate"`
+		From       string  `json:"from"`
+		To         string  `json:"to"`
+		Consignee  string  `json:"consignee"`
+		Phone      string  `json:"phone"`
+		Weight     float64 `json:"weight"`
+		Price      float64 `json:"price"`
+	} `json:"data"`
 }
 
 func (s *SvcImpl) InsertConsignRecord(consign *Consign) (*ConsignResponse, error) {

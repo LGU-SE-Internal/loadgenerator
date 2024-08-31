@@ -851,7 +851,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 			log.Fatalf("[MockedHandleDate]GetAllConsignByAccountId Status != 1")
 		}
 
-		if len(GetAllConsignByAccountId.Data) == 0 || GetAllConsignByAccountId.Data[len(GetAllConsignByAccountId.Data)-1].AccountID == "" {
+		if len(GetAllConsignByAccountId.Data) == 0 || GetAllConsignByAccountId.Data[len(GetAllConsignByAccountId.Data)-1].AccountId == "" {
 			log.Fatalf("MockedHandleDate Fails. Consign Data: %v, account id: %v\n", GetAllConsignByAccountId.Data, MockedAccountID)
 		}
 
@@ -912,7 +912,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 			log.Fatalf("[MockedConsigneeName]GetAllConsignByAccountId Status != 1")
 		}
 
-		if GetAllConsignByAccountId.Data[len(GetAllConsignByAccountId.Data)-1].AccountID == "" {
+		if GetAllConsignByAccountId.Data[len(GetAllConsignByAccountId.Data)-1].AccountId == "" {
 			log.Fatalf("MockedConsigneeName Fails. The AccountID = '' ")
 		}
 
@@ -973,7 +973,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 			log.Fatalf("[MockedConsigneePhone]GetAllConsignByAccountId Status != 1")
 		}
 
-		if GetAllConsignByAccountId.Data[len(GetAllConsignByAccountId.Data)-1].AccountID == "" {
+		if GetAllConsignByAccountId.Data[len(GetAllConsignByAccountId.Data)-1].AccountId == "" {
 			log.Fatalf("MockedConsigneePhone Fails. The AccountID = '' ")
 		}
 
@@ -1035,7 +1035,7 @@ func (o *PreserveBehavior) Run(cli *service.SvcImpl) {
 			log.Fatalf("[MockedConsigneePhone]GetAllConsignByAccountId Status != 1")
 		}
 
-		if GetAllConsignByAccountId.Data[len(GetAllConsignByAccountId.Data)-1].AccountID == "" {
+		if GetAllConsignByAccountId.Data[len(GetAllConsignByAccountId.Data)-1].AccountId == "" {
 			log.Fatalf("MockedConsigneeWeight fails. The AccountID = '' ")
 		}
 
