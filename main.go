@@ -8,5 +8,5 @@ import (
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	lg := &behaviors.LoadGenerator{}
-	lg.Start(behaviors.WithThread(1), behaviors.WithSleep(1000), behaviors.WithChain(behaviors.NormalOrderPayChain))
+	lg.Start(behaviors.WithThread(1), behaviors.WithSleep(1000), behaviors.WithChain(behaviors.ConsignListChain))
 }
