@@ -9,18 +9,6 @@ import (
 	"strings"
 )
 
-//func QueryTripId(ctx *Context) (*NodeResult, error) {
-//	cli, ok := ctx.Get(Client).(service.SeatService)
-//	if !ok {
-//		return nil, fmt.Errorf("service client not found in context")
-//	}
-//
-//	_ = cli
-//
-//	ctx.Set(TripID, "D1345")
-//	return nil, nil
-//}
-
 func QueryTrip(ctx *Context) (*NodeResult, error) {
 	cli, ok := ctx.Get(Client).(*service.SvcImpl)
 	if !ok {
