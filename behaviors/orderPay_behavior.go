@@ -44,5 +44,6 @@ func OrderPay(ctx *Context) (*NodeResult, error) {
 	}
 	log.Infof("[Success]The Status is: %v, and InsidePaymentResp Data: %v", InsidePaymentResp.Status, InsidePaymentResp.Data)
 
-	return &(NodeResult{false}), nil // Chain End :D
+	//return &(NodeResult{false}), nil // Chain End :D
+	return nil, nil
 }
