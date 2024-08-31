@@ -8,26 +8,25 @@ import (
 )
 
 func QueryAssurance(ctx *Context) (*NodeResult, error) {
-	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+	cli, ok := ctx.Get(Client).(service.AssuranceService)
 	if !ok {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
-	Assurances, err := cli.GetAllAssurances()
+	Assurances, err := cli.GetAllAssuranceTypes()
 	if err != nil {
 		log.Errorf("GetAllAssurances failed: %v", err)
 		return nil, err
 	}
 	if Assurances.Status != 1 {
-		log.Errorf("Assurances status is not 1: %+v", Assurances)
-		return nil, nil
+		log.Errorf("Assurances status is not 1: %+v, early exiting", Assurances)
+		return &NodeResult{Continue: false}, nil
 	}
 
 	randomIndex := rand.Intn(len(Assurances.Data))
-	ctx.Set(OrderId, Assurances.Data[randomIndex].OrderId)
-	ctx.Set(AssuranceTypeIndex, Assurances.Data[randomIndex].TypeIndex)
-	ctx.Set(AssuranceTypeName, Assurances.Data[randomIndex].TypeName)
-	ctx.Set(AssuranceTypePrice, Assurances.Data[randomIndex].TypePrice)
+	ctx.Set(AssuranceTypeIndex, Assurances.Data[randomIndex].Index)
+	ctx.Set(AssuranceTypeName, Assurances.Data[randomIndex].Name)
+	ctx.Set(AssuranceTypePrice, Assurances.Data[randomIndex].Price)
 
 	return nil, nil
 }

@@ -35,3 +35,31 @@ func QueryRouteByStartAndEnd(ctx *Context) (*NodeResult, error) {
 
 	return nil, nil
 }
+
+func ChooseRoute(ctx *Context) (*NodeResult, error) {
+	cli, ok := ctx.Get(Client).(*service.SvcImpl)
+	if !ok {
+		return nil, fmt.Errorf("service client not found in context")
+	}
+
+	var routeSvc service.RouteService = cli
+	allRoutes, err := routeSvc.QueryAllRoutes()
+	if err != nil {
+		log.Errorf("Request failed, err %s", err)
+		return nil, err
+	}
+	if allRoutes.Status != 1 {
+		log.Errorf("queryAllRoutes failed, data: %+v", allRoutes)
+		return &(NodeResult{false}), err
+	}
+
+	randomIndex := rand.Intn(len(allRoutes.Data))
+	TheDepartureTime := extractDate(getRandomTime())
+	ctx.Set(RouteID, allRoutes.Data[randomIndex].Id)
+	ctx.Set(StartStation, allRoutes.Data[randomIndex].StartStation)
+	ctx.Set(EndStation, allRoutes.Data[randomIndex].EndStation)
+	ctx.Set(DepartureTime, TheDepartureTime)
+	ctx.Set(StationName, allRoutes.Data[randomIndex].Stations)
+	ctx.Set(Distances, allRoutes.Data[randomIndex].Distances)
+	return nil, nil
+}

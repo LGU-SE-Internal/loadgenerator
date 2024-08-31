@@ -64,6 +64,10 @@ func RefreshOrder(ctx *Context) (*NodeResult, error) {
 	}
 
 	var randomIndex int
+	if len(RefreshResp.Data) == 0 {
+		log.Errorf("Unpaied order is empty")
+		return &NodeResult{Continue: false}, nil
+	}
 	//if rand.Intn(2) == 0 {
 	randomIndex = rand.Intn(len(RefreshResp.Data))
 	ctx.Set(TrainNumber, RefreshResp.Data[randomIndex].TrainNumber)

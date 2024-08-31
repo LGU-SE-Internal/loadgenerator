@@ -6,8 +6,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-const ()
-
 var NormalOrderPayChain *Chain
 
 func init() {

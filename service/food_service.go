@@ -27,6 +27,28 @@ type FoodOrder struct {
 	FoodName    string  `json:"foodName"`
 	Price       float64 `json:"price"`
 }
+type GetAllFoodResponse struct {
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   struct {
+		TrainFoodList []struct {
+			FoodName string  `json:"foodName"`
+			Price    float64 `json:"price"`
+		} `json:"trainFoodList"`
+		FoodStoreListMap map[string][]struct {
+			Id           string  `json:"id"`
+			StationName  string  `json:"stationName"`
+			StoreName    string  `json:"storeName"`
+			Telephone    string  `json:"telephone"`
+			BusinessTime string  `json:"businessTime"`
+			DeliveryFee  float64 `json:"deliveryFee"`
+			FoodList     []struct {
+				FoodName string  `json:"foodName"`
+				Price    float64 `json:"price"`
+			} `json:"foodList"`
+		} `json:"foodStoreListMap"`
+	} `json:"data"`
+}
 
 type CreateFoodOrderResp struct {
 	Status int    `json:"status"`
@@ -200,12 +222,6 @@ func (s *SvcImpl) FindByOrderId(orderID string) (*FindByOrderIdResponse, error) 
 		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 	return &result, nil
-}
-
-type GetAllFoodResponse struct {
-	Status int         `json:"status"`
-	Msg    string      `json:"msg"`
-	Data   interface{} `json:"data"`
 }
 
 func (s *SvcImpl) GetAllFood(date string, startStation string, endStation string, tripID string) (*GetAllFoodResponse, error) {

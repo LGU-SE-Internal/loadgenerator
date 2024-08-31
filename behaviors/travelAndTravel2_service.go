@@ -22,32 +22,21 @@ func QueryTripInfo(ctx *Context) (*NodeResult, error) {
 		DepartureTime: ctx.Get(DepartureTime).(string),
 	}
 
-	//var queryInfoResp service.QueryInfoResponse
-
 	switch TheTrainTypeName {
 	case "GaoTieOne", "GaoTieTwo", "DongCheOne": // travel
-
 		var travelSvc service.TravelService = cli
 		queryInfoResp, err := travelSvc.QueryInfo(tripInfo)
-		if err != nil {
-			log.Errorf("QueryInfo request failed, err %s", err)
+		if err != nil || queryInfoResp.Status != 1 {
+			log.Errorf("QueryInfo failed, status != 1. TrainType: %s, Parameter: %+v", TheTrainTypeName, tripInfo)
 			return nil, err
 		}
-		if queryInfoResp.Status != 1 {
-			log.Errorf("QueryInfo failed, status: %d", queryInfoResp.Status)
-			return nil, err
-		}
-
 		if len(queryInfoResp.Data) == 0 {
-			log.Println("[Please Select Other Train type For The Current Start_End Pair] QueryInfo response is empty.")
+			log.Warnf("QueryInfo failed, no data. TrainType: %s, Parameter: %+v", TheTrainTypeName, tripInfo)
 			return &(NodeResult{false}), nil
 		}
 
 		randomIndex := rand.Intn(len(queryInfoResp.Data))
 		ctx.Set(TripID, fmt.Sprintf("%s%s", queryInfoResp.Data[randomIndex].TripId.Type, queryInfoResp.Data[randomIndex].TripId.Number))
-		//ctx.Set(TrainTypeName, queryInfoResp.Data[randomIndex].TrainTypeName)
-		/*	ctx.Set(StartStation, queryInfoResp.Data[randomIndex].StartStation)
-			ctx.Set(TerminalStation, queryInfoResp.Data[randomIndex].TerminalStation)*/
 		ctx.Set(StartTime, queryInfoResp.Data[randomIndex].StartTime)
 		ctx.Set(EndTime, queryInfoResp.Data[randomIndex].EndTime)
 		ctx.Set(EconomyClass, queryInfoResp.Data[randomIndex].EconomyClass)
@@ -56,28 +45,20 @@ func QueryTripInfo(ctx *Context) (*NodeResult, error) {
 		ctx.Set(PriceForConfortClass, queryInfoResp.Data[randomIndex].PriceForConfortClass)
 
 	default: // travel2
-
 		var travel2Svc service.Travel2Service = cli
 		queryInfoResp, err := travel2Svc.QueryByBatch(&tripInfo)
-		if err != nil {
-			log.Errorf("QueryInfo request failed, err %s", err)
-			return nil, err
-		}
-		if queryInfoResp.Status != 1 {
-			log.Errorf("QueryInfo failed, status: %d", queryInfoResp.Status)
+		if err != nil || queryInfoResp.Status != 1 {
+			log.Errorf("QueryInfo failed, status != 1. TrainType: %s, Parameter: %+v", TheTrainTypeName, tripInfo)
 			return nil, err
 		}
 
 		if len(queryInfoResp.Data) == 0 {
-			log.Println("[Please Select Other Train type For The Current Start_End Pair] QueryInfo response is empty.")
+			log.Warnf("QueryInfo failed, no data. TrainType: %s, Parameter: %+v", TheTrainTypeName, tripInfo)
 			return &(NodeResult{false}), nil
 		}
 
 		randomIndex := rand.Intn(len(queryInfoResp.Data))
 		ctx.Set(TripID, fmt.Sprintf("%s%s", queryInfoResp.Data[randomIndex].TripId.Type, queryInfoResp.Data[randomIndex].TripId.Number))
-		//ctx.Set(TrainTypeName, queryInfoResp.Data[randomIndex].TrainTypeName)
-		/*	ctx.Set(StartStation, queryInfoResp.Data[randomIndex].StartStation)
-			ctx.Set(TerminalStation, queryInfoResp.Data[randomIndex].TerminalStation)*/
 		ctx.Set(StartTime, queryInfoResp.Data[randomIndex].StartTime)
 		ctx.Set(EndTime, queryInfoResp.Data[randomIndex].EndTime)
 		ctx.Set(EconomyClass, queryInfoResp.Data[randomIndex].EconomyClass)
@@ -85,18 +66,6 @@ func QueryTripInfo(ctx *Context) (*NodeResult, error) {
 		ctx.Set(PriceForEconomyClass, queryInfoResp.Data[randomIndex].PriceForEconomyClass)
 		ctx.Set(PriceForConfortClass, queryInfoResp.Data[randomIndex].PriceForConfortClass)
 	}
-
-	//randomIndex := rand.Intn(len(queryInfoResp.Data))
-	//ctx.Set(TripID, fmt.Sprintf("%s%s", queryInfoResp.Data[randomIndex].TripId.Type, queryInfoResp.Data[randomIndex].TripId.Number))
-	////ctx.Set(TrainTypeName, queryInfoResp.Data[randomIndex].TrainTypeName)
-	///*	ctx.Set(StartStation, queryInfoResp.Data[randomIndex].StartStation)
-	//	ctx.Set(TerminalStation, queryInfoResp.Data[randomIndex].TerminalStation)*/
-	//ctx.Set(StartTime, queryInfoResp.Data[randomIndex].StartTime)
-	//ctx.Set(EndTime, queryInfoResp.Data[randomIndex].EndTime)
-	//ctx.Set(EconomyClass, queryInfoResp.Data[randomIndex].EconomyClass)
-	//ctx.Set(ConfortClass, queryInfoResp.Data[randomIndex].ConfortClass)
-	//ctx.Set(PriceForEconomyClass, queryInfoResp.Data[randomIndex].PriceForEconomyClass)
-	//ctx.Set(PriceForConfortClass, queryInfoResp.Data[randomIndex].PriceForConfortClass)
 
 	return nil, nil
 }

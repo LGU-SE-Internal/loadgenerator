@@ -2,11 +2,14 @@ package main
 
 import (
 	"github.com/Lincyaw/loadgenerator/behaviors"
-	"log"
 )
 
 func main() {
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	lg := &behaviors.LoadGenerator{}
-	lg.Start(behaviors.WithThread(1), behaviors.WithSleep(1000), behaviors.WithChain(behaviors.NormalOrderPayChain))
+	composedChain := behaviors.NewChain(behaviors.NewFuncNode(func(ctx *behaviors.Context) (*behaviors.NodeResult, error) {
+		return nil, nil
+	}, "dummy"))
+	composedChain.AddNextChain(behaviors.NormalPreserveChain, 0.5)
+	//composedChain.AddNextChain(behaviors.NormalOrderPayChain, 0.5)
+	lg.Start(behaviors.WithThread(1), behaviors.WithSleep(1000), behaviors.WithChain(composedChain))
 }
