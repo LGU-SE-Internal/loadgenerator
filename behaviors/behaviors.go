@@ -108,6 +108,7 @@ func (c *Chain) AddNextChain(next *Chain, probability float64) {
 
 func (c *Chain) Execute(ctx *Context) (*NodeResult, error) {
 	for _, node := range c.nodes {
+		log.Infof("Executing node %s", node.GetName())
 		result, err := node.Execute(ctx)
 		if err != nil {
 			return nil, err
