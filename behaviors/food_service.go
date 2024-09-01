@@ -17,8 +17,14 @@ func QueryFood(ctx *Context) (*NodeResult, error) {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
+	TheDate := time.Now().Format("2006-01-02")
+	TheStartStation := ctx.Get(StartStation).(string)
+	TheEndStation := ctx.Get(EndStation).(string)
+	TheTripID := ctx.Get(TripID).(string)
+
+	var foodSvc service.FoodService = cli
 	// QueryTraintype all
-	allFood, err := cli.GetAllFood(time.Now().Format("2006-01-02"), ctx.Get(StartStation).(string), ctx.Get(EndStation).(string), ctx.Get(TripID).(string))
+	allFood, err := foodSvc.GetAllFood(TheDate, TheStartStation, TheEndStation, TheTripID)
 	if err != nil {
 		log.Errorf("FindAllFoodOrder request failed, err %s", err)
 		return &NodeResult{false}, err
