@@ -37,6 +37,7 @@ func QueryTripInfo(ctx *Context) (*NodeResult, error) {
 
 		randomIndex := rand.Intn(len(queryInfoResp.Data))
 		ctx.Set(TripID, fmt.Sprintf("%s%s", queryInfoResp.Data[randomIndex].TripId.Type, queryInfoResp.Data[randomIndex].TripId.Number))
+		//ctx.Set(OldTripID, fmt.Sprintf("%s%s", queryInfoResp.Data[randomIndex].TripId.Type, queryInfoResp.Data[randomIndex].TripId.Number))
 		ctx.Set(StartTime, queryInfoResp.Data[randomIndex].StartTime)
 		ctx.Set(EndTime, queryInfoResp.Data[randomIndex].EndTime)
 		ctx.Set(EconomyClass, queryInfoResp.Data[randomIndex].EconomyClass)
@@ -59,6 +60,7 @@ func QueryTripInfo(ctx *Context) (*NodeResult, error) {
 
 		randomIndex := rand.Intn(len(queryInfoResp.Data))
 		ctx.Set(TripID, fmt.Sprintf("%s%s", queryInfoResp.Data[randomIndex].TripId.Type, queryInfoResp.Data[randomIndex].TripId.Number))
+		//ctx.Set(OldTripID, fmt.Sprintf("%s%s", queryInfoResp.Data[randomIndex].TripId.Type, queryInfoResp.Data[randomIndex].TripId.Number))
 		ctx.Set(StartTime, queryInfoResp.Data[randomIndex].StartTime)
 		ctx.Set(EndTime, queryInfoResp.Data[randomIndex].EndTime)
 		ctx.Set(EconomyClass, queryInfoResp.Data[randomIndex].EconomyClass)

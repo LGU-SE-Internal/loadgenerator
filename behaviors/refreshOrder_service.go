@@ -71,7 +71,8 @@ func RefreshOrder(ctx *Context) (*NodeResult, error) {
 	}
 	//if rand.Intn(2) == 0 {
 	randomIndex = rand.Intn(len(RefreshResp.Data))
-	ctx.Set(TrainNumber, RefreshResp.Data[randomIndex].TrainNumber)
+	ctx.Set(TrainNumber, RefreshResp.Data[randomIndex].TrainNumber) // OldTripId
+	ctx.Set(OldTripID, RefreshResp.Data[randomIndex].TrainNumber)   // OldTripId
 	ctx.Set(Price, RefreshResp.Data[randomIndex].Price)
 	ctx.Set(OrderId, RefreshResp.Data[randomIndex].Id) // ID here is exactly the OrderId
 	ctx.Set(From, RefreshResp.Data[randomIndex].From)
