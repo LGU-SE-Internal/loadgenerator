@@ -95,6 +95,7 @@ func init() {
 		NewFuncNode(QueryTripInfo, "QueryTripInfo"),
 		NewFuncNode(QuerySeatInfo, "QuerySeatInfo"),
 		NewFuncNode(QueryContacts, "QueryContacts"),
+		//NewFuncNode(CreateTrainFood, "CreateTrainFood"), //service not support
 		NewFuncNode(QueryFood, "QueryFood"),
 		NewFuncNode(QueryAssurance, "QueryAssurance"),
 		NewFuncNode(Preserve, "Preserve"),

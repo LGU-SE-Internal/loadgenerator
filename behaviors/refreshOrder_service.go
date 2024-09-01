@@ -5,6 +5,7 @@ import (
 	"github.com/Lincyaw/loadgenerator/service"
 	log "github.com/sirupsen/logrus"
 	"math/rand"
+	"time"
 )
 
 const (
@@ -73,6 +74,22 @@ func RefreshOrder(ctx *Context) (*NodeResult, error) {
 	ctx.Set(TrainNumber, RefreshResp.Data[randomIndex].TrainNumber)
 	ctx.Set(Price, RefreshResp.Data[randomIndex].Price)
 	ctx.Set(OrderId, RefreshResp.Data[randomIndex].Id) // ID here is exactly the OrderId
+	ctx.Set(From, RefreshResp.Data[randomIndex].From)
+	ctx.Set(To, RefreshResp.Data[randomIndex].To)
+
+	TheBoughtDate, err := time.Parse("2006-01-02 15:04:05", RefreshResp.Data[randomIndex].BoughtDate)
+	if err != nil {
+		log.Errorf("TheBoughtDate Transformation is failed, err %s", err)
+	}
+	formattedBoughtDate := TheBoughtDate.Format("2006-01-02")
+	ctx.Set(HandleDate, formattedBoughtDate)
+
+	TheTravelDate, err := time.Parse("2006-01-02", RefreshResp.Data[randomIndex].TravelDate)
+	if err != nil {
+		log.Errorf("TheTravelDate Transformation is failed, err %s", err)
+	}
+	formattedTravelDate := TheTravelDate.Format("2006-01-02")
+	ctx.Set(TargetDate, formattedTravelDate)
 	//} else {
 	//	randomIndex = rand.Intn(len(RefreshOtherResp.Data))
 	//	ctx.Set(TrainNumber, RefreshOtherResp.Data[randomIndex].TrainNumber)
