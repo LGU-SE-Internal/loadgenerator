@@ -14,7 +14,6 @@ func QueryTripInfo(ctx *Context) (*NodeResult, error) {
 	}
 
 	TheTrainTypeName := ctx.Get(TrainTypeName).(string)
-	log.Infof("The train type is %s", TheTrainTypeName)
 
 	tripInfo := service.TripInfo{
 		StartPlace:    ctx.Get(StartStation).(string),

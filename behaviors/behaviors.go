@@ -108,7 +108,7 @@ func (c *Chain) AddNextChain(next *Chain, probability float64) {
 
 func (c *Chain) Execute(ctx *Context) (*NodeResult, error) {
 	for _, node := range c.nodes {
-		log.Infof("Executing node %s", node.GetName())
+		log.Debugf("Executing node %s", node.GetName())
 		result, err := node.Execute(ctx)
 		if err != nil {
 			return nil, err
@@ -214,21 +214,21 @@ func (l *LoadGenerator) Start(conf ...func(*Config)) {
 					n := runtime.Stack(buf, false)
 					stackTrace := string(buf[:n])
 
-					log.Printf("Recovered from panic: %v\nStack trace:\n%s", r, stackTrace)
+					log.Infof("Recovered from panic: %v\nStack trace:\n%s", r, stackTrace)
 				}
 			}()
 
 			for {
 				select {
 				case <-ctx.Done():
-					log.Printf("Goroutine %d exiting due to cancellation", index)
+					log.Infof("Goroutine %d exiting due to cancellation", index)
 					return
 				default:
 					chainCtx := NewContext(context.Background())
 					chainCtx.Set(Client, service.NewSvcClients())
 					_, err := config.Chain.Execute(chainCtx)
 					if err != nil {
-						log.Printf("Error executing chain: %v", err)
+						log.Errorf("Error executing chain: %v", err)
 					}
 					time.Sleep(time.Millisecond * time.Duration(rand.Intn(config.SleepTime)))
 				}
