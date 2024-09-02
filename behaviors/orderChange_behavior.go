@@ -17,10 +17,11 @@ func init() {
 		NewFuncNode(VerifyCode, "VerifyCode"),
 		NewFuncNode(LoginBasic, "LoginBasic"),
 		NewFuncNode(QueryUser, "QueryUser"),
-		NewFuncNode(RefreshOrder, "RefreshOrder"),
+		NewFuncNode(RefreshOrderOther, "RefreshOrderOther"),
 		NewFuncNode(QueryTrain, "QueryTrain"),
 		NewFuncNode(ChooseRoute, "ChooseRoute"),
 		NewFuncNode(QueryTripInfo, "QueryTripInfo"),
+		NewFuncNode(QuerySeatInfo, "QuerySeatInfo"),
 		NewFuncNode(OrderRebook, "OrderRebook"),
 	)
 

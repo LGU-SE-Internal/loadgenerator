@@ -8,20 +8,26 @@ import (
 )
 
 type ReBookService interface {
-	PayDifference(info *RebookInfo) (*RoutePlanResponse, error)
-	Rebook(info *RebookInfo) (*RoutePlanResponse, error)
+	PayDifference(info *RebookInfo) (*RebookResponse, error)
+	Rebook(info *RebookInfo) (*RebookResponse, error)
 }
 
 type RebookInfo struct {
-	LoginID   string
-	OrderID   string
-	OldTripID string
-	TripID    string
-	SeatType  int
-	Date      string
+	LoginID   string `json:"loginId"`
+	OrderID   string `json:"orderId"`
+	OldTripID string `json:"oldTripId"`
+	TripID    string `json:"tripId"`
+	SeatType  int    `json:"seatType"`
+	Date      string `json:"date"`
 }
 
-func (s *SvcImpl) PayDifference(info *RebookInfo) (*RoutePlanResponse, error) {
+type RebookResponse struct {
+	Status int         `json:"status"`
+	Msg    string      `json:"msg"`
+	Data   interface{} `json:"data"`
+}
+
+func (s *SvcImpl) PayDifference(info *RebookInfo) (*RebookResponse, error) {
 	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/rebookservice/rebook/difference", info)
 	if err != nil {
 		return nil, err
@@ -33,7 +39,7 @@ func (s *SvcImpl) PayDifference(info *RebookInfo) (*RoutePlanResponse, error) {
 		return nil, err
 	}
 
-	var result RoutePlanResponse
+	var result RebookResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
@@ -41,7 +47,7 @@ func (s *SvcImpl) PayDifference(info *RebookInfo) (*RoutePlanResponse, error) {
 	return &result, nil
 }
 
-func (s *SvcImpl) Rebook(info *RebookInfo) (*RoutePlanResponse, error) {
+func (s *SvcImpl) Rebook(info *RebookInfo) (*RebookResponse, error) {
 	resp, err := s.cli.SendRequest("POST", s.BaseUrl+"/api/v1/rebookservice/rebook", info)
 	if err != nil {
 		return nil, err
@@ -53,7 +59,7 @@ func (s *SvcImpl) Rebook(info *RebookInfo) (*RoutePlanResponse, error) {
 		return nil, err
 	}
 
-	var result RoutePlanResponse
+	var result RebookResponse
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
