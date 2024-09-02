@@ -22,9 +22,27 @@ type RebookInfo struct {
 }
 
 type RebookResponse struct {
-	Status int         `json:"status"`
-	Msg    string      `json:"msg"`
-	Data   interface{} `json:"data"`
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   struct {
+		Id                     string `json:"id"`
+		BoughtDate             string `json:"boughtDate"`
+		TravelDate             string `json:"travelDate"`
+		TravelTime             string `json:"travelTime"`
+		AccountId              string `json:"accountId"`
+		ContactsName           string `json:"contactsName"`
+		DocumentType           int    `json:"documentType"`
+		ContactsDocumentNumber string `json:"contactsDocumentNumber"`
+		TrainNumber            string `json:"trainNumber"`
+		CoachNumber            int    `json:"coachNumber"`
+		SeatClass              int    `json:"seatClass"`
+		SeatNumber             int    `json:"seatNumber"`
+		From                   string `json:"from"`
+		To                     string `json:"to"`
+		Status                 int    `json:"status"`
+		Price                  string `json:"price"`
+		DifferenceMoney        string `json:"differenceMoney"`
+	} `json:"data"`
 }
 
 func (s *SvcImpl) PayDifference(info *RebookInfo) (*RebookResponse, error) {

@@ -18,8 +18,8 @@ func init() {
 		NewFuncNode(LoginBasic, "LoginBasic"),
 		NewFuncNode(QueryUser, "QueryUser"),
 		NewFuncNode(RefreshOrderOther, "RefreshOrderOther"),
-		NewFuncNode(QueryTrain, "QueryTrain"),
 		NewFuncNode(ChooseRoute, "ChooseRoute"),
+		NewFuncNode(QueryTrain, "QueryTrain"),
 		NewFuncNode(QueryTripInfo, "QueryTripInfo"),
 		NewFuncNode(QuerySeatInfo, "QuerySeatInfo"),
 		NewFuncNode(OrderRebook, "OrderRebook"),
@@ -48,9 +48,13 @@ func OrderRebook(ctx *Context) (*NodeResult, error) {
 	if err != nil {
 		return nil, err
 	}
-	if OrderRebookResp.Status != 1 {
-		return nil, fmt.Errorf("order rebook fail. OrderRebookResp Status is %d instead of 1", OrderRebookResp.Status)
+	if OrderRebookResp.Status == 0 || OrderRebookResp.Msg == "You can only change the ticket before the train start or within 2 hours after the train start." {
+		log.Warnf("[Tips]You can only change the ticket before the train start or within 2 hours after the train start.")
+		return &(NodeResult{false}), nil // Chain End :D
+	} else if OrderRebookResp.Status != 1 {
+		return nil, fmt.Errorf("OrderRebookResp Fails. Status != 1. Order Rebook status is %d and Msg is: %v", OrderRebookResp.Status, OrderRebookResp.Msg)
 	}
+
 	log.Infof("[Success!] OrderRebookResp Status is %d", OrderRebookResp.Status)
 
 	return &(NodeResult{false}), nil // Chain End :D
