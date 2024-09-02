@@ -31,7 +31,7 @@ func QueryTripInfo(ctx *Context) (*NodeResult, error) {
 			return nil, err
 		}
 		if len(queryInfoResp.Data) == 0 {
-			log.Warnf("QueryInfo failed, no data. TrainType: %s, Parameter: %+v", TheTrainTypeName, tripInfo)
+			log.Warnf("QueryInfo empty, No Data. TrainType: %s, Parameter: %+v", TheTrainTypeName, tripInfo)
 			return &(NodeResult{false}), nil
 		}
 
