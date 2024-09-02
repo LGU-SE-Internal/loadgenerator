@@ -202,6 +202,9 @@ func (l *LoadGenerator) Start(conf ...func(*Config)) {
 	var wg sync.WaitGroup
 	wg.Add(config.Thread)
 
+	// Create a context with cancellation
+	ctx, cancel := context.WithCancel(context.Background())
+
 	for i := 0; i < config.Thread; i++ {
 		go func(index int) {
 			defer wg.Done()
@@ -211,30 +214,41 @@ func (l *LoadGenerator) Start(conf ...func(*Config)) {
 					n := runtime.Stack(buf, false)
 					stackTrace := string(buf[:n])
 
-					log.Infof("Recovered from panic: %v\nStack trace:\n%s", r, stackTrace)
+					log.Printf("Recovered from panic: %v\nStack trace:\n%s", r, stackTrace)
 				}
 			}()
 
 			for {
-				ctx := NewContext(context.Background())
-				ctx.Set(Client, service.NewSvcClients())
-				_, err := config.Chain.Execute(ctx)
-				if err != nil {
-					log.Infof("Error executing chain: %v", err)
+				select {
+				case <-ctx.Done():
+					log.Printf("Goroutine %d exiting due to cancellation", index)
+					return
+				default:
+					chainCtx := NewContext(context.Background())
+					chainCtx.Set(Client, service.NewSvcClients())
+					_, err := config.Chain.Execute(chainCtx)
+					if err != nil {
+						log.Printf("Error executing chain: %v", err)
+					}
+					time.Sleep(time.Millisecond * time.Duration(rand.Intn(config.SleepTime)))
 				}
-				time.Sleep(time.Millisecond * time.Duration(rand.Intn(config.SleepTime)))
 			}
 		}(i)
 	}
 
+	// Set up signal handling for graceful shutdown
 	sigs := make(chan os.Signal, 1)
-	done := make(chan bool, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
-	go func() {
-		<-sigs
-		done <- true
-	}()
 
-	<-done
+	// Wait for signal
+	<-sigs
+	log.Println("Received shutdown signal, stopping all goroutines...")
+
+	// Cancel all goroutines
+	cancel()
+
+	// Wait for all goroutines to finish
 	wg.Wait()
+
+	log.Println("All goroutines stopped, exiting program.")
 }
