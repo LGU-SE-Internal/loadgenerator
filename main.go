@@ -31,8 +31,16 @@ func main() {
 			composedChain := behaviors.NewChain(behaviors.NewFuncNode(func(ctx *behaviors.Context) (*behaviors.NodeResult, error) {
 				return nil, nil
 			}, "dummy"))
-			composedChain.AddNextChain(behaviors.TicketCollectAndEnterStationChain, 0.5)
-			lg.Start(behaviors.WithThread(1), behaviors.WithSleep(1000), behaviors.WithChain(composedChain))
+			composedChain.AddNextChain(behaviors.NormalPreserveChain, 10)
+			composedChain.AddNextChain(behaviors.NormalOrderPayChain, 10)
+			composedChain.AddNextChain(behaviors.OrderConsignChain, 10)
+			composedChain.AddNextChain(behaviors.TicketCollectAndEnterStationChain, 10)
+
+			composedChain.AddNextChain(behaviors.AdvancedSearchChain, 20)
+			composedChain.AddNextChain(behaviors.ConsignListChain, 8)
+			composedChain.AddNextChain(behaviors.OrderChangeChain, 3)
+			composedChain.AddNextChain(behaviors.OrderCancelChain, 2)
+			lg.Start(behaviors.WithThread(1), behaviors.WithSleep(0), behaviors.WithChain(composedChain))
 		},
 	}
 

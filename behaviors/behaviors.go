@@ -108,8 +108,9 @@ func (c *Chain) AddNextChain(next *Chain, probability float64) {
 
 func (c *Chain) Execute(ctx *Context) (*NodeResult, error) {
 	for _, node := range c.nodes {
-		log.Debugf("Executing node %s", node.GetName())
+		startT := time.Now()
 		result, err := node.Execute(ctx)
+		log.Debugf("Executed node %s, time used: %v", node.GetName(), time.Since(startT))
 		if err != nil {
 			return nil, err
 		}
@@ -226,11 +227,15 @@ func (l *LoadGenerator) Start(conf ...func(*Config)) {
 				default:
 					chainCtx := NewContext(context.Background())
 					chainCtx.Set(Client, service.NewSvcClients())
+					start := time.Now()
 					_, err := config.Chain.Execute(chainCtx)
+					log.Infof("Thread %d executed chain, time used: %v", index, time.Since(start))
 					if err != nil {
 						log.Errorf("Error executing chain: %v", err)
 					}
-					time.Sleep(time.Millisecond * time.Duration(rand.Intn(config.SleepTime)))
+					if config.SleepTime > 0 {
+						time.Sleep(time.Millisecond * time.Duration(rand.Intn(config.SleepTime)))
+					}
 				}
 			}
 		}(i)
