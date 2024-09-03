@@ -30,12 +30,13 @@ func QueryTripInfo(ctx *Context) (*NodeResult, error) {
 			return nil, err
 		}
 		if len(queryInfoResp.Data) == 0 {
-			log.Warnf("QueryInfo failed, no data. TrainType: %s, Parameter: %+v", TheTrainTypeName, tripInfo)
+			log.Warnf("[Please Try Again]QueryInfo empty, No Data. Please Try Again. TrainType: %s, Parameter: %+v", TheTrainTypeName, tripInfo)
 			return &(NodeResult{false}), nil
 		}
 
 		randomIndex := rand.Intn(len(queryInfoResp.Data))
 		ctx.Set(TripID, fmt.Sprintf("%s%s", queryInfoResp.Data[randomIndex].TripId.Type, queryInfoResp.Data[randomIndex].TripId.Number))
+		//ctx.Set(OldTripID, fmt.Sprintf("%s%s", queryInfoResp.Data[randomIndex].TripId.Type, queryInfoResp.Data[randomIndex].TripId.Number))
 		ctx.Set(StartTime, queryInfoResp.Data[randomIndex].StartTime)
 		ctx.Set(EndTime, queryInfoResp.Data[randomIndex].EndTime)
 		ctx.Set(EconomyClass, queryInfoResp.Data[randomIndex].EconomyClass)
@@ -52,12 +53,13 @@ func QueryTripInfo(ctx *Context) (*NodeResult, error) {
 		}
 
 		if len(queryInfoResp.Data) == 0 {
-			log.Warnf("QueryInfo failed, no data. TrainType: %s, Parameter: %+v", TheTrainTypeName, tripInfo)
+			log.Warnf("[Please Try Again]QueryInfo empty, No Data. Please Try Again. TrainType: %s, Parameter: %+v", TheTrainTypeName, tripInfo)
 			return &(NodeResult{false}), nil
 		}
 
 		randomIndex := rand.Intn(len(queryInfoResp.Data))
 		ctx.Set(TripID, fmt.Sprintf("%s%s", queryInfoResp.Data[randomIndex].TripId.Type, queryInfoResp.Data[randomIndex].TripId.Number))
+		//ctx.Set(OldTripID, fmt.Sprintf("%s%s", queryInfoResp.Data[randomIndex].TripId.Type, queryInfoResp.Data[randomIndex].TripId.Number))
 		ctx.Set(StartTime, queryInfoResp.Data[randomIndex].StartTime)
 		ctx.Set(EndTime, queryInfoResp.Data[randomIndex].EndTime)
 		ctx.Set(EconomyClass, queryInfoResp.Data[randomIndex].EconomyClass)

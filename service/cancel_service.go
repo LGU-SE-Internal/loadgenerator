@@ -8,11 +8,23 @@ import (
 )
 
 type CancelService interface {
-	ReqCalculate(orderId string) (*DataStringResp, error)
-	ReqCancelTicket(orderId string, loginId string) (*DataStringResp, error)
+	ReqCalculate(orderId string) (*ReqCalculateResp, error)
+	ReqCancelTicket(orderId string, loginId string) (*CancelTicketResp, error)
 }
 
-func (s *SvcImpl) ReqCalculate(orderId string) (*DataStringResp, error) {
+type ReqCalculateResp struct {
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   string `json:"data"`
+}
+
+type CancelTicketResp struct {
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   string `json:"data"`
+}
+
+func (s *SvcImpl) ReqCalculate(orderId string) (*ReqCalculateResp, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+"/api/v1/cancelservice/cancel/refound/"+orderId, nil)
 	if err != nil {
 		return nil, err
@@ -21,7 +33,7 @@ func (s *SvcImpl) ReqCalculate(orderId string) (*DataStringResp, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result DataStringResp
+	var result ReqCalculateResp
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
@@ -30,7 +42,7 @@ func (s *SvcImpl) ReqCalculate(orderId string) (*DataStringResp, error) {
 	return &result, nil
 }
 
-func (s *SvcImpl) ReqCancelTicket(orderId string, loginId string) (*DataStringResp, error) {
+func (s *SvcImpl) ReqCancelTicket(orderId string, loginId string) (*CancelTicketResp, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+"/api/v1/cancelservice/cancel/"+orderId+"/"+loginId, nil)
 	if err != nil {
 		return nil, err
@@ -39,7 +51,7 @@ func (s *SvcImpl) ReqCancelTicket(orderId string, loginId string) (*DataStringRe
 	if err != nil {
 		return nil, err
 	}
-	var result DataStringResp
+	var result CancelTicketResp
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {

@@ -39,3 +39,15 @@ func QueryTrainFood(ctx *Context) (*NodeResult, error) {
 
 	return nil, nil
 }
+
+/*func CreateTrainFood(ctx *Context) (*NodeResult, error) {
+	cli, ok := ctx.Get(Client).(*service.TrainFoodService)
+	if !ok {
+		return nil, fmt.Errorf("service client not found in context")
+	}
+
+	var trainFoodSvc *service.TrainFoodService = cli
+
+	return nil, nil
+}
+*/ /*service中不存在这个服务*/

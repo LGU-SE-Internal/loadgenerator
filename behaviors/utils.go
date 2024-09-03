@@ -40,10 +40,10 @@ func getMiddleElements(input string) string {
 	return strings.Join(middleElements, ",")
 }
 
-// GenerateWeight generates a float64 value between 0 and 15.
+// GenerateWeight generates a float64 value between 7 and 17.
 func GenerateWeight() float64 {
 	rand.Seed(time.Now().UnixNano())
-	return rand.Float64() * 15
+	return rand.Float64()*10 + 7
 }
 
 func generateDescription() string {
