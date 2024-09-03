@@ -36,7 +36,7 @@ func ConsignList(ctx *Context) (*NodeResult, error) {
 	if ConsignListResp.Status != 1 {
 		return nil, fmt.Errorf("consign service Status != 1, accountId: %s", TheAccountId)
 	}
-	log.Infof("[Success]The Status is %v, and the ConsignList Data is: %v", ConsignListResp.Status, ConsignListResp.Data)
+	log.Infof("[Success] get consign list success %v", ConsignListResp.Status)
 
 	return &(NodeResult{false}), nil // Chain End :D
 }
