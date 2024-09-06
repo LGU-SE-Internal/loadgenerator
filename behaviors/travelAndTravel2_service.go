@@ -27,7 +27,7 @@ func QueryTripInfo(ctx *Context) (*NodeResult, error) {
 		queryInfoResp, err := travelSvc.QueryInfo(tripInfo)
 		if err != nil || queryInfoResp.Status != 1 {
 			log.Errorf("QueryInfo failed, status != 1. TrainType: %s, Parameter: %+v", TheTrainTypeName, tripInfo)
-			return nil, err
+			return &(NodeResult{false}), nil
 		}
 		if len(queryInfoResp.Data) == 0 {
 			log.Warnf("[Please Try Again]QueryInfo empty, No Data. Please Try Again. TrainType: %s, Parameter: %+v", TheTrainTypeName, tripInfo)
@@ -49,7 +49,7 @@ func QueryTripInfo(ctx *Context) (*NodeResult, error) {
 		queryInfoResp, err := travel2Svc.QueryByBatch(&tripInfo)
 		if err != nil || queryInfoResp.Status != 1 {
 			log.Errorf("QueryInfo failed, status != 1. TrainType: %s, Parameter: %+v", TheTrainTypeName, tripInfo)
-			return nil, err
+			return &(NodeResult{false}), nil
 		}
 
 		if len(queryInfoResp.Data) == 0 {
