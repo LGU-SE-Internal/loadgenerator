@@ -18,7 +18,7 @@ func QueryUser(ctx *Context) (*NodeResult, error) {
 		return nil, err
 	}
 	if allUsersResp.Status != 1 {
-		log.Errorf("Expected status 200, got %d", allUsersResp.Status)
+		log.Errorf("Expected status 1, got %+v", allUsersResp)
 		return nil, err
 	}
 
