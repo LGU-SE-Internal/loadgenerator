@@ -27,9 +27,11 @@ func QueryRouteByStartAndEnd(ctx *Context) (*NodeResult, error) {
 	}
 
 	randomIndex := rand.Intn(len(AllRoutesByQueryStartAndEnd.Data))
+	TheDepartureTime := extractDate(getRandomTime())
 	ctx.Set(RouteID, AllRoutesByQueryStartAndEnd.Data[randomIndex].Id)
-	/*	ctx.Set(StartStation, AllRoutesByQueryStartAndEnd.Data[randomIndex].StartStation)
-		ctx.Set(EndStation, AllRoutesByQueryStartAndEnd.Data[randomIndex].EndStation)*/
+	ctx.Set(StartStation, AllRoutesByQueryStartAndEnd.Data[randomIndex].StartStation)
+	ctx.Set(EndStation, AllRoutesByQueryStartAndEnd.Data[randomIndex].EndStation)
+	ctx.Set(DepartureTime, TheDepartureTime)
 	ctx.Set(StationName, AllRoutesByQueryStartAndEnd.Data[randomIndex].Stations)
 	ctx.Set(Distances, AllRoutesByQueryStartAndEnd.Data[randomIndex].Distances)
 
