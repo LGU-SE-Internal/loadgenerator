@@ -7,15 +7,31 @@ import (
 	"math/rand"
 )
 
-func QueryRouteByStartAndEnd(ctx *Context) (*NodeResult, error) {
+func MockStartAndEndAndQueryRouteByStartAndEnd(ctx *Context) (*NodeResult, error) {
 	cli, ok := ctx.Get(Client).(*service.SvcImpl)
 	if !ok {
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
-	TheStart := ctx.Get(StartStation).(string)
-	TheEnd := ctx.Get(EndStation).(string)
+	var TheStart string
+	var TheEnd string
+	var stationSvc service.StationService = cli
 	var routeSvc service.RouteService = cli
+
+	AllRouteResp, err := stationSvc.QueryStations()
+	if err != nil {
+		log.Errorf("Request failed, err %s", err)
+		return &(NodeResult{false}), err // immediately end
+	}
+	if AllRouteResp.Status != 1 {
+		log.Errorf("get AllRouteResp failed, status %d", AllRouteResp.Status)
+		return &(NodeResult{false}), err // immediately end
+	}
+
+	TheStart, TheEnd, _ = randomlyChoosePlaces(AllRouteResp.Data)
+	ctx.Set(StartStation, TheStart)
+	ctx.Set(EndStation, TheEnd)
+
 	AllRoutesByQueryStartAndEnd, err := routeSvc.QueryRoutesByStartAndEnd(TheStart, TheEnd)
 	if err != nil {
 		log.Errorf("Request failed, err %s", err)
@@ -29,8 +45,8 @@ func QueryRouteByStartAndEnd(ctx *Context) (*NodeResult, error) {
 	randomIndex := rand.Intn(len(AllRoutesByQueryStartAndEnd.Data))
 	TheDepartureTime := extractDate(getRandomTime())
 	ctx.Set(RouteID, AllRoutesByQueryStartAndEnd.Data[randomIndex].Id)
-	ctx.Set(StartStation, AllRoutesByQueryStartAndEnd.Data[randomIndex].StartStation)
-	ctx.Set(EndStation, AllRoutesByQueryStartAndEnd.Data[randomIndex].EndStation)
+	/*	ctx.Set(StartStation, AllRoutesByQueryStartAndEnd.Data[randomIndex].StartStation)
+		ctx.Set(EndStation, AllRoutesByQueryStartAndEnd.Data[randomIndex].EndStation)*/
 	ctx.Set(DepartureTime, TheDepartureTime)
 	ctx.Set(StationName, AllRoutesByQueryStartAndEnd.Data[randomIndex].Stations)
 	ctx.Set(Distances, AllRoutesByQueryStartAndEnd.Data[randomIndex].Distances)

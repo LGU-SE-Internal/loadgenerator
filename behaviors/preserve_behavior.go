@@ -91,7 +91,8 @@ func init() {
 		NewFuncNode(LoginBasic, "LoginBasic"),
 		NewFuncNode(QueryUser, "QueryUser"),
 		NewFuncNode(QueryTrain, "QueryTrain"),
-		NewFuncNode(ChooseRoute, "QueryRoute"),
+		//NewFuncNode(ChooseRoute, "QueryRoute"), // 全部都为正确请求
+		NewFuncNode(MockStartAndEndAndQueryRouteByStartAndEnd, "MockStartAndEndAndQueryRouteByStartAndEnd"), // 约94%为无法查询结果(但其实也不算error)；约6%为可以继续
 		NewFuncNode(QueryTripInfo, "QueryTripInfo"),
 		NewFuncNode(QuerySeatInfo, "QuerySeatInfo"),
 		NewFuncNode(QueryContacts, "QueryContacts"),
