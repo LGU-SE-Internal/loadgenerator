@@ -3,8 +3,6 @@ package behaviors
 import (
 	"context"
 	"fmt"
-	"github.com/Lincyaw/loadgenerator/service"
-	log "github.com/sirupsen/logrus"
 	"math/rand"
 	"os"
 	"os/signal"
@@ -13,6 +11,10 @@ import (
 	"sync"
 	"syscall"
 	"time"
+
+	"github.com/Lincyaw/loadgenerator/service"
+	log "github.com/sirupsen/logrus"
+	
 )
 
 const Client = "client"
@@ -184,9 +186,15 @@ func WithChain(c *Chain) func(*Config) {
 }
 
 type LoadGenerator struct {
+	config   *Config
+	wg       sync.WaitGroup
+	ctx      context.Context
+	cancel   context.CancelFunc
+	taskChain chan int
 }
 
-func (l *LoadGenerator) Start(conf ...func(*Config)) {
+func NewLoadGenerator(conf ...func(*Config)) *LoadGenerator {
+	ctx, cancel := context.WithCancel(context.Background())
 	config := Config{}
 	for _, fn := range conf {
 		fn(&config)
@@ -199,47 +207,29 @@ func (l *LoadGenerator) Start(conf ...func(*Config)) {
 	if config.Chain == nil {
 		panic("LoadGenerator needs chain")
 	}
-
-	var wg sync.WaitGroup
-	wg.Add(config.Thread)
-
-	// Create a context with cancellation
-	ctx, cancel := context.WithCancel(context.Background())
-
-	for i := 0; i < config.Thread; i++ {
-		go func(index int) {
-			defer wg.Done()
-			defer func() {
-				if r := recover(); r != nil {
-					buf := make([]byte, 1024)
-					n := runtime.Stack(buf, false)
-					stackTrace := string(buf[:n])
-
-					log.Infof("Recovered from panic: %v\nStack trace:\n%s", r, stackTrace)
-				}
-			}()
-
-			for {
-				select {
-				case <-ctx.Done():
-					log.Infof("Goroutine %d exiting due to cancellation", index)
-					return
-				default:
-					chainCtx := NewContext(context.Background())
-					chainCtx.Set(Client, service.NewSvcClients())
-					start := time.Now()
-					_, err := config.Chain.Execute(chainCtx)
-					log.Infof("Thread %d executed chain, time used: %v", index, time.Since(start))
-					if err != nil {
-						log.Errorf("Error executing chain: %v", err)
-					}
-					if config.SleepTime > 0 {
-						time.Sleep(time.Millisecond * time.Duration(rand.Intn(config.SleepTime)))
-					}
-				}
-			}
-		}(i)
+	return &LoadGenerator{
+		config:   &config,
+		ctx:      ctx,
+		cancel:   cancel,
+		taskChain: make(chan int, config.Thread),
 	}
+}
+
+func (l *LoadGenerator) Start() {
+
+	l.wg.Add(l.config.Thread)
+
+
+	for i := 0; i < l.config.Thread; i++ {
+		go l.worker(i)
+	}
+	go func() {
+        for index := range l.taskChain {
+            log.Infof("Restarting worker %d", index)
+            l.wg.Add(1)
+            go l.worker(index)
+        }
+    }()
 
 	// Set up signal handling for graceful shutdown
 	sigs := make(chan os.Signal, 1)
@@ -250,10 +240,47 @@ func (l *LoadGenerator) Start(conf ...func(*Config)) {
 	log.Println("Received shutdown signal, stopping all goroutines...")
 
 	// Cancel all goroutines
-	cancel()
+	l.cancel()
 
 	// Wait for all goroutines to finish
-	wg.Wait()
+	l.wg.Wait()
 
 	log.Println("All goroutines stopped, exiting program.")
+}
+
+func (l *LoadGenerator) worker(index int) {
+	defer func() {
+        l.wg.Done()
+    }()
+	for {
+		select {
+		case <-l.ctx.Done():
+			log.Infof("Goroutine %d exiting due to cancellation", index)
+			return
+		default:
+			defer func() {
+				if r := recover(); r != nil {
+					buf := make([]byte, 1024)
+					n := runtime.Stack(buf, false)
+					stackTrace := string(buf[:n])
+					log.Infof("Recovered from panic: %v\nStack trace:\n%s", r, stackTrace)
+					l.taskChain <- index
+				}
+			}()
+
+			chainCtx := NewContext(context.Background())
+			chainCtx.Set(Client, service.NewSvcClients())
+			start := time.Now()
+			_, err := l.config.Chain.Execute(chainCtx)
+			log.Infof("Thread %d executed chain, time used: %v", index, time.Since(start))
+			if err != nil {
+				log.Errorf("Error executing chain: %v", err)
+			}
+			if l.config.SleepTime > 0 {
+				time.Sleep(time.Millisecond * time.Duration(rand.Intn(l.config.SleepTime)))
+			}
+
+		}
+	}
+
 }

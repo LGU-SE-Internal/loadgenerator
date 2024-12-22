@@ -40,7 +40,8 @@ func main() {
 			composedChain.AddNextChain(behaviors.ConsignListChain, 8)
 			composedChain.AddNextChain(behaviors.OrderChangeChain, 3)
 			composedChain.AddNextChain(behaviors.OrderCancelChain, 2)
-			lg.Start(behaviors.WithThread(1), behaviors.WithSleep(0), behaviors.WithChain(composedChain))
+			lg = behaviors.NewLoadGenerator(behaviors.WithThread(3), behaviors.WithSleep(100), behaviors.WithChain(composedChain))
+			lg.Start()
 		},
 	}
 
