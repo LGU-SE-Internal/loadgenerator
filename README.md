@@ -14,59 +14,59 @@ The Train-Ticket LoadGenerator is a dedicated tool designed to simulate traffic 
 
   <!-- First Image and Arrow -->
   <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/1Login.jpg" alt="Normal Preserve Chain" style="width: 300px; height: auto;">
+    <img src="assest/images/1Login.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
     <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
   </div>
 
   <!-- Second Image and Arrow -->
   <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/2LoginAsNormalUser.jpg" alt="Normal Preserve Chain" style="width: 300px; height: auto;">
+    <img src="assest/images/2LoginAsNormalUser.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
     <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
   </div>
 
   <!-- Add more images and arrows as needed -->
   <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/3aSearchForTheTicket.jpg" alt="Normal Preserve Chain" style="width: 300px; height: auto;">
+    <img src="assest/images/3aSearchForTheTicket.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
     <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
   </div>
 
   <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/3bChooseTrainType.jpg" alt="Normal Preserve Chain" style="width: 300px; height: auto;">
+    <img src="assest/images/3bChooseTrainType.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
     <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
   </div>
 
   <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/4aChooseSeatType.jpg" alt="Normal Preserve Chain" style="width: 300px; height: auto;">
+    <img src="assest/images/4aChooseSeatType.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
     <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
   </div>
 
   <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/4bGetAvaliableResultAndClickBookingButtonForFurtherChoices.jpg" alt="Normal Preserve Chain" style="width: 300px; height: auto;">
+    <img src="assest/images/4bGetAvaliableResultAndClickBookingButtonForFurtherChoices.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
     <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
   </div>
 
   <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/5ChooseContactsAnd6ChooseAssurance.jpg" alt="Normal Preserve Chain" style="width: 300px; height: auto;">
+    <img src="assest/images/5ChooseContactsAnd6ChooseAssurance.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
     <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
   </div>
 
   <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/7ChooseTheFoodAnd8InputTheConsign.jpg" alt="Normal Preserve Chain" style="width: 300px; height: auto;">
+    <img src="assest/images/7ChooseTheFoodAnd8InputTheConsign.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
     <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
   </div>
 
   <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/9ClickTheSelectBotton.jpg" alt="Normal Preserve Chain" style="width: 300px; height: auto;">
+    <img src="assest/images/9ClickTheSelectBotton.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
     <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
   </div>
 
   <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/10aGetTicketInfoAndConfirmToFinishThePreserveBehavior0.jpg" alt="Normal Preserve Chain" style="width: 300px; height: auto;">
+    <img src="assest/images/10aGetTicketInfoAndConfirmToFinishThePreserveBehavior0.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
     <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
   </div>
 
   <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/10bGetTicketInfoAndConfirmToFinishThePreserveBehavior1.jpg" alt="Normal Preserve Chain" style="width: 300px; height: auto;">
+    <img src="assest/images/10bGetTicketInfoAndConfirmToFinishThePreserveBehavior1.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
     
   </div>
 
@@ -80,13 +80,13 @@ The Train-Ticket LoadGenerator is a dedicated tool designed to simulate traffic 
 
   <!-- First Image and Arrow -->
   <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/1Login.jpg" alt="Normal Preserve Chain" style="width: 300px; height: auto;">
+    <img src="assest/images/1Login.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
     <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
   </div>
 
   <!-- Second Image and Arrow -->
   <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/2LoginAsNormalUser.jpg" alt="Normal Preserve Chain" style="width: 300px; height: auto;">
+    <img src="assest/images/2LoginAsNormalUser.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
     <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
   </div>
 
@@ -101,13 +101,13 @@ The Train-Ticket LoadGenerator is a dedicated tool designed to simulate traffic 
 
   <!-- First Image and Arrow -->
   <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/1Login.jpg" alt="Normal Preserve Chain" style="width: 300px; height: auto;">
+    <img src="assest/images/1Login.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
     <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
   </div>
 
   <!-- Second Image and Arrow -->
   <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/2LoginAsNormalUser.jpg" alt="Normal Preserve Chain" style="width: 300px; height: auto;">
+    <img src="assest/images/2LoginAsNormalUser.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
     <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
   </div>
 
@@ -122,13 +122,13 @@ The Train-Ticket LoadGenerator is a dedicated tool designed to simulate traffic 
 
   <!-- First Image and Arrow -->
   <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/1Login.jpg" alt="Normal Preserve Chain" style="width: 300px; height: auto;">
+    <img src="assest/images/1Login.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
     <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
   </div>
 
   <!-- Second Image and Arrow -->
   <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/2LoginAsNormalUser.jpg" alt="Normal Preserve Chain" style="width: 300px; height: auto;">
+    <img src="assest/images/2LoginAsNormalUser.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
     <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
   </div>
 
@@ -143,13 +143,13 @@ The Train-Ticket LoadGenerator is a dedicated tool designed to simulate traffic 
 
   <!-- First Image and Arrow -->
   <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/1Login.jpg" alt="Normal Preserve Chain" style="width: 300px; height: auto;">
+    <img src="assest/images/1Login.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
     <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
   </div>
 
   <!-- Second Image and Arrow -->
   <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/2LoginAsNormalUser.jpg" alt="Normal Preserve Chain" style="width: 300px; height: auto;">
+    <img src="assest/images/2LoginAsNormalUser.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
     <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
   </div>
 
@@ -164,13 +164,13 @@ The Train-Ticket LoadGenerator is a dedicated tool designed to simulate traffic 
 
   <!-- First Image and Arrow -->
   <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/1Login.jpg" alt="Normal Preserve Chain" style="width: 300px; height: auto;">
+    <img src="assest/images/1Login.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
     <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
   </div>
 
   <!-- Second Image and Arrow -->
   <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/2LoginAsNormalUser.jpg" alt="Normal Preserve Chain" style="width: 300px; height: auto;">
+    <img src="assest/images/2LoginAsNormalUser.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
     <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
   </div>
 
@@ -185,13 +185,13 @@ The Train-Ticket LoadGenerator is a dedicated tool designed to simulate traffic 
 
   <!-- First Image and Arrow -->
   <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/1Login.jpg" alt="Normal Preserve Chain" style="width: 300px; height: auto;">
+    <img src="assest/images/1Login.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
     <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
   </div>
 
   <!-- Second Image and Arrow -->
   <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/2LoginAsNormalUser.jpg" alt="Normal Preserve Chain" style="width: 300px; height: auto;">
+    <img src="assest/images/2LoginAsNormalUser.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
     <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
   </div>
 
@@ -206,13 +206,13 @@ The Train-Ticket LoadGenerator is a dedicated tool designed to simulate traffic 
 
   <!-- First Image and Arrow -->
   <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/1Login.jpg" alt="Normal Preserve Chain" style="width: 300px; height: auto;">
+    <img src="assest/images/1Login.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
     <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
   </div>
 
   <!-- Second Image and Arrow -->
   <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/2LoginAsNormalUser.jpg" alt="Normal Preserve Chain" style="width: 300px; height: auto;">
+    <img src="assest/images/2LoginAsNormalUser.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
     <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
   </div>
 
