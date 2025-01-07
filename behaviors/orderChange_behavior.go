@@ -2,6 +2,7 @@ package behaviors
 
 import (
 	"fmt"
+
 	"github.com/Lincyaw/loadgenerator/service"
 	log "github.com/sirupsen/logrus"
 )
@@ -25,7 +26,7 @@ func init() {
 		NewFuncNode(OrderRebook, "OrderRebook"),
 	)
 
-	fmt.Println(OrderChangeChain.VisualizeChain(0))
+	// fmt.Println(OrderChangeChain.VisualizeChain(0))
 }
 
 func OrderRebook(ctx *Context) (*NodeResult, error) {

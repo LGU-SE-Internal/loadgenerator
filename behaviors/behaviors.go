@@ -14,7 +14,6 @@ import (
 
 	"github.com/Lincyaw/loadgenerator/service"
 	log "github.com/sirupsen/logrus"
-	
 )
 
 const Client = "client"
@@ -186,10 +185,10 @@ func WithChain(c *Chain) func(*Config) {
 }
 
 type LoadGenerator struct {
-	config   *Config
-	wg       sync.WaitGroup
-	ctx      context.Context
-	cancel   context.CancelFunc
+	config    *Config
+	wg        sync.WaitGroup
+	ctx       context.Context
+	cancel    context.CancelFunc
 	taskChain chan int
 }
 
@@ -208,9 +207,9 @@ func NewLoadGenerator(conf ...func(*Config)) *LoadGenerator {
 		panic("LoadGenerator needs chain")
 	}
 	return &LoadGenerator{
-		config:   &config,
-		ctx:      ctx,
-		cancel:   cancel,
+		config:    &config,
+		ctx:       ctx,
+		cancel:    cancel,
 		taskChain: make(chan int, config.Thread),
 	}
 }
@@ -219,17 +218,16 @@ func (l *LoadGenerator) Start() {
 
 	l.wg.Add(l.config.Thread)
 
-
 	for i := 0; i < l.config.Thread; i++ {
 		go l.worker(i)
 	}
 	go func() {
-        for index := range l.taskChain {
-            log.Infof("Restarting worker %d", index)
-            l.wg.Add(1)
-            go l.worker(index)
-        }
-    }()
+		for index := range l.taskChain {
+			log.Infof("Restarting worker %d", index)
+			l.wg.Add(1)
+			go l.worker(index)
+		}
+	}()
 
 	// Set up signal handling for graceful shutdown
 	sigs := make(chan os.Signal, 1)
@@ -250,8 +248,8 @@ func (l *LoadGenerator) Start() {
 
 func (l *LoadGenerator) worker(index int) {
 	defer func() {
-        l.wg.Done()
-    }()
+		l.wg.Done()
+	}()
 	for {
 		select {
 		case <-l.ctx.Done():

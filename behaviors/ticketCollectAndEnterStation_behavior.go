@@ -2,6 +2,7 @@ package behaviors
 
 import (
 	"fmt"
+
 	"github.com/Lincyaw/loadgenerator/service"
 	log "github.com/sirupsen/logrus"
 )
@@ -19,7 +20,7 @@ func init() {
 		NewFuncNode(TicketCollect, "TicketCollect"),
 		NewFuncNode(EnterStation, "EnterStation"),
 	)
-	fmt.Println(TicketCollectAndEnterStationChain.VisualizeChain(0))
+	// fmt.Println(TicketCollectAndEnterStationChain.VisualizeChain(0))
 }
 
 func TicketCollect(ctx *Context) (*NodeResult, error) {

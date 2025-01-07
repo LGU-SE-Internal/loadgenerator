@@ -2,6 +2,7 @@ package behaviors
 
 import (
 	"fmt"
+
 	"github.com/Lincyaw/loadgenerator/service"
 	log "github.com/sirupsen/logrus"
 )
@@ -20,7 +21,7 @@ func init() {
 		NewFuncNode(OrderCancel, "OrderCancel"),
 	)
 
-	fmt.Println(OrderCancelChain.VisualizeChain(0))
+	// fmt.Println(OrderCancelChain.VisualizeChain(0))
 }
 
 func OrderCalculate(ctx *Context) (*NodeResult, error) {

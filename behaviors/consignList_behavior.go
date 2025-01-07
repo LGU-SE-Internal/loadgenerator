@@ -2,6 +2,7 @@ package behaviors
 
 import (
 	"fmt"
+
 	"github.com/Lincyaw/loadgenerator/service"
 	log "github.com/sirupsen/logrus"
 )
@@ -17,7 +18,7 @@ func init() {
 		NewFuncNode(QueryUser, "QueryUser"),
 		NewFuncNode(ConsignList, "ConsignList"),
 	)
-	fmt.Println(ConsignListChain.VisualizeChain(0))
+	// fmt.Println(ConsignListChain.VisualizeChain(0))
 }
 
 func ConsignList(ctx *Context) (*NodeResult, error) {

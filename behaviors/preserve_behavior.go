@@ -2,9 +2,10 @@ package behaviors
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/Lincyaw/loadgenerator/service"
 	log "github.com/sirupsen/logrus"
-	"time"
 )
 
 const (
@@ -100,7 +101,7 @@ func init() {
 		NewFuncNode(QueryAssurance, "QueryAssurance"),
 		NewFuncNode(Preserve, "Preserve"),
 	)
-	fmt.Println(NormalPreserveChain.VisualizeChain(0))
+	// fmt.Println(NormalPreserveChain.VisualizeChain(0))
 }
 
 // Preserve Behaviors Function

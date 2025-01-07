@@ -2,6 +2,7 @@ package behaviors
 
 import (
 	"fmt"
+
 	"github.com/Lincyaw/loadgenerator/service"
 	log "github.com/sirupsen/logrus"
 )
@@ -16,7 +17,7 @@ func init() {
 		NewFuncNode(RefreshOrder, "RefreshOrder"),
 		NewFuncNode(OrderPay, "OrderPay"),
 	)
-	fmt.Println(NormalOrderPayChain.VisualizeChain(0))
+	// fmt.Println(NormalOrderPayChain.VisualizeChain(0))
 }
 
 func OrderPay(ctx *Context) (*NodeResult, error) {

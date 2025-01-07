@@ -2,9 +2,10 @@ package behaviors
 
 import (
 	"fmt"
+	"math/rand"
+
 	"github.com/Lincyaw/loadgenerator/service"
 	log "github.com/sirupsen/logrus"
-	"math/rand"
 )
 
 const (
@@ -33,7 +34,7 @@ func init() {
 		NewFuncNode(Preserve, "Preserve"),
 	)
 
-	fmt.Println(AdvancedSearchChain.VisualizeChain(0))
+	// fmt.Println(AdvancedSearchChain.VisualizeChain(0))
 }
 
 func TravelPlanAdvancedSearch(ctx *Context) (*NodeResult, error) {

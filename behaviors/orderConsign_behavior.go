@@ -2,6 +2,7 @@ package behaviors
 
 import (
 	"fmt"
+
 	"github.com/Lincyaw/loadgenerator/service"
 	"github.com/go-faker/faker/v4"
 	log "github.com/sirupsen/logrus"
@@ -22,7 +23,7 @@ func init() {
 		NewFuncNode(OrderConsign, "OrderConsign"),
 	)
 
-	fmt.Println(OrderConsignChain.VisualizeChain(0))
+	// fmt.Println(OrderConsignChain.VisualizeChain(0))
 }
 
 func OrderQuery(ctx *Context) (*NodeResult, error) {
