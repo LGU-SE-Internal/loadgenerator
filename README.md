@@ -1,14 +1,31 @@
 
 
-# LoadGenerator (base on 'Train-Ticket' Microservice Systems): A New Version loadgenerator for Microservice Systems
+# LoadGenerator (based on 'Train-Ticket' Microservice Systems): A New Version LoadGenerator for Microservice Systems
 The Train-Ticket LoadGenerator is a dedicated tool designed to simulate traffic for the Train Ticket Booking System, which is based on a microservice architecture containing 41 microservices. This tool is primarily developed in Go, leveraging its performance and simplicity to effectively test and benchmark the system.
 
 ## Behavior Logic Graph
-![Behavior-Logic-Graph0.png](assest/images/Screenshot 2024-12-23 at 1.17.14 AM.png)
-![Behavior-Logic-Graph1.png](assest/images/Screenshot 2024-12-23 at 1.16.10 AM.png)
+![Behavior-Logic-Graph0.png](assest/images/Behavior-Logic-Graph0.png)
+![Behavior-Logic-Graph1.png](assest/images/Behavior-Logic-Graph1.png)
 
 ### Existing Behavior:
 #### • Normal Preserve Chain
+
+Here is the flow for the **Normal Preserve Chain**:
+
+| Step | Image                                                                                     | Arrow |
+|------|-------------------------------------------------------------------------------------------|-------|
+| 1    | ![1Login](assest/images/1Login.jpg)                                                      | ⟶     |
+| 2    | ![2LoginAsNormalUser](assest/images/2LoginAsNormalUser.jpg)                              | ⟶     |
+| 3    | ![3aSearchForTheTicket](assest/images/3aSearchForTheTicket.jpg)                          | ⟶     |
+| 4    | ![3bChooseTrainType](assest/images/3bChooseTrainType.jpg)                                | ⟶     |
+| 5    | ![4aChooseSeatType](assest/images/4aChooseSeatType.jpg)                                  | ⟶     |
+| 6    | ![4bGetAvailableResultAndClickBookingButtonForFurtherChoices](assest/images/4bGetAvaliableResultAndClickBookingButtonForFurtherChoices.jpg) | ⟶     |
+| 7    | ![5ChooseContactsAnd6ChooseAssurance](assest/images/5ChooseContactsAnd6ChooseAssurance.jpg) | ⟶     |
+| 8    | ![7ChooseTheFoodAnd8InputTheConsign](assest/images/7ChooseTheFoodAnd8InputTheConsign.jpg) | ⟶     |
+| 9    | ![9ClickTheSelectButton](assest/images/9ClickTheSelectBotton.jpg)                        | ⟶     |
+| 10   | ![10aGetTicketInfoAndConfirmToFinishThePreserveBehavior0](assest/images/10aGetTicketInfoAndConfirmToFinishThePreserveBehavior0.jpg) | ⟶     |
+| 11   | ![10bGetTicketInfoAndConfirmToFinishThePreserveBehavior1](assest/images/10bGetTicketInfoAndConfirmToFinishThePreserveBehavior1.jpg) |       |
+
 
 <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 20px;">
 
