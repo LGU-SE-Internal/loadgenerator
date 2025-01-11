@@ -8,233 +8,92 @@ The Train-Ticket LoadGenerator is a dedicated tool designed to simulate traffic 
 ![Behavior-Logic-Graph1.png](assest/images/Behavior-Logic-Graph1.png)
 
 ### Existing Behavior:
-#### • Normal Preserve Chain
 
+#### • Normal Preserve Chain
 Here is the flow for the **Normal Preserve Chain**:
 
-| Step | Image                                                                                     | Arrow |
-|------|-------------------------------------------------------------------------------------------|-------|
-| 1    | ![1Login](assest/images/1Login.jpg)                                                      | ⟶     |
-| 2    | ![2LoginAsNormalUser](assest/images/2LoginAsNormalUser.jpg)                              | ⟶     |
-| 3    | ![3aSearchForTheTicket](assest/images/3aSearchForTheTicket.jpg)                          | ⟶     |
-| 4    | ![3bChooseTrainType](assest/images/3bChooseTrainType.jpg)                                | ⟶     |
-| 5    | ![4aChooseSeatType](assest/images/4aChooseSeatType.jpg)                                  | ⟶     |
-| 6    | ![4bGetAvailableResultAndClickBookingButtonForFurtherChoices](assest/images/4bGetAvaliableResultAndClickBookingButtonForFurtherChoices.jpg) | ⟶     |
-| 7    | ![5ChooseContactsAnd6ChooseAssurance](assest/images/5ChooseContactsAnd6ChooseAssurance.jpg) | ⟶     |
-| 8    | ![7ChooseTheFoodAnd8InputTheConsign](assest/images/7ChooseTheFoodAnd8InputTheConsign.jpg) | ⟶     |
-| 9    | ![9ClickTheSelectButton](assest/images/9ClickTheSelectBotton.jpg)                        | ⟶     |
-| 10   | ![10aGetTicketInfoAndConfirmToFinishThePreserveBehavior0](assest/images/10aGetTicketInfoAndConfirmToFinishThePreserveBehavior0.jpg) | ⟶     |
-| 11   | ![10bGetTicketInfoAndConfirmToFinishThePreserveBehavior1](assest/images/10bGetTicketInfoAndConfirmToFinishThePreserveBehavior1.jpg) |       |
-
-
-<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 20px;">
-
-  <!-- First Image and Arrow -->
-  <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/1Login.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
-    <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
-  </div>
-
-  <!-- Second Image and Arrow -->
-  <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/2LoginAsNormalUser.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
-    <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
-  </div>
-
-  <!-- Add more images and arrows as needed -->
-  <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/3aSearchForTheTicket.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
-    <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
-  </div>
-
-  <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/3bChooseTrainType.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
-    <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
-  </div>
-
-  <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/4aChooseSeatType.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
-    <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
-  </div>
-
-  <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/4bGetAvaliableResultAndClickBookingButtonForFurtherChoices.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
-    <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
-  </div>
-
-  <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/5ChooseContactsAnd6ChooseAssurance.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
-    <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
-  </div>
-
-  <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/7ChooseTheFoodAnd8InputTheConsign.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
-    <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
-  </div>
-
-  <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/9ClickTheSelectBotton.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
-    <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
-  </div>
-
-  <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/10aGetTicketInfoAndConfirmToFinishThePreserveBehavior0.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
-    <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
-  </div>
-
-  <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/10bGetTicketInfoAndConfirmToFinishThePreserveBehavior1.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
-    
-  </div>
-
-</div>
+| Step | Image                                                                                     |
+|------|-------------------------------------------------------------------------------------------|
+| 1    | ![1Login](assest/images/1Login.jpg)                                                      |
+| 2    | ![2LoginAsNormalUser](assest/images/2LoginAsNormalUser.jpg)                              |
+| 3    | ![3aSearchForTheTicket](assest/images/3aSearchForTheTicket.jpg)                          |
+| 4    | ![3bChooseTrainType](assest/images/3bChooseTrainType.jpg)                                |
+| 5    | ![4aChooseSeatType](assest/images/4aChooseSeatType.jpg)                                  |
+| 6    | ![4bGetAvailableResultAndClickBookingButtonForFurtherChoices](assest/images/4bGetAvaliableResultAndClickBookingButtonForFurtherChoices.jpg) |
+| 7    | ![5ChooseContactsAnd6ChooseAssurance](assest/images/5ChooseContactsAnd6ChooseAssurance.jpg) |
+| 8    | ![7ChooseTheFoodAnd8InputTheConsign](assest/images/7ChooseTheFoodAnd8InputTheConsign.jpg) |
+| 9    | ![9ClickTheSelectButton](assest/images/9ClickTheSelectBotton.jpg)                        |
+| 10   | ![10aGetTicketInfoAndConfirmToFinishThePreserveBehavior0](assest/images/10aGetTicketInfoAndConfirmToFinishThePreserveBehavior0.jpg) |
+| 11   | ![10bGetTicketInfoAndConfirmToFinishThePreserveBehavior1](assest/images/10bGetTicketInfoAndConfirmToFinishThePreserveBehavior1.jpg) |
 
 ---
 
 #### • Normal Order Pay Chain
+Here is the flow for the **Normal Order Pay Chain**:
 
-<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 20px;">
-
-  <!-- First Image and Arrow -->
-  <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/1Login.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
-    <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
-  </div>
-
-  <!-- Second Image and Arrow -->
-  <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/2LoginAsNormalUser.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
-    <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
-  </div>
-
-
-</div>
+| Step | Image                                                                                     |
+|------|-------------------------------------------------------------------------------------------|
+| 1    | ![1Login](assest/images/1Login.jpg)                                                      |
+| 2    | ![2LoginAsNormalUser](assest/images/2LoginAsNormalUser.jpg)                              |
 
 ---
 
 #### • Order Consign Chain
+Here is the flow for the **Order Consign Chain**:
 
-<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 20px;">
-
-  <!-- First Image and Arrow -->
-  <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/1Login.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
-    <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
-  </div>
-
-  <!-- Second Image and Arrow -->
-  <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/2LoginAsNormalUser.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
-    <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
-  </div>
-
-
-</div>
-
+| Step | Image                                                                                     |
+|------|-------------------------------------------------------------------------------------------|
+| 1    | ![1Login](assest/images/1Login.jpg)                                                      |
+| 2    | ![2LoginAsNormalUser](assest/images/2LoginAsNormalUser.jpg)                              |
 ---
 
 #### • Ticket Collect and Enter Station Chain
+Here is the flow for the **Ticket Collect and Enter Station Chain**:
 
-<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 20px;">
-
-  <!-- First Image and Arrow -->
-  <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/1Login.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
-    <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
-  </div>
-
-  <!-- Second Image and Arrow -->
-  <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/2LoginAsNormalUser.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
-    <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
-  </div>
-
-
-</div>
+| Step | Image                                                                                     |
+|------|-------------------------------------------------------------------------------------------|
+| 1    | ![1Login](assest/images/1Login.jpg)                                                      |
+| 2    | ![2LoginAsNormalUser](assest/images/2LoginAsNormalUser.jpg)                              |
 
 ---
 
 #### • Advanced Search Chain
+Here is the flow for the **Advanced Search Chain**:
 
-<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 20px;">
-
-  <!-- First Image and Arrow -->
-  <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/1Login.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
-    <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
-  </div>
-
-  <!-- Second Image and Arrow -->
-  <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/2LoginAsNormalUser.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
-    <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
-  </div>
-
-
-</div>
+| Step | Image                                                                                     |
+|------|-------------------------------------------------------------------------------------------|
+| 1    | ![1Login](assest/images/1Login.jpg)                                                      |
+| 2    | ![2LoginAsNormalUser](assest/images/2LoginAsNormalUser.jpg)                              |
 
 ---
 
 #### • Consign List Chain
+Here is the flow for the **Consign List Chain**:
 
-<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 20px;">
-
-  <!-- First Image and Arrow -->
-  <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/1Login.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
-    <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
-  </div>
-
-  <!-- Second Image and Arrow -->
-  <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/2LoginAsNormalUser.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
-    <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
-  </div>
-
-
-</div>
+| Step | Image                                                                                     |
+|------|-------------------------------------------------------------------------------------------|
+| 1    | ![1Login](assest/images/1Login.jpg)                                                      |
+| 2    | ![2LoginAsNormalUser](assest/images/2LoginAsNormalUser.jpg)                              |
 
 ---
 
 #### • Order Change Chain
+Here is the flow for the **Order Change Chain**:
 
-<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 20px;">
-
-  <!-- First Image and Arrow -->
-  <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/1Login.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
-    <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
-  </div>
-
-  <!-- Second Image and Arrow -->
-  <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/2LoginAsNormalUser.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
-    <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
-  </div>
-
-
-</div>
+| Step | Image                                                                                     |
+|------|-------------------------------------------------------------------------------------------|
+| 1    | ![1Login](assest/images/1Login.jpg)                                                      |
+| 2    | ![2LoginAsNormalUser](assest/images/2LoginAsNormalUser.jpg)                              |
 
 ---
 
 #### • Order Cancel Chain
+Here is the flow for the **Order Cancel Chain**:
 
-<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 20px;">
-
-  <!-- First Image and Arrow -->
-  <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/1Login.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
-    <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
-  </div>
-
-  <!-- Second Image and Arrow -->
-  <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <img src="assest/images/2LoginAsNormalUser.jpg" alt="Normal Preserve Chain" style="width: 95px; height: auto;">
-    <div style="font-size: 24px; color: gray; margin-left: 10px;">⟶</div>
-  </div>
-
-
-</div>
+| Step | Image                                                                                     |
+|------|-------------------------------------------------------------------------------------------|
+| 1    | ![1Login](assest/images/1Login.jpg)                                                      |
+| 2    | ![2LoginAsNormalUser](assest/images/2LoginAsNormalUser.jpg)                              |
 
 ---
 
