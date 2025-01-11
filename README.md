@@ -4,6 +4,13 @@
 The Train-Ticket LoadGenerator is a dedicated tool designed to simulate traffic for the Train Ticket Booking System, which is based on a microservice architecture containing 41 microservices. This tool is primarily developed in Go, leveraging its performance and simplicity to effectively test and benchmark the system.
 
 ## Behavior Logic Graph
+The following graphs illustrate the behavior logic of the Train-Ticket Microservice System.
+
+- The **yellow nodes** represent higher-level classes or components in the system.
+- The **arrows** indicate the **invocation relationships** between these components.
+
+These graphs provide a clear visualization of how different parts of the system interact and communicate with each other, offering insights into the overall architecture and dependencies.
+
 ![Behavior-Logic-Graph0.png](assest/images/Behavior-Logic-Graph0.png)
 ![Behavior-Logic-Graph1.png](assest/images/Behavior-Logic-Graph1.png)
 
