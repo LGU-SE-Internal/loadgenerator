@@ -1,0 +1,25 @@
+apiVersion: skaffold/v2beta29
+kind: Config
+metadata:
+  name: loadgenerator
+build:
+  artifacts:
+  - image: 10.10.10.240/library/loadgenerator
+    docker:
+      dockerfile: Dockerfile
+  tagPolicy:
+    sha256: {}  # Use content hash for consistent tagging
+  local:
+    push: true
+deploy:
+  helm:
+    releases:
+    - name: loadgenerator
+      chartPath: charts/loadgenerator
+      valuesFiles:
+      - charts/loadgenerator/values.yaml
+      namespace: default
+      setValues:
+        image.pullPolicy: IfNotPresent
+        image.repository: 10.10.10.240/library/loadgenerator
+        image.tag: latest
