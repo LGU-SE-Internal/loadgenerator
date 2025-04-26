@@ -122,6 +122,9 @@ To deploy and run the application, follow these steps:
 2. Start the application:
    ```bash
    go run main.go
+
+
+   helm upgrade loadgen ./charts/loadgenerator -n experiment --set baseURL=http://10.10.10.220:30081 --set config.threads=1
    ```
 That's it! The application should now be running and accessible at the specified `BASE_URL`.
 

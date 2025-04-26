@@ -33,8 +33,8 @@ baseURL: "http://10.10.10.220:30080"
 
 # Command line arguments from main.go
 config:
-  debug: false
-  threads: 10
-  sleep: 100
+  debug: true
+  threads: 1
+  sleep: 1000
   # chain: ""
   # count: 1
