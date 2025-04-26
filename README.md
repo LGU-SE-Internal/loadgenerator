@@ -120,12 +120,15 @@ To deploy and run the application, follow these steps:
    $env:BASE_URL = "http://10.10.10.220:30080"
    ```
 2. Start the application:
-   ```bash
-   go run main.go
+```bash
+go run main.go
 
 
-   helm upgrade loadgen ./charts/loadgenerator -n experiment --set baseURL=http://10.10.10.220:30081 --set config.threads=1
-   ```
+helm repo add loadgenerator https://cuhk-se-group.github.io/loadgenerator
+helm repo update
+
+helm upgrade loadgen loadgenerator -n experiment --set baseURL=http://10.10.10.220:30081 --set config.threads=1
+```
 That's it! The application should now be running and accessible at the specified `BASE_URL`.
 
 
