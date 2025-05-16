@@ -5,6 +5,7 @@ on:
     paths:
       - 'charts/**'
       - '.github/workflows/release-helm.yml'
+      - './**'
 
 jobs:
   deploy:
