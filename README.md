@@ -124,7 +124,7 @@ To deploy and run the application, follow these steps:
 go run main.go
 
 
-helm repo add loadgenerator https://cuhk-se-group.github.io/loadgenerator
+helm repo add loadgenerator https://lgu-se-internal.github.io/loadgenerator
 helm repo update
 
 helm upgrade loadgen loadgenerator -n experiment --set baseURL=http://10.10.10.220:30081 --set config.threads=1

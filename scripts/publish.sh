@@ -3,7 +3,7 @@ set -e
 
 CHART_DIR="charts/loadgenerator"
 REPO_NAME="loadgenerator"
-REPO_URL="https://cuhk-se-group.github.io/loadgenerator"
+REPO_URL="https://lgu-se-internal.github.io/loadgenerator"
 
 helm dependency update $CHART_DIR
 
