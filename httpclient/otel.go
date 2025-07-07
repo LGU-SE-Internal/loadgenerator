@@ -7,10 +7,12 @@ import (
 	"time"
 
 	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/sdk/resource"
 	"go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.34.0"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func InitOTel(serviceName string) func() {
@@ -35,12 +37,12 @@ func InitOTel(serviceName string) func() {
 		log.Printf("No OTEL_EXPORTER_OTLP_ENDPOINT set, using default: %s", otlpEndpoint)
 	}
 
-	log.Printf("Using OTLP exporter with endpoint: %s", otlpEndpoint)
+	log.Printf("Using OTLP gRPC exporter with endpoint: %s", otlpEndpoint)
 
-	otlpExporter, err := otlptracehttp.New(
+	otlpExporter, err := otlptracegrpc.New(
 		context.Background(),
-		otlptracehttp.WithEndpoint(otlpEndpoint),
-		otlptracehttp.WithInsecure(),
+		otlptracegrpc.WithEndpoint(otlpEndpoint),
+		otlptracegrpc.WithDialOption(grpc.WithTransportCredentials(insecure.NewCredentials())),
 	)
 	if err != nil {
 		log.Fatalf("Failed to create OTLP exporter: %v", err)
