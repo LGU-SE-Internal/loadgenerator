@@ -4,11 +4,9 @@ import (
 	"context"
 	"log"
 	"os"
-	"strings"
 	"time"
 
 	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/sdk/resource"
@@ -17,55 +15,22 @@ import (
 )
 
 func InitOTel(serviceName string) func() {
-	// Base attributes
-	attrs := []attribute.KeyValue{
+	// Create base resource with service info
+	baseRes := resource.NewWithAttributes(
+		semconv.SchemaURL,
 		semconv.ServiceName(serviceName),
 		semconv.ServiceVersion("1.0.0"),
-	}
-
-	// Add custom attributes from environment variables
-	if serviceNamespace := os.Getenv("SERVICE_NAMESPACE"); serviceNamespace != "" {
-		attrs = append(attrs, attribute.String("service.namespace", serviceNamespace))
-	}
-	
-	if customServiceName := os.Getenv("SERVICE_NAME"); customServiceName != "" {
-		// Override service name if provided via environment
-		attrs[0] = semconv.ServiceName(customServiceName)
-	}
-	
-	if podName := os.Getenv("POD_NAME"); podName != "" {
-		attrs = append(attrs, attribute.String("pod.name", podName))
-	}
-
-	// Parse OTEL_RESOURCE_ATTRIBUTES if present
-	if otelResourceAttrs := os.Getenv("OTEL_RESOURCE_ATTRIBUTES"); otelResourceAttrs != "" {
-		for _, pair := range strings.Split(otelResourceAttrs, ",") {
-			if kv := strings.SplitN(strings.TrimSpace(pair), "=", 2); len(kv) == 2 {
-				key := strings.TrimSpace(kv[0])
-				value := strings.TrimSpace(kv[1])
-				
-				// Handle standard service attributes
-				switch key {
-				case "service.name":
-					attrs[0] = semconv.ServiceName(value)
-				case "service.namespace":
-					attrs = append(attrs, attribute.String("service.namespace", value))
-				case "pod.name":
-					attrs = append(attrs, attribute.String("pod.name", value))
-				default:
-					attrs = append(attrs, attribute.String(key, value))
-				}
-			}
-		}
-	}
-
-	res, err := resource.Merge(
-		resource.Default(),
-		resource.NewWithAttributes(
-			semconv.SchemaURL,
-			attrs...,
-		),
 	)
+
+	envRes, err := resource.Merge(
+		resource.Default(),
+		resource.Environment(),
+	)
+	if err != nil {
+		log.Fatalf("Failed to merge environment resource: %v", err)
+	}
+
+	res, err := resource.Merge(envRes, baseRes)
 	if err != nil {
 		log.Fatalf("Failed to create resource: %v", err)
 	}
