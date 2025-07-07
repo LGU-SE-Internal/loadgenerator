@@ -18,23 +18,89 @@ podAnnotations: {}
 
 resources:
   limits:
-    cpu: 4000m
-    memory: 2048Mi
+    cpu: 500m
+    memory: 512Mi
   requests:
-    cpu: 2000m
-    memory: 1024Mi
+    cpu: 100m
+    memory: 128Mi
 
 nodeSelector: {}
 tolerations: []
 affinity: {}
 
 # Application specific configuration
-baseURL: "http://10.10.10.220:30080"
+baseURL: "http://ts-ui-dashboard:8080"
 
 # Command line arguments from main.go
 config:
-  debug: true
-  threads: 1
-  sleep: 1000
+  debug: false
+  threads: 5
+  sleep: 500
   # chain: ""
   # count: 1
+
+
+waitForServices:
+  enabled: false
+  timeout: 600  
+  checkInterval: 10 
+  services:
+    - name: ts-ui-dashboard
+      port: 8080
+      path: "/"
+    - name: ts-auth-service
+      port: 8080
+      path: "/api/v1/auth/hello"
+    - name: ts-user-service
+      port: 8080
+      path: "/api/v1/userservice/users/hello"
+    - name: ts-order-service
+      port: 8080
+      path: "/api/v1/orderservice/orders/hello"
+    - name: ts-travel-service
+      port: 8080
+      path: "/api/v1/travelservice/trips/hello"
+    - name: ts-travel2-service
+      port: 8080
+      path: "/api/v1/travel2service/trips/hello"
+    - name: ts-preserve-service
+      port: 8080
+      path: "/api/v1/preserveservice/preserve/hello"
+    - name: ts-basic-service
+      port: 8080
+      path: "/api/v1/basicservice/basic/hello"
+    - name: ts-station-service
+      port: 8080
+      path: "/api/v1/stationservice/stations/hello"
+    - name: ts-train-service
+      port: 8080
+      path: "/api/v1/trainservice/trains/hello"
+    - name: ts-route-service
+      port: 8080
+      path: "/api/v1/routeservice/routes/hello"
+    - name: ts-price-service
+      port: 8080
+      path: "/api/v1/priceservice/prices/hello"
+    - name: ts-seat-service
+      port: 8080
+      path: "/api/v1/seatservice/seats/hello"
+    - name: ts-security-service
+      port: 8080
+      path: "/api/v1/securityservice/security/hello"
+    - name: ts-payment-service
+      port: 8080
+      path: "/api/v1/paymentservice/payment/hello"
+    - name: mysql
+      port: 3306
+    - name: rabbitmq
+      port: 5672
+
+initContainer:
+  image: nicolaka/netshoot:latest
+  resources:
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
