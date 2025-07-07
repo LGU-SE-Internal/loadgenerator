@@ -22,6 +22,7 @@ spec:
       initContainers:
         - name: wait-for-services
           image: {{ .Values.initContainer.image }}
+          imagePullPolicy: IfNotPresent
           command: ["/bin/sh"]
           args:
             - -c
@@ -81,6 +82,8 @@ spec:
           env:
             - name: BASE_URL
               value: "{{ .Values.baseURL }}"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "{{ .Values.opentelemetry.endpoint }}"
           args:
             {{- if .Values.config.debug }}
             - "--debug"

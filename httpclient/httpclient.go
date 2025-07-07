@@ -104,10 +104,12 @@ func (c *HttpClient) SendRequestWithContext(ctx context.Context, method, url str
 		return nil, err
 	}
 
-	// 添加头信息
+	// 添加头信息，需要持有锁避免并发读写
+	c.mu.Lock()
 	for key, value := range c.headers {
 		req.Header.Set(key, value)
 	}
+	c.mu.Unlock()
 
 	// 发送请求并记录请求和响应信息
 	resp, err := c.client.Do(req)
@@ -184,7 +186,7 @@ func (c *HttpClient) logRequestResponse(req *http.Request, resp *http.Response, 
 
 		if rand.Int()%10 == 0 {
 			value.RequestBody = append(value.RequestBody, string(reqBody))
-			value.ResponseBody = append(value.RequestBody, string(respBody))
+			value.ResponseBody = append(value.ResponseBody, string(respBody))
 		}
 		c.requestStats[key] = value
 		return
@@ -193,7 +195,7 @@ func (c *HttpClient) logRequestResponse(req *http.Request, resp *http.Response, 
 	value.Failed += 1
 	if rand.Int()%5 == 0 {
 		value.RequestBody = append(value.RequestBody, string(reqBody))
-		value.ResponseBody = append(value.RequestBody, string(respBody))
+		value.ResponseBody = append(value.ResponseBody, string(respBody))
 	}
 	c.requestStats[key] = value
 }
@@ -217,7 +219,7 @@ func (c *HttpClient) GetRequestStats() map[RequestStatsKey]RequestStats {
 		newv.Success = value.Success
 		newv.Failed = value.Failed
 		newv.RequestBody = make([]string, len(value.RequestBody))
-		newv.ResponseBody = make([]string, len(value.RequestBody))
+		newv.ResponseBody = make([]string, len(value.ResponseBody))
 		copy(newv.RequestBody, value.RequestBody)
 		copy(newv.ResponseBody, value.ResponseBody)
 		statsCopy[key] = newv
