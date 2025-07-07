@@ -94,7 +94,7 @@ spec:
               value: "{{ .Release.Namespace }}"
             {{- if .Values.opentelemetry.resourceAttributes }}
             - name: OTEL_RESOURCE_ATTRIBUTES
-              value: "service.name=loadgenerator-service,service.namespace={{ $root.Release.Namespace }},pod.name=$(POD_NAME)"
+              value: "service.name=loadgenerator-service,service.namespace={{ .Release.Namespace }},pod.name=$(POD_NAME)"
             {{- end }}
           args:
             {{- if .Values.config.debug }}
