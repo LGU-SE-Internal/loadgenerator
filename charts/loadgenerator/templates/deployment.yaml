@@ -47,9 +47,10 @@ spec:
                   fi
                   
                   if [ -n "$path" ]; then
-                    # HTTP health check
-                    if curl -f -s --connect-timeout 5 --max-time 10 "http://$name:$port$path" > /dev/null 2>&1; then
-                      echo "$name is ready (HTTP)"
+                    # HTTP health check - accept 200, 404, etc. (any HTTP response means service is running)
+                    http_code=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 5 --max-time 10 "http://$name:$port$path" 2>/dev/null)
+                    if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 500 ]; then
+                      echo "$name is ready (HTTP $http_code)"
                       return 0
                     fi
                   else
