@@ -281,7 +281,7 @@ func (l *LoadGenerator) worker(index int) {
 			_, err := l.config.Chain.Execute(chainCtx)
 			log.Infof("Thread %d executed chain, time used: %v", index, time.Since(start))
 			if err != nil {
-				log.Errorf("Error executing chain: %v", err)
+				log.Warn(err)
 			}
 			if l.config.SleepTime > 0 {
 				time.Sleep(time.Millisecond * time.Duration(rand.Intn(l.config.SleepTime)))

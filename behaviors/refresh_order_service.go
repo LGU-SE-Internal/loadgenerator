@@ -156,7 +156,7 @@ func RefreshOrderOther(ctx *Context) (*NodeResult, error) {
 
 	var randomIndex int
 	if len(RefreshOtherResp.Data) == 0 {
-		log.Errorf("Paied order is empty")
+		log.Warn("Paied order is empty")
 		return &NodeResult{Continue: false}, nil
 	}
 	//if rand.Intn(2) == 0 {
