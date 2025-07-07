@@ -47,16 +47,18 @@ func OrderRebook(ctx *Context) (*NodeResult, error) {
 	var rebookSvc service.ReBookService = cli
 	OrderRebookResp, err := rebookSvc.Rebook(&RebookInfo)
 	if err != nil {
+		log.Errorf("Order rebooking failed: %v", err)
 		return nil, err
 	}
 	if OrderRebookResp.Status == 0 || OrderRebookResp.Msg == "You can only change the ticket before the train start or within 2 hours after the train start." {
-		log.Warnf("[Tips]You can only change the ticket before the train start or within 2 hours after the train start.")
-		return &(NodeResult{false}), nil // Chain End :D
+		log.Warnf("Order rebooking not allowed: %s", OrderRebookResp.Msg)
+		return &(NodeResult{false}), nil // Chain End
 	} else if OrderRebookResp.Status != 1 {
-		return nil, fmt.Errorf("OrderRebookResp Fails. Status != 1. Order Rebook status is %d and Msg is: %v", OrderRebookResp.Status, OrderRebookResp.Msg)
+		log.Errorf("Order rebooking failed: unexpected status %d, message: %s", OrderRebookResp.Status, OrderRebookResp.Msg)
+		return nil, fmt.Errorf("OrderRebookResp failed: status=%d, msg=%v", OrderRebookResp.Status, OrderRebookResp.Msg)
 	}
 
-	log.Infof("[Success!] OrderRebookResp Status is %d", OrderRebookResp.Status)
+	log.Infof("Order rebooking succeeded: status=%d, orderID=%s, newTripID=%s", OrderRebookResp.Status, RebookInfo.OrderID, RebookInfo.TripID)
 
-	return &(NodeResult{false}), nil // Chain End :D
+	return &(NodeResult{false}), nil // Chain End
 }

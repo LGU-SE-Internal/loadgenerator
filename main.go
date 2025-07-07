@@ -22,9 +22,8 @@ var chains = map[string]*behaviors.Chain{
 }
 
 func callChain(chain *behaviors.Chain, count int) {
-	// 创建客户端（包含 OpenTelemetry 初始化）
 	client := service.NewSvcClients()
-	defer client.CleanUp() // 确保在函数结束时清理
+	defer client.CleanUp()
 
 	chainCtx := behaviors.NewContext(context.Background())
 	chainCtx.Set(behaviors.Client, client)
@@ -48,16 +47,19 @@ func main() {
 		Use:   "app",
 		Short: "A load generator application",
 		Run: func(cmd *cobra.Command, args []string) {
+			// 设置日志格式
+			logrus.SetFormatter(&logrus.TextFormatter{
+				ForceColors:     true,
+				FullTimestamp:   true,
+				TimestampFormat: "2006-01-02 15:04:05",
+			})
+
 			if debug {
 				logrus.SetLevel(logrus.DebugLevel)
 				logrus.SetReportCaller(true)
 			} else {
-				logrus.SetLevel(logrus.InfoLevel)
+				logrus.SetLevel(logrus.ErrorLevel)
 			}
-
-			logrus.SetFormatter(&logrus.TextFormatter{
-				FullTimestamp: true,
-			})
 
 			composedChain := behaviors.NewChain(behaviors.NewFuncNode(func(ctx *behaviors.Context) (*behaviors.NodeResult, error) {
 				return nil, nil
@@ -94,8 +96,8 @@ func main() {
 	}
 
 	rootCmd.PersistentFlags().BoolVar(&debug, "debug", false, "Enable debug logging")
-	rootCmd.PersistentFlags().IntVarP(&threads, "threads", "t", 3, "Number of threads")
-	rootCmd.PersistentFlags().IntVarP(&sleepDuration, "sleep", "s", 100, "Sleep duration in milliseconds")
+	rootCmd.PersistentFlags().IntVarP(&threads, "threads", "t", 1, "Number of threads")
+	rootCmd.PersistentFlags().IntVarP(&sleepDuration, "sleep", "s", 10000, "Sleep duration in milliseconds")
 	rootCmd.PersistentFlags().StringVar(&chainName, "chain", "", "Choose which chain to execute")
 	rootCmd.PersistentFlags().IntVar(&chainCount, "count", 1, "How many times to run the chain")
 

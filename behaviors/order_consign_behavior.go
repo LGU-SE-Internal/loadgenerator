@@ -37,10 +37,11 @@ func OrderQuery(ctx *Context) (*NodeResult, error) {
 	var consignSvc service.ConsignService = cli
 	OrderQueryResp, err := consignSvc.QueryByOrderId(TheOrderId)
 	if err != nil {
+		log.Errorf("Failed to query order by ID [%s]: %v", TheOrderId, err)
 		return nil, err
 	}
 	if OrderQueryResp.Status == 0 {
-		log.Infof("Order has not been consigned before. You can consign now.")
+		log.Infof("Order [%s] has not been consigned. Proceeding to consign.", TheOrderId)
 		TheConsignee := faker.Name()
 		ThePhone := faker.Phonenumber()
 		TheWeight := GenerateWeight()
@@ -48,14 +49,12 @@ func OrderQuery(ctx *Context) (*NodeResult, error) {
 		ctx.Set(Consignee, TheConsignee)
 		ctx.Set(Phone, ThePhone)
 		ctx.Set(Weight, TheWeight)
-		log.Infof("[Success]The Status is: %v. Order has not been consigned before. You can consign now.", OrderQueryResp.Status)
+		log.Infof("Order [%s] is ready for consignment. Consignee: %s, Phone: %s, Weight: %.2f", TheOrderId, TheConsignee, ThePhone, TheWeight)
 		return nil, nil
-		/*	} else if OrderQueryResp.Status == 1 || OrderQueryResp.Status == 500 {*/
 	} else {
-		log.Infof("The Order has been consigned before. Please try to consign another order again.")
-		return &(NodeResult{false}), nil // Chain End :D
+		log.Warnf("Order [%s] has already been consigned. Skipping consignment.", TheOrderId)
+		return &(NodeResult{false}), nil // Chain End
 	}
-
 }
 
 func OrderConsign(ctx *Context) (*NodeResult, error) {
@@ -81,12 +80,14 @@ func OrderConsign(ctx *Context) (*NodeResult, error) {
 	var consignSvc service.ConsignService = cli
 	OrderConsignResp, err := consignSvc.UpdateConsignRecord(&TheConsign)
 	if err != nil {
+		log.Errorf("Failed to update consignment record for OrderID [%s]: %v", TheConsign.OrderID, err)
 		return nil, err
 	}
 	if OrderConsignResp.Status != 1 {
+		log.Errorf("Consignment failed for OrderID [%s]. Unexpected status: %d", TheConsign.OrderID, OrderConsignResp.Status)
 		return nil, fmt.Errorf("OrderConsign Fails. Status != 1. Order consign status is %d", OrderConsignResp.Status)
 	}
-	log.Infof("[Success]You have consigned successfully! The Status is: %v, and OrderConsignResp Data: %v", OrderConsignResp.Status, OrderConsignResp.Data)
+	log.Infof("Consignment successful for OrderID [%s]. Status: %d, Response Data: %+v", TheConsign.OrderID, OrderConsignResp.Status, OrderConsignResp.Data)
 
-	return &(NodeResult{true}), nil // Chain End :D
+	return &(NodeResult{true}), nil // Chain End
 }

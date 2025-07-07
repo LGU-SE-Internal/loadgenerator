@@ -2,10 +2,11 @@ package behaviors
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/Lincyaw/loadgenerator/service"
 	"github.com/go-faker/faker/v4"
 	log "github.com/sirupsen/logrus"
-	"strings"
 )
 
 func QueryBasic(ctx *Context) (*NodeResult, error) {
@@ -42,12 +43,12 @@ func QueryBasic(ctx *Context) (*NodeResult, error) {
 	var basicSvc service.BasicService = cli
 	travel, err := basicSvc.QueryForTravel(travelQuery)
 	if err != nil {
-		log.Errorf("QueryTraintype travel request failed, err %s", err)
+		log.Errorf("QueryForTravel failed: request=%+v, error=%v", travelQuery, err)
 		return nil, err
 	}
 	if travel.Status != 1 {
-		log.Errorf("travel.Status != 1")
-		return nil, err
+		log.Errorf("QueryForTravel returned abnormal status: expected=1, got=%d, request=%+v, response=%+v", travel.Status, travelQuery, travel)
+		return nil, fmt.Errorf("unexpected travel status: %d", travel.Status)
 	}
 
 	ctx.Set(Status, travel.Data.Status)

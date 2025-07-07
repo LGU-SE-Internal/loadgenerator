@@ -2,25 +2,27 @@ package behaviors
 
 import (
 	"fmt"
+	"math/rand"
+
 	"github.com/Lincyaw/loadgenerator/service"
 	"github.com/go-faker/faker/v4"
 	log "github.com/sirupsen/logrus"
-	"math/rand"
 )
 
 func QueryOrder(ctx *Context) (*NodeResult, error) {
 	cli, ok := ctx.Get(Client).(*service.SvcImpl)
 	if !ok {
+		log.Error("Failed to retrieve service client from context in QueryOrder")
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
 	Resp, err := cli.ReqFindAllOrder()
 	if err != nil {
-		log.Errorf("Request failed, err %s", err)
+		log.Errorf("QueryOrder: Failed to request all orders: %v", err)
 		return nil, err
 	}
 	if len(Resp.Data) == 0 {
-		log.Errorf("no data found.")
+		log.Warn("QueryOrder: No order data returned from service")
 		return nil, err
 	}
 
@@ -45,6 +47,7 @@ func QueryOrder(ctx *Context) (*NodeResult, error) {
 func CreateOrder(ctx *Context) (*NodeResult, error) {
 	cli, ok := ctx.Get(Client).(*service.SvcImpl)
 	if !ok {
+		log.Error("Failed to retrieve service client from context in CreateOrder")
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
@@ -74,11 +77,11 @@ func CreateOrder(ctx *Context) (*NodeResult, error) {
 
 	CreateNewOrderResp, err := cli.ReqCreateNewOrder(&originOrder0)
 	if err != nil {
-		log.Errorf("Request failed, err %s", err)
+		log.Errorf("CreateOrder: Failed to create new order: %v", err)
 		return nil, err
 	}
 	if CreateNewOrderResp.Status != 1 {
-		log.Errorf("Request failed, CreateNewOrder status != 1")
+		log.Errorf("CreateOrder: Unexpected response status: %d, expected 1", CreateNewOrderResp.Status)
 		return nil, err
 	}
 

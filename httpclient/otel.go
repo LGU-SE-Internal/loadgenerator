@@ -3,16 +3,16 @@ package httpclient
 import (
 	"context"
 	"log"
+	"os"
 	"time"
 
 	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	"go.opentelemetry.io/otel/sdk/resource"
 	"go.opentelemetry.io/otel/sdk/trace"
-	semconv "go.opentelemetry.io/otel/semconv/v1.24.0"
+	semconv "go.opentelemetry.io/otel/semconv/v1.34.0"
 )
 
-// InitOTel 初始化 OpenTelemetry
 func InitOTel(serviceName string) func() {
 	// 创建资源
 	res, err := resource.Merge(
@@ -27,13 +27,26 @@ func InitOTel(serviceName string) func() {
 		log.Fatalf("Failed to create resource: %v", err)
 	}
 
-	// 创建 stdout trace exporter
-	exporter, err := stdouttrace.New(
-		stdouttrace.WithPrettyPrint(),
+	var exporter trace.SpanExporter
+
+	otlpEndpoint := os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
+	if otlpEndpoint == "" {
+		// otlpEndpoint = "opentelemetry-collector-deployment.monitoring:4317"
+		otlpEndpoint = "localhost:4317"
+		log.Printf("No OTEL_EXPORTER_OTLP_ENDPOINT set, using default: %s", otlpEndpoint)
+	}
+
+	log.Printf("Using OTLP exporter with endpoint: %s", otlpEndpoint)
+
+	otlpExporter, err := otlptracehttp.New(
+		context.Background(),
+		otlptracehttp.WithEndpoint(otlpEndpoint),
+		otlptracehttp.WithInsecure(),
 	)
 	if err != nil {
-		log.Fatalf("Failed to create trace exporter: %v", err)
+		log.Fatalf("Failed to create OTLP exporter: %v", err)
 	}
+	exporter = otlpExporter
 
 	// 创建 trace provider
 	tp := trace.NewTracerProvider(

@@ -2,29 +2,30 @@ package behaviors
 
 import (
 	"fmt"
+	"math/rand"
+
 	"github.com/Lincyaw/loadgenerator/service"
 	"github.com/go-faker/faker/v4"
 	log "github.com/sirupsen/logrus"
-	"math/rand"
 )
 
 // ContactsBehaviorChain
 func QueryContacts(ctx *Context) (*NodeResult, error) {
 	cli, ok := ctx.Get(Client).(*service.SvcImpl)
 	if !ok {
-		return nil, fmt.Errorf("service client not found in context")
+		return nil, fmt.Errorf("failed to retrieve service client from context")
 	}
 
 	var contactsSvc service.ContactsService = cli
 	TheAccountId := ctx.Get(UserId).(string)
 	GetAllContacts, err := contactsSvc.GetContactByAccountId(TheAccountId)
 	if err != nil {
-		log.Errorf("[Mock AccountID]GetAllContacts fail. The error occurs: %v", err)
+		log.Errorf("Failed to query contacts for account_id=%s: %v", TheAccountId, err)
 		return nil, err
 	}
 	if GetAllContacts.Status != 1 {
-		log.Errorf("[Mock AccountID]GetAllContacts.Status != 1")
-		return nil, err
+		log.Errorf("Unexpected response status when querying contacts for account_id=%s: status=%d", TheAccountId, GetAllContacts.Status)
+		return nil, fmt.Errorf("unexpected response status: %d", GetAllContacts.Status)
 	}
 
 	randomIndex := rand.Intn(len(GetAllContacts.Data))
@@ -41,7 +42,7 @@ func QueryContacts(ctx *Context) (*NodeResult, error) {
 func CreateContacts(ctx *Context) (*NodeResult, error) {
 	cli, ok := ctx.Get(Client).(*service.SvcImpl)
 	if !ok {
-		return nil, fmt.Errorf("service client not found in context")
+		return nil, fmt.Errorf("failed to retrieve service client from context")
 	}
 
 	CreateContactsInput := service.AdminContacts{
@@ -54,12 +55,12 @@ func CreateContacts(ctx *Context) (*NodeResult, error) {
 	}
 	CreateContacts, err := cli.AddContact(&CreateContactsInput)
 	if err != nil {
-		log.Errorf("[Mock AccountID] CreateContacts error occurs: %v", err)
+		log.Errorf("Failed to create contact for account_id=%s: %v", CreateContactsInput.AccountId, err)
 		return nil, err
 	}
 	if CreateContacts.Status != 1 {
-		log.Errorf("[Mock AccountID] CreateContacts.Status != 1, resp: %+v", CreateContacts)
-		return nil, err
+		log.Errorf("Unexpected response status when creating contact for account_id=%s: status=%d, response=%+v", CreateContactsInput.AccountId, CreateContacts.Status, CreateContacts)
+		return nil, fmt.Errorf("unexpected response status: %d", CreateContacts.Status)
 	}
 
 	//ctx.Set(AccountID, CreateContacts.Data.AccountId)

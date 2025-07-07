@@ -2,27 +2,29 @@ package behaviors
 
 import (
 	"fmt"
+	"math/rand"
+
 	"github.com/Lincyaw/loadgenerator/service"
 	log "github.com/sirupsen/logrus"
-	"math/rand"
 )
 
 // ConfigBehaviorChain
 func QueryConfig(ctx *Context) (*NodeResult, error) {
 	cli, ok := ctx.Get(Client).(*service.SvcImpl)
 	if !ok {
+		log.Errorf("QueryConfig: failed to get service client from context, got type: %T", ctx.Get(Client))
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
 	// QueryTraintype All Configs Test
 	queryAllResp, err := cli.QueryAllConfigs()
 	if err != nil {
-		log.Errorf("QueryAllConfigs request failed, err %s", err)
+		log.Errorf("QueryConfig: QueryAllConfigs request failed, error: %v", err)
 		return nil, err
 	}
 	if queryAllResp.Status != 1 {
-		log.Errorf("QueryAllConfigs status != 1")
-		return nil, err
+		log.Errorf("QueryConfig: QueryAllConfigs returned unexpected status: %d, expected: 1", queryAllResp.Status)
+		return nil, fmt.Errorf("unexpected status from QueryAllConfigs: %d", queryAllResp.Status)
 	}
 
 	/*	Name        string `json:"name"`

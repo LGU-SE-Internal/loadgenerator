@@ -2,10 +2,11 @@ package behaviors
 
 import (
 	"fmt"
-	"github.com/Lincyaw/loadgenerator/service"
-	log "github.com/sirupsen/logrus"
 	"math/rand"
 	"time"
+
+	"github.com/Lincyaw/loadgenerator/service"
+	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -66,7 +67,7 @@ func RefreshOrder(ctx *Context) (*NodeResult, error) {
 
 	var randomIndex int
 	if len(RefreshResp.Data) == 0 {
-		log.Errorf("Unpaied order is empty")
+		log.Warnf("Unpaied order is empty")
 		return &NodeResult{Continue: false}, nil
 	}
 	//if rand.Intn(2) == 0 {
@@ -244,7 +245,7 @@ func RefreshCollectedOrder(ctx *Context) (*NodeResult, error) {
 
 	var randomIndex int
 	if len(RefreshResp.Data) == 0 {
-		log.Errorf("Unpaied order is empty")
+		log.Warnf("Unpaied order is empty")
 		return &NodeResult{Continue: false}, nil
 	}
 	//if rand.Intn(2) == 0 {

@@ -91,6 +91,91 @@ go build -o examples/otel_example examples/otel_example.go
 
 示例会发送几个 HTTP 请求并将 trace 信息输出到控制台。
 
+## 配置 OTLP Endpoint
+
+### 环境变量配置
+
+你可以通过以下环境变量来配置 OpenTelemetry 导出器：
+
+#### OTEL_EXPORTER_OTLP_ENDPOINT
+设置 OTLP endpoint URL。如果不设置此变量，将使用默认值：`http://opentelemetry-collector-deployment.monitoring:4317`
+
+```bash
+# 使用 Jaeger (OTLP HTTP)
+export OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318
+
+# 使用 OTEL Collector
+export OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
+
+# 使用云服务 (例如: Grafana Cloud, DataDog, etc.)
+export OTEL_EXPORTER_OTLP_ENDPOINT=https://your-cloud-provider.com/v1/traces
+```
+
+#### OTEL_EXPORTER_OTLP_HEADERS (可选)
+设置 OTLP 请求头，用于认证等。
+
+```bash
+# 使用 API Key 认证
+export OTEL_EXPORTER_OTLP_HEADERS="authorization=Bearer your-api-key"
+
+# 使用多个头信息
+export OTEL_EXPORTER_OTLP_HEADERS="authorization=Bearer token,x-custom-header=value"
+```
+
+### 使用示例
+
+#### 1. 使用 Jaeger
+
+```bash
+# 启动 Jaeger (使用 Docker)
+docker run -d --name jaeger \
+  -p 16686:16686 \
+  -p 4318:4318 \
+  jaegertracing/all-in-one:latest
+
+# 配置环境变量
+export OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318
+export BASE_URL=http://your-service:8080
+
+# 运行负载生成器
+./loadgenerator --threads 3 --sleep 1000
+```
+
+#### 2. 使用 OpenTelemetry Collector
+
+```bash
+# 配置 OTEL Collector endpoint
+export OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
+export BASE_URL=http://your-service:8080
+
+# 运行负载生成器
+./loadgenerator --chain NormalPreserveChain --count 10
+```
+
+#### 3. 使用云服务
+
+```bash
+# 配置云服务 endpoint 和认证
+export OTEL_EXPORTER_OTLP_ENDPOINT=https://api.your-cloud-provider.com/v1/traces
+export OTEL_EXPORTER_OTLP_HEADERS="authorization=Bearer your-api-token"
+export BASE_URL=http://your-service:8080
+
+# 运行负载生成器
+./loadgenerator --debug --threads 5
+```
+
+### 验证配置
+
+当程序启动时，你会看到以下日志信息之一：
+
+```
+# 使用 OTLP exporter
+Using OTLP exporter with endpoint: http://localhost:4318
+
+# 使用 stdout exporter（默认）
+Using stdout exporter (set OTEL_EXPORTER_OTLP_ENDPOINT to use OTLP)
+```
+
 ## 集成其他 Exporter
 
 默认使用 stdout exporter 将 trace 输出到控制台。你可以修改 `httpclient/otel.go` 文件来集成其他 exporter，如：

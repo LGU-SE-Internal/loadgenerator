@@ -24,7 +24,7 @@ func init() {
 func ConsignList(ctx *Context) (*NodeResult, error) {
 	cli, ok := ctx.Get(Client).(*service.SvcImpl)
 	if !ok {
-		return nil, fmt.Errorf("service client not found in context")
+		return nil, fmt.Errorf("ConsignList: unable to retrieve service client from context")
 	}
 
 	TheAccountId := ctx.Get(AccountID).(string)
@@ -32,12 +32,14 @@ func ConsignList(ctx *Context) (*NodeResult, error) {
 	var consignSvc service.ConsignService = cli
 	ConsignListResp, err := consignSvc.QueryByAccountId(TheAccountId)
 	if err != nil {
+		log.Errorf("ConsignList: QueryByAccountId failed for AccountID=%s, error=%v", TheAccountId, err)
 		return nil, err
 	}
 	if ConsignListResp.Status != 1 {
-		return nil, fmt.Errorf("consign service Status != 1, accountId: %s", TheAccountId)
+		log.Warnf("ConsignList: QueryByAccountId returned non-success status for AccountID=%s, status=%v", TheAccountId, ConsignListResp.Status)
+		return nil, fmt.Errorf("ConsignList: service returned status=%v for AccountID=%s", ConsignListResp.Status, TheAccountId)
 	}
-	log.Infof("[Success] get consign list success %v", ConsignListResp.Status)
+	log.Infof("ConsignList: QueryByAccountId succeeded for AccountID=%s, status=%v", TheAccountId, ConsignListResp.Status)
 
 	return &(NodeResult{false}), nil // Chain End :D
 }

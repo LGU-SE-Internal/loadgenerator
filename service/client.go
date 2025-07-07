@@ -95,7 +95,7 @@ func NewSvcClients() *SvcImpl {
 	cli.AddHeader("Connection", "keep-alive")
 	baseUrl := os.Getenv("BASE_URL")
 	if baseUrl == "" {
-		panic("PLEASE use BASE_URL environment variable, example: BASE_URL=http://127.0.0.1:8080")
+		baseUrl = "http://10.10.10.220:30080"
 	}
 	return &SvcImpl{
 		cli:         cli,

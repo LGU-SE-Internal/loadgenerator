@@ -35,13 +35,15 @@ func OrderCalculate(ctx *Context) (*NodeResult, error) {
 	var cancelSvc service.CancelService = cli
 	OrderCalculateResp, err := cancelSvc.ReqCalculate(TheOrderId)
 	if err != nil {
+		log.Errorf("OrderCalculate failed: error occurred while requesting calculation for order_id=%s: %v", TheOrderId, err)
 		return nil, err
 	}
 	if OrderCalculateResp.Status != 1 {
-		return nil, fmt.Errorf("OrderCalculate fail. Preserve Status is %v", OrderCalculateResp.Status)
+		log.Errorf("OrderCalculate failed: unexpected response status for order_id=%s, status=%v", TheOrderId, OrderCalculateResp.Status)
+		return nil, fmt.Errorf("OrderCalculate failed, response status: %v", OrderCalculateResp.Status)
 	}
 
-	log.Infof("OrderCalculate success. Preserve Status is %v", OrderCalculateResp.Status)
+	log.Infof("OrderCalculate succeeded: order_id=%s, response status=%v", TheOrderId, OrderCalculateResp.Status)
 
 	return nil, nil
 }
@@ -58,13 +60,15 @@ func OrderCancel(ctx *Context) (*NodeResult, error) {
 	var cancelSvc service.CancelService = cli
 	OrderCancelResp, err := cancelSvc.ReqCancelTicket(TheOrderId, TheAccountId)
 	if err != nil {
+		log.Errorf("OrderCancel failed: error occurred while requesting cancellation for order_id=%s, account_id=%s: %v", TheOrderId, TheAccountId, err)
 		return nil, err
 	}
 	if OrderCancelResp.Status != 1 {
-		return nil, fmt.Errorf("OrderCancel fail. Preserve Status is %v", OrderCancelResp.Status)
+		log.Errorf("OrderCancel failed: unexpected response status for order_id=%s, account_id=%s, status=%v", TheOrderId, TheAccountId, OrderCancelResp.Status)
+		return nil, fmt.Errorf("OrderCancel failed, response status: %v", OrderCancelResp.Status)
 	}
 
-	log.Infof("[Success]OrderCancel success! Preserve Status is %v", OrderCancelResp.Status)
+	log.Infof("OrderCancel succeeded: order_id=%s, account_id=%s, response status=%v", TheOrderId, TheAccountId, OrderCancelResp.Status)
 
 	return &(NodeResult{false}), nil // Chain End :D
 }

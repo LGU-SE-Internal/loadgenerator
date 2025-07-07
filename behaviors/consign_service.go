@@ -2,6 +2,7 @@ package behaviors
 
 import (
 	"fmt"
+
 	"github.com/Lincyaw/loadgenerator/service"
 	"github.com/go-faker/faker/v4"
 	log "github.com/sirupsen/logrus"
@@ -11,6 +12,7 @@ import (
 func QueryConsign(ctx *Context) (*NodeResult, error) {
 	cli, ok := ctx.Get(Client).(*service.SvcImpl)
 	if !ok {
+		log.Error("Failed to retrieve service client from context: type assertion to *service.SvcImpl failed")
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
@@ -18,12 +20,12 @@ func QueryConsign(ctx *Context) (*NodeResult, error) {
 	TheOrderId := ctx.Get(OrderId).(string)
 	consignsByOrderId, err := cli.QueryByOrderId(TheOrderId)
 	if err != nil {
-		log.Errorf("QueryByOrderId failed: %v", err)
+		log.Errorf("Consign query failed for orderId '%s': %v", TheOrderId, err)
 		return nil, err
 	}
 	if consignsByOrderId.Status != 1 {
-		log.Errorf("consignsByOrderId.Status = 1")
-		return nil, err
+		log.Errorf("Consign query for orderId '%s' returned unexpected status %d. Full response: %+v", TheOrderId, consignsByOrderId.Status, consignsByOrderId)
+		return nil, fmt.Errorf("unexpected status from QueryByOrderId: %d", consignsByOrderId.Status)
 	}
 
 	ctx.Set(ID, consignsByOrderId.Data.Id)
@@ -44,6 +46,7 @@ func QueryConsign(ctx *Context) (*NodeResult, error) {
 func CreateConsign(ctx *Context) (*NodeResult, error) {
 	cli, ok := ctx.Get(Client).(*service.SvcImpl)
 	if !ok {
+		log.Error("Failed to retrieve service client from context: type assertion to *service.SvcImpl failed")
 		return nil, fmt.Errorf("service client not found in context")
 	}
 
@@ -77,15 +80,16 @@ func CreateConsign(ctx *Context) (*NodeResult, error) {
 	}
 	insertResp, err := cli.InsertConsignRecord(&insertReq)
 	if err != nil {
-		log.Errorf("InsertConsignRecord failed: %v", err)
+		log.Errorf("Failed to insert consign record. Request: %+v, Error: %v", insertReq, err)
 		return nil, err
 	}
 	if insertResp.Msg == "Already exists" {
+		log.Warnf("Consign record already exists. Request: %+v", insertReq)
 		return nil, fmt.Errorf("Consign already exists")
 	}
 	if insertResp.Status != 1 {
-		log.Errorf("InsertConsignRecord failed: %v", insertResp.Status)
-		return nil, err
+		log.Errorf("InsertConsignRecord returned non-success status %d. Request: %+v, Response: %+v", insertResp.Status, insertReq, insertResp)
+		return nil, fmt.Errorf("InsertConsignRecord returned unexpected status: %d", insertResp.Status)
 	}
 	isMatch := false
 	if /*insertResp.Data.ID == insertReq.ID &&*/
@@ -102,8 +106,8 @@ func CreateConsign(ctx *Context) (*NodeResult, error) {
 		isMatch = true
 	}
 	if !isMatch {
-		log.Errorf("Creation not match. Expect: %v, but get: %v", insertReq, insertResp.Data)
-		return nil, err
+		log.Errorf("Mismatch between consign creation request and response. Expected: %+v, Actual: %+v", insertReq, insertResp.Data)
+		return nil, fmt.Errorf("consign creation result mismatch")
 	}
 	//log.Errorf("InsertConsignRecord response: %+v", insertResp)
 	//existedConsign := insertResp.Data

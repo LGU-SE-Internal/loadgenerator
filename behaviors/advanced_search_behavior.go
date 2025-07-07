@@ -53,59 +53,68 @@ func TravelPlanAdvancedSearch(ctx *Context) (*NodeResult, error) {
 	var Resp *service.TravelQueryArrResponse
 	switch rand.Intn(3) {
 	case 0:
+		log.Infof("Querying cheapest tickets from %s to %s on %s", travelPlanInput.StartPlace, travelPlanInput.EndPlace, travelPlanInput.DepartureTime)
 		travelPlanCheapestResp, err := travelplanSvc.ReqGetByCheapest(&travelPlanInput)
 		if err != nil {
 			return nil, err
 		}
 		if travelPlanCheapestResp.Status != 1 {
-			return nil, fmt.Errorf("query Cheapest Tickets fail. travelPlanCheapestResp.Status != 1, get %v. The Resp Msg is: %v", travelPlanCheapestResp.Status, travelPlanCheapestResp.Msg)
+			return nil, fmt.Errorf("cheapest tickets query failed: status=%d, message=%s", travelPlanCheapestResp.Status, travelPlanCheapestResp.Msg)
 		}
 		if len(travelPlanCheapestResp.Data) == 0 {
-			log.Warnf("[Please Try Again]Query Cheapest Ticket empty, No Data. Please Try Again. CheapestTicket Resp Status: %v", travelPlanCheapestResp.Status)
+			log.Warnf("No cheapest tickets found from %s to %s on %s, retrying later", travelPlanInput.StartPlace, travelPlanInput.EndPlace, travelPlanInput.DepartureTime)
 			return &(NodeResult{false}), nil
 		}
-		log.Infof("[Success]Search Cheapest Ticket Success. Go to ticket Reserve~. Resp Status: %v", travelPlanCheapestResp.Status)
+		log.Infof("Found %d cheapest ticket options, proceeding to reservation", len(travelPlanCheapestResp.Data))
 		Resp = travelPlanCheapestResp
 	case 1:
+		log.Infof("Querying minimum station tickets from %s to %s on %s", travelPlanInput.StartPlace, travelPlanInput.EndPlace, travelPlanInput.DepartureTime)
 		travelPlanMinimumStationNumberResp, err := travelplanSvc.ReqGetByMinStation(&travelPlanInput)
 		if err != nil {
 			return nil, err
 		}
 		if travelPlanMinimumStationNumberResp.Status != 1 {
-			return nil, fmt.Errorf("query Minimum Station Number Tickets fail. travelPlanMinimumStationNumberResp.Status != 1, get %v. The Resp Msg is: %v", travelPlanMinimumStationNumberResp.Status, travelPlanMinimumStationNumberResp.Msg)
+			return nil, fmt.Errorf("minimum station tickets query failed: status=%d, message=%s", travelPlanMinimumStationNumberResp.Status, travelPlanMinimumStationNumberResp.Msg)
 		}
 		if len(travelPlanMinimumStationNumberResp.Data) == 0 {
-			log.Warnf("[Please Try Again]Query Minimum Station Number Ticket empty, No Data. Please Try Again. travelPlanMinimumStationNumber Resp Status: %v", travelPlanMinimumStationNumberResp.Status)
+			log.Warnf("No minimum station tickets found from %s to %s on %s, retrying later", travelPlanInput.StartPlace, travelPlanInput.EndPlace, travelPlanInput.DepartureTime)
 			return &(NodeResult{false}), nil
 		}
-		log.Infof("[Success]Search Minimum Station Number Ticket Success. Go to ticket Reserve~. Resp Status: %v", travelPlanMinimumStationNumberResp.Status)
+		log.Infof("Found %d minimum station ticket options, proceeding to reservation", len(travelPlanMinimumStationNumberResp.Data))
 		Resp = travelPlanMinimumStationNumberResp
 	case 2:
+		log.Infof("Querying quickest tickets from %s to %s on %s", travelPlanInput.StartPlace, travelPlanInput.EndPlace, travelPlanInput.DepartureTime)
 		travelPlanQuickestResp, err := travelplanSvc.ReqGetByQuickest(&travelPlanInput)
 		if err != nil {
 			return nil, err
 		}
 		if travelPlanQuickestResp.Status != 1 {
-			return nil, fmt.Errorf("query Quickest Tickets fail. travelPlanQuickestResp.Status != 1, get %v. The Resp Msg is: %v", travelPlanQuickestResp.Status, travelPlanQuickestResp.Msg)
+			return nil, fmt.Errorf("quickest tickets query failed: status=%d, message=%s", travelPlanQuickestResp.Status, travelPlanQuickestResp.Msg)
 		}
 		if len(travelPlanQuickestResp.Data) == 0 {
-			log.Warnf("[Please Try Again]Query Qucikest Ticket empty, No Data. Please Try Again. QuciketTicket Resp Status: %v", travelPlanQuickestResp.Status)
+			log.Warnf("No quickest tickets found from %s to %s on %s, retrying later", travelPlanInput.StartPlace, travelPlanInput.EndPlace, travelPlanInput.DepartureTime)
 			return &(NodeResult{false}), nil
 		}
-		log.Infof("[Success]Search Quickest Ticket Success. Go to ticket Reserve~. Resp Status: %v", travelPlanQuickestResp.Status)
+		log.Infof("Found %d quickest ticket options, proceeding to reservation", len(travelPlanQuickestResp.Data))
 		Resp = travelPlanQuickestResp
 	}
 
 	randomIndex := rand.Intn(len(Resp.Data))
-	ctx.Set(TripID, Resp.Data[randomIndex].TripId)
-	//ctx.Set(OldTripID, fmt.Sprintf("%s%s", Resp.Data[randomIndex].TripId.Type, Resp.Data[randomIndex].TripId.Number))
-	ctx.Set(StartTime, Resp.Data[randomIndex].StartTime)
-	ctx.Set(EndTime, Resp.Data[randomIndex].EndTime)
-	ctx.Set(EconomyClass, Resp.Data[randomIndex].NumberOfRestTicketSecondClass)
-	ctx.Set(ConfortClass, Resp.Data[randomIndex].NumberOfRestTicketFirstClass)
-	ctx.Set(PriceForEconomyClass, Resp.Data[randomIndex].PriceForSecondClassSeat)
-	ctx.Set(PriceForConfortClass, Resp.Data[randomIndex].PriceForFirstClassSeat)
-	ctx.Set(TrainTypeName, Resp.Data[randomIndex].TrainTypeId)
+	selectedTrip := Resp.Data[randomIndex]
+
+	log.Infof("Selected trip: %s, departure: %s, arrival: %s, economy seats: %d, first class seats: %d",
+		selectedTrip.TripId, selectedTrip.StartTime, selectedTrip.EndTime,
+		selectedTrip.NumberOfRestTicketSecondClass, selectedTrip.NumberOfRestTicketFirstClass)
+
+	ctx.Set(TripID, selectedTrip.TripId)
+	//ctx.Set(OldTripID, fmt.Sprintf("%s%s", selectedTrip.TripId.Type, selectedTrip.TripId.Number))
+	ctx.Set(StartTime, selectedTrip.StartTime)
+	ctx.Set(EndTime, selectedTrip.EndTime)
+	ctx.Set(EconomyClass, selectedTrip.NumberOfRestTicketSecondClass)
+	ctx.Set(ConfortClass, selectedTrip.NumberOfRestTicketFirstClass)
+	ctx.Set(PriceForEconomyClass, selectedTrip.PriceForSecondClassSeat)
+	ctx.Set(PriceForConfortClass, selectedTrip.PriceForFirstClassSeat)
+	ctx.Set(TrainTypeName, selectedTrip.TrainTypeId)
 
 	return nil, nil
 }
