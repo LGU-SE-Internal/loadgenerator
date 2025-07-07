@@ -11,12 +11,9 @@ import (
 	"go.opentelemetry.io/otel/sdk/resource"
 	"go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.34.0"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 func InitOTel(serviceName string) func() {
-	// 创建资源
 	res, err := resource.Merge(
 		resource.Default(),
 		resource.NewWithAttributes(
@@ -42,7 +39,7 @@ func InitOTel(serviceName string) func() {
 	otlpExporter, err := otlptracegrpc.New(
 		context.Background(),
 		otlptracegrpc.WithEndpoint(otlpEndpoint),
-		otlptracegrpc.WithDialOption(grpc.WithTransportCredentials(insecure.NewCredentials())),
+		otlptracegrpc.WithInsecure(),
 	)
 	if err != nil {
 		log.Fatalf("Failed to create OTLP exporter: %v", err)

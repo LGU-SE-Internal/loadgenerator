@@ -14,24 +14,20 @@ import (
 type SvcImpl struct {
 	cli         *httpclient.HttpClient
 	BaseUrl     string
-	otelCleanup func() // 存储 OpenTelemetry 清理函数
+	otelCleanup func()
 }
 
 func (s *SvcImpl) ShowStats() {
-	// 创建 TUI 界面
 	app := tview.NewApplication()
 	table := tview.NewTable().SetBorders(true)
 	table.SetBackgroundColor(tcell.ColorDefault)
-	// 设置表头
 	headers := []string{"URL", "Method", "Success", "Failed", "Request Bodies", "RouteResponse Bodies"}
 	for i, header := range headers {
 		table.SetCell(0, i, tview.NewTableCell(header).SetTextColor(tcell.ColorYellow))
 	}
 
-	// 填充表格数据
 	updateTable := func() {
 		statistics := s.cli.GetRequestStats()
-		// 先提取并排序 keys
 		keys := make([]httpclient.RequestStatsKey, 0, len(statistics))
 		for key := range s.cli.GetRequestStats() {
 			keys = append(keys, key)
@@ -56,21 +52,18 @@ func (s *SvcImpl) ShowStats() {
 		}
 	}
 
-	// 启动一个定时器，每秒更新一次表格
 	go func() {
 		for {
 			time.Sleep(1 * time.Second)
 			app.QueueUpdateDraw(updateTable)
 		}
 	}()
-	// 启动 TUI 应用
 	if err := app.SetRoot(table, true).Run(); err != nil {
 		panic(err)
 	}
 }
 
 func (s *SvcImpl) CleanUp() {
-	// 调用 OpenTelemetry 清理函数
 	if s.otelCleanup != nil {
 		s.otelCleanup()
 	}
@@ -81,7 +74,6 @@ func (s *SvcImpl) CleanUp() {
 }
 
 func NewSvcClients() *SvcImpl {
-	// 初始化 OpenTelemetry
 	cleanup := httpclient.InitOTel("loadgenerator-service")
 
 	cli := httpclient.NewCustomClient()

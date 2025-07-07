@@ -31,7 +31,7 @@ func QueryFood(ctx *Context) (*NodeResult, error) {
 	}
 
 	if allFood.Status != 1 {
-		log.Errorf("Food service returned non-success status: %d | Response: %+v | Parameters: date=%s, startStation=%s, endStation=%s, tripID=%s", allFood.Status, allFood, TheDate, TheStartStation, TheEndStation, TheTripID)
+		log.Warnf("Food service returned non-success status: %d | Response: %+v | Parameters: date=%s, startStation=%s, endStation=%s, tripID=%s", allFood.Status, allFood, TheDate, TheStartStation, TheEndStation, TheTripID)
 		return &NodeResult{false}, errors.New("food service responded with status error")
 	}
 	foodType := rand.Int()%2 + 1 // 1: train food, 2: food store
