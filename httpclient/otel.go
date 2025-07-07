@@ -31,8 +31,7 @@ func InitOTel(serviceName string) func() {
 
 	otlpEndpoint := os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
 	if otlpEndpoint == "" {
-		// otlpEndpoint = "opentelemetry-collector-deployment.monitoring:4317"
-		otlpEndpoint = "localhost:4317"
+		otlpEndpoint = "opentelemetry-collector-deployment.monitoring:4317"
 		log.Printf("No OTEL_EXPORTER_OTLP_ENDPOINT set, using default: %s", otlpEndpoint)
 	}
 
