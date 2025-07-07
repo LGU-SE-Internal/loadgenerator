@@ -84,6 +84,18 @@ spec:
               value: "{{ .Values.baseURL }}"
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
               value: "{{ .Values.opentelemetry.endpoint }}"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: SERVICE_NAME
+              value: "{{ include "loadgenerator.fullname" . }}"
+            - name: SERVICE_NAMESPACE
+              value: "{{ .Release.Namespace }}"
+            {{- if .Values.opentelemetry.resourceAttributes }}
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: "service.name=loadgenerator-service,service.namespace={{ $root.Release.Namespace }},pod.name=$(POD_NAME)"
+            {{- end }}
           args:
             {{- if .Values.config.debug }}
             - "--debug"

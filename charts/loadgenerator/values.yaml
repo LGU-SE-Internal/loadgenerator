@@ -28,14 +28,12 @@ nodeSelector: {}
 tolerations: []
 affinity: {}
 
-# Application specific configuration
 baseURL: "http://ts-ui-dashboard:8080"
 
-# OpenTelemetry configuration
 opentelemetry:
   endpoint: "opentelemetry-collector-deployment.monitoring:4317"
 
-# Command line arguments from main.go
+
 config:
   debug: false
   threads: 5
