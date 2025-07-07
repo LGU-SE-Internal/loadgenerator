@@ -185,11 +185,12 @@ func WithChain(c *Chain) func(*Config) {
 }
 
 type LoadGenerator struct {
-	config    *Config
-	wg        sync.WaitGroup
-	ctx       context.Context
-	cancel    context.CancelFunc
-	taskChain chan int
+	config       *Config
+	wg           sync.WaitGroup
+	ctx          context.Context
+	cancel       context.CancelFunc
+	taskChain    chan int
+	sharedClient *service.SvcImpl // 共享的客户端实例
 }
 
 func NewLoadGenerator(conf ...func(*Config)) *LoadGenerator {
@@ -206,11 +207,16 @@ func NewLoadGenerator(conf ...func(*Config)) *LoadGenerator {
 	if config.Chain == nil {
 		panic("LoadGenerator needs chain")
 	}
+
+	// 初始化共享的客户端实例
+	sharedClient := service.NewSvcClients()
+
 	return &LoadGenerator{
-		config:    &config,
-		ctx:       ctx,
-		cancel:    cancel,
-		taskChain: make(chan int, config.Thread),
+		config:       &config,
+		ctx:          ctx,
+		cancel:       cancel,
+		taskChain:    make(chan int, config.Thread),
+		sharedClient: sharedClient,
 	}
 }
 
@@ -243,6 +249,9 @@ func (l *LoadGenerator) Start() {
 	// Wait for all goroutines to finish
 	l.wg.Wait()
 
+	// 调用清理函数
+	l.sharedClient.CleanUp()
+
 	log.Println("All goroutines stopped, exiting program.")
 }
 
@@ -267,7 +276,7 @@ func (l *LoadGenerator) worker(index int) {
 			}()
 
 			chainCtx := NewContext(context.Background())
-			chainCtx.Set(Client, service.NewSvcClients())
+			chainCtx.Set(Client, l.sharedClient)
 			start := time.Now()
 			_, err := l.config.Chain.Execute(chainCtx)
 			log.Infof("Thread %d executed chain, time used: %v", index, time.Since(start))

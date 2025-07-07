@@ -2,17 +2,19 @@ package service
 
 import (
 	"fmt"
-	"github.com/Lincyaw/loadgenerator/httpclient"
-	"github.com/gdamore/tcell/v2"
-	"github.com/rivo/tview"
 	"os"
 	"sort"
 	"time"
+
+	"github.com/Lincyaw/loadgenerator/httpclient"
+	"github.com/gdamore/tcell/v2"
+	"github.com/rivo/tview"
 )
 
 type SvcImpl struct {
-	cli     *httpclient.HttpClient
-	BaseUrl string
+	cli         *httpclient.HttpClient
+	BaseUrl     string
+	otelCleanup func() // 存储 OpenTelemetry 清理函数
 }
 
 func (s *SvcImpl) ShowStats() {
@@ -68,12 +70,20 @@ func (s *SvcImpl) ShowStats() {
 }
 
 func (s *SvcImpl) CleanUp() {
+	// 调用 OpenTelemetry 清理函数
+	if s.otelCleanup != nil {
+		s.otelCleanup()
+	}
+
 	stats := httpclient.GenerateMarkdownTable(s.cli.GetRequestStats())
 	fmt.Println(stats)
 	os.WriteFile(fmt.Sprintf("data-%d.md", time.Now().UnixNano()), []byte(stats), 0644)
 }
 
 func NewSvcClients() *SvcImpl {
+	// 初始化 OpenTelemetry
+	cleanup := httpclient.InitOTel("loadgenerator-service")
+
 	cli := httpclient.NewCustomClient()
 	cli.AddHeader("Proxy-Connection", "keep-alive")
 
@@ -88,7 +98,8 @@ func NewSvcClients() *SvcImpl {
 		panic("PLEASE use BASE_URL environment variable, example: BASE_URL=http://127.0.0.1:8080")
 	}
 	return &SvcImpl{
-		cli:     cli,
-		BaseUrl: baseUrl,
+		cli:         cli,
+		BaseUrl:     baseUrl,
+		otelCleanup: cleanup,
 	}
 }

@@ -22,8 +22,12 @@ var chains = map[string]*behaviors.Chain{
 }
 
 func callChain(chain *behaviors.Chain, count int) {
+	// 创建客户端（包含 OpenTelemetry 初始化）
+	client := service.NewSvcClients()
+	defer client.CleanUp() // 确保在函数结束时清理
+
 	chainCtx := behaviors.NewContext(context.Background())
-	chainCtx.Set(behaviors.Client, service.NewSvcClients())
+	chainCtx.Set(behaviors.Client, client)
 	for i := 0; i < count; i++ {
 		chain.Execute(chainCtx)
 	}
