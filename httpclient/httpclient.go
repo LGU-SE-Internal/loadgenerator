@@ -62,7 +62,7 @@ func (c *HttpClient) SendRequest(method, url string, body interface{}) (*http.Re
 }
 
 func (c *HttpClient) SendRequestWithContext(ctx context.Context, method, url string, body interface{}) (*http.Response, error) {
-	ctx, span := c.tracer.Start(ctx, fmt.Sprintf("HTTP %s", method),
+	ctx, span := c.tracer.Start(ctx, fmt.Sprintf("HTTP %s %s", method, url),
 		trace.WithAttributes(
 			attribute.String("http.method", method),
 			attribute.String("http.url", url),
