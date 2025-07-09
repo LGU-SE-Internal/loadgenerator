@@ -15,7 +15,6 @@ import (
 
 	"github.com/Lincyaw/loadgenerator/service"
 	"github.com/Lincyaw/loadgenerator/stats"
-	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -203,6 +202,11 @@ type LoadGenerator struct {
 	statsCheckTicker     *time.Ticker
 	printStatsTicker     *time.Ticker
 	slowRequestThreshold time.Duration
+
+	// 用于管理 worker 线程
+	workerContexts map[int]context.Context
+	workerCancels  map[int]context.CancelFunc
+	workerMutex    sync.RWMutex
 }
 
 func NewLoadGenerator(conf ...func(*Config)) *LoadGenerator {
@@ -238,6 +242,10 @@ func NewLoadGenerator(conf ...func(*Config)) *LoadGenerator {
 		statsCheckTicker:     time.NewTicker(30 * time.Second), // 每30秒检查一次
 		printStatsTicker:     time.NewTicker(10 * time.Second), // 每10秒打印一次统计信息
 		slowRequestThreshold: 10 * time.Second,
+
+		// 初始化 worker 管理
+		workerContexts: make(map[int]context.Context),
+		workerCancels:  make(map[int]context.CancelFunc),
 	}
 }
 
@@ -248,13 +256,13 @@ func (l *LoadGenerator) Start() {
 	l.wg.Add(int(currentThreads))
 
 	for i := 0; i < int(currentThreads); i++ {
-		go l.worker(i)
+		l.startWorker(i)
 	}
 	go func() {
 		for index := range l.taskChain {
 			log.Infof("Restarting worker %d", index)
 			l.wg.Add(1)
-			go l.worker(index)
+			l.startWorker(index)
 		}
 	}()
 
@@ -272,6 +280,13 @@ func (l *LoadGenerator) Start() {
 	// Cancel all goroutines
 	l.cancel()
 
+	// Cancel all worker contexts
+	l.workerMutex.Lock()
+	for _, cancel := range l.workerCancels {
+		cancel()
+	}
+	l.workerMutex.Unlock()
+
 	// Wait for all goroutines to finish
 	l.wg.Wait()
 
@@ -281,14 +296,22 @@ func (l *LoadGenerator) Start() {
 	log.Println("All goroutines stopped, exiting program.")
 }
 
-func (l *LoadGenerator) worker(index int) {
+func (l *LoadGenerator) worker(index int, workerCtx context.Context) {
 	defer func() {
 		l.wg.Done()
+		// 清理 worker context
+		l.workerMutex.Lock()
+		delete(l.workerContexts, index)
+		delete(l.workerCancels, index)
+		l.workerMutex.Unlock()
 	}()
 	for {
 		select {
+		case <-workerCtx.Done():
+			log.Infof("Worker %d exiting due to cancellation", index)
+			return
 		case <-l.ctx.Done():
-			log.Infof("Goroutine %d exiting due to cancellation", index)
+			log.Infof("Worker %d exiting due to main context cancellation", index)
 			return
 		default:
 			defer func() {
@@ -319,6 +342,31 @@ func (l *LoadGenerator) worker(index int) {
 	}
 }
 
+// startWorker 启动一个新的 worker 并管理其 context
+func (l *LoadGenerator) startWorker(index int) {
+	workerCtx, workerCancel := context.WithCancel(l.ctx)
+
+	l.workerMutex.Lock()
+	l.workerContexts[index] = workerCtx
+	l.workerCancels[index] = workerCancel
+	l.workerMutex.Unlock()
+
+	go l.worker(index, workerCtx)
+}
+
+// stopWorker 停止指定的 worker
+func (l *LoadGenerator) stopWorker(index int) {
+	l.workerMutex.Lock()
+	defer l.workerMutex.Unlock()
+
+	if cancel, exists := l.workerCancels[index]; exists {
+		cancel()
+		delete(l.workerContexts, index)
+		delete(l.workerCancels, index)
+		log.Infof("Stopped worker %d", index)
+	}
+}
+
 // 动态负载控制方法
 func (l *LoadGenerator) adjustLoadBasedOnStats() {
 	// 需要导入httpclient包来访问GlobalLatencyManager
@@ -344,6 +392,20 @@ func (l *LoadGenerator) decreaseLoad() {
 	if currentThreads > l.minThreads {
 		newThreads := currentThreads - 1
 		atomic.StoreInt32(&l.currentThreads, newThreads)
+
+		// 停止一个 worker
+		l.workerMutex.RLock()
+		var workerToStop int = -1
+		for workerIndex := range l.workerCancels {
+			workerToStop = workerIndex
+			break
+		}
+		l.workerMutex.RUnlock()
+
+		if workerToStop >= 0 {
+			l.stopWorker(workerToStop)
+		}
+
 		log.Infof("Decreased threads from %d to %d due to slow requests", currentThreads, newThreads)
 	} else {
 		// 如果线程数已经是最小值，则增加睡眠时间
@@ -373,12 +435,12 @@ func (l *LoadGenerator) increaseLoad() {
 
 		// 启动新的worker
 		l.wg.Add(1)
-		go l.worker(int(newThreads))
+		l.startWorker(int(newThreads))
 	}
 }
 
 func (l *LoadGenerator) startStatsMonitor() {
-	logrus.Info("Starting stats monitor...")
+	log.Info("Starting stats monitor...")
 	go func() {
 		for {
 			select {

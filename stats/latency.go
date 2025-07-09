@@ -7,11 +7,15 @@ import (
 	"time"
 )
 
-// 请求延迟统计
+type LatencyRecord struct {
+	Latency   time.Duration
+	Timestamp time.Time
+}
+
 type LatencyStats struct {
 	URL        string
 	Method     string
-	Latencies  []time.Duration
+	Records    []LatencyRecord
 	Count      int
 	MaxLatency time.Duration
 	MinLatency time.Duration
@@ -23,7 +27,7 @@ func NewLatencyStats(url, method string) *LatencyStats {
 	return &LatencyStats{
 		URL:        url,
 		Method:     method,
-		Latencies:  make([]time.Duration, 0),
+		Records:    make([]LatencyRecord, 0),
 		MinLatency: time.Duration(^uint64(0) >> 1), // 最大值
 	}
 }
@@ -32,7 +36,11 @@ func (ls *LatencyStats) AddLatency(latency time.Duration) {
 	ls.mu.Lock()
 	defer ls.mu.Unlock()
 
-	ls.Latencies = append(ls.Latencies, latency)
+	record := LatencyRecord{
+		Latency:   latency,
+		Timestamp: time.Now(),
+	}
+	ls.Records = append(ls.Records, record)
 	ls.Count++
 
 	if latency > ls.MaxLatency {
@@ -44,8 +52,8 @@ func (ls *LatencyStats) AddLatency(latency time.Duration) {
 
 	// 计算平均延迟
 	total := time.Duration(0)
-	for _, l := range ls.Latencies {
-		total += l
+	for _, record := range ls.Records {
+		total += record.Latency
 	}
 	ls.AvgLatency = total / time.Duration(ls.Count)
 }
@@ -54,13 +62,15 @@ func (ls *LatencyStats) GetPercentile(percentile float64) time.Duration {
 	ls.mu.RLock()
 	defer ls.mu.RUnlock()
 
-	if len(ls.Latencies) == 0 {
+	if len(ls.Records) == 0 {
 		return 0
 	}
 
-	// 创建副本并排序
-	sortedLatencies := make([]time.Duration, len(ls.Latencies))
-	copy(sortedLatencies, ls.Latencies)
+	// 创建延迟切片并排序
+	sortedLatencies := make([]time.Duration, len(ls.Records))
+	for i, record := range ls.Records {
+		sortedLatencies[i] = record.Latency
+	}
 	sort.Slice(sortedLatencies, func(i, j int) bool {
 		return sortedLatencies[i] < sortedLatencies[j]
 	})
@@ -155,10 +165,28 @@ func (lm *LatencyManager) HasSlowRequests(threshold time.Duration) bool {
 	lm.mu.RLock()
 	defer lm.mu.RUnlock()
 
+	now := time.Now()
+	timeWindow := time.Minute // 只检查最近1分钟
+
 	for _, stats := range lm.stats {
-		if stats.MaxLatency > threshold {
-			return true
+		stats.mu.RLock()
+
+		// 检查最近1分钟内的请求
+		for i := len(stats.Records) - 1; i >= 0; i-- {
+			record := stats.Records[i]
+
+			// 如果请求时间超过1分钟，停止检查
+			if now.Sub(record.Timestamp) > timeWindow {
+				break
+			}
+
+			// 检查是否有慢请求
+			if record.Latency > threshold {
+				stats.mu.RUnlock()
+				return true
+			}
 		}
+		stats.mu.RUnlock()
 	}
 	return false
 }
@@ -170,8 +198,8 @@ func (lm *LatencyManager) GetSlowRequestsCount(threshold time.Duration) int {
 	count := 0
 	for _, stats := range lm.stats {
 		stats.mu.RLock()
-		for _, latency := range stats.Latencies {
-			if latency > threshold {
+		for _, record := range stats.Records {
+			if record.Latency > threshold {
 				count++
 			}
 		}
@@ -188,3 +216,102 @@ func (lm *LatencyManager) Reset() {
 
 // 全局延迟管理器实例
 var GlobalLatencyManager = NewLatencyManager()
+
+func (lm *LatencyManager) HasRecentSlowRequests(threshold time.Duration, timeWindow time.Duration) bool {
+	lm.mu.RLock()
+	defer lm.mu.RUnlock()
+
+	now := time.Now()
+
+	for _, stats := range lm.stats {
+		stats.mu.RLock()
+
+		for i := len(stats.Records) - 1; i >= 0; i-- {
+			record := stats.Records[i]
+
+			if now.Sub(record.Timestamp) > timeWindow {
+				break
+			}
+
+			if record.Latency > threshold {
+				stats.mu.RUnlock()
+				return true
+			}
+		}
+		stats.mu.RUnlock()
+	}
+	return false
+}
+
+// CleanOldRecords 清理超过指定时间的旧记录
+func (ls *LatencyStats) CleanOldRecords(maxAge time.Duration) {
+	ls.mu.Lock()
+	defer ls.mu.Unlock()
+
+	now := time.Now()
+	cutoff := now.Add(-maxAge)
+
+	// 找到第一个不需要删除的记录
+	firstValidIndex := 0
+	for i, record := range ls.Records {
+		if record.Timestamp.After(cutoff) {
+			firstValidIndex = i
+			break
+		}
+	}
+
+	// 如果所有记录都太旧，清空
+	if firstValidIndex == 0 && len(ls.Records) > 0 && ls.Records[0].Timestamp.Before(cutoff) {
+		ls.Records = ls.Records[:0]
+		ls.Count = 0
+		ls.MaxLatency = 0
+		ls.MinLatency = time.Duration(^uint64(0) >> 1)
+		ls.AvgLatency = 0
+		return
+	}
+
+	// 删除旧记录
+	if firstValidIndex > 0 {
+		ls.Records = ls.Records[firstValidIndex:]
+		ls.Count = len(ls.Records)
+
+		// 重新计算统计数据
+		ls.recalculateStats()
+	}
+}
+
+// recalculateStats 重新计算统计数据
+func (ls *LatencyStats) recalculateStats() {
+	if len(ls.Records) == 0 {
+		ls.MaxLatency = 0
+		ls.MinLatency = time.Duration(^uint64(0) >> 1)
+		ls.AvgLatency = 0
+		return
+	}
+
+	ls.MaxLatency = 0
+	ls.MinLatency = time.Duration(^uint64(0) >> 1)
+	total := time.Duration(0)
+
+	for _, record := range ls.Records {
+		if record.Latency > ls.MaxLatency {
+			ls.MaxLatency = record.Latency
+		}
+		if record.Latency < ls.MinLatency {
+			ls.MinLatency = record.Latency
+		}
+		total += record.Latency
+	}
+
+	ls.AvgLatency = total / time.Duration(len(ls.Records))
+}
+
+// CleanOldRecords 清理所有统计中的旧记录
+func (lm *LatencyManager) CleanOldRecords(maxAge time.Duration) {
+	lm.mu.RLock()
+	defer lm.mu.RUnlock()
+
+	for _, stats := range lm.stats {
+		stats.CleanOldRecords(maxAge)
+	}
+}
