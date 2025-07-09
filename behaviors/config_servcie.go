@@ -27,6 +27,11 @@ func QueryConfig(ctx *Context) (*NodeResult, error) {
 		return nil, fmt.Errorf("unexpected status from QueryAllConfigs: %d", queryAllResp.Status)
 	}
 
+	if len(queryAllResp.Data) == 0 {
+		log.Warnf("No configs found")
+		return &(NodeResult{false}), nil
+	}
+
 	/*	Name        string `json:"name"`
 		Value       string `json:"value"`
 		Description string `json:"description"`*/

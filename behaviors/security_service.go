@@ -2,9 +2,10 @@ package behaviors
 
 import (
 	"fmt"
+	"math/rand"
+
 	"github.com/Lincyaw/loadgenerator/service"
 	log "github.com/sirupsen/logrus"
-	"math/rand"
 )
 
 func QuerySecurity(ctx *Context) (*NodeResult, error) {
@@ -22,6 +23,11 @@ func QuerySecurity(ctx *Context) (*NodeResult, error) {
 	if configs.Status != 1 {
 		log.Errorf("[Security Service]Status != 1")
 		return nil, err3
+	}
+
+	if len(configs.Data) == 0 {
+		log.Warnf("No security configs found")
+		return &(NodeResult{false}), nil
 	}
 
 	randomIndex := rand.Intn(len(configs.Data))

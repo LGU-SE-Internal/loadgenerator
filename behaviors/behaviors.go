@@ -191,7 +191,6 @@ type LoadGenerator struct {
 	wg           sync.WaitGroup
 	ctx          context.Context
 	cancel       context.CancelFunc
-	taskChain    chan int
 	sharedClient *service.SvcImpl // 共享的客户端实例
 
 	// 动态负载控制
@@ -232,7 +231,6 @@ func NewLoadGenerator(conf ...func(*Config)) *LoadGenerator {
 		config:       &config,
 		ctx:          ctx,
 		cancel:       cancel,
-		taskChain:    make(chan int, config.Thread*2), // 增加缓冲区大小
 		sharedClient: sharedClient,
 
 		// 动态负载控制初始化
@@ -260,13 +258,6 @@ func (l *LoadGenerator) Start() {
 	for i := 0; i < int(currentThreads); i++ {
 		l.startWorker(-1) // 使用-1表示自动分配ID
 	}
-	go func() {
-		for index := range l.taskChain {
-			log.Infof("Restarting worker %d", index)
-			l.wg.Add(1)
-			l.startWorker(index) // 重启时使用原有ID
-		}
-	}()
 
 	// Set up signal handling for graceful shutdown
 	sigs := make(chan os.Signal, 1)
@@ -306,7 +297,9 @@ func (l *LoadGenerator) worker(index int, workerCtx context.Context) {
 		delete(l.workerContexts, index)
 		delete(l.workerCancels, index)
 		l.workerMutex.Unlock()
+		log.Infof("Worker %d cleanup completed", index)
 	}()
+
 	for {
 		select {
 		case <-workerCtx.Done():
@@ -316,30 +309,33 @@ func (l *LoadGenerator) worker(index int, workerCtx context.Context) {
 			log.Infof("Worker %d exiting due to main context cancellation", index)
 			return
 		default:
-			defer func() {
-				if r := recover(); r != nil {
-					buf := make([]byte, 1024)
-					n := runtime.Stack(buf, false)
-					stackTrace := string(buf[:n])
-					log.Infof("Recovered from panic: %v\nStack trace:\n%s", r, stackTrace)
-					l.taskChain <- index
+			func() {
+				defer func() {
+					if r := recover(); r != nil {
+						buf := make([]byte, 1024)
+						n := runtime.Stack(buf, false)
+						stackTrace := string(buf[:n])
+						log.Errorf("Worker %d recovered from panic: %v\nStack trace:\n%s", index, r, stackTrace)
+						// 不要在这里重启worker，让它自然退出
+						// 动态负载控制会在必要时创建新的worker
+					}
+				}()
+
+				chainCtx := NewContext(context.Background())
+				chainCtx.Set(Client, l.sharedClient)
+				start := time.Now()
+				_, err := l.config.Chain.Execute(chainCtx)
+				log.Infof("Thread %d executed chain, time used: %v", index, time.Since(start))
+				if err != nil {
+					log.Warn(err)
+				}
+
+				// 使用动态睡眠时间
+				currentSleepTime := atomic.LoadInt32(&l.currentSleepTime)
+				if currentSleepTime > 0 {
+					time.Sleep(time.Millisecond * time.Duration(rand.Intn(int(currentSleepTime))))
 				}
 			}()
-
-			chainCtx := NewContext(context.Background())
-			chainCtx.Set(Client, l.sharedClient)
-			start := time.Now()
-			_, err := l.config.Chain.Execute(chainCtx)
-			log.Infof("Thread %d executed chain, time used: %v", index, time.Since(start))
-			if err != nil {
-				log.Warn(err)
-			}
-
-			// 使用动态睡眠时间
-			currentSleepTime := atomic.LoadInt32(&l.currentSleepTime)
-			if currentSleepTime > 0 {
-				time.Sleep(time.Millisecond * time.Duration(rand.Intn(int(currentSleepTime))))
-			}
 		}
 	}
 }
