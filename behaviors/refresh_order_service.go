@@ -88,7 +88,10 @@ func RefreshOrder(ctx *Context) (*NodeResult, error) {
 
 	TheTravelDate, err := time.Parse("2006-01-02 15:04:05", RefreshResp.Data[randomIndex].TravelDate)
 	if err != nil {
-		log.Errorf("TheTravelDate Transformation is failed, err %s", err)
+		TheTravelDate, err = time.Parse("2006-01-02", RefreshOtherResp.Data[randomIndex].TravelDate)
+		if err != nil {
+			log.Errorf("TheTravelDate Transformation is failed, err %s", err)
+		}
 	}
 	formattedTravelDate := TheTravelDate.Format("2006-01-02")
 	ctx.Set(TargetDate, formattedTravelDate)
@@ -272,7 +275,10 @@ func RefreshCollectedOrder(ctx *Context) (*NodeResult, error) {
 
 	TheTravelDate, err := time.Parse("2006-01-02 15:04:05", RefreshResp.Data[randomIndex].TravelDate)
 	if err != nil {
-		log.Errorf("TheTravelDate Transformation is failed, err %s", err)
+		TheTravelDate, err = time.Parse("2006-01-02", RefreshOtherResp.Data[randomIndex].TravelDate)
+		if err != nil {
+			log.Errorf("TheTravelDate Transformation is failed, err %s", err)
+		}
 	}
 	formattedTravelDate := TheTravelDate.Format("2006-01-02")
 	ctx.Set(TargetDate, formattedTravelDate)

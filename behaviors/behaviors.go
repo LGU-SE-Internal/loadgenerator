@@ -207,6 +207,7 @@ type LoadGenerator struct {
 	workerContexts map[int]context.Context
 	workerCancels  map[int]context.CancelFunc
 	workerMutex    sync.RWMutex
+	nextWorkerID   int32
 }
 
 func NewLoadGenerator(conf ...func(*Config)) *LoadGenerator {
@@ -246,6 +247,7 @@ func NewLoadGenerator(conf ...func(*Config)) *LoadGenerator {
 		// 初始化 worker 管理
 		workerContexts: make(map[int]context.Context),
 		workerCancels:  make(map[int]context.CancelFunc),
+		nextWorkerID:   0,
 	}
 }
 
@@ -256,13 +258,13 @@ func (l *LoadGenerator) Start() {
 	l.wg.Add(int(currentThreads))
 
 	for i := 0; i < int(currentThreads); i++ {
-		l.startWorker(i)
+		l.startWorker(-1) // 使用-1表示自动分配ID
 	}
 	go func() {
 		for index := range l.taskChain {
 			log.Infof("Restarting worker %d", index)
 			l.wg.Add(1)
-			l.startWorker(index)
+			l.startWorker(index) // 重启时使用原有ID
 		}
 	}()
 
@@ -343,15 +345,26 @@ func (l *LoadGenerator) worker(index int, workerCtx context.Context) {
 }
 
 // startWorker 启动一个新的 worker 并管理其 context
+// 如果index为-1，则自动分配一个新的ID
 func (l *LoadGenerator) startWorker(index int) {
+	var workerID int
+
+	if index == -1 {
+		// 自动分配新的ID
+		workerID = int(atomic.AddInt32(&l.nextWorkerID, 1))
+	} else {
+		// 使用指定的ID（通常用于重启）
+		workerID = index
+	}
+
 	workerCtx, workerCancel := context.WithCancel(l.ctx)
 
 	l.workerMutex.Lock()
-	l.workerContexts[index] = workerCtx
-	l.workerCancels[index] = workerCancel
+	l.workerContexts[workerID] = workerCtx
+	l.workerCancels[workerID] = workerCancel
 	l.workerMutex.Unlock()
 
-	go l.worker(index, workerCtx)
+	go l.worker(workerID, workerCtx)
 }
 
 // stopWorker 停止指定的 worker
@@ -365,6 +378,13 @@ func (l *LoadGenerator) stopWorker(index int) {
 		delete(l.workerCancels, index)
 		log.Infof("Stopped worker %d", index)
 	}
+}
+
+// getActiveWorkerCount 获取当前活跃的worker数量
+func (l *LoadGenerator) getActiveWorkerCount() int {
+	l.workerMutex.RLock()
+	defer l.workerMutex.RUnlock()
+	return len(l.workerContexts)
 }
 
 // 动态负载控制方法
@@ -386,10 +406,11 @@ func (l *LoadGenerator) checkSlowRequests() bool {
 
 func (l *LoadGenerator) decreaseLoad() {
 	currentThreads := atomic.LoadInt32(&l.currentThreads)
+	activeWorkers := l.getActiveWorkerCount()
 	currentSleepTime := atomic.LoadInt32(&l.currentSleepTime)
 
 	// 减少线程数或增加睡眠时间
-	if currentThreads > l.minThreads {
+	if currentThreads > l.minThreads && activeWorkers > 0 {
 		newThreads := currentThreads - 1
 		atomic.StoreInt32(&l.currentThreads, newThreads)
 
@@ -406,7 +427,7 @@ func (l *LoadGenerator) decreaseLoad() {
 			l.stopWorker(workerToStop)
 		}
 
-		log.Infof("Decreased threads from %d to %d due to slow requests", currentThreads, newThreads)
+		log.Infof("Decreased threads from %d to %d due to slow requests (active workers: %d)", currentThreads, newThreads, activeWorkers-1)
 	} else {
 		// 如果线程数已经是最小值，则增加睡眠时间
 		newSleepTime := currentSleepTime + 1000 // 增加1秒
@@ -435,7 +456,7 @@ func (l *LoadGenerator) increaseLoad() {
 
 		// 启动新的worker
 		l.wg.Add(1)
-		l.startWorker(int(newThreads))
+		l.startWorker(-1) // 使用-1表示自动分配ID
 	}
 }
 
@@ -474,10 +495,12 @@ func (l *LoadGenerator) printLatencyStats() {
 	}
 
 	currentThreads := atomic.LoadInt32(&l.currentThreads)
+	activeWorkers := l.getActiveWorkerCount()
 	currentSleepTime := atomic.LoadInt32(&l.currentSleepTime)
 	slowRequestsCount := stats.GlobalLatencyManager.GetSlowRequestsCount(l.slowRequestThreshold)
 
-	log.Infof("Current Threads: %d, Sleep Time: %d ms", currentThreads, currentSleepTime)
+	log.Infof("Current Threads: %d, Active Workers: %d, Sleep Time: %d ms", currentThreads, activeWorkers, currentSleepTime)
 	log.Infof("Slow requests (>10s): %d", slowRequestsCount)
+	log.Infof("Next Worker ID: %d", atomic.LoadInt32(&l.nextWorkerID))
 	log.Info("=========================")
 }
