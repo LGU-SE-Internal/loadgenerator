@@ -325,7 +325,9 @@ func (l *LoadGenerator) worker(index int, workerCtx context.Context) {
 				chainCtx.Set(Client, l.sharedClient)
 				start := time.Now()
 				_, err := l.config.Chain.Execute(chainCtx)
-				log.Infof("Thread %d executed chain, time used: %v", index, time.Since(start))
+				if time.Since(start) > 5*time.Second {
+					log.Errorf("Thread %d executed chain, time used: %v", index, time.Since(start))
+				}
 				if err != nil {
 					log.Warn(err)
 				}
@@ -476,17 +478,17 @@ func (l *LoadGenerator) printLatencyStats() {
 	// 获取延迟最高的前10个请求
 	topSlowStats := stats.GlobalLatencyManager.GetTopSlowStats(10)
 
-	log.Info("=== Top 10 Slowest Requests ===")
+	log.Warn("=== Top 10 Slowest Requests ===")
 	if len(topSlowStats) == 0 {
 		log.Info("No request statistics available yet")
 	} else {
 		for i, statObj := range topSlowStats {
 			min, max, avg, p50, p95, p99 := statObj.GetStats()
-			log.Infof("#%d URL: %s %s", i+1, statObj.Method, statObj.URL)
-			log.Infof("  Count: %d", statObj.Count)
-			log.Infof("  Min: %v, Max: %v, Avg: %v", min, max, avg)
-			log.Infof("  P50: %v, P95: %v, P99: %v", p50, p95, p99)
-			log.Info("---")
+			log.Warnf("#%d URL: %s %s", i+1, statObj.Method, statObj.URL)
+			log.Warnf("  Count: %d", statObj.Count)
+			log.Warnf("  Min: %v, Max: %v, Avg: %v", min, max, avg)
+			log.Warnf("  P50: %v, P95: %v, P99: %v", p50, p95, p99)
+			log.Warnf("---")
 		}
 	}
 
@@ -495,8 +497,8 @@ func (l *LoadGenerator) printLatencyStats() {
 	currentSleepTime := atomic.LoadInt32(&l.currentSleepTime)
 	slowRequestsCount := stats.GlobalLatencyManager.GetSlowRequestsCount(l.slowRequestThreshold)
 
-	log.Infof("Current Threads: %d, Active Workers: %d, Sleep Time: %d ms", currentThreads, activeWorkers, currentSleepTime)
-	log.Infof("Slow requests (>10s): %d", slowRequestsCount)
-	log.Infof("Next Worker ID: %d", atomic.LoadInt32(&l.nextWorkerID))
-	log.Info("=========================")
+	log.Warnf("Current Threads: %d, Active Workers: %d, Sleep Time: %d ms", currentThreads, activeWorkers, currentSleepTime)
+	log.Warnf("Slow requests (>10s): %d", slowRequestsCount)
+	log.Warnf("Next Worker ID: %d", atomic.LoadInt32(&l.nextWorkerID))
+	log.Warn("=========================")
 }

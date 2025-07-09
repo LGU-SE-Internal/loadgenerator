@@ -58,14 +58,14 @@ func main() {
 				logrus.SetLevel(logrus.DebugLevel)
 				logrus.SetReportCaller(true)
 			} else {
-				logrus.SetLevel(logrus.InfoLevel)
+				logrus.SetLevel(logrus.WarnLevel)
 			}
 
 			composedChain := behaviors.NewChain(behaviors.NewFuncNode(func(ctx *behaviors.Context) (*behaviors.NodeResult, error) {
 				return nil, nil
 			}, "dummy"))
-			composedChain.AddNextChain(behaviors.NormalPreserveChain, 10)
-			composedChain.AddNextChain(behaviors.NormalOrderPayChain, 10)
+			composedChain.AddNextChain(behaviors.NormalPreserveChain, 30)
+			composedChain.AddNextChain(behaviors.NormalOrderPayChain, 20)
 			composedChain.AddNextChain(behaviors.OrderConsignChain, 10)
 			composedChain.AddNextChain(behaviors.TicketCollectAndEnterStationChain, 10)
 
@@ -97,7 +97,7 @@ func main() {
 
 	rootCmd.PersistentFlags().BoolVar(&debug, "debug", false, "Enable debug logging")
 	rootCmd.PersistentFlags().IntVarP(&threads, "threads", "t", 1, "Number of threads")
-	rootCmd.PersistentFlags().IntVarP(&sleepDuration, "sleep", "s", 10000, "Sleep duration in milliseconds")
+	rootCmd.PersistentFlags().IntVarP(&sleepDuration, "sleep", "s", 100, "Sleep duration in milliseconds")
 	rootCmd.PersistentFlags().StringVar(&chainName, "chain", "", "Choose which chain to execute")
 	rootCmd.PersistentFlags().IntVar(&chainCount, "count", 1, "How many times to run the chain")
 	rootCmd.PersistentFlags().BoolVar(&showStats, "stats", false, "Show current latency statistics")

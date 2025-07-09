@@ -67,7 +67,7 @@ func RefreshOrder(ctx *Context) (*NodeResult, error) {
 
 	var randomIndex int
 	if len(RefreshResp.Data) == 0 {
-		log.Warnf("Unpaied order is empty")
+		log.Infof("Unpaied order is empty")
 		return &NodeResult{Continue: false}, nil
 	}
 	//if rand.Intn(2) == 0 {
@@ -176,7 +176,7 @@ func RefreshOrderOther(ctx *Context) (*NodeResult, error) {
 
 	var randomIndex int
 	if len(RefreshOtherResp.Data) == 0 {
-		log.Warn("Paied order is empty")
+		log.Info("Paied order is empty")
 		return &NodeResult{Continue: false}, nil
 	}
 	//if rand.Intn(2) == 0 {
@@ -271,7 +271,7 @@ func RefreshCollectedOrder(ctx *Context) (*NodeResult, error) {
 
 	var randomIndex int
 	if len(RefreshResp.Data) == 0 {
-		log.Warnf("Unpaied order is empty")
+		log.Infof("Unpaied order is empty")
 		return &NodeResult{Continue: false}, nil
 	}
 	//if rand.Intn(2) == 0 {
