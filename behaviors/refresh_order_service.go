@@ -170,14 +170,20 @@ func RefreshOrderOther(ctx *Context) (*NodeResult, error) {
 
 	TheBoughtDate, err := time.Parse("2006-01-02 15:04:05", RefreshOtherResp.Data[randomIndex].BoughtDate)
 	if err != nil {
-		log.Errorf("TheBoughtDate Transformation is failed, err %s", err)
+		TheBoughtDate, err = time.Parse("2006-01-02", RefreshOtherResp.Data[randomIndex].BoughtDate)
+		if err != nil {
+			log.Errorf("TheBoughtDate Transformation is failed, err %s", err)
+		}
 	}
 	formattedBoughtDate := TheBoughtDate.Format("2006-01-02")
 	ctx.Set(HandleDate, formattedBoughtDate)
 
 	TheTravelDate, err := time.Parse("2006-01-02 15:04:05", RefreshOtherResp.Data[randomIndex].TravelDate)
 	if err != nil {
-		log.Errorf("TheTravelDate Transformation is failed, err %s", err)
+		TheTravelDate, err = time.Parse("2006-01-02", RefreshOtherResp.Data[randomIndex].TravelDate)
+		if err != nil {
+			log.Errorf("TheTravelDate Transformation is failed, err %s", err)
+		}
 	}
 	formattedTravelDate := TheTravelDate.Format("2006-01-02")
 	ctx.Set(TargetDate, formattedTravelDate)

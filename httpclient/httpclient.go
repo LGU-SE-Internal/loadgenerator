@@ -8,7 +8,9 @@ import (
 	"io"
 	"net/http"
 	"sync"
+	"time"
 
+	"github.com/Lincyaw/loadgenerator/stats"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -35,11 +37,13 @@ type HttpClient struct {
 	reqCount int
 	mu       sync.Mutex
 	tracer   trace.Tracer
+	timeout  time.Duration
 }
 
 func NewCustomClient() *HttpClient {
 	httpClient := &http.Client{
 		Transport: otelhttp.NewTransport(http.DefaultTransport),
+		Timeout:   20 * time.Second, // 默认30秒超时
 	}
 
 	tracer := otel.Tracer("loadgenerator/httpclient")
@@ -48,6 +52,7 @@ func NewCustomClient() *HttpClient {
 		client:  httpClient,
 		headers: make(map[string]string),
 		tracer:  tracer,
+		timeout: 20 * time.Second,
 	}
 }
 
@@ -57,11 +62,20 @@ func (c *HttpClient) AddHeader(key, value string) {
 	c.headers[key] = value
 }
 
+func (c *HttpClient) GetTimeout() time.Duration {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	return c.timeout
+}
+
 func (c *HttpClient) SendRequest(method, url string, body interface{}) (*http.Response, error) {
 	return c.SendRequestWithContext(context.Background(), method, url, body)
 }
 
 func (c *HttpClient) SendRequestWithContext(ctx context.Context, method, url string, body interface{}) (*http.Response, error) {
+	// 记录请求开始时间
+	startTime := time.Now()
+
 	ctx, span := c.tracer.Start(ctx, fmt.Sprintf("HTTP %s %s", method, url),
 		trace.WithAttributes(
 			attribute.String("http.method", method),
@@ -99,8 +113,23 @@ func (c *HttpClient) SendRequestWithContext(ctx context.Context, method, url str
 	propagator.Inject(ctx, propagation.HeaderCarrier(req.Header))
 
 	resp, err := c.client.Do(req)
+
+	latency := time.Since(startTime)
+	statsObj := stats.GlobalLatencyManager.GetOrCreateStats(url, method)
+	statsObj.AddLatency(latency)
+
+	span.SetAttributes(attribute.Int64("http.request_duration_ms", latency.Nanoseconds()/1000000))
+
 	if err != nil {
 		span.RecordError(err)
+		if ctx.Err() == context.DeadlineExceeded {
+			span.SetStatus(codes.Error, "HTTP request timeout")
+			return nil, fmt.Errorf("request timeout after %v: %w", c.GetTimeout(), err)
+		}
+		if err.Error() == "context deadline exceeded" {
+			span.SetStatus(codes.Error, "HTTP request timeout")
+			return nil, fmt.Errorf("request timeout after %v: %w", c.GetTimeout(), err)
+		}
 		span.SetStatus(codes.Error, "HTTP request failed")
 		return nil, err
 	}

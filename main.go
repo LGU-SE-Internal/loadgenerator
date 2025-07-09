@@ -42,12 +42,12 @@ func main() {
 	var sleepDuration int
 	var chainName string
 	var chainCount int
+	var showStats bool
 
 	var rootCmd = &cobra.Command{
 		Use:   "app",
 		Short: "A load generator application",
 		Run: func(cmd *cobra.Command, args []string) {
-			// 设置日志格式
 			logrus.SetFormatter(&logrus.TextFormatter{
 				ForceColors:     true,
 				FullTimestamp:   true,
@@ -58,7 +58,7 @@ func main() {
 				logrus.SetLevel(logrus.DebugLevel)
 				logrus.SetReportCaller(true)
 			} else {
-				logrus.SetLevel(logrus.ErrorLevel)
+				logrus.SetLevel(logrus.InfoLevel)
 			}
 
 			composedChain := behaviors.NewChain(behaviors.NewFuncNode(func(ctx *behaviors.Context) (*behaviors.NodeResult, error) {
@@ -100,6 +100,7 @@ func main() {
 	rootCmd.PersistentFlags().IntVarP(&sleepDuration, "sleep", "s", 10000, "Sleep duration in milliseconds")
 	rootCmd.PersistentFlags().StringVar(&chainName, "chain", "", "Choose which chain to execute")
 	rootCmd.PersistentFlags().IntVar(&chainCount, "count", 1, "How many times to run the chain")
+	rootCmd.PersistentFlags().BoolVar(&showStats, "stats", false, "Show current latency statistics")
 
 	if err := rootCmd.Execute(); err != nil {
 		logrus.Fatalf("Error executing command: %v", err)
