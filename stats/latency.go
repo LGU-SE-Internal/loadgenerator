@@ -21,14 +21,16 @@ type LatencyStats struct {
 	MinLatency time.Duration
 	AvgLatency time.Duration
 	mu         sync.RWMutex
+	maxRecords int // 限制最大记录数
 }
 
 func NewLatencyStats(url, method string) *LatencyStats {
 	return &LatencyStats{
 		URL:        url,
 		Method:     method,
-		Records:    make([]LatencyRecord, 0),
+		Records:    make([]LatencyRecord, 0, 1000), // 预分配1000个记录的容量
 		MinLatency: time.Duration(^uint64(0) >> 1), // 最大值
+		maxRecords: 5000,                           // 最多保留5000条记录
 	}
 }
 
@@ -40,6 +42,15 @@ func (ls *LatencyStats) AddLatency(latency time.Duration) {
 		Latency:   latency,
 		Timestamp: time.Now(),
 	}
+
+	// 如果记录数量达到上限，删除最旧的记录
+	if len(ls.Records) >= ls.maxRecords {
+		// 删除前25%的记录以避免频繁的内存操作
+		removeCount := ls.maxRecords / 4
+		copy(ls.Records, ls.Records[removeCount:])
+		ls.Records = ls.Records[:len(ls.Records)-removeCount]
+	}
+
 	ls.Records = append(ls.Records, record)
 	ls.Count++
 
@@ -50,12 +61,12 @@ func (ls *LatencyStats) AddLatency(latency time.Duration) {
 		ls.MinLatency = latency
 	}
 
-	// 计算平均延迟
+	// 计算平均延迟 - 只基于当前记录，不基于总计数
 	total := time.Duration(0)
 	for _, record := range ls.Records {
 		total += record.Latency
 	}
-	ls.AvgLatency = total / time.Duration(ls.Count)
+	ls.AvgLatency = total / time.Duration(len(ls.Records))
 }
 
 func (ls *LatencyStats) GetPercentile(percentile float64) time.Duration {
@@ -248,11 +259,15 @@ func (ls *LatencyStats) CleanOldRecords(maxAge time.Duration) {
 	ls.mu.Lock()
 	defer ls.mu.Unlock()
 
+	if len(ls.Records) == 0 {
+		return
+	}
+
 	now := time.Now()
 	cutoff := now.Add(-maxAge)
 
 	// 找到第一个不需要删除的记录
-	firstValidIndex := 0
+	firstValidIndex := -1
 	for i, record := range ls.Records {
 		if record.Timestamp.After(cutoff) {
 			firstValidIndex = i
@@ -261,7 +276,7 @@ func (ls *LatencyStats) CleanOldRecords(maxAge time.Duration) {
 	}
 
 	// 如果所有记录都太旧，清空
-	if firstValidIndex == 0 && len(ls.Records) > 0 && ls.Records[0].Timestamp.Before(cutoff) {
+	if firstValidIndex == -1 {
 		ls.Records = ls.Records[:0]
 		ls.Count = 0
 		ls.MaxLatency = 0
@@ -272,8 +287,10 @@ func (ls *LatencyStats) CleanOldRecords(maxAge time.Duration) {
 
 	// 删除旧记录
 	if firstValidIndex > 0 {
-		ls.Records = ls.Records[firstValidIndex:]
-		ls.Count = len(ls.Records)
+		// 使用copy而不是切片来避免内存泄露
+		newRecords := make([]LatencyRecord, len(ls.Records)-firstValidIndex)
+		copy(newRecords, ls.Records[firstValidIndex:])
+		ls.Records = newRecords
 
 		// 重新计算统计数据
 		ls.recalculateStats()

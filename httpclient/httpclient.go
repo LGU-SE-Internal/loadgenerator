@@ -41,9 +41,17 @@ type HttpClient struct {
 }
 
 func NewCustomClient() *HttpClient {
+	// 配置传输层以优化连接管理
+	transport := &http.Transport{
+		MaxIdleConns:        100,              // 最大空闲连接数
+		MaxIdleConnsPerHost: 10,               // 每个主机的最大空闲连接数
+		IdleConnTimeout:     90 * time.Second, // 空闲连接超时
+		DisableKeepAlives:   false,            // 启用keep-alive
+	}
+
 	httpClient := &http.Client{
-		Transport: otelhttp.NewTransport(http.DefaultTransport),
-		Timeout:   20 * time.Second, // 默认30秒超时
+		Transport: otelhttp.NewTransport(transport),
+		Timeout:   20 * time.Second, // 默认20秒超时
 	}
 
 	tracer := otel.Tracer("loadgenerator/httpclient")

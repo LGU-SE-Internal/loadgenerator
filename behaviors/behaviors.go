@@ -273,18 +273,33 @@ func (l *LoadGenerator) Start() {
 	// Cancel all goroutines
 	l.cancel()
 
-	// Cancel all worker contexts
+	// Cancel all worker contexts with timeout
 	l.workerMutex.Lock()
-	for _, cancel := range l.workerCancels {
+	for workerID, cancel := range l.workerCancels {
+		log.Infof("Cancelling worker %d", workerID)
 		cancel()
 	}
 	l.workerMutex.Unlock()
 
-	// Wait for all goroutines to finish
-	l.wg.Wait()
+	// Wait for all goroutines to finish with timeout
+	done := make(chan struct{})
+	go func() {
+		l.wg.Wait()
+		close(done)
+	}()
+
+	select {
+	case <-done:
+		log.Println("All workers stopped gracefully")
+	case <-time.After(30 * time.Second):
+		log.Warn("Timeout waiting for workers to stop, forcing exit")
+	}
 
 	// 调用清理函数
 	l.sharedClient.CleanUp()
+
+	// 最后一次垃圾回收
+	runtime.GC()
 
 	log.Println("All goroutines stopped, exiting program.")
 }
@@ -427,10 +442,16 @@ func (l *LoadGenerator) decreaseLoad() {
 
 		log.Infof("Decreased threads from %d to %d due to slow requests (active workers: %d)", currentThreads, newThreads, activeWorkers-1)
 	} else {
-		// 如果线程数已经是最小值，则增加睡眠时间
-		newSleepTime := currentSleepTime + 1000 // 增加1秒
-		atomic.StoreInt32(&l.currentSleepTime, newSleepTime)
-		log.Infof("Increased sleep time from %d to %d ms due to slow requests", currentSleepTime, newSleepTime)
+		// 如果线程数已经是最小值，则增加睡眠时间，但设置上限
+		maxSleepTime := int32(30000) // 最大30秒
+		if currentSleepTime < maxSleepTime {
+			newSleepTime := currentSleepTime + 1000 // 增加1秒
+			if newSleepTime > maxSleepTime {
+				newSleepTime = maxSleepTime
+			}
+			atomic.StoreInt32(&l.currentSleepTime, newSleepTime)
+			log.Infof("Increased sleep time from %d to %d ms due to slow requests", currentSleepTime, newSleepTime)
+		}
 	}
 }
 
@@ -460,7 +481,16 @@ func (l *LoadGenerator) increaseLoad() {
 
 func (l *LoadGenerator) startStatsMonitor() {
 	log.Info("Starting stats monitor...")
+
+	// 添加定期清理过期统计数据的ticker
+	cleanupTicker := time.NewTicker(5 * time.Minute) // 每5分钟清理一次
+
+	// 添加定期垃圾回收的ticker
+	gcTicker := time.NewTicker(2 * time.Minute) // 每2分钟强制GC一次
+
 	go func() {
+		defer cleanupTicker.Stop()
+		defer gcTicker.Stop()
 		for {
 			select {
 			case <-l.ctx.Done():
@@ -469,6 +499,19 @@ func (l *LoadGenerator) startStatsMonitor() {
 				l.adjustLoadBasedOnStats()
 			case <-l.printStatsTicker.C:
 				l.printLatencyStats()
+			case <-cleanupTicker.C:
+				// 清理超过10分钟的旧统计数据
+				log.Info("Cleaning old statistics records...")
+				stats.GlobalLatencyManager.CleanOldRecords(10 * time.Minute)
+			case <-gcTicker.C:
+				// 定期强制垃圾回收
+				log.Debug("Forcing garbage collection...")
+				runtime.GC()
+				// 记录内存使用情况
+				var m runtime.MemStats
+				runtime.ReadMemStats(&m)
+				log.Debugf("Memory usage: Alloc=%d KB, TotalAlloc=%d KB, Sys=%d KB, NumGC=%d",
+					m.Alloc/1024, m.TotalAlloc/1024, m.Sys/1024, m.NumGC)
 			}
 		}
 	}()
