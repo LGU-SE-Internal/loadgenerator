@@ -9,7 +9,6 @@ import (
 	"runtime"
 	"strings"
 	"sync"
-	"sync/atomic"
 	"syscall"
 	"time"
 
@@ -187,26 +186,12 @@ func WithChain(c *Chain) func(*Config) {
 }
 
 type LoadGenerator struct {
-	config       *Config
-	wg           sync.WaitGroup
-	ctx          context.Context
-	cancel       context.CancelFunc
-	sharedClient *service.SvcImpl // 共享的客户端实例
-
-	// 动态负载控制
-	currentThreads       int32
-	currentSleepTime     int32
-	maxThreads           int32
-	minThreads           int32
-	statsCheckTicker     *time.Ticker
-	printStatsTicker     *time.Ticker
-	slowRequestThreshold time.Duration
-
-	// 用于管理 worker 线程
-	workerContexts map[int]context.Context
-	workerCancels  map[int]context.CancelFunc
-	workerMutex    sync.RWMutex
-	nextWorkerID   int32
+	config           *Config
+	wg               sync.WaitGroup
+	ctx              context.Context
+	cancel           context.CancelFunc
+	sharedClient     *service.SvcImpl // 共享的客户端实例
+	printStatsTicker *time.Ticker
 }
 
 func NewLoadGenerator(conf ...func(*Config)) *LoadGenerator {
@@ -224,39 +209,23 @@ func NewLoadGenerator(conf ...func(*Config)) *LoadGenerator {
 		panic("LoadGenerator needs chain")
 	}
 
-	// 初始化共享的客户端实例
 	sharedClient := service.NewSvcClients()
 
 	return &LoadGenerator{
-		config:       &config,
-		ctx:          ctx,
-		cancel:       cancel,
-		sharedClient: sharedClient,
-
-		// 动态负载控制初始化
-		currentThreads:       int32(config.Thread),
-		currentSleepTime:     int32(config.SleepTime),
-		maxThreads:           int32(config.Thread * 2), // 最大线程数为初始值的2倍
-		minThreads:           1,
-		statsCheckTicker:     time.NewTicker(30 * time.Second), // 每30秒检查一次
-		printStatsTicker:     time.NewTicker(10 * time.Second), // 每10秒打印一次统计信息
-		slowRequestThreshold: 10 * time.Second,
-
-		// 初始化 worker 管理
-		workerContexts: make(map[int]context.Context),
-		workerCancels:  make(map[int]context.CancelFunc),
-		nextWorkerID:   0,
+		config:           &config,
+		ctx:              ctx,
+		cancel:           cancel,
+		sharedClient:     sharedClient,
+		printStatsTicker: time.NewTicker(10 * time.Second),
 	}
 }
 
 func (l *LoadGenerator) Start() {
 	l.startStatsMonitor()
 
-	currentThreads := atomic.LoadInt32(&l.currentThreads)
-	l.wg.Add(int(currentThreads))
-
-	for i := 0; i < int(currentThreads); i++ {
-		l.startWorker(-1) // 使用-1表示自动分配ID
+	l.wg.Add(l.config.Thread)
+	for i := 0; i < l.config.Thread; i++ {
+		go l.worker(i)
 	}
 
 	// Set up signal handling for graceful shutdown
@@ -267,19 +236,10 @@ func (l *LoadGenerator) Start() {
 	<-sigs
 	log.Println("Received shutdown signal, stopping all goroutines...")
 
-	l.statsCheckTicker.Stop()
 	l.printStatsTicker.Stop()
 
-	// Cancel all goroutines
+	// Cancel the main context, which will cascade to all workers
 	l.cancel()
-
-	// Cancel all worker contexts with timeout
-	l.workerMutex.Lock()
-	for workerID, cancel := range l.workerCancels {
-		log.Infof("Cancelling worker %d", workerID)
-		cancel()
-	}
-	l.workerMutex.Unlock()
 
 	// Wait for all goroutines to finish with timeout
 	done := make(chan struct{})
@@ -295,31 +255,18 @@ func (l *LoadGenerator) Start() {
 		log.Warn("Timeout waiting for workers to stop, forcing exit")
 	}
 
-	// 调用清理函数
 	l.sharedClient.CleanUp()
 
-	// 最后一次垃圾回收
 	runtime.GC()
 
 	log.Println("All goroutines stopped, exiting program.")
 }
 
-func (l *LoadGenerator) worker(index int, workerCtx context.Context) {
-	defer func() {
-		l.wg.Done()
-		// 清理 worker context
-		l.workerMutex.Lock()
-		delete(l.workerContexts, index)
-		delete(l.workerCancels, index)
-		l.workerMutex.Unlock()
-		log.Infof("Worker %d cleanup completed", index)
-	}()
+func (l *LoadGenerator) worker(index int) {
+	defer l.wg.Done()
 
 	for {
 		select {
-		case <-workerCtx.Done():
-			log.Infof("Worker %d exiting due to cancellation", index)
-			return
 		case <-l.ctx.Done():
 			log.Infof("Worker %d exiting due to main context cancellation", index)
 			return
@@ -331,8 +278,6 @@ func (l *LoadGenerator) worker(index int, workerCtx context.Context) {
 						n := runtime.Stack(buf, false)
 						stackTrace := string(buf[:n])
 						log.Errorf("Worker %d recovered from panic: %v\nStack trace:\n%s", index, r, stackTrace)
-						// 不要在这里重启worker，让它自然退出
-						// 动态负载控制会在必要时创建新的worker
 					}
 				}()
 
@@ -347,146 +292,18 @@ func (l *LoadGenerator) worker(index int, workerCtx context.Context) {
 					log.Warn(err)
 				}
 
-				// 使用动态睡眠时间
-				currentSleepTime := atomic.LoadInt32(&l.currentSleepTime)
-				if currentSleepTime > 0 {
-					time.Sleep(time.Millisecond * time.Duration(rand.Intn(int(currentSleepTime))))
+				if l.config.SleepTime > 0 {
+					time.Sleep(time.Millisecond * time.Duration(rand.Intn(l.config.SleepTime)))
 				}
 			}()
 		}
 	}
 }
 
-// startWorker 启动一个新的 worker 并管理其 context
-// 如果index为-1，则自动分配一个新的ID
-func (l *LoadGenerator) startWorker(index int) {
-	var workerID int
-
-	if index == -1 {
-		// 自动分配新的ID
-		workerID = int(atomic.AddInt32(&l.nextWorkerID, 1))
-	} else {
-		// 使用指定的ID（通常用于重启）
-		workerID = index
-	}
-
-	workerCtx, workerCancel := context.WithCancel(l.ctx)
-
-	l.workerMutex.Lock()
-	l.workerContexts[workerID] = workerCtx
-	l.workerCancels[workerID] = workerCancel
-	l.workerMutex.Unlock()
-
-	go l.worker(workerID, workerCtx)
-}
-
-// stopWorker 停止指定的 worker
-func (l *LoadGenerator) stopWorker(index int) {
-	l.workerMutex.Lock()
-	defer l.workerMutex.Unlock()
-
-	if cancel, exists := l.workerCancels[index]; exists {
-		cancel()
-		delete(l.workerContexts, index)
-		delete(l.workerCancels, index)
-		log.Infof("Stopped worker %d", index)
-	}
-}
-
-// getActiveWorkerCount 获取当前活跃的worker数量
-func (l *LoadGenerator) getActiveWorkerCount() int {
-	l.workerMutex.RLock()
-	defer l.workerMutex.RUnlock()
-	return len(l.workerContexts)
-}
-
-// 动态负载控制方法
-func (l *LoadGenerator) adjustLoadBasedOnStats() {
-	// 需要导入httpclient包来访问GlobalLatencyManager
-	// 这里我们先检查是否有超过阈值的请求
-	hasSlowRequests := l.checkSlowRequests()
-
-	if hasSlowRequests {
-		l.decreaseLoad()
-	} else {
-		l.increaseLoad()
-	}
-}
-
-func (l *LoadGenerator) checkSlowRequests() bool {
-	return stats.GlobalLatencyManager.HasSlowRequests(l.slowRequestThreshold)
-}
-
-func (l *LoadGenerator) decreaseLoad() {
-	currentThreads := atomic.LoadInt32(&l.currentThreads)
-	activeWorkers := l.getActiveWorkerCount()
-	currentSleepTime := atomic.LoadInt32(&l.currentSleepTime)
-
-	// 减少线程数或增加睡眠时间
-	if currentThreads > l.minThreads && activeWorkers > 0 {
-		newThreads := currentThreads - 1
-		atomic.StoreInt32(&l.currentThreads, newThreads)
-
-		// 停止一个 worker
-		l.workerMutex.RLock()
-		var workerToStop int = -1
-		for workerIndex := range l.workerCancels {
-			workerToStop = workerIndex
-			break
-		}
-		l.workerMutex.RUnlock()
-
-		if workerToStop >= 0 {
-			l.stopWorker(workerToStop)
-		}
-
-		log.Infof("Decreased threads from %d to %d due to slow requests (active workers: %d)", currentThreads, newThreads, activeWorkers-1)
-	} else {
-		// 如果线程数已经是最小值，则增加睡眠时间，但设置上限
-		maxSleepTime := int32(30000) // 最大30秒
-		if currentSleepTime < maxSleepTime {
-			newSleepTime := currentSleepTime + 1000 // 增加1秒
-			if newSleepTime > maxSleepTime {
-				newSleepTime = maxSleepTime
-			}
-			atomic.StoreInt32(&l.currentSleepTime, newSleepTime)
-			log.Infof("Increased sleep time from %d to %d ms due to slow requests", currentSleepTime, newSleepTime)
-		}
-	}
-}
-
-func (l *LoadGenerator) increaseLoad() {
-	currentThreads := atomic.LoadInt32(&l.currentThreads)
-	currentSleepTime := atomic.LoadInt32(&l.currentSleepTime)
-
-	// 如果睡眠时间大于原始配置，先减少睡眠时间
-	if currentSleepTime > int32(l.config.SleepTime) {
-		newSleepTime := currentSleepTime - 500 // 减少500ms
-		if newSleepTime < int32(l.config.SleepTime) {
-			newSleepTime = int32(l.config.SleepTime)
-		}
-		atomic.StoreInt32(&l.currentSleepTime, newSleepTime)
-		log.Infof("Decreased sleep time from %d to %d ms", currentSleepTime, newSleepTime)
-	} else if currentThreads < l.maxThreads {
-		// 如果睡眠时间已经是原始值，则增加线程数
-		newThreads := currentThreads + 1
-		atomic.StoreInt32(&l.currentThreads, newThreads)
-		log.Infof("Increased threads from %d to %d", currentThreads, newThreads)
-
-		// 启动新的worker
-		l.wg.Add(1)
-		l.startWorker(-1) // 使用-1表示自动分配ID
-	}
-}
-
 func (l *LoadGenerator) startStatsMonitor() {
 	log.Info("Starting stats monitor...")
-
-	// 添加定期清理过期统计数据的ticker
-	cleanupTicker := time.NewTicker(5 * time.Minute) // 每5分钟清理一次
-
-	// 添加定期垃圾回收的ticker
-	gcTicker := time.NewTicker(2 * time.Minute) // 每2分钟强制GC一次
+	cleanupTicker := time.NewTicker(5 * time.Minute)
+	gcTicker := time.NewTicker(2 * time.Minute)
 
 	go func() {
 		defer cleanupTicker.Stop()
@@ -495,22 +312,17 @@ func (l *LoadGenerator) startStatsMonitor() {
 			select {
 			case <-l.ctx.Done():
 				return
-			case <-l.statsCheckTicker.C:
-				l.adjustLoadBasedOnStats()
 			case <-l.printStatsTicker.C:
 				l.printLatencyStats()
 			case <-cleanupTicker.C:
-				// 清理超过10分钟的旧统计数据
 				log.Info("Cleaning old statistics records...")
 				stats.GlobalLatencyManager.CleanOldRecords(10 * time.Minute)
 			case <-gcTicker.C:
-				// 定期强制垃圾回收
 				log.Debug("Forcing garbage collection...")
 				runtime.GC()
-				// 记录内存使用情况
 				var m runtime.MemStats
 				runtime.ReadMemStats(&m)
-				log.Debugf("Memory usage: Alloc=%d KB, TotalAlloc=%d KB, Sys=%d KB, NumGC=%d",
+				log.Errorf("Memory usage: Alloc=%d KB, TotalAlloc=%d KB, Sys=%d KB, NumGC=%d",
 					m.Alloc/1024, m.TotalAlloc/1024, m.Sys/1024, m.NumGC)
 			}
 		}
@@ -518,7 +330,6 @@ func (l *LoadGenerator) startStatsMonitor() {
 }
 
 func (l *LoadGenerator) printLatencyStats() {
-	// 获取延迟最高的前10个请求
 	topSlowStats := stats.GlobalLatencyManager.GetTopSlowStats(10)
 
 	log.Warn("=== Top 10 Slowest Requests ===")
@@ -535,13 +346,6 @@ func (l *LoadGenerator) printLatencyStats() {
 		}
 	}
 
-	currentThreads := atomic.LoadInt32(&l.currentThreads)
-	activeWorkers := l.getActiveWorkerCount()
-	currentSleepTime := atomic.LoadInt32(&l.currentSleepTime)
-	slowRequestsCount := stats.GlobalLatencyManager.GetSlowRequestsCount(l.slowRequestThreshold)
-
-	log.Warnf("Current Threads: %d, Active Workers: %d, Sleep Time: %d ms", currentThreads, activeWorkers, currentSleepTime)
-	log.Warnf("Slow requests (>10s): %d", slowRequestsCount)
-	log.Warnf("Next Worker ID: %d", atomic.LoadInt32(&l.nextWorkerID))
+	log.Warnf("Current Threads: %d, Sleep Time: %d ms", l.config.Thread, l.config.SleepTime)
 	log.Warn("=========================")
 }
