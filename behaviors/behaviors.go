@@ -293,7 +293,7 @@ func (l *LoadGenerator) worker(index int) {
 				}
 
 				if l.config.SleepTime > 0 {
-					time.Sleep(time.Millisecond * time.Duration(rand.Intn(l.config.SleepTime)))
+					time.Sleep(time.Millisecond * time.Duration(l.config.SleepTime))
 				}
 			}()
 		}

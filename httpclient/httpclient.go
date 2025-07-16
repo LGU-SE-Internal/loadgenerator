@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/Lincyaw/loadgenerator/stats"
+	"github.com/sirupsen/logrus"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -38,6 +39,7 @@ type HttpClient struct {
 	mu       sync.Mutex
 	tracer   trace.Tracer
 	timeout  time.Duration
+	MaxLat   time.Duration
 }
 
 func NewCustomClient() *HttpClient {
@@ -81,7 +83,6 @@ func (c *HttpClient) SendRequest(method, url string, body interface{}) (*http.Re
 }
 
 func (c *HttpClient) SendRequestWithContext(ctx context.Context, method, url string, body interface{}) (*http.Response, error) {
-	// 记录请求开始时间
 	startTime := time.Now()
 
 	ctx, span := c.tracer.Start(ctx, fmt.Sprintf("HTTP %s %s", method, url),
@@ -123,6 +124,8 @@ func (c *HttpClient) SendRequestWithContext(ctx context.Context, method, url str
 	resp, err := c.client.Do(req)
 
 	latency := time.Since(startTime)
+	c.MaxLat = max(c.MaxLat, latency)
+	logrus.Warnf("HTTP %s %s took %v, max latency: %v", method, url, latency, c.MaxLat)
 	statsObj := stats.GlobalLatencyManager.GetOrCreateStats(url, method)
 	statsObj.AddLatency(latency)
 

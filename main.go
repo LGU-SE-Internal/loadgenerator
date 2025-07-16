@@ -86,7 +86,6 @@ func main() {
 					return
 				}
 				callChain(chain, chainCount)
-				logrus.Infof("executed chain %s %d times", chainName, chainCount)
 				return
 			}
 
@@ -97,7 +96,7 @@ func main() {
 
 	rootCmd.PersistentFlags().BoolVar(&debug, "debug", false, "Enable debug logging")
 	rootCmd.PersistentFlags().IntVarP(&threads, "threads", "t", 1, "Number of threads")
-	rootCmd.PersistentFlags().IntVarP(&sleepDuration, "sleep", "s", 100, "Sleep duration in milliseconds")
+	rootCmd.PersistentFlags().IntVarP(&sleepDuration, "sleep", "s", 1000, "Sleep duration in milliseconds")
 	rootCmd.PersistentFlags().StringVar(&chainName, "chain", "", "Choose which chain to execute")
 	rootCmd.PersistentFlags().IntVar(&chainCount, "count", 1, "How many times to run the chain")
 	rootCmd.PersistentFlags().BoolVar(&showStats, "stats", false, "Show current latency statistics")
