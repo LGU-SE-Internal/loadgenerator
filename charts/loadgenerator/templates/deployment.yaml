@@ -34,9 +34,9 @@ spec:
               
               # Single check function
               check_service_once() {
-                local name=$1
-                local port=$2
-                local path=$3
+                name=$1
+                port=$2
+                path=$3
                 
                 if [ -n "$path" ]; then
                   # HTTP health check
@@ -55,9 +55,9 @@ spec:
               
               # Wait for specific service
               wait_for_service() {
-                local name=$1
-                local port=$2
-                local path=$3
+                name=$1
+                port=$2
+                path=$3
                 
                 echo "Waiting for $name:$port$path"
                 
@@ -79,43 +79,65 @@ spec:
                 done
               }
               
-              # Create array of services to check
-              services=(
+              # Create temporary files for service lists
+              ready_services="/tmp/ready_services"
+              pending_services="/tmp/pending_services"
+              all_services="/tmp/all_services"
+              
+              # Clear temp files
+              > "$ready_services"
+              > "$pending_services"
+              > "$all_services"
+              
+              # Create list of all services
               {{- range .Values.waitForServices.services }}
-                "{{ .name }}:{{ .port }}:{{ .path | default "" }}"
+              echo "{{ .name }}:{{ .port }}:{{ .path | default "" }}" >> "$all_services"
               {{- end }}
-              )
               
               # First round: parallel check all services
               echo "Performing initial parallel check of all services..."
-              ready_services=()
-              pending_services=()
               
-              for service in "${services[@]}"; do
-                IFS=':' read -r name port path <<< "$service"
-                if check_service_once "$name" "$port" "$path"; then
-                  echo "$name is ready"
-                  ready_services+=("$service")
-                else
-                  echo "$name is not ready"
-                  pending_services+=("$service")
+              while IFS= read -r service; do
+                if [ -n "$service" ]; then
+                  name=$(echo "$service" | cut -d':' -f1)
+                  port=$(echo "$service" | cut -d':' -f2)
+                  path=$(echo "$service" | cut -d':' -f3)
+                  
+                  if check_service_once "$name" "$port" "$path"; then
+                    echo "$name is ready"
+                    echo "$service" >> "$ready_services"
+                  else
+                    echo "$name is not ready"
+                    echo "$service" >> "$pending_services"
+                  fi
                 fi
-              done
+              done < "$all_services"
+              
+              # Count services
+              ready_count=$(wc -l < "$ready_services" 2>/dev/null || echo 0)
+              pending_count=$(wc -l < "$pending_services" 2>/dev/null || echo 0)
               
               # If all services are ready, exit
-              if [ ${#pending_services[@]} -eq 0 ]; then
+              if [ "$pending_count" -eq 0 ]; then
                 echo "All services are ready!"
                 exit 0
               fi
               
-              echo "Ready services: ${#ready_services[@]}"
-              echo "Pending services: ${#pending_services[@]}"
+              echo "Ready services: $ready_count"
+              echo "Pending services: $pending_count"
               
               # Second round: wait for pending services
-              for service in "${pending_services[@]}"; do
-                IFS=':' read -r name port path <<< "$service"
-                wait_for_service "$name" "$port" "$path"
-              done
+              while IFS= read -r service; do
+                if [ -n "$service" ]; then
+                  name=$(echo "$service" | cut -d':' -f1)
+                  port=$(echo "$service" | cut -d':' -f2)
+                  path=$(echo "$service" | cut -d':' -f3)
+                  wait_for_service "$name" "$port" "$path"
+                fi
+              done < "$pending_services"
+              
+              # Clean up temp files
+              rm -f "$ready_services" "$pending_services" "$all_services"
               
               echo "All services are ready!"
           resources:
