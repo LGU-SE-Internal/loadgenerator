@@ -32,12 +32,34 @@ spec:
               interval={{ .Values.waitForServices.checkInterval }}
               start_time=$(date +%s)
               
-              check_service() {
+              # Single check function
+              check_service_once() {
                 local name=$1
                 local port=$2
                 local path=$3
                 
-                echo "Checking $name:$port$path"
+                if [ -n "$path" ]; then
+                  # HTTP health check
+                  http_code=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 5 --max-time 10 "http://$name:$port$path" 2>/dev/null)
+                  if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 500 ]; then
+                    return 0
+                  fi
+                else
+                  # TCP port check
+                  if nc -z $name $port 2>/dev/null; then
+                    return 0
+                  fi
+                fi
+                return 1
+              }
+              
+              # Wait for specific service
+              wait_for_service() {
+                local name=$1
+                local port=$2
+                local path=$3
+                
+                echo "Waiting for $name:$port$path"
                 
                 while true; do
                   current_time=$(date +%s)
@@ -47,19 +69,9 @@ spec:
                     exit 1
                   fi
                   
-                  if [ -n "$path" ]; then
-                    # HTTP health check - accept 200, 404, etc. (any HTTP response means service is running)
-                    http_code=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 5 --max-time 10 "http://$name:$port$path" 2>/dev/null)
-                    if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 500 ]; then
-                      echo "$name is ready (HTTP $http_code)"
-                      return 0
-                    fi
-                  else
-                    # TCP port check
-                    if nc -z $name $port 2>/dev/null; then
-                      echo "$name is ready (TCP)"
-                      return 0
-                    fi
+                  if check_service_once "$name" "$port" "$path"; then
+                    echo "$name is ready"
+                    return 0
                   fi
                   
                   echo "$name not ready, waiting $interval seconds..."
@@ -67,9 +79,43 @@ spec:
                 done
               }
               
+              # Create array of services to check
+              services=(
               {{- range .Values.waitForServices.services }}
-              check_service "{{ .name }}" "{{ .port }}" "{{ .path | default "" }}"
+                "{{ .name }}:{{ .port }}:{{ .path | default "" }}"
               {{- end }}
+              )
+              
+              # First round: parallel check all services
+              echo "Performing initial parallel check of all services..."
+              ready_services=()
+              pending_services=()
+              
+              for service in "${services[@]}"; do
+                IFS=':' read -r name port path <<< "$service"
+                if check_service_once "$name" "$port" "$path"; then
+                  echo "$name is ready"
+                  ready_services+=("$service")
+                else
+                  echo "$name is not ready"
+                  pending_services+=("$service")
+                fi
+              done
+              
+              # If all services are ready, exit
+              if [ ${#pending_services[@]} -eq 0 ]; then
+                echo "All services are ready!"
+                exit 0
+              fi
+              
+              echo "Ready services: ${#ready_services[@]}"
+              echo "Pending services: ${#pending_services[@]}"
+              
+              # Second round: wait for pending services
+              for service in "${pending_services[@]}"; do
+                IFS=':' read -r name port path <<< "$service"
+                wait_for_service "$name" "$port" "$path"
+              done
               
               echo "All services are ready!"
           resources:

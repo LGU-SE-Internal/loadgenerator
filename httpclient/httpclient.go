@@ -43,7 +43,6 @@ type HttpClient struct {
 }
 
 func NewCustomClient() *HttpClient {
-	// 配置传输层以优化连接管理
 	transport := &http.Transport{
 		MaxIdleConns:        100,              // 最大空闲连接数
 		MaxIdleConnsPerHost: 10,               // 每个主机的最大空闲连接数
