@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  loadgenerator:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2025-07-18T13:46:20.194162061Z"
+    description: A Helm chart for the Load Generator application
+    digest: c420d141cab06f5610a23fd3f8fdb3000a2de9fd9843a73fd98224aaec5701bf
+    name: loadgenerator
+    type: application
+    urls:
+    - https://lgu-se-internal.github.io/loadgenerator/loadgenerator-0.1.1.tgz
+    version: 0.1.1
+generated: "2025-07-18T13:46:20.193381691Z"
