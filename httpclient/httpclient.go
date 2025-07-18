@@ -12,7 +12,6 @@ import (
 
 	"github.com/Lincyaw/loadgenerator/stats"
 	"github.com/sirupsen/logrus"
-	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
@@ -51,7 +50,7 @@ func NewCustomClient() *HttpClient {
 	}
 
 	httpClient := &http.Client{
-		Transport: otelhttp.NewTransport(transport),
+		Transport: transport,
 		Timeout:   20 * time.Second, // 默认20秒超时
 	}
 
@@ -85,6 +84,7 @@ func (c *HttpClient) SendRequestWithContext(ctx context.Context, method, url str
 	startTime := time.Now()
 
 	ctx, span := c.tracer.Start(ctx, fmt.Sprintf("HTTP %s %s", method, url),
+		trace.WithSpanKind(trace.SpanKindClient),
 		trace.WithAttributes(
 			attribute.String("http.method", method),
 			attribute.String("http.url", url),
