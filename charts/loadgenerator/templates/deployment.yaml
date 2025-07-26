@@ -161,7 +161,7 @@ spec:
             - name: SERVICE_NAMESPACE
               value: "{{ .Release.Namespace }}"
             - name: OTEL_RESOURCE_ATTRIBUTES
-              value: "service.name=loadgenerator-service,service.namespace={{ .Release.Namespace }},pod.name=$(POD_NAME)"
+              value: "service.name=loadgenerator,service.namespace={{ .Release.Namespace }},pod.name=$(POD_NAME)"
           args:
             {{- if .Values.config.debug }}
             - "--debug"

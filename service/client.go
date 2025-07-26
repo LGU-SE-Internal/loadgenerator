@@ -19,7 +19,7 @@ func (s *SvcImpl) CleanUp() {
 }
 
 func NewSvcClients() *SvcImpl {
-	cleanup := httpclient.InitOTel("loadgenerator-service")
+	cleanup := httpclient.InitOTel("loadgenerator")
 
 	cli := httpclient.NewCustomClient()
 	cli.AddHeader("Proxy-Connection", "keep-alive")
