@@ -93,12 +93,19 @@ func (c *HttpClient) SendRequestWithContext(ctx context.Context, method, url str
 
 	c.mu.Lock()
 	c.reqCount++
+	reqCountSnapshot := c.reqCount
 	c.mu.Unlock()
+
+	span.SetAttributes(attribute.Int("http.request_count", reqCountSnapshot))
 
 	jsonData, err := json.Marshal(body)
 	if err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, "Failed to marshal request body")
+		span.SetAttributes(
+			attribute.String("error.type", "marshal_error"),
+			attribute.String("error.message", err.Error()),
+		)
 		return nil, err
 	}
 
@@ -108,6 +115,10 @@ func (c *HttpClient) SendRequestWithContext(ctx context.Context, method, url str
 	if err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, "Failed to create HTTP request")
+		span.SetAttributes(
+			attribute.String("error.type", "request_creation_error"),
+			attribute.String("error.message", err.Error()),
+		)
 		return nil, err
 	}
 
@@ -134,13 +145,25 @@ func (c *HttpClient) SendRequestWithContext(ctx context.Context, method, url str
 		span.RecordError(err)
 		if ctx.Err() == context.DeadlineExceeded {
 			span.SetStatus(codes.Error, "HTTP request timeout")
+			span.SetAttributes(
+				attribute.String("error.type", "timeout"),
+				attribute.Int64("timeout_duration_ms", c.GetTimeout().Milliseconds()),
+			)
 			return nil, fmt.Errorf("request timeout after %v: %w", c.GetTimeout(), err)
 		}
 		if err.Error() == "context deadline exceeded" {
 			span.SetStatus(codes.Error, "HTTP request timeout")
+			span.SetAttributes(
+				attribute.String("error.type", "context_timeout"),
+				attribute.Int64("timeout_duration_ms", c.GetTimeout().Milliseconds()),
+			)
 			return nil, fmt.Errorf("request timeout after %v: %w", c.GetTimeout(), err)
 		}
 		span.SetStatus(codes.Error, "HTTP request failed")
+		span.SetAttributes(
+			attribute.String("error.type", "network_error"),
+			attribute.String("error.message", err.Error()),
+		)
 		return nil, err
 	}
 

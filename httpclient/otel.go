@@ -59,7 +59,11 @@ func InitOTel(serviceName string) func() {
 	exporter = otlpExporter
 
 	tp := trace.NewTracerProvider(
-		trace.WithBatcher(exporter),
+		trace.WithBatcher(exporter,
+			trace.WithBatchTimeout(5*time.Second), // 强制每5秒导出一次
+			trace.WithMaxExportBatchSize(512),     // 批次大小
+			trace.WithMaxQueueSize(2048),          // 队列大小
+		),
 		trace.WithResource(res),
 		trace.WithSampler(trace.AlwaysSample()),
 	)

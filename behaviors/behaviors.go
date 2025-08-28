@@ -15,6 +15,8 @@ import (
 	"github.com/Lincyaw/loadgenerator/service"
 	"github.com/Lincyaw/loadgenerator/stats"
 	log "github.com/sirupsen/logrus"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
 )
 
 const Client = "client"
@@ -73,7 +75,14 @@ type FuncNode struct {
 }
 
 func (f *FuncNode) Execute(ctx *Context) (*NodeResult, error) {
-	return f.fn(ctx)
+	span := trace.SpanFromContext(ctx.ctx)
+
+	result, err := f.fn(ctx)
+	if err != nil && span.IsRecording() {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, fmt.Sprintf("Error in node %s: %v", f.Name, err))
+	}
+	return result, err
 }
 
 func (f *FuncNode) GetName() string {
@@ -114,6 +123,7 @@ func (c *Chain) Execute(ctx *Context) (*NodeResult, error) {
 		result, err := node.Execute(ctx)
 		log.Debugf("Executed node %s, time used: %v", node.GetName(), time.Since(startT))
 		if err != nil {
+			log.Tracef("Error occurred in node %s: %v", node.GetName(), err)
 			return nil, err
 		}
 		if result == nil {
