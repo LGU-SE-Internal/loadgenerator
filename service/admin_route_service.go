@@ -22,9 +22,15 @@ type AdminRouteInfo struct {
 }
 
 type AdminAddResponse struct {
-	Status int      `json:"status"`
-	Msg    string   `json:"msg"`
-	Data   []string `json:"data"`
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   struct {
+		ID           string   `json:"id"`
+		Stations     []string `json:"stations"`
+		Distances    []int    `json:"distances"`
+		StartStation string   `json:"startStation"`
+		EndStation   string   `json:"endStation"`
+	} `json:"data"`
 }
 
 type AdminRouteInfoResp struct {

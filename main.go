@@ -19,6 +19,12 @@ var chains = map[string]*behaviors.Chain{
 	"ConsignListChain":                  behaviors.ConsignListChain,
 	"OrderChangeChain":                  behaviors.OrderChangeChain,
 	"OrderCancelChain":                  behaviors.OrderCancelChain,
+	// Admin chains
+	"AdminBasicInfoChain": behaviors.AdminBasicInfoChain,
+	"AdminOrderChain":     behaviors.AdminOrderChain,
+	"AdminRouteChain":     behaviors.AdminRouteChain,
+	"AdminTravelChain":    behaviors.AdminTravelChain,
+	"AdminUserChain":      behaviors.AdminUserChain,
 }
 
 func callChain(chain *behaviors.Chain, count int) {

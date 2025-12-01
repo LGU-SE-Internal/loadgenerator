@@ -23,7 +23,7 @@ type AdminBasicInfoService interface {
 	AdminDeleteConfig(name string) (*AdminConfigResponse, error)
 	AdminModifyConfig(config *AdminConfig) (*AdminConfigResponse, error)
 	AdminAddConfig(config *AdminConfig) (*AdminConfigResponse, error)
-	AdminGetAllPrices() (*AdminPriceResponse, error)
+	AdminGetAllPrices() (*AdminAllPricesResponse, error)
 	AdminDeletePrice(pricesId string) (*AdminPriceResponse, error)
 	AdminModifyPrice(price *AdminPriceInfo) (*AdminPriceResponse, error)
 	AdminAddPrice(price *AdminPriceInfo) (*AdminPriceResponse, error)
@@ -86,6 +86,18 @@ type AdminPriceResponse struct {
 	Status int    `json:"status"`
 	Msg    string `json:"msg"`
 	Data   struct {
+		Id                  string  `json:"id"`
+		TrainType           string  `json:"trainType"`
+		RouteId             string  `json:"routeId"`
+		BasicPriceRate      float64 `json:"basicPriceRate"`
+		FirstClassPriceRate float64 `json:"firstClassPriceRate"`
+	} `json:"data"`
+}
+
+type AdminAllPricesResponse struct {
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   []struct {
 		Id                  string  `json:"id"`
 		TrainType           string  `json:"trainType"`
 		RouteId             string  `json:"routeId"`
@@ -369,7 +381,7 @@ func (s *SvcImpl) AdminAddConfig(config *AdminConfig) (*AdminConfigResponse, err
 	return &result, err
 }
 
-func (s *SvcImpl) AdminGetAllPrices() (*AdminPriceResponse, error) {
+func (s *SvcImpl) AdminGetAllPrices() (*AdminAllPricesResponse, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+"/api/v1/adminbasicservice/adminbasic/prices", nil)
 	if err != nil {
 		return nil, err
@@ -378,7 +390,7 @@ func (s *SvcImpl) AdminGetAllPrices() (*AdminPriceResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result AdminPriceResponse
+	var result AdminAllPricesResponse
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
