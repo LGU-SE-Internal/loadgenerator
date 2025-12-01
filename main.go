@@ -70,22 +70,22 @@ func main() {
 			composedChain := behaviors.NewChain(behaviors.NewFuncNode(func(ctx *behaviors.Context) (*behaviors.NodeResult, error) {
 				return nil, nil
 			}, "dummy"))
-			composedChain.AddNextChain(behaviors.NormalPreserveChain, 30)
-			composedChain.AddNextChain(behaviors.NormalOrderPayChain, 20)
-			composedChain.AddNextChain(behaviors.OrderConsignChain, 10)
-			composedChain.AddNextChain(behaviors.TicketCollectAndEnterStationChain, 10)
+			// 用户行为 chains (总计 90%)
+			composedChain.AddNextChain(behaviors.NormalPreserveChain, 20)               // 预订票务 - 最常见操作
+			composedChain.AddNextChain(behaviors.NormalOrderPayChain, 15)               // 订单支付
+			composedChain.AddNextChain(behaviors.AdvancedSearchChain, 18)               // 高级搜索 - 用户经常查询
+			composedChain.AddNextChain(behaviors.TicketCollectAndEnterStationChain, 12) // 取票进站
+			composedChain.AddNextChain(behaviors.OrderConsignChain, 8)                  // 订单托运
+			composedChain.AddNextChain(behaviors.ConsignListChain, 6)                   // 托运列表查询
+			composedChain.AddNextChain(behaviors.OrderChangeChain, 4)                   // 改签 - 较少
+			composedChain.AddNextChain(behaviors.OrderCancelChain, 2)                   // 退票 - 最少
 
-			composedChain.AddNextChain(behaviors.AdvancedSearchChain, 20)
-			composedChain.AddNextChain(behaviors.ConsignListChain, 8)
-			composedChain.AddNextChain(behaviors.OrderChangeChain, 3)
-			composedChain.AddNextChain(behaviors.OrderCancelChain, 2)
-
-			// Admin chains
-			composedChain.AddNextChain(behaviors.AdminBasicInfoChain, 5)
-			composedChain.AddNextChain(behaviors.AdminOrderChain, 5)
-			composedChain.AddNextChain(behaviors.AdminRouteChain, 3)
-			composedChain.AddNextChain(behaviors.AdminTravelChain, 3)
-			composedChain.AddNextChain(behaviors.AdminUserChain, 3)
+			// Admin chains (总计 10%) - 管理员操作较少
+			composedChain.AddNextChain(behaviors.AdminBasicInfoChain, 3) // 基础信息管理
+			composedChain.AddNextChain(behaviors.AdminOrderChain, 3)     // 订单管理
+			composedChain.AddNextChain(behaviors.AdminTravelChain, 3)    // 行程管理
+			composedChain.AddNextChain(behaviors.AdminRouteChain, 3)     // 路线管理
+			composedChain.AddNextChain(behaviors.AdminUserChain, 3)      // 用户管理
 
 			if chainName != "" {
 				chain := getChainByName(chainName)
