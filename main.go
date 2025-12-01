@@ -80,6 +80,13 @@ func main() {
 			composedChain.AddNextChain(behaviors.OrderChangeChain, 3)
 			composedChain.AddNextChain(behaviors.OrderCancelChain, 2)
 
+			// Admin chains
+			composedChain.AddNextChain(behaviors.AdminBasicInfoChain, 5)
+			composedChain.AddNextChain(behaviors.AdminOrderChain, 5)
+			composedChain.AddNextChain(behaviors.AdminRouteChain, 3)
+			composedChain.AddNextChain(behaviors.AdminTravelChain, 3)
+			composedChain.AddNextChain(behaviors.AdminUserChain, 3)
+
 			if chainName != "" {
 				chain := getChainByName(chainName)
 				if chain == nil {
