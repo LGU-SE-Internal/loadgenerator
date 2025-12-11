@@ -25,9 +25,6 @@ func init() {
 		NewFuncNode(AdminUpdateUser, "AdminUpdateUser"),
 	), 0.5)
 
-	AdminUserChain.AddNextChain(NewChain(
-		NewFuncNode(AdminDeleteUser, "AdminDeleteUser"),
-	), 0.5)
 }
 
 // AdminQueryAllUsers 查询所有用户

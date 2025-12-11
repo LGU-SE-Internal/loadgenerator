@@ -80,7 +80,6 @@ func main() {
 			composedChain.AddNextChain(behaviors.OrderChangeChain, 4)                   // 改签 - 较少
 			composedChain.AddNextChain(behaviors.OrderCancelChain, 2)                   // 退票 - 最少
 
-			// Admin chains (总计 10%) - 管理员操作较少
 			composedChain.AddNextChain(behaviors.AdminBasicInfoChain, 3) // 基础信息管理
 			composedChain.AddNextChain(behaviors.AdminOrderChain, 3)     // 订单管理
 			composedChain.AddNextChain(behaviors.AdminTravelChain, 3)    // 行程管理

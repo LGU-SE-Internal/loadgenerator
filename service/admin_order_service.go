@@ -19,6 +19,7 @@ func (s *SvcImpl) ReqGetAllOrders() (*OrderArrResp, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -38,6 +39,7 @@ func (s *SvcImpl) ReqAddOrder(input *Order) (*OrderResp, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
@@ -56,6 +58,7 @@ func (s *SvcImpl) ReqUpdateOrder(input *Order) (*OrderResp, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -81,6 +84,7 @@ func (s *SvcImpl) ReqDeleteOrder(orderId string, trainNumber string) (*ReqDelete
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 
 	if err != nil {
