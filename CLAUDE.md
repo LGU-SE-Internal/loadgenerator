@@ -46,9 +46,35 @@ go test ./...
 # Run tests for a specific package
 go test ./behaviors
 go test ./service
+```
+
+## Code Quality
+
+We use pre-commit hooks to maintain Go code quality. The configuration includes:
+- **golangci-lint**: Comprehensive linting with 30+ checks including security, performance, and style
+- **gofmt/goimports**: Automatic code formatting and import organization
+- **govet**: Static analysis for suspicious constructs
+- **Standard hooks**: Trailing whitespace, EOF fixes, file validation
+
+To set up pre-commit:
+```bash
+# Install pre-commit
+pip install pre-commit
+
+# Install git hooks
+pre-commit install
+
+# Run on all files
+pre-commit run --all-files
+
+# Run specific checks
+pre-commit run --all-files --show-diff-on-failure --color=always go-fmt
+pre-commit run --all-files --show-diff-on-failure --color=always golangci-lint
+```
 
 # Run tests with verbose output
 go test -v ./...
+```
 
 # Run a specific test
 go test -v ./behaviors -run TestSpecificFunction
