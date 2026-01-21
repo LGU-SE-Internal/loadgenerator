@@ -31,13 +31,13 @@ spec:
               timeout={{ .Values.waitForServices.timeout }}
               interval={{ .Values.waitForServices.checkInterval }}
               start_time=$(date +%s)
-              
+
               # Single check function
               check_service_once() {
                 name=$1
                 port=$2
                 path=$3
-                
+
                 if [ -n "$path" ]; then
                   # HTTP health check
                   http_code=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 5 --max-time 10 "http://$name:$port$path" 2>/dev/null)
@@ -52,15 +52,15 @@ spec:
                 fi
                 return 1
               }
-              
+
               # Wait for specific service
               wait_for_service() {
                 name=$1
                 port=$2
                 path=$3
-                
+
                 echo "Waiting for $name:$port$path"
-                
+
                 while true; do
                   current_time=$(date +%s)
                   elapsed=$((current_time - start_time))
@@ -68,41 +68,41 @@ spec:
                     echo "Timeout waiting for $name"
                     exit 1
                   fi
-                  
+
                   if check_service_once "$name" "$port" "$path"; then
                     echo "$name is ready"
                     return 0
                   fi
-                  
+
                   echo "$name not ready, waiting $interval seconds..."
                   sleep $interval
                 done
               }
-              
+
               # Create temporary files for service lists
               ready_services="/tmp/ready_services"
               pending_services="/tmp/pending_services"
               all_services="/tmp/all_services"
-              
+
               # Clear temp files
               > "$ready_services"
               > "$pending_services"
               > "$all_services"
-              
+
               # Create list of all services
               {{- range .Values.waitForServices.services }}
               echo "{{ .name }}:{{ .port }}:{{ .path | default "" }}" >> "$all_services"
               {{- end }}
-              
+
               # First round: parallel check all services
               echo "Performing initial parallel check of all services..."
-              
+
               while IFS= read -r service; do
                 if [ -n "$service" ]; then
                   name=$(echo "$service" | cut -d':' -f1)
                   port=$(echo "$service" | cut -d':' -f2)
                   path=$(echo "$service" | cut -d':' -f3)
-                  
+
                   if check_service_once "$name" "$port" "$path"; then
                     echo "$name is ready"
                     echo "$service" >> "$ready_services"
@@ -112,20 +112,20 @@ spec:
                   fi
                 fi
               done < "$all_services"
-              
+
               # Count services
               ready_count=$(wc -l < "$ready_services" 2>/dev/null || echo 0)
               pending_count=$(wc -l < "$pending_services" 2>/dev/null || echo 0)
-              
+
               # If all services are ready, exit
               if [ "$pending_count" -eq 0 ]; then
                 echo "All services are ready!"
                 exit 0
               fi
-              
+
               echo "Ready services: $ready_count"
               echo "Pending services: $pending_count"
-              
+
               # Second round: wait for pending services
               while IFS= read -r service; do
                 if [ -n "$service" ]; then
@@ -135,10 +135,10 @@ spec:
                   wait_for_service "$name" "$port" "$path"
                 fi
               done < "$pending_services"
-              
+
               # Clean up temp files
               rm -f "$ready_services" "$pending_services" "$all_services"
-              
+
               echo "All services are ready!"
           resources:
             {{- toYaml .Values.initContainer.resources | nindent 12 }}

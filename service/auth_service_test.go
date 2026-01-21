@@ -2,8 +2,9 @@ package service
 
 import (
 	"fmt"
-	"github.com/google/uuid"
 	"testing"
+
+	"github.com/google/uuid"
 )
 
 func GetBasicClient() (*SvcImpl, string) {

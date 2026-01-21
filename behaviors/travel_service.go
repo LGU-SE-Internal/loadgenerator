@@ -3,10 +3,11 @@ package behaviors
 import (
 	"errors"
 	"fmt"
-	"github.com/Lincyaw/loadgenerator/service"
-	log "github.com/sirupsen/logrus"
 	"math/rand"
 	"strings"
+
+	"github.com/Lincyaw/loadgenerator/service"
+	log "github.com/sirupsen/logrus"
 )
 
 func QueryTrip(ctx *Context) (*NodeResult, error) {

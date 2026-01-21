@@ -1,9 +1,10 @@
 package service
 
 import (
-	"github.com/go-faker/faker/v4"
 	"log"
 	"testing"
+
+	"github.com/go-faker/faker/v4"
 )
 
 func TestSvc_FullIntegration(t *testing.T) {

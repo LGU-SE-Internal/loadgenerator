@@ -107,7 +107,6 @@ func TestLoadGenerator_PanicRecovery(t *testing.T) {
 	node2 := NewFuncNode(func(ctx *Context) (*NodeResult, error) {
 		fmt.Println("node2", time.Now().String())
 		panic("intentional panic for testing")
-		return nil, nil
 	}, "node2")
 	node3 := NewFuncNode(func(ctx *Context) (*NodeResult, error) {
 		fmt.Println("node3", time.Now().String())

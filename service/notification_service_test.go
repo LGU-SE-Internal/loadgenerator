@@ -2,9 +2,10 @@ package service
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/go-faker/faker/v4"
 	"github.com/google/uuid"
-	"testing"
 )
 
 func TestSvcImpl_ReqOrderCancelSuccess(t *testing.T) {

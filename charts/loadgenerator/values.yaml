@@ -44,7 +44,7 @@ config:
 
 waitForServices:
   enabled: true
-  timeout: 600  
+  timeout: 600
   checkInterval: 1
   services:
     - name: ts-auth-service
@@ -174,16 +174,6 @@ waitForServices:
 
 initContainer:
   image: 10.10.10.240/library/netshoot:v0.14
-  resources:
-    requests:
-      cpu: 10m
-      memory: 32Mi
-    limits:
-      cpu: 100m
-      memory: 128Mi
-
-initContainer:
-  image: nicolaka/netshoot:latest
   resources:
     requests:
       cpu: 10m

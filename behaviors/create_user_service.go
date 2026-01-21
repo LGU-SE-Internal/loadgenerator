@@ -2,6 +2,7 @@ package behaviors
 
 import (
 	"fmt"
+
 	"github.com/Lincyaw/loadgenerator/service"
 	"github.com/go-faker/faker/v4"
 	_ "github.com/go-faker/faker/v4"

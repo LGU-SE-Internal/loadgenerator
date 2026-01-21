@@ -2,6 +2,7 @@ package behaviors
 
 import (
 	"fmt"
+
 	"github.com/Lincyaw/loadgenerator/service"
 	log "github.com/sirupsen/logrus"
 )

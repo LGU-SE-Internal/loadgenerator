@@ -2,8 +2,9 @@ package service
 
 import (
 	"fmt"
-	"github.com/google/uuid"
 	"testing"
+
+	"github.com/google/uuid"
 )
 
 func TestSvcImpl_ReqPay_InsidePayment(t *testing.T) {

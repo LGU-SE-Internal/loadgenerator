@@ -1,12 +1,13 @@
 package service
 
 import (
-	"github.com/go-faker/faker/v4"
-	"github.com/google/uuid"
 	"math/rand"
 	"strconv"
 	"testing"
 	"time"
+
+	"github.com/go-faker/faker/v4"
+	"github.com/google/uuid"
 )
 
 func TestUserService_FullIntegration(t *testing.T) {

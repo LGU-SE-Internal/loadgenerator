@@ -2,12 +2,13 @@ package service
 
 import (
 	"fmt"
-	"github.com/go-faker/faker/v4"
 	"log"
 	"math/rand"
 	"strings"
 	"sync"
 	"testing"
+
+	"github.com/go-faker/faker/v4"
 )
 
 func TestTravelService_FullIntegration(t *testing.T) {

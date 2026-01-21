@@ -2,11 +2,12 @@ package behaviors
 
 import (
 	"fmt"
-	"github.com/Lincyaw/loadgenerator/service"
 	"math/rand"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/Lincyaw/loadgenerator/service"
 )
 
 func randomlyChoosePlaces(data []service.Place) (string, string, error) {

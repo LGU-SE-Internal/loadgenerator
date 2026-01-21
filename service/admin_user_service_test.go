@@ -1,8 +1,9 @@
 package service
 
 import (
-	"github.com/go-faker/faker/v4"
 	"testing"
+
+	"github.com/go-faker/faker/v4"
 )
 
 func TestSvcImpl_AddUpdateDeleteUser(t *testing.T) {

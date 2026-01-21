@@ -2,9 +2,10 @@ package behaviors
 
 import (
 	"fmt"
+	"math/rand"
+
 	"github.com/Lincyaw/loadgenerator/service"
 	log "github.com/sirupsen/logrus"
-	"math/rand"
 )
 
 func QueryStation(ctx *Context) (*NodeResult, error) {

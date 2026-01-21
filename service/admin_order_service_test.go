@@ -2,10 +2,11 @@ package service
 
 import (
 	"fmt"
-	"github.com/go-faker/faker/v4"
-	"github.com/google/uuid"
 	"strconv"
 	"testing"
+
+	"github.com/go-faker/faker/v4"
+	"github.com/google/uuid"
 )
 
 func TestSvcImpl_ReqGetAllOrders(t *testing.T) {

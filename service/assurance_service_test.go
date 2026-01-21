@@ -1,9 +1,10 @@
 package service
 
 import (
-	"github.com/go-faker/faker/v4"
 	"strconv"
 	"testing"
+
+	"github.com/go-faker/faker/v4"
 )
 
 func TestSvcImpl_AddUpdateDeleteAssurance(t *testing.T) {

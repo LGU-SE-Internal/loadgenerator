@@ -2,10 +2,11 @@ package behaviors
 
 import (
 	"fmt"
+	"math/rand"
+
 	"github.com/Lincyaw/loadgenerator/service"
 	"github.com/go-faker/faker/v4"
 	log "github.com/sirupsen/logrus"
-	"math/rand"
 )
 
 func QueryOrderOther(ctx *Context) (*NodeResult, error) {

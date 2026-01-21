@@ -50,7 +50,7 @@ composedChain.AddNextChain(behaviors.OrderCancelChain, 2)            // 2%  - �
 ```go
 func (c *Chain) Execute(ctx *Context) (*NodeResult, error) {
     // ... 执行当前链的节点 ...
-    
+
     if len(c.nextChains) > 0 {
         randValue := rand.Float64() * c.probabilitySum  // 生成随机值
         cumulative := 0.0
@@ -178,7 +178,7 @@ func TravelPlanAdvancedSearch(ctx *Context) (*NodeResult, error) {
 ```go
 func init() {
     LoginChain.AddNextChain(NewChain(NewFuncNode(LoginAdmin, "LoginAdmin")), 0.2)      // 20% 管理员
-    LoginChain.AddNextChain(NewChain(NewFuncNode(CreateUser, "CreateUser"), 
+    LoginChain.AddNextChain(NewChain(NewFuncNode(CreateUser, "CreateUser"),
                                      NewFuncNode(LoginNormal, "LoginNormal")), 0.8)  // 80% 普通用户
 }
 ```

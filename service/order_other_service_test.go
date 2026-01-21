@@ -2,12 +2,13 @@ package service
 
 import (
 	"fmt"
-	"github.com/go-faker/faker/v4"
-	"github.com/google/uuid"
 	"math/rand"
 	"strconv"
 	"testing"
 	"time"
+
+	"github.com/go-faker/faker/v4"
+	"github.com/google/uuid"
 )
 
 func TestSvcImpl_ReqFindAllOeder_Other(t *testing.T) {

@@ -2,10 +2,11 @@ package service
 
 import (
 	"fmt"
-	"github.com/go-faker/faker/v4"
 	"math/rand"
 	"strings"
 	"testing"
+
+	"github.com/go-faker/faker/v4"
 )
 
 func TestBasicServiceFullIntegration(t *testing.T) {
