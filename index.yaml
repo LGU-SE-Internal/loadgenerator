@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  loadgenerator:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2026-02-10T02:53:51.34799666Z"
+    description: A Helm chart for the Load Generator application
+    digest: 55d8616ffccd4192a3bde8ea2e5854cfc4614f40e549f9f8a7cdabf9a73ed64c
+    name: loadgenerator
+    type: application
+    urls:
+    - https://operationspai.github.io/loadgenerator/loadgenerator-0.1.1.tgz
+    version: 0.1.1
+generated: "2026-02-10T02:53:51.347565426Z"
