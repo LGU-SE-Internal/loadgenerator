@@ -2,9 +2,10 @@ package behaviors
 
 import (
 	"fmt"
+	"math/rand"
+
 	"github.com/Lincyaw/loadgenerator/service"
 	log "github.com/sirupsen/logrus"
-	"math/rand"
 )
 
 func QueryRouteByStartAndEnd(ctx *Context) (*NodeResult, error) {
@@ -24,6 +25,11 @@ func QueryRouteByStartAndEnd(ctx *Context) (*NodeResult, error) {
 	if AllRoutesByQueryStartAndEnd.Status != 1 { // With Prob = (156-10) / 156 approximately equivalent to 94%
 		log.Infof("Can not find the Start-End pair, query parameter, start:[%s], end[%s]", TheStart, TheEnd)
 		return &(NodeResult{false}), err // immediately end
+	}
+
+	if len(AllRoutesByQueryStartAndEnd.Data) == 0 {
+		log.Warnf("No routes found for Start-End pair, start:[%s], end[%s]", TheStart, TheEnd)
+		return &(NodeResult{false}), nil
 	}
 
 	randomIndex := rand.Intn(len(AllRoutesByQueryStartAndEnd.Data))
@@ -51,6 +57,11 @@ func ChooseRoute(ctx *Context) (*NodeResult, error) {
 	if allRoutes.Status != 1 {
 		log.Errorf("queryAllRoutes failed, data: %+v", allRoutes)
 		return &(NodeResult{false}), err
+	}
+
+	if len(allRoutes.Data) == 0 {
+		log.Warnf("No routes found")
+		return &(NodeResult{false}), nil
 	}
 
 	randomIndex := rand.Intn(len(allRoutes.Data))

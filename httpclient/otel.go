@@ -15,6 +15,15 @@ import (
 )
 
 func InitOTel(serviceName string) func() {
+	// Check if OTEL is enabled via environment variable
+	otlpEndpoint := os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
+	if otlpEndpoint == "" {
+		log.Printf("OTEL_EXPORTER_OTLP_ENDPOINT not set, OpenTelemetry disabled")
+		return func() {} // Return empty cleanup function
+	}
+
+	log.Printf("OTEL_EXPORTER_OTLP_ENDPOINT set to: %s, initializing OpenTelemetry", otlpEndpoint)
+
 	// Create base resource with service info
 	baseRes := resource.NewWithAttributes(
 		semconv.SchemaURL,
@@ -37,12 +46,6 @@ func InitOTel(serviceName string) func() {
 
 	var exporter trace.SpanExporter
 
-	otlpEndpoint := os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
-	if otlpEndpoint == "" {
-		otlpEndpoint = "opentelemetry-collector-deployment.monitoring:4317"
-		log.Printf("No OTEL_EXPORTER_OTLP_ENDPOINT set, using default: %s", otlpEndpoint)
-	}
-
 	log.Printf("Using OTLP gRPC exporter with endpoint: %s", otlpEndpoint)
 
 	otlpExporter, err := otlptracegrpc.New(
@@ -56,7 +59,11 @@ func InitOTel(serviceName string) func() {
 	exporter = otlpExporter
 
 	tp := trace.NewTracerProvider(
-		trace.WithBatcher(exporter),
+		trace.WithBatcher(exporter,
+			trace.WithBatchTimeout(5*time.Second), // 强制每5秒导出一次
+			trace.WithMaxExportBatchSize(512),     // 批次大小
+			trace.WithMaxQueueSize(2048),          // 队列大小
+		),
 		trace.WithResource(res),
 		trace.WithSampler(trace.AlwaysSample()),
 	)

@@ -23,7 +23,7 @@ type AdminBasicInfoService interface {
 	AdminDeleteConfig(name string) (*AdminConfigResponse, error)
 	AdminModifyConfig(config *AdminConfig) (*AdminConfigResponse, error)
 	AdminAddConfig(config *AdminConfig) (*AdminConfigResponse, error)
-	AdminGetAllPrices() (*AdminPriceResponse, error)
+	AdminGetAllPrices() (*AdminAllPricesResponse, error)
 	AdminDeletePrice(pricesId string) (*AdminPriceResponse, error)
 	AdminModifyPrice(price *AdminPriceInfo) (*AdminPriceResponse, error)
 	AdminAddPrice(price *AdminPriceInfo) (*AdminPriceResponse, error)
@@ -94,6 +94,18 @@ type AdminPriceResponse struct {
 	} `json:"data"`
 }
 
+type AdminAllPricesResponse struct {
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   []struct {
+		Id                  string  `json:"id"`
+		TrainType           string  `json:"trainType"`
+		RouteId             string  `json:"routeId"`
+		BasicPriceRate      float64 `json:"basicPriceRate"`
+		FirstClassPriceRate float64 `json:"firstClassPriceRate"`
+	} `json:"data"`
+}
+
 // Request structs
 type AdminContacts struct {
 	Id             string `json:"id"`
@@ -150,6 +162,8 @@ func (s *SvcImpl) AdminGetAllContacts() (*AdminGetContactsResp, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
+
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
@@ -164,6 +178,8 @@ func (s *SvcImpl) AdminDeleteContact(contactsId string) (*AdminDeleteContactResp
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
+
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
@@ -178,6 +194,7 @@ func (s *SvcImpl) AdminModifyContact(contacts *AdminContacts) (*AdminContactResp
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
@@ -192,6 +209,7 @@ func (s *SvcImpl) AdminAddContact(contacts *AdminContacts) (*AdminContactRespons
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
@@ -206,6 +224,8 @@ func (s *SvcImpl) AdminGetAllStations() (*AdminStationResponse, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
+
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
@@ -220,6 +240,7 @@ func (s *SvcImpl) AdminDeleteStation(id string) (*AdminDeleteResponse, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
@@ -234,6 +255,7 @@ func (s *SvcImpl) AdminModifyStation(station *AdminStation) (*AdminStationRespon
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
@@ -248,6 +270,7 @@ func (s *SvcImpl) AdminAddStation(station *AdminStation) (*AdminStationResponse,
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
@@ -262,6 +285,7 @@ func (s *SvcImpl) AdminGetAllTrains() (*AdminTrainResponse, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
@@ -276,6 +300,7 @@ func (s *SvcImpl) AdminDeleteTrain(id string) (*AdminTrainResponse, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
@@ -290,6 +315,7 @@ func (s *SvcImpl) AdminModifyTrain(train *AdminTrainType) (*AdminTrainResponse, 
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
@@ -304,6 +330,7 @@ func (s *SvcImpl) AdminAddTrain(train *AdminTrainType) (*AdminTrainResponse, err
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
@@ -318,6 +345,7 @@ func (s *SvcImpl) AdminGetAllConfigs() (*AdminConfigResponse, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
@@ -332,6 +360,7 @@ func (s *SvcImpl) AdminDeleteConfig(name string) (*AdminConfigResponse, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
@@ -346,6 +375,7 @@ func (s *SvcImpl) AdminModifyConfig(config *AdminConfig) (*AdminConfigResponse, 
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
@@ -360,6 +390,7 @@ func (s *SvcImpl) AdminAddConfig(config *AdminConfig) (*AdminConfigResponse, err
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
@@ -369,16 +400,17 @@ func (s *SvcImpl) AdminAddConfig(config *AdminConfig) (*AdminConfigResponse, err
 	return &result, err
 }
 
-func (s *SvcImpl) AdminGetAllPrices() (*AdminPriceResponse, error) {
+func (s *SvcImpl) AdminGetAllPrices() (*AdminAllPricesResponse, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+"/api/v1/adminbasicservice/adminbasic/prices", nil)
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
-	var result AdminPriceResponse
+	var result AdminAllPricesResponse
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
@@ -388,6 +420,7 @@ func (s *SvcImpl) AdminDeletePrice(pricesId string) (*AdminPriceResponse, error)
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
@@ -402,6 +435,7 @@ func (s *SvcImpl) AdminModifyPrice(price *AdminPriceInfo) (*AdminPriceResponse, 
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
@@ -416,6 +450,7 @@ func (s *SvcImpl) AdminAddPrice(price *AdminPriceInfo) (*AdminPriceResponse, err
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err

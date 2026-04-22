@@ -28,6 +28,11 @@ func QueryContacts(ctx *Context) (*NodeResult, error) {
 		return nil, fmt.Errorf("unexpected response status: %d", GetAllContacts.Status)
 	}
 
+	if len(GetAllContacts.Data) == 0 {
+		log.Warnf("No contacts found for account_id=%s", TheAccountId)
+		return &(NodeResult{false}), nil
+	}
+
 	randomIndex := rand.Intn(len(GetAllContacts.Data))
 	//ctx.Set(AccountID, GetAllContacts.Data[randomIndex].AccountId)
 	ctx.Set(ContactsID, GetAllContacts.Data[randomIndex].Id)

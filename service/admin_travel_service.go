@@ -11,7 +11,7 @@ type AdminTravelService interface {
 	CreateTravel(request *AdminTravelInfo) (*AdminTravelResponse, error)
 	UpdateTravel(request *AdminTravelInfo) (*AdminTravelResponse, error)
 	DeleteTravel(tripId string) (*AdminTravelResponse, error)
-	GetAllTravels() ([]AdminTravelInfo, error)
+	GetAllTravels() (*AdminAllTravelsResponse, error)
 }
 type AdminTravelInfo struct {
 	LoginID             string `json:"loginId"`
@@ -23,6 +23,12 @@ type AdminTravelInfo struct {
 	TerminalStationName string `json:"terminalStationName"`
 	StartTime           string `json:"startTime"`
 	EndTime             string `json:"endTime"`
+}
+
+type AdminAllTravelsResponse struct {
+	Status int               `json:"status"`
+	Msg    string            `json:"msg"`
+	Data   []AdminTravelInfo `json:"data"`
 }
 
 type AdminTravelResponse struct {
@@ -105,7 +111,7 @@ func (s *SvcImpl) DeleteTravel(tripId string) (*AdminTravelResponse, error) {
 	return &result, nil
 }
 
-func (s *SvcImpl) GetAllTravels() ([]AdminTravelInfo, error) {
+func (s *SvcImpl) GetAllTravels() (*AdminAllTravelsResponse, error) {
 	resp, err := s.cli.SendRequest("GET", s.BaseUrl+"/api/v1/admintravelservice/admintravel", nil)
 	if err != nil {
 		return nil, err
@@ -117,11 +123,11 @@ func (s *SvcImpl) GetAllTravels() ([]AdminTravelInfo, error) {
 		return nil, err
 	}
 
-	var travels []AdminTravelInfo
-	err = json.Unmarshal(body, &travels)
+	var result AdminAllTravelsResponse
+	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, fmt.Errorf("body: %v", string(body)))
 	}
 
-	return travels, nil
+	return &result, nil
 }

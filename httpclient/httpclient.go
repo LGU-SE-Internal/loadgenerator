@@ -8,8 +8,10 @@ import (
 	"io"
 	"net/http"
 	"sync"
+	"time"
 
-	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
+	"github.com/Lincyaw/loadgenerator/stats"
+	"github.com/sirupsen/logrus"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
@@ -35,11 +37,21 @@ type HttpClient struct {
 	reqCount int
 	mu       sync.Mutex
 	tracer   trace.Tracer
+	timeout  time.Duration
+	MaxLat   time.Duration
 }
 
 func NewCustomClient() *HttpClient {
+	transport := &http.Transport{
+		MaxIdleConns:        100,              // 最大空闲连接数
+		MaxIdleConnsPerHost: 10,               // 每个主机的最大空闲连接数
+		IdleConnTimeout:     90 * time.Second, // 空闲连接超时
+		DisableKeepAlives:   false,            // 启用keep-alive
+	}
+
 	httpClient := &http.Client{
-		Transport: otelhttp.NewTransport(http.DefaultTransport),
+		Transport: transport,
+		Timeout:   20 * time.Second, // 默认20秒超时
 	}
 
 	tracer := otel.Tracer("loadgenerator/httpclient")
@@ -48,6 +60,7 @@ func NewCustomClient() *HttpClient {
 		client:  httpClient,
 		headers: make(map[string]string),
 		tracer:  tracer,
+		timeout: 20 * time.Second,
 	}
 }
 
@@ -57,12 +70,21 @@ func (c *HttpClient) AddHeader(key, value string) {
 	c.headers[key] = value
 }
 
+func (c *HttpClient) GetTimeout() time.Duration {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	return c.timeout
+}
+
 func (c *HttpClient) SendRequest(method, url string, body interface{}) (*http.Response, error) {
 	return c.SendRequestWithContext(context.Background(), method, url, body)
 }
 
 func (c *HttpClient) SendRequestWithContext(ctx context.Context, method, url string, body interface{}) (*http.Response, error) {
+	startTime := time.Now()
+
 	ctx, span := c.tracer.Start(ctx, fmt.Sprintf("HTTP %s %s", method, url),
+		trace.WithSpanKind(trace.SpanKindClient),
 		trace.WithAttributes(
 			attribute.String("http.method", method),
 			attribute.String("http.url", url),
@@ -71,12 +93,19 @@ func (c *HttpClient) SendRequestWithContext(ctx context.Context, method, url str
 
 	c.mu.Lock()
 	c.reqCount++
+	reqCountSnapshot := c.reqCount
 	c.mu.Unlock()
+
+	span.SetAttributes(attribute.Int("http.request_count", reqCountSnapshot))
 
 	jsonData, err := json.Marshal(body)
 	if err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, "Failed to marshal request body")
+		span.SetAttributes(
+			attribute.String("error.type", "marshal_error"),
+			attribute.String("error.message", err.Error()),
+		)
 		return nil, err
 	}
 
@@ -86,6 +115,10 @@ func (c *HttpClient) SendRequestWithContext(ctx context.Context, method, url str
 	if err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, "Failed to create HTTP request")
+		span.SetAttributes(
+			attribute.String("error.type", "request_creation_error"),
+			attribute.String("error.message", err.Error()),
+		)
 		return nil, err
 	}
 
@@ -99,9 +132,38 @@ func (c *HttpClient) SendRequestWithContext(ctx context.Context, method, url str
 	propagator.Inject(ctx, propagation.HeaderCarrier(req.Header))
 
 	resp, err := c.client.Do(req)
+
+	latency := time.Since(startTime)
+	c.MaxLat = max(c.MaxLat, latency)
+	logrus.Warnf("HTTP %s %s took %v, max latency: %v", method, url, latency, c.MaxLat)
+	statsObj := stats.GlobalLatencyManager.GetOrCreateStats(url, method)
+	statsObj.AddLatency(latency)
+
+	span.SetAttributes(attribute.Int64("http.request_duration_ms", latency.Nanoseconds()/1000000))
+
 	if err != nil {
 		span.RecordError(err)
+		if ctx.Err() == context.DeadlineExceeded {
+			span.SetStatus(codes.Error, "HTTP request timeout")
+			span.SetAttributes(
+				attribute.String("error.type", "timeout"),
+				attribute.Int64("timeout_duration_ms", c.GetTimeout().Milliseconds()),
+			)
+			return nil, fmt.Errorf("request timeout after %v: %w", c.GetTimeout(), err)
+		}
+		if err.Error() == "context deadline exceeded" {
+			span.SetStatus(codes.Error, "HTTP request timeout")
+			span.SetAttributes(
+				attribute.String("error.type", "context_timeout"),
+				attribute.Int64("timeout_duration_ms", c.GetTimeout().Milliseconds()),
+			)
+			return nil, fmt.Errorf("request timeout after %v: %w", c.GetTimeout(), err)
+		}
 		span.SetStatus(codes.Error, "HTTP request failed")
+		span.SetAttributes(
+			attribute.String("error.type", "network_error"),
+			attribute.String("error.message", err.Error()),
+		)
 		return nil, err
 	}
 

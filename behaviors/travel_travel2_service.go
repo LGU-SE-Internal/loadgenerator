@@ -2,9 +2,10 @@ package behaviors
 
 import (
 	"fmt"
+	"math/rand"
+
 	"github.com/Lincyaw/loadgenerator/service"
 	log "github.com/sirupsen/logrus"
-	"math/rand"
 )
 
 func QueryTripInfo(ctx *Context) (*NodeResult, error) {
@@ -26,11 +27,11 @@ func QueryTripInfo(ctx *Context) (*NodeResult, error) {
 		var travelSvc service.TravelService = cli
 		queryInfoResp, err := travelSvc.QueryInfo(tripInfo)
 		if err != nil || queryInfoResp.Status != 1 {
-			log.Errorf("QueryInfo failed, status != 1. TrainType: %s, Parameter: %+v", TheTrainTypeName, tripInfo)
+			log.Infof("QueryInfo failed, status != 1. TrainType: %s, Parameter: %+v", TheTrainTypeName, tripInfo)
 			return &(NodeResult{false}), nil
 		}
 		if len(queryInfoResp.Data) == 0 {
-			log.Warnf("[Please Try Again]QueryInfo empty, No Data. Please Try Again. TrainType: %s, Parameter: %+v", TheTrainTypeName, tripInfo)
+			log.Infof("[Please Try Again]QueryInfo empty, No Data. Please Try Again. TrainType: %s, Parameter: %+v", TheTrainTypeName, tripInfo)
 			return &(NodeResult{false}), nil
 		}
 
@@ -48,12 +49,12 @@ func QueryTripInfo(ctx *Context) (*NodeResult, error) {
 		var travel2Svc service.Travel2Service = cli
 		queryInfoResp, err := travel2Svc.QueryByBatch(&tripInfo)
 		if err != nil || queryInfoResp.Status != 1 {
-			log.Errorf("QueryInfo failed, status != 1. TrainType: %s, Parameter: %+v", TheTrainTypeName, tripInfo)
+			log.Infof("QueryInfo failed, status != 1. TrainType: %s, Parameter: %+v", TheTrainTypeName, tripInfo)
 			return &(NodeResult{false}), nil
 		}
 
 		if len(queryInfoResp.Data) == 0 {
-			log.Warnf("[Please Try Again]QueryInfo empty, No Data. Please Try Again. TrainType: %s, Parameter: %+v", TheTrainTypeName, tripInfo)
+			log.Infof("[Please Try Again]QueryInfo empty, No Data. Please Try Again. TrainType: %s, Parameter: %+v", TheTrainTypeName, tripInfo)
 			return &(NodeResult{false}), nil
 		}
 

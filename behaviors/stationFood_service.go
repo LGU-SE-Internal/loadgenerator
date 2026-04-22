@@ -2,9 +2,10 @@ package behaviors
 
 import (
 	"fmt"
+	"math/rand"
+
 	"github.com/Lincyaw/loadgenerator/service"
 	log "github.com/sirupsen/logrus"
-	"math/rand"
 )
 
 func QueryStationFood(ctx *Context) (*NodeResult, error) {
@@ -22,6 +23,12 @@ func QueryStationFood(ctx *Context) (*NodeResult, error) {
 		log.Errorf("GetAllStationFood status should be 1, but is %d", resp.Status)
 		return nil, err
 	}
+
+	if len(resp.Data) == 0 {
+		log.Warnf("No station food found")
+		return &(NodeResult{false}), nil
+	}
+
 	randomIndex := rand.Intn(len(resp.Data))
 	ctx.Set(StoreName, resp.Data[randomIndex].StoreName)
 	ctx.Set(Phone, resp.Data[randomIndex].Telephone)

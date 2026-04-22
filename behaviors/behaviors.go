@@ -13,7 +13,10 @@ import (
 	"time"
 
 	"github.com/Lincyaw/loadgenerator/service"
+	"github.com/Lincyaw/loadgenerator/stats"
 	log "github.com/sirupsen/logrus"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
 )
 
 const Client = "client"
@@ -72,7 +75,14 @@ type FuncNode struct {
 }
 
 func (f *FuncNode) Execute(ctx *Context) (*NodeResult, error) {
-	return f.fn(ctx)
+	span := trace.SpanFromContext(ctx.ctx)
+
+	result, err := f.fn(ctx)
+	if err != nil && span.IsRecording() {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, fmt.Sprintf("Error in node %s: %v", f.Name, err))
+	}
+	return result, err
 }
 
 func (f *FuncNode) GetName() string {
@@ -113,6 +123,7 @@ func (c *Chain) Execute(ctx *Context) (*NodeResult, error) {
 		result, err := node.Execute(ctx)
 		log.Debugf("Executed node %s, time used: %v", node.GetName(), time.Since(startT))
 		if err != nil {
+			log.Tracef("Error occurred in node %s: %v", node.GetName(), err)
 			return nil, err
 		}
 		if result == nil {
@@ -185,12 +196,12 @@ func WithChain(c *Chain) func(*Config) {
 }
 
 type LoadGenerator struct {
-	config       *Config
-	wg           sync.WaitGroup
-	ctx          context.Context
-	cancel       context.CancelFunc
-	taskChain    chan int
-	sharedClient *service.SvcImpl // 共享的客户端实例
+	config           *Config
+	wg               sync.WaitGroup
+	ctx              context.Context
+	cancel           context.CancelFunc
+	sharedClient     *service.SvcImpl // 共享的客户端实例
+	printStatsTicker *time.Ticker
 }
 
 func NewLoadGenerator(conf ...func(*Config)) *LoadGenerator {
@@ -208,32 +219,24 @@ func NewLoadGenerator(conf ...func(*Config)) *LoadGenerator {
 		panic("LoadGenerator needs chain")
 	}
 
-	// 初始化共享的客户端实例
 	sharedClient := service.NewSvcClients()
 
 	return &LoadGenerator{
-		config:       &config,
-		ctx:          ctx,
-		cancel:       cancel,
-		taskChain:    make(chan int, config.Thread),
-		sharedClient: sharedClient,
+		config:           &config,
+		ctx:              ctx,
+		cancel:           cancel,
+		sharedClient:     sharedClient,
+		printStatsTicker: time.NewTicker(10 * time.Second),
 	}
 }
 
 func (l *LoadGenerator) Start() {
+	l.startStatsMonitor()
 
 	l.wg.Add(l.config.Thread)
-
 	for i := 0; i < l.config.Thread; i++ {
 		go l.worker(i)
 	}
-	go func() {
-		for index := range l.taskChain {
-			log.Infof("Restarting worker %d", index)
-			l.wg.Add(1)
-			go l.worker(index)
-		}
-	}()
 
 	// Set up signal handling for graceful shutdown
 	sigs := make(chan os.Signal, 1)
@@ -243,51 +246,116 @@ func (l *LoadGenerator) Start() {
 	<-sigs
 	log.Println("Received shutdown signal, stopping all goroutines...")
 
-	// Cancel all goroutines
+	l.printStatsTicker.Stop()
+
+	// Cancel the main context, which will cascade to all workers
 	l.cancel()
 
-	// Wait for all goroutines to finish
-	l.wg.Wait()
+	// Wait for all goroutines to finish with timeout
+	done := make(chan struct{})
+	go func() {
+		l.wg.Wait()
+		close(done)
+	}()
 
-	// 调用清理函数
+	select {
+	case <-done:
+		log.Println("All workers stopped gracefully")
+	case <-time.After(30 * time.Second):
+		log.Warn("Timeout waiting for workers to stop, forcing exit")
+	}
+
 	l.sharedClient.CleanUp()
+
+	runtime.GC()
 
 	log.Println("All goroutines stopped, exiting program.")
 }
 
 func (l *LoadGenerator) worker(index int) {
-	defer func() {
-		l.wg.Done()
-	}()
+	defer l.wg.Done()
+
 	for {
 		select {
 		case <-l.ctx.Done():
-			log.Infof("Goroutine %d exiting due to cancellation", index)
+			log.Infof("Worker %d exiting due to main context cancellation", index)
 			return
 		default:
-			defer func() {
-				if r := recover(); r != nil {
-					buf := make([]byte, 1024)
-					n := runtime.Stack(buf, false)
-					stackTrace := string(buf[:n])
-					log.Infof("Recovered from panic: %v\nStack trace:\n%s", r, stackTrace)
-					l.taskChain <- index
+			func() {
+				defer func() {
+					if r := recover(); r != nil {
+						buf := make([]byte, 1024)
+						n := runtime.Stack(buf, false)
+						stackTrace := string(buf[:n])
+						log.Errorf("Worker %d recovered from panic: %v\nStack trace:\n%s", index, r, stackTrace)
+					}
+				}()
+
+				chainCtx := NewContext(context.Background())
+				chainCtx.Set(Client, l.sharedClient)
+				start := time.Now()
+				_, err := l.config.Chain.Execute(chainCtx)
+				if time.Since(start) > 5*time.Second {
+					log.Errorf("Thread %d executed chain, time used: %v", index, time.Since(start))
+				}
+				if err != nil {
+					log.Warn(err)
+				}
+
+				if l.config.SleepTime > 0 {
+					time.Sleep(time.Millisecond * time.Duration(l.config.SleepTime))
 				}
 			}()
+		}
+	}
+}
 
-			chainCtx := NewContext(context.Background())
-			chainCtx.Set(Client, l.sharedClient)
-			start := time.Now()
-			_, err := l.config.Chain.Execute(chainCtx)
-			log.Infof("Thread %d executed chain, time used: %v", index, time.Since(start))
-			if err != nil {
-				log.Warn(err)
-			}
-			if l.config.SleepTime > 0 {
-				time.Sleep(time.Millisecond * time.Duration(rand.Intn(l.config.SleepTime)))
-			}
+func (l *LoadGenerator) startStatsMonitor() {
+	log.Info("Starting stats monitor...")
+	cleanupTicker := time.NewTicker(5 * time.Minute)
+	gcTicker := time.NewTicker(2 * time.Minute)
 
+	go func() {
+		defer cleanupTicker.Stop()
+		defer gcTicker.Stop()
+		for {
+			select {
+			case <-l.ctx.Done():
+				return
+			case <-l.printStatsTicker.C:
+				l.printLatencyStats()
+			case <-cleanupTicker.C:
+				log.Info("Cleaning old statistics records...")
+				stats.GlobalLatencyManager.CleanOldRecords(10 * time.Minute)
+			case <-gcTicker.C:
+				log.Debug("Forcing garbage collection...")
+				runtime.GC()
+				var m runtime.MemStats
+				runtime.ReadMemStats(&m)
+				log.Errorf("Memory usage: Alloc=%d KB, TotalAlloc=%d KB, Sys=%d KB, NumGC=%d",
+					m.Alloc/1024, m.TotalAlloc/1024, m.Sys/1024, m.NumGC)
+			}
+		}
+	}()
+}
+
+func (l *LoadGenerator) printLatencyStats() {
+	topSlowStats := stats.GlobalLatencyManager.GetTopSlowStats(10)
+
+	log.Warn("=== Top 10 Slowest Requests ===")
+	if len(topSlowStats) == 0 {
+		log.Info("No request statistics available yet")
+	} else {
+		for i, statObj := range topSlowStats {
+			min, max, avg, p50, p95, p99 := statObj.GetStats()
+			log.Warnf("#%d URL: %s %s", i+1, statObj.Method, statObj.URL)
+			log.Warnf("  Count: %d", statObj.Count)
+			log.Warnf("  Min: %v, Max: %v, Avg: %v", min, max, avg)
+			log.Warnf("  P50: %v, P95: %v, P99: %v", p50, p95, p99)
+			log.Warnf("---")
 		}
 	}
 
+	log.Warnf("Current Threads: %d, Sleep Time: %d ms", l.config.Thread, l.config.SleepTime)
+	log.Warn("=========================")
 }

@@ -136,7 +136,7 @@ func Preserve(ctx *Context) (*NodeResult, error) {
 			return nil, err
 		}
 		if PreserveResp.Status != 1 {
-			return nil, fmt.Errorf("preserve order tickets fail, %v", PreserveResp.Msg)
+			return nil, nil
 		}
 
 	default: //preserveOther
@@ -146,7 +146,7 @@ func Preserve(ctx *Context) (*NodeResult, error) {
 			return nil, err
 		}
 		if PreserveOtherResp.Status != 1 {
-			return nil, fmt.Errorf("preserve other order tickets fail. PreserveResp.Status != 1, get %v", PreserveOtherResp.Status)
+			return nil, nil
 		}
 		log.Infof("The Status is: %v, and PreserveResp Data: %v", PreserveOtherResp.Status, PreserveOtherResp.Data)
 		log.Infof("[Success]PreserveBehaviors(Chain) Finished. End time: %v", time.Now().String())

@@ -22,9 +22,15 @@ type AdminRouteInfo struct {
 }
 
 type AdminAddResponse struct {
-	Status int      `json:"status"`
-	Msg    string   `json:"msg"`
-	Data   []string `json:"data"`
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   struct {
+		ID           string   `json:"id"`
+		Stations     []string `json:"stations"`
+		Distances    []int    `json:"distances"`
+		StartStation string   `json:"startStation"`
+		EndStation   string   `json:"endStation"`
+	} `json:"data"`
 }
 
 type AdminRouteInfoResp struct {
@@ -51,6 +57,7 @@ func (s *SvcImpl) ReqGetAllRoutes() (*AdminRouteInfoResp, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err

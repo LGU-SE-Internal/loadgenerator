@@ -67,7 +67,7 @@ func RefreshOrder(ctx *Context) (*NodeResult, error) {
 
 	var randomIndex int
 	if len(RefreshResp.Data) == 0 {
-		log.Warnf("Unpaied order is empty")
+		log.Infof("Unpaied order is empty")
 		return &NodeResult{Continue: false}, nil
 	}
 	//if rand.Intn(2) == 0 {
@@ -88,7 +88,27 @@ func RefreshOrder(ctx *Context) (*NodeResult, error) {
 
 	TheTravelDate, err := time.Parse("2006-01-02 15:04:05", RefreshResp.Data[randomIndex].TravelDate)
 	if err != nil {
-		log.Errorf("TheTravelDate Transformation is failed, err %s", err)
+		// 检查 RefreshOtherResp.Data 是否为空或者 randomIndex 是否超出范围
+		if len(RefreshOtherResp.Data) == 0 {
+			log.Warnf("RefreshOtherResp.Data is empty, cannot parse TravelDate")
+			// 使用当前时间作为默认值
+			TheTravelDate = time.Now()
+		} else if randomIndex >= len(RefreshOtherResp.Data) {
+			log.Warnf("randomIndex %d is out of range for RefreshOtherResp.Data (length: %d)", randomIndex, len(RefreshOtherResp.Data))
+			// 使用第一个元素或者随机选择一个有效的索引
+			validIndex := rand.Intn(len(RefreshOtherResp.Data))
+			TheTravelDate, err = time.Parse("2006-01-02", RefreshOtherResp.Data[validIndex].TravelDate)
+			if err != nil {
+				log.Errorf("TheTravelDate Transformation is failed, err %s", err)
+				TheTravelDate = time.Now()
+			}
+		} else {
+			TheTravelDate, err = time.Parse("2006-01-02", RefreshOtherResp.Data[randomIndex].TravelDate)
+			if err != nil {
+				log.Errorf("TheTravelDate Transformation is failed, err %s", err)
+				TheTravelDate = time.Now()
+			}
+		}
 	}
 	formattedTravelDate := TheTravelDate.Format("2006-01-02")
 	ctx.Set(TargetDate, formattedTravelDate)
@@ -156,7 +176,7 @@ func RefreshOrderOther(ctx *Context) (*NodeResult, error) {
 
 	var randomIndex int
 	if len(RefreshOtherResp.Data) == 0 {
-		log.Warn("Paied order is empty")
+		log.Info("Paied order is empty")
 		return &NodeResult{Continue: false}, nil
 	}
 	//if rand.Intn(2) == 0 {
@@ -170,14 +190,20 @@ func RefreshOrderOther(ctx *Context) (*NodeResult, error) {
 
 	TheBoughtDate, err := time.Parse("2006-01-02 15:04:05", RefreshOtherResp.Data[randomIndex].BoughtDate)
 	if err != nil {
-		log.Errorf("TheBoughtDate Transformation is failed, err %s", err)
+		TheBoughtDate, err = time.Parse("2006-01-02", RefreshOtherResp.Data[randomIndex].BoughtDate)
+		if err != nil {
+			log.Errorf("TheBoughtDate Transformation is failed, err %s", err)
+		}
 	}
 	formattedBoughtDate := TheBoughtDate.Format("2006-01-02")
 	ctx.Set(HandleDate, formattedBoughtDate)
 
 	TheTravelDate, err := time.Parse("2006-01-02 15:04:05", RefreshOtherResp.Data[randomIndex].TravelDate)
 	if err != nil {
-		log.Errorf("TheTravelDate Transformation is failed, err %s", err)
+		TheTravelDate, err = time.Parse("2006-01-02", RefreshOtherResp.Data[randomIndex].TravelDate)
+		if err != nil {
+			log.Errorf("TheTravelDate Transformation is failed, err %s", err)
+		}
 	}
 	formattedTravelDate := TheTravelDate.Format("2006-01-02")
 	ctx.Set(TargetDate, formattedTravelDate)
@@ -245,7 +271,7 @@ func RefreshCollectedOrder(ctx *Context) (*NodeResult, error) {
 
 	var randomIndex int
 	if len(RefreshResp.Data) == 0 {
-		log.Warnf("Unpaied order is empty")
+		log.Infof("Unpaied order is empty")
 		return &NodeResult{Continue: false}, nil
 	}
 	//if rand.Intn(2) == 0 {
@@ -266,7 +292,27 @@ func RefreshCollectedOrder(ctx *Context) (*NodeResult, error) {
 
 	TheTravelDate, err := time.Parse("2006-01-02 15:04:05", RefreshResp.Data[randomIndex].TravelDate)
 	if err != nil {
-		log.Errorf("TheTravelDate Transformation is failed, err %s", err)
+		// 检查 RefreshOtherResp.Data 是否为空或者 randomIndex 是否超出范围
+		if len(RefreshOtherResp.Data) == 0 {
+			log.Warnf("RefreshOtherResp.Data is empty, cannot parse TravelDate")
+			// 使用当前时间作为默认值
+			TheTravelDate = time.Now()
+		} else if randomIndex >= len(RefreshOtherResp.Data) {
+			log.Warnf("randomIndex %d is out of range for RefreshOtherResp.Data (length: %d)", randomIndex, len(RefreshOtherResp.Data))
+			// 使用第一个元素或者随机选择一个有效的索引
+			validIndex := rand.Intn(len(RefreshOtherResp.Data))
+			TheTravelDate, err = time.Parse("2006-01-02", RefreshOtherResp.Data[validIndex].TravelDate)
+			if err != nil {
+				log.Errorf("TheTravelDate Transformation is failed, err %s", err)
+				TheTravelDate = time.Now()
+			}
+		} else {
+			TheTravelDate, err = time.Parse("2006-01-02", RefreshOtherResp.Data[randomIndex].TravelDate)
+			if err != nil {
+				log.Errorf("TheTravelDate Transformation is failed, err %s", err)
+				TheTravelDate = time.Now()
+			}
+		}
 	}
 	formattedTravelDate := TheTravelDate.Format("2006-01-02")
 	ctx.Set(TargetDate, formattedTravelDate)
